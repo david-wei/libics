@@ -54,7 +54,7 @@ def ft_matrixrect(mrect):
     f_nyq_x, f_nyq_y = 1 / 2 / pxsize_x, 1 / 2 / pxsize_y
     f_cor_x, f_cor_y = 0.0, 0.0
     # Even point correction (acc. to FFT implementation)
-    if pxcount_x % 2== 0:
+    if pxcount_x % 2 == 0:
         f_cor_x = f_nyq_x / (pxcount_x / 2)
     if pxcount_y % 2 == 0:
         f_cor_y = f_nyq_y / (pxcount_y / 2)
