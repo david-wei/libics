@@ -1,2 +1,4 @@
-# libics
+# LibICS
+
 Incoherent Source Library
+
