@@ -433,6 +433,8 @@ class Camera(object):
                 shape=(frame.height, frame.width, self._px_rgb_size)
             )
             self._frame_buffer_counter = index
+            # Queue frame buffer to allow loading of next image
+            frame.queueFrameCapture()
             return image
         else:
             return None
