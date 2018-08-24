@@ -27,7 +27,7 @@ def setup_camera(camera):
     Sets up a camera object.
     """
     # Configure camera settings
-    camera.open(mode="full")
+    camera.openCam(mode="full")
     camera.set_acquisition(mode="Continuous")
     camera.set_format(width="max", height="max", px_format="Mono8")
     camera.set_exposure(auto="Continuous")
@@ -59,11 +59,20 @@ def play(camera, video):
     video.close()
 
 
+def cleanup(camera):
+    """
+    Closes camera and Vimba API.
+    """
+    camera.closeCam()
+    vimba.shutdown()
+
+
 def main():
     camera = get_camera
     setup_camera(camera)
     video = setup_video(camera)
     play(camera, video)
+    cleanup(camera)
 
 
 if __name__ == "__main__":

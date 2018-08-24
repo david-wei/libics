@@ -82,7 +82,7 @@ class Video(object):
             self.source_mode = source_mode
         return ret
 
-    def open(self):
+    def openCap(self):
         """
         Opens the video origin (if in file or device mode).
 
@@ -93,7 +93,7 @@ class Video(object):
         elif self.source_mode == "device":
             self.cap.open(self.device_index)
 
-    def close(self):
+    def closeCap(self):
         """
         Closes the video origin (if in file or device mode):
         """
