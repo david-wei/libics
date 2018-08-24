@@ -111,6 +111,7 @@ class Video(object):
         break_key : char
             Keyboard character upon which playback stops.
         """
+        cv2.namedWindow(wnd_title, cv2.WINDOW_NORMAL)
         if self._continuous_playback_mode():
             while True:
                 cv2.imshow(wnd_title, self.frame_function())
@@ -118,6 +119,8 @@ class Video(object):
                     break
         else:
             cv2.imshow(wnd_title, self.frame_function())
+            cv2.waitKey(0)  # 0 is interpreted as infinity
+        cv2.destroyAllWindows()
 
 
 ###############################################################################
