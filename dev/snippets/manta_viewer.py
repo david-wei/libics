@@ -27,7 +27,7 @@ def setup_camera(camera):
     Sets up a camera object.
     """
     # Configure camera settings
-    camera.openCam(mode="full")
+    camera.open_cam(mode="full")
     camera.set_acquisition(mode="Continuous")
     camera.set_format(width="max", height="max", px_format="Mono8")
     camera.set_exposure(auto="Continuous")
@@ -50,20 +50,20 @@ def play(camera, video):
     """
     Live-displays the camera image.
     """
-    video.open()
+    video.open_cap()
     camera.start_capture()
     camera.start_acquisition()
     video.play(wnd_title="Press s to stop stream", break_key="s")
     camera.end_acquisition()
     camera.end_capture()
-    video.close()
+    video.close_cap()
 
 
 def cleanup(camera):
     """
     Closes camera and Vimba API.
     """
-    camera.closeCam()
+    camera.close_cam()
     vimba.shutdown()
 
 

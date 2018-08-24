@@ -191,7 +191,7 @@ class Camera(object):
             pass
         return self._px_dtype_size, self._px_rgb_size
 
-    def openCam(self, mode="full"):
+    def open_cam(self, mode="full"):
         """
         Initializes the camera, `close` the camera after use.
 
@@ -210,7 +210,7 @@ class Camera(object):
         )
         self._is_open = True
 
-    def closeCam(self):
+    def close_cam(self):
         """
         Closes the camera.
         """
