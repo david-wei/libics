@@ -59,8 +59,12 @@ def play(camera, video):
     video.close()
 
 
-if __name__ == "__main__":
+def main():
     camera = get_camera
     setup_camera(camera)
     video = setup_video(camera)
     play(camera, video)
+
+
+if __name__ == "__main__":
+    main()
