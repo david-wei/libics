@@ -438,7 +438,7 @@ class Camera(object):
             return None
 
 
-def getCameras(regex_id_filter=None):
+def get_cameras(regex_id_filter=None):
     """
     Gets all discovered Vimba cameras.
 
