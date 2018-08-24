@@ -103,7 +103,7 @@ class Camera(object):
         self._is_acquiring = False
         self._frame_buffer = []
         self._frame_buffer_counter = 0
-        self._px_dtype_size = 0
+        self._px_dtype = None
         self._px_rgb_size = 0
 
     def get_id(self):
@@ -181,15 +181,15 @@ class Camera(object):
             Number of subpixels (e.g. 1 for monochromatic).
         """
         if px_format == "Mono8":
-            self._px_dtype_size = 8
+            self._px_dtype = "uint8"
             self._px_rgb_size = 1
         elif px_format == "Mono12":
-            self._px_dtype_size = 16
+            self._px_dtype = "uint16"
             self._px_rgb_size = 1
         elif px_format == "Mono12Packed":
             # FIXME: handling packed 12bit data
             pass
-        return self._px_dtype_size, self._px_rgb_size
+        return self._px_dtype, self._px_rgb_size
 
     def open_cam(self, mode="full"):
         """
@@ -429,8 +429,8 @@ class Camera(object):
             # Load into numpy array
             image = np.array(
                 buffer=frame.getBufferByteData(),
-                dtype=np.uint8,
-                shape=(frame.height, frame.width, 1)
+                dtype=self._px_dtype,
+                shape=(frame.height, frame.width, self._px_rgb_size)
             )
             self._frame_buffer_counter = index
             return image
