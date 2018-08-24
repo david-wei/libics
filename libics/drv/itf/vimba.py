@@ -427,7 +427,7 @@ class Camera(object):
         # Wait for Vimba API response
         if frame.waitFrameCapture() == 0:
             # Load into numpy array
-            image = np.array(
+            image = np.ndarray(
                 buffer=frame.getBufferByteData(),
                 dtype=self._px_dtype,
                 shape=(frame.height, frame.width, self._px_rgb_size)
@@ -436,6 +436,9 @@ class Camera(object):
             return image
         else:
             return None
+
+
+###############################################################################
 
 
 def get_cameras(regex_id_filter=None):
