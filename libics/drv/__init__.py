@@ -1,1 +1,1 @@
-from . import gpib      # noqa
+from . import itf       # noqa
