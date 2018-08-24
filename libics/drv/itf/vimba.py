@@ -373,7 +373,7 @@ class Camera(object):
         # Add frame buffers
         elif rel_buffer_size > 0:
             for _ in range(rel_buffer_size):
-                self._frame_buffer.append(pymba.vimbaframe.VimbaFrame())
+                self._frame_buffer.append(self._camera.getFrame())
                 self._frame_buffer[-1].announceFrame()
 
     def start_capture(self):
