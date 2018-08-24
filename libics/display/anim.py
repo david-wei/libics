@@ -184,71 +184,71 @@ class LiveAnimation(Animation, object):
 ###############################################################################
 
 
-def ff(var):
-    x, y = var
-    return (
-        np.cos(2 * np.pi * np.sqrt(x**2 + y**2))
-        + np.sin(5 * np.pi * np.sqrt(x**2 + y**2))
+if __name__ == "__main__":
+
+    def ff(var):
+        x, y = var
+        return (
+            np.cos(2 * np.pi * np.sqrt(x**2 + y**2))
+            + np.sin(5 * np.pi * np.sqrt(x**2 + y**2))
+        )
+
+    def f(i):
+        return np.array(
+            [[ff((x + i, y)) for y in range(100)] for x in range(100)]
+        )
+
+    ax = plt.subplot(111)
+    a = Animation(axes=ax)
+    a.set_func(f)
+    a.set_func_anim_args(list(range(200)))
+    print("Pre-loading frames")
+    a.pre_load_frames()
+    print("Animating")
+    ani = a.animate()
+    plt.show(ani)
+
+    """
+    def f(x, y):
+        return (
+            np.cos(2 * np.pi * np.sqrt(x**2 + y**2))
+            + np.sin(5 * np.pi * np.sqrt(x**2 + y**2))
+        )
+
+
+    def setup_frames():
+        frames = []
+        for i in range(200):
+            array = np.full((100, 100), 0.0)
+            for x in range(array.shape[0]):
+                for y in range(array.shape[1]):
+                    array[x, y] = f(x + i, y)
+            frames.append(array)
+        return frames
+
+
+    print("Calculating frames")
+    _frames = setup_frames()
+
+
+    def grab_frame(i):
+        print(i)
+        global _frames
+        return _frames[i % len(_frames)]
+
+
+    def update(i):
+        global im1
+        im1.set_data(grab_frame(i))
+
+
+    # create axes
+    ax1 = plt.subplot(111)
+    im1 = ax1.imshow(grab_frame(0))
+    # create animation
+    print("Animating frames")
+    ani = matplotlib.animation.FuncAnimation(
+        plt.gcf(), update, frames=200, interval=20
     )
-
-
-def f(i):
-    return np.array(
-        [[ff((x + i, y)) for y in range(100)] for x in range(100)]
-    )
-
-
-ax = plt.subplot(111)
-a = Animation(axes=ax)
-a.set_func(f)
-a.set_func_anim_args(list(range(200)))
-print("Pre-loading frames")
-a.pre_load_frames()
-print("Animating")
-ani = a.animate()
-plt.show(ani)
-
-"""
-def f(x, y):
-    return (
-        np.cos(2 * np.pi * np.sqrt(x**2 + y**2))
-        + np.sin(5 * np.pi * np.sqrt(x**2 + y**2))
-    )
-
-
-def setup_frames():
-    frames = []
-    for i in range(200):
-        array = np.full((100, 100), 0.0)
-        for x in range(array.shape[0]):
-            for y in range(array.shape[1]):
-                array[x, y] = f(x + i, y)
-        frames.append(array)
-    return frames
-
-
-print("Calculating frames")
-_frames = setup_frames()
-
-
-def grab_frame(i):
-    print(i)
-    global _frames
-    return _frames[i % len(_frames)]
-
-
-def update(i):
-    global im1
-    im1.set_data(grab_frame(i))
-
-
-# create axes
-ax1 = plt.subplot(111)
-im1 = ax1.imshow(grab_frame(0))
-# create animation
-print("Animating frames")
-ani = matplotlib.animation.FuncAnimation(
-    plt.gcf(), update, frames=200, interval=20
-)
-plt.show()
-"""
+    plt.show()
+    """
