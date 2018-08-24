@@ -286,7 +286,7 @@ class Camera(object):
             self._camera.Width = width
         if height is not None and height < max_y:
             self._camera.Height = height
-        width, height, _, __ = self.get_format()
+        width, height, _, __, ___ = self.get_format()
         if width_offset is not None:
             width_offset = max(min(max_x - width, width_offset), 0)
             self._camera.OffsetX = width_offset
