@@ -149,7 +149,7 @@ class Camera(object):
         return info
 
     @classmethod
-    def _access_mode(mode_str):
+    def _access_mode(cls, mode_str):
         if mode_str is None or mode_str == "none":
             return 0
         elif mode_str == "full":
