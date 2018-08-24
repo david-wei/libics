@@ -454,12 +454,13 @@ def get_cameras(regex_id_filter=None):
         Discovered (and filtered) cameras. Note that these
         cameras are unopened.
     """
+    global _Vimba, _VimbaSystem
     # Issue command to discover all GigE cameras
     if _VimbaSystem.GeVTLIsPresent:
         _VimbaSystem.runFeatureCommand("GeVDiscoveryAllOnce")
         time.sleep(TIMEOUT_DISCOVERY_GIGE)
     # Get all cameras
-    camera_ids = _VimbaSystem.getCameraIds()
+    camera_ids = _Vimba.getCameraIds()
     cameras = []
     if regex_id_filter is None:
         cameras = [Camera(_Vimba.getCamera(cam_id))
