@@ -163,7 +163,7 @@ class Camera(object):
         else:
             raise TypeError("invalid camera access mode")
 
-    def set_px_format(self, px_format):
+    def _set_px_format(self, px_format):
         """
         Sets the internal pixel format variables needed for numpy array
         representation of images.
@@ -269,10 +269,19 @@ class Camera(object):
         ----------
         width, height, width_offset, height_offset : int or None
             Pixel counts. `None` does not set the variable.
+            `width` and `height` may be `"max"` with which the
+            camera's maximum image size is used and offsets are
+            set to zero.
         px_format : str or None
             "Mono8", "Mono12", "Mono12Packed"
         """
         max_x, max_y = self.get_max_size()
+        if width == "max":
+            width = max_x
+            width_offset = 0
+        if height == "max":
+            height = max_y
+            height_offset = 0
         if width is not None and width <= max_x:
             self._camera.Width = width
         if height is not None and height < max_y:
@@ -372,7 +381,7 @@ class Camera(object):
         self._frame_buffer_counter = 0
         for frame in self._frame_buffer:
             frame.queueFrameCapture()
-        self.set_px_format(self._camera.PixelFormat)
+        self._set_px_format(self._camera.PixelFormat)
         self._is_capturing = True
 
     def end_capture(self):
