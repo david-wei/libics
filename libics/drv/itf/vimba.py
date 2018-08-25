@@ -77,7 +77,7 @@ def getVimba():
 ###############################################################################
 
 
-class Camera(object):
+class VimbaCamera(object):
 
     """
     Pure pythonic wrapper class for `pymba.vimbaCamera.VimbaCamera` with
@@ -103,6 +103,7 @@ class Camera(object):
         self._is_acquiring = False
         self._frame_buffer = []
         self._frame_buffer_counter = 0
+        self._frame_callback = None
         self._px_dtype = None
         self._px_rgb_size = 0
 
@@ -206,7 +207,7 @@ class Camera(object):
             If parameters are invalid.
         """
         self._camera.openCamera(
-            cameraAccessMode=Camera._access_mode(mode)
+            cameraAccessMode=VimbaCamera._access_mode(mode)
         )
         self._is_open = True
 
@@ -219,7 +220,7 @@ class Camera(object):
 
     # ++++ Configuration +++++++++++++++++++++
 
-    def set_acquisition(self, mode="Continuous"):
+    def set_acquisition(self, mode=None, multi_count=None):
         """
         Sets the acquisition mode, i.e. how many frames are recorded.
 
@@ -236,17 +237,24 @@ class Camera(object):
         TypeError
             If parameters are invalid.
         """
-        if (mode == "Continuous" or mode == "SingleFrame"
-                or mode == "MultiFrame"):
+        if (mode is not None and (mode == "Continuous" or mode == "SingleFrame"
+                                  or mode == "MultiFrame")):
             self._camera.AcquisitionMode = mode
-        else:
-            raise TypeError("invalid frame acquisition mode")
+        if multi_count is not None:
+            self._camera.AcquisitionFrameCount = multi_count
 
     def get_acquisition(self):
         """
-        Gets the acquisition mode (str).
+        Gets the acquisition properties.
+
+        Returns
+        -------
+        mode : str
+            Acquisition mode.
+        multi_count : int
+            Multi-frame mode frame count.
         """
-        return self._camera.AcquisitionMode
+        return self._camera.AcquisitionMode, self._camera.AcquisitionFrameCount
 
     def get_max_size(self):
         """
@@ -343,7 +351,8 @@ class Camera(object):
         """
         Gets auto-exposure settings and manual exposure time in µs.
         """
-        return self._camera.ExposureAuto, self._camera.ExposureTimeAbs
+        return (self._camera.ExposureAuto, self._camera.ExposureTimeAbs,
+                self._camera.NirMode)
 
     # ++++ Image Capturing +++++++++++++++++++
 
@@ -376,17 +385,26 @@ class Camera(object):
                 self._frame_buffer.append(self._camera.getFrame())
                 self._frame_buffer[-1].announceFrame()
 
-    def start_capture(self):
+    def start_capture(self, frame_callback=None):
+        """
+        Starts capture. On frame ready the `frame_callback` function
+        is called.
+        """
+        if callable(frame_callback):
+            self._frame_callback = frame_callback
+        else:
+            self._frame_callback = None
         self._camera.startCapture()
         self._frame_buffer_counter = 0
         for frame in self._frame_buffer:
-            frame.queueFrameCapture()
+            frame.queueFrameCapture(frameCallback=self.get_image_callback)
         self._set_px_format(self._camera.PixelFormat)
         self._is_capturing = True
 
     def end_capture(self):
         self._camera.endCapture()
         self._camera.revokeAllFrames()
+        self._frame_buffer = []
         self._is_capturing = False
 
     def start_acquisition(self):
@@ -439,11 +457,20 @@ class Camera(object):
         else:
             return None
 
+    def get_image_callback(self, frame):
+        image = np.ndarray(
+            buffer=frame.getBufferByteData(),
+            dtype=self._px_dtype,
+            shape=(frame.height, frame.width, self._px_rgb_size)
+        )
+        frame.queueFrameCapture(frameCallback=self.get_image_callback)
+        self._frame_callback(image)
+
 
 ###############################################################################
 
 
-def get_cameras(regex_id_filter=None):
+def get_vimba_cameras(regex_id_filter=None):
     """
     Gets all discovered Vimba cameras.
 
@@ -468,10 +495,10 @@ def get_cameras(regex_id_filter=None):
     camera_ids = _Vimba.getCameraIds()
     cameras = []
     if regex_id_filter is None:
-        cameras = [Camera(_Vimba.getCamera(cam_id))
+        cameras = [VimbaCamera(_Vimba.getCamera(cam_id))
                    for cam_id in camera_ids]
     else:
         for cam_id in camera_ids:
             if re.match(regex_id_filter) is not None:
-                cameras.append(Camera(_Vimba.getCamera(cam_id)))
+                cameras.append(VimbaCamera(_Vimba.getCamera(cam_id)))
     return cameras
