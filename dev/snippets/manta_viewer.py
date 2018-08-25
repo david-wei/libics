@@ -7,7 +7,7 @@ def get_camera(index=None):
     Returns the Manta `Camera` object.
     """
     vimba.startup()
-    cams = vimba.get_cameras()
+    cams = vimba.get_vimba_cameras()
     if len(cams) == 0:
         print("No Vimba cameras found.")
         return None
