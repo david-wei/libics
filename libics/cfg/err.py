@@ -230,7 +230,7 @@ class DTYPE_PQUANT(DTYPE_CUSTOM):
 class DTYPE_MATRIXDATA(DTYPE_CUSTOM):
     _err_description = ErrorDescription(
         "data type: expected data.matrixdata.MatrixData",
-        151
+        152
     )
 
 
@@ -402,4 +402,30 @@ class INVAL_STRUCT_WCT(INVAL_STRUCT):
     _err_description = ErrorDescription(
         "invalid value: generic WCT file error",
         342
+    )
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++
+# 400: Runtime Error
+# ++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+class RUNTM(LibICSError):
+    _err_description = ErrorDescription(
+        "runtime error: generic runtime error",
+        400
+    )
+
+
+class RUNTM_DRV(RUNTM):
+    _err_description = ErrorDescription(
+        "runtime error: generic driver error",
+        410
+    )
+
+
+class RUNTM_DRV_CAM(RUNTM):
+    _err_description = ErrorDescription(
+        "runtime error: camera interface error",
+        411
     )
