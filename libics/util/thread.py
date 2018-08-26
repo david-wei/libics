@@ -17,6 +17,15 @@ class StoppableThread(threading.Thread):
         super().__init__()
         self.stop_event = threading.Event()
 
+    def stop_action(self):
+        """
+        Abstract method that is called upon stop.
+
+        If any action should be performed after stop, subclass this class and
+        implement the `stop_action()` method.
+        """
+        pass
+
     def stop(self):
         """
         Stops the thread.
@@ -26,6 +35,7 @@ class StoppableThread(threading.Thread):
             self.stop_event.set()
             # block calling thread until thread really has terminated
             self.join()
+            self.stop_action()
 
 
 class PeriodicTimer(StoppableThread):
@@ -54,10 +64,16 @@ class PeriodicTimer(StoppableThread):
         Can be stopped by running the `stop()` method.
         No dynamic arguments are allowed. Static (keyword) arguments can be set
         by calling the `set_args(*args, **kwargs)` method.
+        Timer has feedback, i.e. corrects runtime delays if delays are smaller
+        than the period.
         """
+        target_time = time.time()
         while not self.stop_event.is_set():
             self._worker_func(*self._args, **self._kwargs)
-            time.sleep(self._interval)
+            diff_time = time.time() - target_time
+            sleep_time = max(0, self._period - diff_time)
+            time.sleep(sleep_time)
+            target_time += self._period
 
     def set_args(self, *args, **kwargs):
         """
