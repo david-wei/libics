@@ -28,7 +28,7 @@ class CameraCfg(object):
             str: "rgb", "rgba", "bgr", "bgra", "mono"
             None: "mono" but array without channel dimension
         - bpc (bits per channel) : int
-            8, 16, 32
+            8, 10, 12
     * acquisition:
         - frame_count : non-negative int
             0: infinite (continuous acquisition)
@@ -47,6 +47,10 @@ class CameraCfg(object):
     -----
     All attributes are of `util.types.FlaggedType` in which the flag is
     interpreted as a to-be-updated flag.
+
+    See Also
+    --------
+    display.qtimage.QtImage.set_image_format
     """
 
     class Camera:
@@ -61,7 +65,7 @@ class CameraCfg(object):
     class ImageFormat:
 
         CHANNEL = ["rgb", "rgba", "bgr", "bgra", "mono", None]
-        BPC = [8, 16, 32]
+        BPC = [8, 10, 12]
 
         def __init__(self):
             self.width = FlaggedType(640)

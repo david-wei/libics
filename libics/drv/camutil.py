@@ -200,7 +200,7 @@ def _read_camera_cfg_vimba(camera):
         camera_cfg.image_format.bpc.val = 8
     elif px_format == "Mono12":
         camera_cfg.image_format.channel.val = "mono"
-        camera_cfg.image_format.channel.val = 16
+        camera_cfg.image_format.channel.val = 12
 
     auto, time, nir_mode = camera.get_exposure()
     if auto == "Off":
@@ -246,7 +246,7 @@ def _write_camera_cfg_vimba(camera, camera_cfg):
     if camera_cfg.image_format.bpc.flag:
         if camera_cfg.image_format.bpc.val == 8:
             px_format = "Mono8"
-        elif camera_cfg.image_format.bpc.val == 16:
+        elif camera_cfg.image_format.bpc.val == 12:
             px_format = "Mono12"
     camera.set_format(width=width, height=height, width_offset=width_offset,
                       height_offset=height_offset, px_format=px_format)
