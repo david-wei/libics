@@ -221,7 +221,9 @@ class Camera(object):
         if self._frame_buffer_enabled:
             self._load_frame_buffer(frame, *args, **kwargs)
         if self._origin_callback is not None:
+            self.acquire_lock()
             self._origin_callback(frame)
+            self.release_lock()
 
     def open_camera(self):
         """

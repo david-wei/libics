@@ -161,11 +161,12 @@ class ImageProcessor(QWidget, object):
         im_std = np.std(im_buffer, axis=axes)
         im_max = np.max(im_buffer, axis=axes)
         im_min = np.max(im_buffer, axis=axes)
+        self.camera.reset_frame_buffer()
+        self.camera.release_lock()
+
         self._coh_hist_std.append(im_std / im_mean * 128 - 1)
         self._coh_hist_max.append(im_max / im_mean * 128 - 1)
         self._coh_hist_min.append(im_min / im_mean * 128 - 1)
-        self.camera.reset_frame_buffer()
-        self.camera.release_lock()
         self.display_coh_hist_image()
 
 
