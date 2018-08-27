@@ -57,10 +57,10 @@ class CameraCfg(object):
 
         CAMERA_TYPE = ["vimba"]
 
-        def __init__(self):
-            self.camera_type = FlaggedType("vimba",
+        def __init__(self, camera_type="vimba", camera_id=None):
+            self.camera_type = FlaggedType(camera_type,
                                            cond=CameraCfg.Camera.CAMERA_TYPE)
-            self.camera_id = FlaggedType(None)
+            self.camera_id = FlaggedType(camera_id)
 
     class ImageFormat:
 
@@ -95,8 +95,9 @@ class CameraCfg(object):
                                         cond=CameraCfg.Exposure.CAM_AUTO)
             self.time = FlaggedType(1e-3)
 
-    def __init__(self):
-        self.camera = CameraCfg.Camera()
+    def __init__(self, camera_type="vimba", camera_id=None):
+        self.camera = CameraCfg.Camera(camera_type=camera_type,
+                                       camera_id=camera_id)
         self.image_format = CameraCfg.ImageFormat()
         self.acquisition = CameraCfg.Acquisition()
         self.exposure = CameraCfg.Exposure()
@@ -123,6 +124,9 @@ class CameraCfg(object):
         """
         Sets the configuration parameters.
 
+        If an attribute of the passed `camera_cfg` is `None`, this value is
+        not set.
+
         Parameters
         ----------
         camera_cfg : CameraCfg
@@ -136,9 +140,14 @@ class CameraCfg(object):
         for cat_key, cat_val in self.__dict__.items():
             if cat_key != "camera":
                 for item_key, item_val in cat_val.__dict__.items():
-                    if self.__dict__[cat_key].__dict__[item_key] != item_val:
-                        self.__dict__[cat_key].__dict__[item_key].assign(
-                            item_val, diff_flag=diff_flag
-                        )
+                    if item_val is not None:
+                        if (self.__dict__[cat_key].__dict__[item_key]
+                                != item_val):
+                            self.__dict__[cat_key].__dict__[item_key].assign(
+                                item_val, diff_flag=diff_flag
+                            )
+                        else:
+                            (self.__dict__[cat_key].__dict__[item_key]
+                             .flag) = False
         if type(flags) == bool:
             self.set_all_flags(flags)
