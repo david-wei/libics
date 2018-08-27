@@ -86,5 +86,5 @@ def _add_to_sys_path(path, index=None):
 _current_dir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
 ))
-_parent_dir = _get_parent_dir(_current_dir, level=1)
+_parent_dir = _get_parent_dir(_current_dir, level=2)
 _add_to_sys_path(_parent_dir, index=None)
