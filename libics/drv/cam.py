@@ -266,16 +266,31 @@ class Camera(object):
         """
         self._camera_origin.write_camera_cfg()
 
-    def run(self):
+    def run(self, start_timer=True):
         """
         Starts capturing.
-        """
-        return self._camera_origin.run(callback=self._cb_origin)
 
-    def stop(self):
+        Parameters
+        ----------
+        start_timer : bool
+            Whether to start all timers after `run` call.
+        """
+        ret = self._camera_origin.run(callback=self._cb_origin)
+        if start_timer:
+            self.start_timer(timer_id=None)
+        return ret
+
+    def stop(self, stop_timer=True):
         """
         Stops capturing.
+
+        Parameters
+        ----------
+        stop_timer : bool
+            Whether to stop all timers before `stop` call.
         """
+        if stop_timer:
+            self.stop_timer(timer_id=None)
         return self._camera_origin.stop()
 
     def grab(self):
