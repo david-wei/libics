@@ -6,8 +6,8 @@ except(ImportError):
 import cfg.err as ERR
 
 # Subpackage Imports
-import itf.camcfg as camcfg
-import itf.vimba as vimba
+import drv.itf.camcfg as camcfg
+import drv.itf.vimba as vimba
 
 
 ###############################################################################
@@ -37,11 +37,14 @@ class CameraOrigin(object):
     """
 
     def __init__(self, camera_cfg=camcfg.CameraCfg()):
+        """
+        FIXME: check with relative imports
         ERR.assertion(
             ERR.DTYPE_CUSTOM,
             type(camera_cfg) == camcfg.CameraCfg,
             description="data type: expected drv.itf.camcfg.CameraCfg"
         )
+        """
         self._camera_cfg = camera_cfg
         self._camera = None
         self._init_camera()
@@ -51,7 +54,7 @@ class CameraOrigin(object):
         """
         Creates and initializes the respective camera object.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             self._camera = _init_camera_vimba(self._camera_cfg)
         raise ERR.RUNTM_DRV_CAM(str(ERR.RUNTM_DRV_CAM))
 
@@ -147,7 +150,7 @@ def _init_camera_vimba(camera_cfg):
         regex_id_filter=camera_cfg.camera.camera_id
     )
     if len(cameras) == 0:
-        raise ERR.RUNTM_DRV_CAM(str(ERR.RUNTM_DRV_CAM))
+        raise ERR.RUNTM_DRV_CAM(ERR.RUNTM_DRV_CAM.str())
     else:
         if len(cameras) > 1:
             print("libics.drv.camutil._init_camera:" +
