@@ -82,6 +82,27 @@ class FlaggedType:
         self.cond = other.cond
         self.val = other.val
 
+    def set_val(self, val, diff_flag=True):
+        """
+        Sets the value without changing the condition.
+
+        Parameters
+        ----------
+        val
+            New value of flagged type.
+        diff_flag : bool
+            Whether to set a differential flag.
+            `False`:
+                Keeps the current flag state.
+            `True`:
+                Compares the values and sets the flag to
+                `self.val != val`.
+        """
+        _old_val = self.val
+        self.val = val
+        if diff_flag:
+            self.flag = (val != _old_val)
+
     def __eq__(self, other):
         return self.val == other.val
 
