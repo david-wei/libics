@@ -45,8 +45,8 @@ class PeriodicTimer(StoppableThread):
 
     Parameters
     ----------
-    period : int
-        Timeout period in ms.
+    period : float
+        Timeout period in seconds.
     """
 
     def __init__(self, period, worker_func, *args, **kwargs):

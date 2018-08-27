@@ -67,8 +67,8 @@ class Camera(object):
         ----------
         timer_id : str
             ID of timer with which the timer can be referenced.
-        timeout : int
-            Timeout in ms.
+        timeout : float
+            Timeout in seconds.
         func : callable
             Call signature: `func()`.
         *args, **kwargs

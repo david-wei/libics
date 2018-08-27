@@ -41,7 +41,7 @@ class ImageProcessor(QWidget, object):
         ))
         self.camera.set_origin_callback(self.display_frame)
         self.camera.add_timer(
-            "proc_coh", int(1000 * self._buffer_time),
+            "proc_coh", self._buffer_time,
             self.process_frame_buffer
         )
         self.camera.enable_frame_buffer()
