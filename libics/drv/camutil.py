@@ -56,7 +56,8 @@ class CameraOrigin(object):
         """
         if self._camera_cfg.camera.camera_type.val == "vimba":
             self._camera = _init_camera_vimba(self._camera_cfg)
-        raise ERR.RUNTM_DRV_CAM(str(ERR.RUNTM_DRV_CAM))
+        else:
+            raise ERR.RUNTM_DRV_CAM(ERR.RUNTM_DRV_CAM.str())
 
     # ++++ Camera interface ++++++++++++++++++++++++++++
 
