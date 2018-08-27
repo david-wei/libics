@@ -163,6 +163,7 @@ class ImageProcessor(QWidget, object):
         self._coh_hist_min.append(im_min / im_mean * 128 - 1)
         self.camera.reset_frame_buffer()
         self.camera.release_lock()
+        self.display_coh_hist_image()
 
 
 ###############################################################################
