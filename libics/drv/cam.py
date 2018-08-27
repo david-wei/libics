@@ -145,11 +145,13 @@ class Camera(object):
 
     def reset_frame_buffer(self):
         """
-        Clears the buffered frames to release memory.
+        Clears the buffered frames to release memory. NOT THREAD SAFE!
+
+        Notes
+        -----
+        Before running this function, call `acquire_lock()`.
         """
-        self.acquire_lock()
         self._frame_buffer = []
-        self.release_lock()
 
     def get_frame_buffer(self):
         """
@@ -203,6 +205,9 @@ class Camera(object):
 
     def get_matrix_data(self):
         return self._matrix_data
+
+    def set_camera_cfg(self, camera_cfg):
+        self._camera_origin.set_camera_cfg(camera_cfg)
 
     def get_camera_cfg(self):
         return self._camera_origin.get_camera_cfg()
