@@ -298,7 +298,7 @@ class VimbaCamera(object):
         if width_offset is not None:
             width_offset = max(min(max_x - width, width_offset), 0)
             self._camera.OffsetX = width_offset
-        if height is not None:
+        if height_offset is not None:
             height_offset = max(min(max_y - height, height_offset), 0)
             self._camera.OffsetY = height_offset
         if (px_format is not None and
