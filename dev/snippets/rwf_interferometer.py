@@ -105,10 +105,10 @@ class ImageProcessor(QWidget, object):
         self.camera.close_camera()
 
     def open_camera(self):
-        self.camera.open()
+        self.camera.open_camera()
 
     def close_camera(self):
-        self.camera.close()
+        self.camera.close_camera()
 
     @pyqtSlot()
     def run(self):
