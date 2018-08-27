@@ -250,9 +250,7 @@ class Camera(object):
         camera_cfg : drv.itf.camcfg.CameraCfg
             Currently active camera configuration
         """
-        camera_cfg = self._camera_origin.read_camera_cfg(
-            overwrite_cfg=overwrite_cfg
-        )
+        camera_cfg = self._camera_origin.read_camera_cfg()
         if overwrite_cfg:
             self._camera_origin.set_camera_cfg(camera_cfg)
         return camera_cfg
