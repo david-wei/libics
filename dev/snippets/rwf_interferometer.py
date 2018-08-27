@@ -68,7 +68,7 @@ class ImageProcessor(QWidget, object):
 
     def _init_ui(self):
         self.setWindowTitle("Reversing Wavefront Interferometer")
-        self.main_layout = QVBoxLayout
+        self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
 
         self._run_button = QPushButton("Run")
