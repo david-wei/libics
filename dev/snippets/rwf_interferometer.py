@@ -147,6 +147,9 @@ class ImageProcessor(QWidget, object):
         self.camera.acquire_lock()
         im_buffer = np.array(self.camera.get_frame_buffer())
         print("Image shape:", im_buffer.shape)
+        # Check for empty frame buffer
+        if im_buffer.shape == (0, ):
+            return
         axes = None
         ch = self.camera_cfg.image_format.channel.val
         if (ch == "rgb" or ch == "rgba" or ch == "bgr" or ch == "bgra"
