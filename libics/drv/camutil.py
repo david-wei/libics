@@ -71,14 +71,14 @@ class CameraOrigin(object):
         """
         Opens camera interface.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             _open_camera_vimba(self._camera)
 
     def close_camera(self):
         """
         Closes camera interface.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             _close_camera_vimba(self._camera)
 
     # ++++ Camera configuration ++++++++++++++++++++++++
@@ -101,7 +101,7 @@ class CameraOrigin(object):
         Does NOT overwrite the `camera_cfg` attribute.
         """
         camera_cfg = None
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             camera_cfg = _read_camera_cfg_vimba(self._camera)
         return camera_cfg
 
@@ -110,7 +110,7 @@ class CameraOrigin(object):
         Writes the `camera_cfg` attributes' configuration into the camera. Only
         writes the properties with set update flags.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             _write_camera_cfg_vimba(self._camera, self._camera_cfg)
 
     # ++++ Capturing +++++++++++++++++++++++++++++++++++
@@ -127,14 +127,14 @@ class CameraOrigin(object):
         on every frame ready event. The call signature is
         `callback(numpy.ndarray)`.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             self._grab_func = _run_vimba(self._camera, callback=callback)
 
     def stop(self):
         """
         Stops capturing.
         """
-        if self._camera_cfg.camera.camera_type == "vimba":
+        if self._camera_cfg.camera.camera_type.val == "vimba":
             _stop_vimba(self._camera)
 
 
