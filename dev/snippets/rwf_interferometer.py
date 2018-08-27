@@ -77,7 +77,7 @@ class ImageProcessor(QWidget, object):
         self._controls_layout.addWidget(self._run_button)
         self._controls_layout.addWidget(self._stop_button)
 
-        self.main_layout.addWidget(self._controls_layout)
+        self.main_layout.addLayout(self._controls_layout)
         self.main_layout.addWidget(self.qt_image)
         self.main_layout.addWidget(self.coh_hist_std_image)
         self.main_layout.addWidget(self.coh_hist_max_image)
