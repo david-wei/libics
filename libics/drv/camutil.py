@@ -147,7 +147,7 @@ class CameraOrigin(object):
 def _init_camera_vimba(camera_cfg):
     vimba.startup()
     cameras = vimba.get_vimba_cameras(
-        regex_id_filter=camera_cfg.camera.camera_id
+        regex_id_filter=camera_cfg.camera.camera_id.val
     )
     if len(cameras) == 0:
         raise ERR.RUNTM_DRV_CAM(ERR.RUNTM_DRV_CAM.str())
