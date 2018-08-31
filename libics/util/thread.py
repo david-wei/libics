@@ -55,9 +55,12 @@ class PeriodicTimer(StoppableThread):
         self._worker_func = worker_func
         self.set_args(*args, **kwargs)
 
-    def start(self):
+    def run(self):
         """
-        Starts a timer that periodically calls a function.
+        Timer thread method that periodically calls a function.
+
+        For starting a thread running this `run` method, call the `start`
+        method.
 
         Notes
         -----
@@ -74,6 +77,15 @@ class PeriodicTimer(StoppableThread):
             sleep_time = max(0, self._period - diff_time)
             time.sleep(sleep_time)
             target_time += self._period
+
+    def start(self, *args, **kwargs):
+        """
+        Starts a thread which runs the `run` method.
+
+        Arguments are passed on to the `Thread.start` method.
+        """
+        if not self.isAlive():
+            super().start(*args, **kwargs)
 
     def set_args(self, *args, **kwargs):
         """
