@@ -2,7 +2,7 @@
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QThread
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QHBoxLayout, QSizePolicy, QWidget
+    QApplication, QFrame, QLabel, QHBoxLayout, QSizePolicy, QWidget
 )
 
 
@@ -89,6 +89,7 @@ class QtImage(QWidget, object):
         self.main_layout = QHBoxLayout()
         self.setLayout(self.main_layout)
         self.image = QScaledLabel(self)
+        self.image.setFrameStyle(QFrame.Panel)
         self.main_layout.addWidget(self.image)
 
     def _init_connections(self):
@@ -193,7 +194,7 @@ class QtImage(QWidget, object):
         """
         if self._cvt_func_bpc is not None:
             np_image = self._cvt_func_bpc(np_image)
-        width, height = np_image.shape[0], np_image.shape[1]
+        height, width = np_image.shape[0], np_image.shape[1]
         bytes_per_line = width * self._bytes_per_pixel
         image = QImage(np_image, width, height, bytes_per_line,
                        self._image_format)
