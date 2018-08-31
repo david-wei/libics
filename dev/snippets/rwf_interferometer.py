@@ -96,6 +96,7 @@ class ImageProcessor(QWidget, object):
     # ++++ Setup capture ++++++++++++++++++++++++++
 
     def setup_camera(self):
+        print("rwf setup_camera")
         self.camera.open_camera()
         # Get current camera config
         self.camera.read_camera_cfg(overwrite_cfg=True)
@@ -112,10 +113,12 @@ class ImageProcessor(QWidget, object):
 
     @pyqtSlot()
     def run(self):
+        print("rwf run")
         self.camera.run()
 
     @pyqtSlot()
     def stop(self):
+        print("rwf stop")
         self.camera.stop()
 
     # ++++ Callback functions +++++++++++++++++++++
@@ -130,6 +133,8 @@ class ImageProcessor(QWidget, object):
         """
         Updates the coherence history images.
         """
+        print("rwf display_coh_hist_image: mean shape =",
+              np.array(self._coh_hist_std, dtype="uint8").shape)
         self.coh_hist_std_image.update_image(
             np.array(self._coh_hist_std, dtype="uint8")
         )
@@ -146,17 +151,18 @@ class ImageProcessor(QWidget, object):
         """
         self.camera.acquire_lock()
         im_buffer = np.array(self.camera.get_frame_buffer())
-        print("Image shape:", im_buffer.shape)
+        print("rwf process_frame_buffer: image shape =", im_buffer.shape)
         # Check for empty frame buffer
         if im_buffer.shape == (0, ):
+            self.camera.release_lock()
             return
         axes = None
         ch = self.camera_cfg.image_format.channel.val
         if (ch == "rgb" or ch == "rgba" or ch == "bgr" or ch == "bgra"
                 or ch == "mono"):
-            axes = (0, 1, 3)
+            axes = (0, 2, 3)
         elif ch is None:
-            axes = (0, 1)
+            axes = (0, 2)
         im_mean = np.mean(im_buffer, axis=axes)
         im_std = np.std(im_buffer, axis=axes)
         im_max = np.max(im_buffer, axis=axes)
