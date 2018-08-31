@@ -41,6 +41,8 @@ class Camera(object):
         # Callback functions
         self._origin_callback = None    # on video origin callback
         self._timer_callback = {}       # dict: id -> util.thread.PeriodicTimer
+        # Status flags
+        self._is_running = False
 
     # ++++ Origin callback ++++++++++++++++++++++
 
@@ -277,9 +279,12 @@ class Camera(object):
         start_timer : bool
             Whether to start all timers after `run` call.
         """
-        ret = self._camera_origin.run(callback=self._cb_origin)
-        if start_timer:
-            self.start_timer(timer_id=None)
+        ret = None
+        if not self._is_running:
+            ret = self._camera_origin.run(callback=self._cb_origin)
+            if start_timer:
+                self.start_timer(timer_id=None)
+            self._is_running = True
         return ret
 
     def stop(self, stop_timer=True):
@@ -291,9 +296,13 @@ class Camera(object):
         stop_timer : bool
             Whether to stop all timers before `stop` call.
         """
-        if stop_timer:
-            self.stop_timer(timer_id=None)
-        return self._camera_origin.stop()
+        ret = None
+        if self._is_running:
+            if stop_timer:
+                self.stop_timer(timer_id=None)
+            ret = self._camera_origin.stop()
+            self._is_running = False
+        return ret
 
     def grab(self):
         """
@@ -329,13 +338,15 @@ if __name__ == "__main__":
         print("Origin callback: cb image shape =", frame.shape)
 
     def print_timer_cb(camera):
-        print("3s timer: grabbed image shape =", camera.grab().shape)
+        frame = camera.grab()
+        print("2s timer: grabbed image shape =",
+              frame.shape if frame is not None else frame)
         camera.reset_frame_buffer()
 
     # Create camera object
     camera = Camera(camera_cfg=camera_cfg)
     camera.set_origin_callback(print_origin_cb)
-    camera.add_timer("3sTimer", 3000, print_timer_cb, camera)
+    camera.add_timer("2sTimer", 2, print_timer_cb, camera)
     camera.enable_frame_buffer()
 
     # Configure camera
@@ -345,7 +356,8 @@ if __name__ == "__main__":
     # Capture images
     camera.run()
     camera.start_timer()
-    time.sleep(20000)
+    time.sleep(10)
+    print("cam stop")
     camera.stop_timer()
     camera.stop()
 
