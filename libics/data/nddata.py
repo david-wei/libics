@@ -1,9 +1,13 @@
+# System Imports
 import copy
 import numpy as np
 
-import cfg.err as ERR
-import util.serialization as ser
-import data.types as types
+# Package Imports
+from libics.cfg import err as ERR
+from libics.util import serialization as ser
+
+# Subpackage Imports
+from libics.data import types
 
 
 ###############################################################################

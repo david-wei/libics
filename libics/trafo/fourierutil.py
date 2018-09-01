@@ -1,9 +1,5 @@
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import data.matrixdata as mdata
+from libics.data import matrixdata as mdata
 
 
 ###############################################################################

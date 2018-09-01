@@ -2,15 +2,11 @@
 import numpy as np
 
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.err as ERR
+from libics.cfg import err as ERR
 
 # Subpackage Imports
-import data.matrixdata as matrixdata
-import data.nddata as nddata
+from libics.data import matrixdata as matrixdata
+from libics.data import nddata as nddata
 
 
 ###############################################################################

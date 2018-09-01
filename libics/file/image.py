@@ -4,17 +4,13 @@ import PIL
 import os
 
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.default as DEF
-import cfg.err as ERR
-import data.matrixdata as mdata
-import util.misc as misc
+from libics.cfg import default as DEF
+from libics.cfg import err as ERR
+from libics.data import matrixdata as mdata
+from libics.util import misc
 
 # Subpackage Imports
-import file.imageutil as imageutil
+from libics.file import imageutil
 
 
 ###############################################################################

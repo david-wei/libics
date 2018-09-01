@@ -3,16 +3,12 @@ import copy
 import numpy as np
 
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.err as ERR
-import data.matrixdata as mdata
-import data.types as types
+from libics.cfg import err as ERR
+from libics.data import matrixdata as mdata
+from libics.data import types
 
 # Subpackage Imports
-import trafo.fourierutil as fourierutil
+from libics.trafo import fourierutil
 
 
 ###############################################################################

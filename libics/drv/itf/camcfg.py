@@ -1,9 +1,5 @@
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-from util.types import FlaggedType
+from libics.util.types import FlaggedType
 
 
 class CameraCfg(object):

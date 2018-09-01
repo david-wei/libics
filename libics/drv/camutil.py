@@ -1,13 +1,9 @@
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.err as ERR
+from libics.cfg import err as ERR
 
 # Subpackage Imports
-import drv.itf.camcfg as camcfg
-import drv.itf.vimba as vimba
+from libics.drv.itf import camcfg
+from libics.drv.itf import vimba
 
 
 ###############################################################################

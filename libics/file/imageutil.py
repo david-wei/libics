@@ -3,14 +3,10 @@ import os
 import pandas as pd
 
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.default as DEF
-import cfg.err as ERR
-import data.matrixdata as mdata
-import data.types as types
+from libics.cfg import default as DEF
+from libics.cfg import err as ERR
+from libics.data import matrixdata as mdata
+from libics.data import types
 
 
 ###############################################################################

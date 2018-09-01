@@ -3,15 +3,11 @@ import threading
 import time
 
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import util.thread as thread
+from libics.util import thread
 
 # Subpackage Imports
-import drv.camutil as camutil
-import drv.itf.camcfg as camcfg
+from libics.drv import camutil
+from libics.drv.itf import camcfg
 
 
 ###############################################################################

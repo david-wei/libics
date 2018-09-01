@@ -1,10 +1,6 @@
 # Package Imports
-try:
-    from . import addpath   # noqa
-except(ImportError):
-    import addpath          # noqa
-import cfg.err as ERR
-import util.serialization as ser
+from libics.cfg import err as ERR
+from libics.util import serialization as ser
 
 
 ###############################################################################
