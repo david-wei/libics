@@ -47,19 +47,27 @@ class CameraOrigin(object):
         """
         self._camera_cfg = camera_cfg
         self._camera = None
-        self._init_camera()
         self._grab_func = None
 
-    def _init_camera(self):
+    def setup_camera(self):
         """
-        Creates and initializes the respective camera object.
+        Opens the camera API and creates the respective camera object.
         """
         if self._camera_cfg.camera.camera_type.val == "vimba":
-            self._camera = _init_camera_vimba(self._camera_cfg)
+            self._camera = _setup_camera_vimba(self._camera_cfg)
         else:
             raise ERR.RUNTM_DRV_CAM(ERR.RUNTM_DRV_CAM.str())
 
-    # ++++ Camera interface ++++++++++++++++++++++++++++
+    def shutdown_camera(self):
+        """
+        Shuts down the respective camera object and closes the camera API.
+        """
+        if self._camera_cfg.camera.camera_type.val == "vimba":
+            _shutdown_camera_vimba()
+        else:
+            raise ERR.RUNTM_DRV_CAM(ERR.RUNTM_DRV_CAM.str())
+
+    # ++++ Camera connection +++++++++++++++++++++++++++
 
     def get_camera(self):
         """
@@ -71,7 +79,6 @@ class CameraOrigin(object):
         """
         Opens camera interface.
         """
-        print("camutil: open_camera")
         if self._camera_cfg.camera.camera_type.val == "vimba":
             _open_camera_vimba(self._camera)
 
@@ -79,7 +86,6 @@ class CameraOrigin(object):
         """
         Closes camera interface.
         """
-        print("camutil: close_camera")
         if self._camera_cfg.camera.camera_type.val == "vimba":
             _close_camera_vimba(self._camera)
 
@@ -89,7 +95,6 @@ class CameraOrigin(object):
         """
         Sets the `camera_cfg` attribute. Only sets the differing update flags.
         """
-        print("camutil: set_camera_cfg")
         self._camera_cfg.set_config(camera_cfg)
 
     def get_camera_cfg(self):
@@ -103,7 +108,6 @@ class CameraOrigin(object):
         Reads and gets the actual camera configuration.
         Does NOT overwrite the `camera_cfg` attribute.
         """
-        print("camutil: read_camera_cfg")
         camera_cfg = None
         if self._camera_cfg.camera.camera_type.val == "vimba":
             camera_cfg = _read_camera_cfg_vimba(self._camera)
@@ -114,7 +118,6 @@ class CameraOrigin(object):
         Writes the `camera_cfg` attributes' configuration into the camera. Only
         writes the properties with set update flags.
         """
-        print("camutil: write_camera_cfg")
         if self._camera_cfg.camera.camera_type.val == "vimba":
             _write_camera_cfg_vimba(self._camera, self._camera_cfg)
 
@@ -150,7 +153,7 @@ class CameraOrigin(object):
 # ++++++++++ Vimba +++++++++++++++++++++++++++++
 
 
-def _init_camera_vimba(camera_cfg):
+def _setup_camera_vimba(camera_cfg):
     vimba.startup()
     cameras = vimba.get_vimba_cameras(
         regex_id_filter=camera_cfg.camera.camera_id.val
@@ -164,6 +167,10 @@ def _init_camera_vimba(camera_cfg):
         cam = cameras[0]
         camera_cfg.camera.camera_id = cam.get_id()
         return cam
+
+
+def _shutdown_camera_vimba():
+    vimba.shutdown()
 
 
 ###############################################################################
@@ -230,7 +237,6 @@ def _read_camera_cfg_vimba(camera):
 
 
 def _write_camera_cfg_vimba(camera, camera_cfg):
-    print("write_camera_cfg_vimba")
     mode, multi_count = None, None
     if camera_cfg.acquisition.frame_count.flag:
         if camera_cfg.acquisition.frame_count.val == 0:
@@ -248,6 +254,7 @@ def _write_camera_cfg_vimba(camera, camera_cfg):
     if camera_cfg.image_format.width.flag:
         width = camera_cfg.image_format.width.val
     if camera_cfg.image_format.height.flag:
+        print("camutil: write height:", camera_cfg.image_format.height.val)
         height = camera_cfg.image_format.height.val
     if camera_cfg.image_format.width_offset.flag:
         width_offset = camera_cfg.image_format.width_offset.val

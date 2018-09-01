@@ -31,6 +31,9 @@ class ImageProcessor(QWidget, object):
         self._init_ui()
         self._init_connections()
 
+    def shutdown(self):
+        self.camera.shutdown_camera()
+
     def _init_camera_cfg(self, camera_cfg):
         self.camera_cfg = camera_cfg
 
@@ -45,9 +48,10 @@ class ImageProcessor(QWidget, object):
             self.process_frame_buffer
         )
         self.camera.enable_frame_buffer()
+        self.camera.setup_camera()
 
     def _init_qt_image(self):
-        self.qt_image = qtimage.QtImage()
+        self.qt_image = qtimage.QtImage(aspect_ratio=None)
         self.qt_image.set_image_format(
             channel=self.camera_cfg.image_format.channel.val,
             bpc=self.camera_cfg.image_format.bpc.val
@@ -55,13 +59,13 @@ class ImageProcessor(QWidget, object):
 
     def _init_coh_hist(self, coh_hist_len):
         self._coh_hist_std = collections.deque(maxlen=coh_hist_len)
-        self.coh_hist_std_image = qtimage.QtImage()
+        self.coh_hist_std_image = qtimage.QtImage(aspect_ratio=None)
         self.coh_hist_std_image.set_image_format(channel=None, bpc=8)
         self._coh_hist_max = collections.deque(maxlen=coh_hist_len)
-        self.coh_hist_max_image = qtimage.QtImage()
+        self.coh_hist_max_image = qtimage.QtImage(aspect_ratio=None)
         self.coh_hist_max_image.set_image_format(channel=None, bpc=8)
         self._coh_hist_min = collections.deque(maxlen=coh_hist_len)
-        self.coh_hist_min_image = qtimage.QtImage()
+        self.coh_hist_min_image = qtimage.QtImage(aspect_ratio=None)
         self.coh_hist_min_image.set_image_format(channel=None, bpc=8)
 
     # ++++ GUI ++++++++++++++++++++++++++++++++++++
@@ -76,6 +80,7 @@ class ImageProcessor(QWidget, object):
         self._controls_layout = QHBoxLayout()
         self._controls_layout.addWidget(self._run_button)
         self._controls_layout.addWidget(self._stop_button)
+        self._stop_button.setVisible(False)
 
         self.main_layout.addLayout(self._controls_layout)
         self.main_layout.addWidget(self.qt_image)
@@ -96,7 +101,6 @@ class ImageProcessor(QWidget, object):
     # ++++ Setup capture ++++++++++++++++++++++++++
 
     def setup_camera(self):
-        print("rwf setup_camera")
         self.camera.open_camera()
         # Get current camera config
         self.camera.read_camera_cfg(overwrite_cfg=True)
@@ -109,17 +113,20 @@ class ImageProcessor(QWidget, object):
         self.camera.open_camera()
 
     def close_camera(self):
+        self.stop()     # Ensure capturing has stopped
         self.camera.close_camera()
 
     @pyqtSlot()
     def run(self):
-        print("rwf run")
         self.camera.run()
+        self._stop_button.setVisible(True)
+        self._run_button.setVisible(False)
 
     @pyqtSlot()
     def stop(self):
-        print("rwf stop")
         self.camera.stop()
+        self._stop_button.setVisible(False)
+        self._run_button.setVisible(True)
 
     # ++++ Callback functions +++++++++++++++++++++
 
@@ -133,8 +140,6 @@ class ImageProcessor(QWidget, object):
         """
         Updates the coherence history images.
         """
-        print("rwf display_coh_hist_image: mean shape =",
-              np.array(self._coh_hist_std, dtype="uint8").shape)
         self.coh_hist_std_image.update_image(
             np.array(self._coh_hist_std, dtype="uint8")
         )
@@ -151,7 +156,6 @@ class ImageProcessor(QWidget, object):
         """
         self.camera.acquire_lock()
         im_buffer = np.array(self.camera.get_frame_buffer())
-        print("rwf process_frame_buffer: image shape =", im_buffer.shape)
         # Check for empty frame buffer
         if im_buffer.shape == (0, ):
             self.camera.release_lock()
@@ -160,9 +164,9 @@ class ImageProcessor(QWidget, object):
         ch = self.camera_cfg.image_format.channel.val
         if (ch == "rgb" or ch == "rgba" or ch == "bgr" or ch == "bgra"
                 or ch == "mono"):
-            axes = (0, 2, 3)
+            axes = (0, 1, 3)
         elif ch is None:
-            axes = (0, 2)
+            axes = (0, 1)
         im_mean = np.mean(im_buffer, axis=axes)
         im_std = np.std(im_buffer, axis=axes)
         im_max = np.max(im_buffer, axis=axes)
@@ -218,7 +222,7 @@ if __name__ == "__main__":
 
     # Test settings
     line = 500
-    buffer_time = 0.5
+    buffer_time = 0.3
     coh_hist_len = 1000
 
     # Create Vimba ImageProcessor
@@ -237,4 +241,5 @@ if __name__ == "__main__":
     im_proc.open_camera()
     app_ret = app.exec_()
     im_proc.close_camera()
+    im_proc.shutdown()
     sys.exit(app_ret)

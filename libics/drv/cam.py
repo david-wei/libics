@@ -42,6 +42,8 @@ class Camera(object):
         self._origin_callback = None    # on video origin callback
         self._timer_callback = {}       # dict: id -> util.thread.PeriodicTimer
         # Status flags
+        self._is_setup = False
+        self._is_open = False
         self._is_running = False
 
     # ++++ Origin callback ++++++++++++++++++++++
@@ -227,17 +229,45 @@ class Camera(object):
             self._origin_callback(frame)
             self.release_lock()
 
-    def open_camera(self):
+    def setup_camera(self):
         """
         Sets up the camera interface.
         """
-        return self._camera_origin.open_camera()
+        ret = None
+        if not self._is_setup:
+            ret = self._camera_origin.setup_camera()
+            self._is_setup = True
+        return ret
+
+    def shutdown_camera(self):
+        """
+        Shuts down the camera interface.
+        """
+        ret = None
+        if self._is_setup:
+            ret = self._camera_origin.shutdown_camera()
+            self._is_setup = False
+        return ret
+
+    def open_camera(self):
+        """
+        Opens the camera connection.
+        """
+        ret = None
+        if not self._is_open:
+            ret = self._camera_origin.open_camera()
+            self._is_open = True
+        return ret
 
     def close_camera(self):
         """
-        Closes the camera interface.
+        Closes the camera connection.
         """
-        return self._camera_origin.close_camera()
+        ret = None
+        if self._is_open:
+            ret = self._camera_origin.close_camera()
+            self._is_open = False
+        return ret
 
     def read_camera_cfg(self, overwrite_cfg=False):
         """
@@ -350,6 +380,7 @@ if __name__ == "__main__":
     camera.enable_frame_buffer()
 
     # Configure camera
+    camera.setup_camera()
     camera.open_camera()
     camera.read_camera_cfg(overwrite_cfg=True)
 
@@ -363,3 +394,4 @@ if __name__ == "__main__":
 
     # Cleanup
     camera.close_camera()
+    camera.shutdown_camera()
