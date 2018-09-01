@@ -1,5 +1,5 @@
 # Qt Imports
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QThread
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
     QApplication, QFrame, QLabel, QHBoxLayout, QSizePolicy, QWidget
@@ -16,6 +16,11 @@ class QScaledLabel(QLabel, object):
 
     Parameters
     ----------
+    aspect_ratio : int or float or None, optional
+        `int`, `float`:
+            Fixed aspect ratio (width/height) of scaled label.
+        `None`:
+            Fluent aspect ratio, resizes with label space.
     *args, **kwargs
         Arguments passed to `QLabel` constructor.
 
@@ -28,22 +33,81 @@ class QScaledLabel(QLabel, object):
           Sets the original pixmap ready to be scaled.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, aspect_ratio=1, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.set_scaling(aspect_ratio)
         self._pixmap = None
 
+    @staticmethod
+    def _get_image_size(px_width, px_height, aspect_ratio,
+                        rect_width, rect_height):
+        """
+        Calculates the scaled image size given the image size, the
+        image's aspect ratio and the given canvas space.
+        """
+        width, height = float(rect_width), float(rect_height)
+        px_width = px_width * aspect_ratio
+        scale = (width / px_width, height / px_height)
+        if scale[0] > scale[1]:
+            width = scale[1] * px_width
+        elif scale[0] < scale[1]:
+            height = scale[0] * px_height
+        return int(round(width)), int(round(height))
+
+    def set_scaling(self, aspect_ratio):
+        """
+        Sets the `QLabel` scaling behaviour.
+
+        Parameters
+        ----------
+        aspect_ratio : int or float or None, optional
+            `int`, `float`:
+                Fixed aspect ratio (width/height) of scaled label.
+            `None`:
+                Fluent aspect ratio, resizes with label space.
+        """
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        if aspect_ratio is None:
+            self._aspect_ratio = None
+        else:
+            self._aspect_ratio = aspect_ratio
+
     def set_pixmap(self, pixmap):
-        self._pixmap = pixmap   # Set original, unscaled pixmap
+        """
+        Caches the original, unscaled pixmap.
+        """
+        self._pixmap = pixmap
         self._set_scaled_pixmap()
 
     def _set_scaled_pixmap(self):
+        """
+        Uses the cached pixmap to draw a scaled pixmap.
+        """
         if self._pixmap is not None:
-            super().setPixmap(self._pixmap.scaled(
-                self.width(), self.height(), Qt.KeepAspectRatio
-            ))
+            if self._aspect_ratio is None:
+                super().setPixmap(self._pixmap.scaled(
+                    self.width(), self.height(),
+                    aspectRatioMode=Qt.IgnoreAspectRatio
+                ))
+            elif self._aspect_ratio == 1:
+                super().setPixmap(self._pixmap.scaled(
+                    self.width(), self.height(),
+                    aspectRatioMode=Qt.KeepAspectRatio
+                ))
+            else:
+                width, height = QScaledLabel._get_image_size(
+                    self._pixmap.width(), self._pixmap.height(),
+                    self._aspect_ratio,
+                    self.width(), self.height()
+                )
+                super().setPixmap(self._pixmap.scaled(
+                    width, height, aspectRatioMode=Qt.IgnoreAspectRatio
+                ))
 
     def resizeEvent(self, event):
+        """
+        Scales the pixmap to the new size.
+        """
         self._set_scaled_pixmap()
         super().resizeEvent(event)
 
@@ -61,6 +125,11 @@ class QtImage(QWidget, object):
 
     Parameters
     ----------
+    aspect_ratio : int or float or None, optional
+        `int`, `float`:
+            Fixed aspect ratio (width/height) of scaled label.
+        `None`:
+            Fluent aspect ratio, resizes with label space.
     *args, **kwargs
         Arguments are passed to the `QtWidgets.QWidget` constructor.
 
@@ -72,10 +141,10 @@ class QtImage(QWidget, object):
 
     sUpdateImage = pyqtSignal(QImage)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, aspect_ratio=1, **kwargs):
         super().__init__(*args, **kwargs)
         self._init_logic()
-        self._init_ui()
+        self._init_ui(aspect_ratio=aspect_ratio)
         self._init_connections()
 
     def _init_logic(self):
@@ -84,11 +153,11 @@ class QtImage(QWidget, object):
         self._rgb_swapped = None
         self._image_format = None
 
-    def _init_ui(self):
+    def _init_ui(self, aspect_ratio=1):
         self.setWindowTitle("QtImage")
         self.main_layout = QHBoxLayout()
         self.setLayout(self.main_layout)
-        self.image = QScaledLabel(self)
+        self.image = QScaledLabel(self, aspect_ratio=aspect_ratio)
         self.image.setFrameStyle(QFrame.Panel)
         self.main_layout.addWidget(self.image)
 
@@ -96,7 +165,7 @@ class QtImage(QWidget, object):
         self.sUpdateImage.connect(self.set_image)
 
     @staticmethod
-    def _scale_bpc(cls, val, bpc_source, bpc_target):
+    def _scale_bpc(val, bpc_source, bpc_target):
         """
         Proportionaly rescales the dynamic range of a value.
 
@@ -233,12 +302,12 @@ if __name__ == "__main__":
         return arr
 
     # Random image source
-    class ImageSource(QThread):
+    class ImageSource():
 
         def __init__(self, qt_image, fps=50.0, duration=10.0):
             super().__init__()
             self.timer = thread.PeriodicTimer(1.0 / fps, self.update)
-            self.shape = (1920, 1080, 3)
+            self.shape = (1080, 1920, 3)
             self.image_count = int(fps * duration)
             self.images = [get_random_8bit_array(self.shape, seed=it)
                            for it in range(self.image_count)]
@@ -247,18 +316,17 @@ if __name__ == "__main__":
             self.timer_start = None
 
         def update(self):
-            if self.counter >= self.image_count:
-                self.timer.stop()
-            else:
-                t0 = time.time()
-                self.qt_image.update_image(self.images[self.counter])
-                t1 = time.time()
-                print(("Update image {:d}: frame processing: {:.0f}µs, " +
-                       "total: {:.1f}s").format(
-                            self.counter,
-                            float(t1 - t0) * 1e6,
-                            float(t1 - self.timer_start)))
-                self.counter += 1
+            t0 = time.time()
+            self.qt_image.update_image(
+                self.images[self.counter % len(self.images)]
+            )
+            t1 = time.time()
+            print(("Update image {:d}: frame processing: {:.0f}µs, " +
+                   "total: {:.1f}s").format(
+                        self.counter,
+                        float(t1 - t0) * 1e6,
+                        float(t1 - self.timer_start)))
+            self.counter += 1
 
         def run(self):
             print("Initial sleep for 2 seconds")
@@ -267,19 +335,23 @@ if __name__ == "__main__":
             self.timer_start = time.time()
             self.timer.start()
 
+    # Test settings
+    fps = 50.0
+    duration = 10.0
+    aspect_ratio = 0.5
+
     # Create image widget
     app = QApplication(sys.argv)
     print("Setting up QtImage")
-    qt_image = QtImage()
+    qt_image = QtImage(aspect_ratio=aspect_ratio)
     qt_image.set_image_format(channel="rgb", bpc=8)
     qt_image.show()
 
     # Create RGB test image source
     print("Setting up ImageSource")
-    image_source = ImageSource(qt_image)
+    image_source = ImageSource(qt_image, fps=fps, duration=duration)
 
     # Run test slide show
     print("Start video")
-    thread_start_time = time.time()
-    image_source.start()
+    image_source.run()
     sys.exit(app.exec_())
