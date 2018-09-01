@@ -140,14 +140,15 @@ class CameraCfg(object):
         for cat_key, cat_val in self.__dict__.items():
             if cat_key != "camera":
                 for item_key, item_val in cat_val.__dict__.items():
-                    if item_val is not None:
-                        if (self.__dict__[cat_key].__dict__[item_key]
-                                != item_val):
-                            self.__dict__[cat_key].__dict__[item_key].assign(
-                                item_val, diff_flag=diff_flag
-                            )
+                    cam_cfg_item_val = (camera_cfg.__dict__[cat_key]
+                                        .__dict__[item_key])
+                    if cam_cfg_item_val is not None:
+                        if item_val is None:
+                            item_val = cam_cfg_item_val.copy()
+                        elif cam_cfg_item_val != item_val:
+                            item_val.assign(cam_cfg_item_val,
+                                            diff_flag=diff_flag)
                         else:
-                            (self.__dict__[cat_key].__dict__[item_key]
-                             .flag) = False
+                            item_val.flag = False
         if type(flags) == bool:
             self.set_all_flags(flags)
