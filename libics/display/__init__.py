@@ -1,2 +1,1 @@
-from . import anim      # noqa
-from . import cvimage   # noqa
+from . import qtimage       # noqa

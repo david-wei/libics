@@ -1,0 +1,4 @@
+include README.md
+include docs/*.txt
+include docs/*.md
+include docs/*.rst
