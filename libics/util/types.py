@@ -35,10 +35,12 @@ class FlaggedType:
         if self._cond is not None:
             if type(self._cond) == tuple:
                 if v < self._cond[0] or v > self._cond[1]:
-                    raise ValueError("libics.util.types.FlaggedType.val")
+                    raise ValueError("libics.util.types.FlaggedType.val: {:s}"
+                                     .format(str(v)))
             else:
                 if v not in self._cond:
-                    raise ValueError("libics.util.types.FlaggedType.val")
+                    raise ValueError("libics.util.types.FlaggedType.val: {:s}"
+                                     .format(str(v)))
         self._val = v
 
     @property
@@ -47,11 +49,12 @@ class FlaggedType:
 
     @cond.setter
     def cond(self, c):
-        if ((type(c) == tuple and len(c) == 2 and c[0] <= c[1])
-                or type(c) == list):
+        if (c is None or type(c) == list or
+                (type(c) == tuple and len(c) == 2 and c[0] <= c[1])):
             self._cond = c
         else:
-            raise TypeError("libics.util.types.FlaggedType.cond")
+            raise TypeError("libics.util.types.FlaggedType.cond: {:s}"
+                            .format(str(c)))
 
     def invert(self):
         self.flag = not self.flag
@@ -102,6 +105,12 @@ class FlaggedType:
         self.val = val
         if diff_flag:
             self.flag = (val != _old_val)
+
+    def copy(self):
+        """
+        Returns an independent copy of itself.
+        """
+        return FlaggedType(self.val, flag=self.flag, cond=self.cond)
 
     def __eq__(self, other):
         return self.val == other.val
