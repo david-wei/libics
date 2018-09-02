@@ -51,17 +51,25 @@ class PeriodicTimer():
     ----------
     period : float
         Timeout period in seconds.
+    worker_func : callable
+        Function that is periodically called.
+        Call signature: `worker_func(*args, **kwargs)` with
+        `*args, **kwargs` static arguments.
+    repetitions : int or None
+        Number of timeouts after the thread returns.
+        `None` allows for infinite repetitions.
 
     Notes
     -----
     This timer can be restarted.
     """
 
-    def __init__(self, period, worker_func, *args, **kwargs):
+    def __init__(self, period, worker_func, *args, repetitions=None, **kwargs):
         self._thread = None
         self._stop_action = None
         self._period = period
         self._worker_func = worker_func
+        self._repetitions = repetitions if repetitions is not None else -1
         self.set_args(*args, **kwargs)
 
     def run(self):
@@ -80,12 +88,17 @@ class PeriodicTimer():
         than the period.
         """
         target_time = time.time()
-        while not self._thread.stop_event.is_set():
+        counter = 0
+        while (
+            not self._thread.stop_event.is_set()
+            and counter != self._repetitions
+        ):
             self._worker_func(*self._args, **self._kwargs)
             diff_time = time.time() - target_time
             sleep_time = max(0, self._period - diff_time)
             time.sleep(sleep_time)
             target_time += self._period
+            counter += 1
 
     def start(self, *args, **kwargs):
         """
@@ -114,6 +127,7 @@ class PeriodicTimer():
         ----------
         stop_action : callable
             Function that is called upon `stop` method call.
+            Call signature: `stop_action()`.
         """
         if callable(stop_action):
             self._stop_action = stop_action
