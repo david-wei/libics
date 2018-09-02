@@ -71,8 +71,11 @@ class LibICSError(Exception):
     )
 
     @classmethod
-    def str(cls):
-        return str(cls._err_description)
+    def str(cls, text=None):
+        ret = str(cls._err_description)
+        if text is not None:
+            ret += " (" + str(text) + ")"
+        return ret
 
 
 def assertion(exception, *args, description=None):
@@ -428,4 +431,11 @@ class RUNTM_DRV_CAM(RUNTM):
     _err_description = ErrorDescription(
         "runtime error: camera interface error",
         411
+    )
+
+
+class RUNTM_DRV_PIZ(RUNTM):
+    _err_description = ErrorDescription(
+        "runtime error: piezo interface error",
+        412
     )

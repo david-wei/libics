@@ -37,3 +37,12 @@ DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
 
 
 FORMAT_JSON_INDENT = 4
+
+
+###############################################################################
+# Threading
+###############################################################################
+
+
+THREAD_DELAY_QTSIGNAL = 0.1
+THREAD_DELAY_COM = 0.05
