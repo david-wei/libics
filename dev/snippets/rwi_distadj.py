@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import (
 )
 
 # Package Imports
-import addpath          # noqa
 from libics.display import qtimage
 from libics.drv import cam
 from libics.drv.itf import camcfg
