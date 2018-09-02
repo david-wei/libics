@@ -283,6 +283,8 @@ def _write_camera_cfg_vimba(camera, camera_cfg):
             nir_mode = "On_HighQuality"
     camera.set_exposure(auto=auto, time=time, nir_mode=nir_mode)
 
+    camera_cfg.set_all_flags(False)
+
 
 ###############################################################################
 # Capturing
