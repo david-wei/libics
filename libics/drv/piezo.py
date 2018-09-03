@@ -19,7 +19,8 @@ class PiezoCfg(object):
         DEVICE_TYPE = ["mdt693"]
 
         def __init__(self, device_type="mdt693", device_id=0,
-                     port=None, timeout_send=1.0, timeout_recv=1.0):
+                     port=None, timeout_send=1.0, timeout_recv=1.0,
+                     hw_proc_delay=0.05):
             self.device_type = FlaggedType(
                 device_type, cond=PiezoCfg.Device.DEVICE_TYPE
             )
@@ -27,12 +28,15 @@ class PiezoCfg(object):
             self.port = FlaggedType(port)
             self.timeout_send = FlaggedType(timeout_send)
             self.timeout_recv = FlaggedType(timeout_recv)
+            self.hw_proc_delay = FlaggedType(hw_proc_delay)
 
     class Voltage:
 
-        def __init__(self, voltage_min=0.0, voltage_max=75.0):
+        def __init__(self, voltage_min=0.0, voltage_max=75.0,
+                     range_per_volt=2.5e-7):
             self.voltage_min = FlaggedType(voltage_min)
             self.voltage_max = FlaggedType(voltage_max)
+            self.range_per_volt = FlaggedType(range_per_volt)
 
     def __init__(self, device_type="mdt693", device_id=0, port=None):
         self.device = PiezoCfg.Device(
@@ -179,12 +183,13 @@ class Piezo(object):
 
 def _setup_piezo_mdt693(piezo_cfg):
     port = piezo_cfg.device.port.val
-    # If unspecified, automatically choose last serial port
+    # If unspecified, automatically choose first serial port
     if port is None:
-        port = mdt693._list_serial_ports()[-1]
+        port = mdt693._list_serial_ports()[0]
     piezo_itf = mdt693.MDT693(
-        port=port, read_timeout=piezo_cfg.device.timeout_recv,
-        write_timeout=piezo_cfg.device.timeout_send
+        port=port, read_timeout=piezo_cfg.device.timeout_recv.val,
+        write_timeout=piezo_cfg.device.timeout_send.val,
+        hw_proc_delay=piezo_cfg.device.hw_proc_delay.val
     )
     return piezo_itf
 
@@ -200,7 +205,7 @@ def _read_piezo_cfg_mdt693(piezo_itf, piezo_cfg):
     piezo_cfg = copy.deepcopy(piezo_cfg)
 
     voltage_range = piezo_itf.get_voltage_range(
-        channel=piezo_cfg.device.device_id
+        channel=piezo_cfg.device.device_id.val
     )
     if piezo_cfg.device.device_id is None:
         voltage_range = [
@@ -221,7 +226,7 @@ def _write_piezo_cfg_mdt693(piezo_itf, piezo_cfg):
         max_volt = piezo_cfg.voltage.voltage_max.val
     piezo_itf.set_voltage_range(
         min_volt=min_volt, max_volt=max_volt,
-        channel=piezo_cfg.device.device_id
+        channel=piezo_cfg.device.device_id.val
     )
     piezo_cfg.set_all_flags(False)
 
@@ -234,8 +239,8 @@ def _write_piezo_cfg_mdt693(piezo_itf, piezo_cfg):
 
 
 def _set_voltage_mdt693(piezo_itf, piezo_cfg, voltage):
-    piezo_itf.set_voltage(voltage, channeL=piezo_cfg.device.device_id)
+    piezo_itf.set_voltage(voltage, channeL=piezo_cfg.device.device_id.val)
 
 
 def _get_voltage_mdt693(piezo_itf, piezo_cfg):
-    return piezo_itf.get_voltage(channel=piezo_cfg.device.device_id)
+    return piezo_itf.get_voltage(channel=piezo_cfg.device.device_id.val)
