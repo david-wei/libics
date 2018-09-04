@@ -5,9 +5,10 @@ import threading
 import time
 
 # Qt Imports
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import (
-    QApplication, QPushButton, QHBoxLayout, QVBoxLayout, QWidget
+    QApplication, QPushButton, QHBoxLayout, QVBoxLayout, QLabel,
+    QSizePolicy, QWidget
 )
 import pyqtgraph as pg
 
@@ -109,6 +110,8 @@ class CohMeas(QWidget, object):
     REFFIXED = 2
     REFSCANNED = 3
 
+    sUpdatePlot = pyqtSignal()
+
     def __init__(self,
                  camera_cfg, piezo_cfg, *args,
                  step_time=1e-1, piezo_steps=1000, piezo_trace="bilinear",
@@ -135,8 +138,9 @@ class CohMeas(QWidget, object):
 
     def _init_logic(self, step_time, piezo_steps, piezo_trace, cohtraces):
         # Access control
-        self.mode == CohMeas.PREVIEW
+        self.mode = CohMeas.PREVIEW
         self._cam_access = threading.Lock()
+        self._cohtrace_access = threading.Lock()
         self._measurement_timer = None
         # Normalization images
         self._ref_fixed_image = None
@@ -151,14 +155,16 @@ class CohMeas(QWidget, object):
         self.set_piezo_trace(piezo_trace=piezo_trace, piezo_steps=piezo_steps)
         self._cohtrace_coords = []
         d_width, d_height = (
-            int(round(self.camera_cfg.image_format.width.val / cohtraces)),
-            int(round(self.camera_cfg.image_format.height.val / cohtraces))
+            int(round(self.camera_cfg.image_format.width.val
+                      / (cohtraces + 1))),
+            int(round(self.camera_cfg.image_format.height.val
+                      / (cohtraces + 1)))
         )
         for w in range(cohtraces):
             for h in range(cohtraces):
                 self._cohtrace_coords.append((
-                    max(0, (w + 1) * d_width - 1),
-                    max(0, (h + 1) * d_height - 1)
+                    max(0, (h + 1) * d_height - 1),
+                    max(0, (w + 1) * d_width - 1)
                 ))
 
     def _init_camera(self, camera_cfg):
@@ -199,15 +205,11 @@ class CohMeas(QWidget, object):
 
     def _init_qt_normview(self):
         self.qt_normview = qtimage.QtImage(aspect_ratio=1)
-        self.qt_normview.set_image_format(
-            channel=self.camera_cfg.image_format.channel.val,
-            bpc=self.camera_cfg.image_format.bpc.val
-        )
+        self.qt_normview.set_image_format(channel=None, bpc=8)
 
     def _init_qt_cohtrace(self):
         self.qt_cohtrace = pg.GraphicsLayoutWidget(parent=self)
         self.qt_cohtrace.setBackground(None)
-        self.qt_cohtrace.setLabels(left="Interference normalized intensity")
         self._cohtrace_data = []
         self._cohtrace_plots = []
         for it in range(len(self._cohtrace_coords)):
@@ -220,25 +222,31 @@ class CohMeas(QWidget, object):
                 bottom="Piezo voltage [V]"
             )
             self._cohtrace_plots[-1].showGrid(x=True, y=True)
-            self._cohtrace_plots[-1].setYRange(-1, 1)
+        self._update_cohtrace_plot_range()
 
     def _init_ui(self):
+        # Main window
         self.setWindowTitle(
             "Reversing Wavefront Interferometer - Coherence Measurement"
         )
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
 
+        # Main layout
         self.controls_layout = QHBoxLayout()
         self.display_layout = QHBoxLayout()
         self.main_layout.addLayout(self.controls_layout)
         self.main_layout.addLayout(self.display_layout)
 
+        # Display layout
         self.preview_layout = QVBoxLayout()
+        self.preview_layout.setSpacing(0)
+        self.preview_layout.setContentsMargins(0, 0, 0, 0)
         self.cohtrace_layout = QVBoxLayout()
-        self.display_layout.addLayout(self.preview_layout)
-        self.display_layout.addLayout(self.cohtrace_layout)
+        self.display_layout.addLayout(self.preview_layout, stretch=1)
+        self.display_layout.addLayout(self.cohtrace_layout, stretch=2)
 
+        # Controls Layout
         self._button_live_preview = QPushButton("Live preview")
         self._button_live_preview.setCheckable(True)
         self._button_record_ref_fixed = QPushButton(
@@ -249,10 +257,33 @@ class CohMeas(QWidget, object):
         )
         self._button_measure_coherence = QPushButton("Measure coherence")
         self._button_measure_coherence.setCheckable(True)
+        self._button_measure_coherence.setEnabled(False)
         self.controls_layout.addWidget(self._button_live_preview)
         self.controls_layout.addWidget(self._button_record_ref_fixed)
         self.controls_layout.addWidget(self._button_record_ref_scanned)
         self.controls_layout.addWidget(self._button_measure_coherence)
+
+        # Preview layout
+        self._label_preview = QLabel("Raw image")
+        self._label_preview.setSizePolicy(
+            QSizePolicy.Minimum, QSizePolicy.Fixed
+        )
+        self._label_normview = QLabel("Normalized image")
+        self._label_normview.setSizePolicy(
+            QSizePolicy.Minimum, QSizePolicy.Fixed
+        )
+        self.preview_layout.addWidget(self._label_preview)
+        self.preview_layout.addWidget(self.qt_preview)
+        self.preview_layout.addWidget(self._label_normview)
+        self.preview_layout.addWidget(self.qt_normview)
+
+        # Cohtrace layout
+        self._label_cohtrace = QLabel("Normalized interference intensity")
+        self._label_cohtrace.setSizePolicy(
+            QSizePolicy.Minimum, QSizePolicy.Fixed
+        )
+        self.cohtrace_layout.addWidget(self._label_cohtrace)
+        self.cohtrace_layout.addWidget(self.qt_cohtrace)
 
     def _init_connections(self):
         self._button_live_preview.toggled.connect(self.toggle_live_preview)
@@ -265,6 +296,10 @@ class CohMeas(QWidget, object):
         self._button_measure_coherence.toggled.connect(
             self.toggle_measure_coherence
         )
+        self.sUpdatePlot.connect(self._update_cohtrace_plots)
+
+    def _uncheck_button_measure_coherence(self):
+        self._button_measure_coherence.setChecked(False)
 
     def show(self):
         super().show()
@@ -287,7 +322,7 @@ class CohMeas(QWidget, object):
 
     @pyqtSlot()
     def record_image_ref_fixed(self):
-        is_live_previewing = self._button_live_preview.checked()
+        is_live_previewing = self._button_live_preview.isChecked()
         self._button_live_preview.setChecked(False)
         self._button_measure_coherence.setChecked(False)
         time.sleep(ENV.THREAD_DELAY_QTSIGNAL)
@@ -300,29 +335,38 @@ class CohMeas(QWidget, object):
 
     @pyqtSlot()
     def record_image_ref_scanned(self):
-        is_live_previewing = self._button_live_preview.checked()
+        is_live_previewing = self._button_live_preview.isChecked()
         self._button_live_preview.setChecked(False)
         self._button_measure_coherence.setChecked(False)
         time.sleep(ENV.THREAD_DELAY_QTSIGNAL)
         self._cam_access.acquire()
         self.camera.stop()
         self.mode = CohMeas.REFSCANNED
-        self.run()
+        self.camera.run()
         self._cam_access.release()
         self._button_live_preview.setChecked(is_live_previewing)
 
     @pyqtSlot(bool)
     def toggle_measure_coherence(self, is_checked):
+        if not self._ref_are_set():
+            if is_checked:
+                self._button_measure_coherence.setChecked(False)
+            return
         if is_checked:
             self._button_live_preview.setChecked(False)
             time.sleep(ENV.THREAD_DELAY_QTSIGNAL)
             self._cam_access.acquire()
+            self._button_live_preview.setEnabled(False)
+            self._button_record_ref_fixed.setEnabled(False)
+            self._button_record_ref_scanned.setEnabled(False)
+            self.mode = CohMeas.NORMVIEW
             self.run_measurement()
             self._cam_access.release()
         else:
-            self._cam_access.acquire()
             self.stop_measurement()
-            self._cam_access.release()
+            self._button_live_preview.setEnabled(True)
+            self._button_record_ref_fixed.setEnabled(True)
+            self._button_record_ref_scanned.setEnabled(True)
 
     # ++++ Logic functions ++++++++++++++++++++++++
 
@@ -357,8 +401,8 @@ class CohMeas(QWidget, object):
         Updates the plot range to show the whole trace.
         """
         if type(piezo_trace) == str:
-            start = self.piezo_cfg.voltage.voltage_min
-            end = self.piezo_cfg.voltage.voltage_max
+            start = self.piezo_cfg.voltage.voltage_min.val
+            end = self.piezo_cfg.voltage.voltage_max.val
             if piezo_trace == "bilinear":
                 num = int(round(piezo_steps / 2))
                 self._piezo_trace = np.concatenate((
@@ -375,12 +419,30 @@ class CohMeas(QWidget, object):
                 self._piezo_trace = np.linspace(start, end, num=piezo_steps)
             elif piezo_trace == "linear_down":
                 self._piezo_trace = np.linspace(end, start, num=piezo_steps)
+            else:
+                raise ERR.INVAL_SET(ERR.INVAL_SET.str("invalid piezo trace"))
         else:
             self._piezo_trace = np.array(piezo_trace)
+        self._update_cohtrace_plot_range()
 
-        piezo_range = (min(self._piezo_trace), max(self._piezo_trace))
-        for pl in self._cohtrace_plots:
-            pl.setXRange(*piezo_range)
+    def _update_cohtrace_plot_range(self):
+        # check whether in initialization process
+        if hasattr(self, "_cohtrace_plots") and hasattr(self, "_piezo_trace"):
+            piezo_range = (min(self._piezo_trace), max(self._piezo_trace))
+            for pl in self._cohtrace_plots:
+                pl.setXRange(*piezo_range)
+                pl.setYRange(-1.2, 1.2)
+
+    @pyqtSlot()
+    def _update_cohtrace_plots(self):
+        self._cohtrace_access.acquire()
+        for it in range(len(self._cohtrace_plots)):
+            self._cohtrace_plots[it].plot(
+                x=self._piezo_trace[: len(self._cohtrace_data[it])],
+                y=self._cohtrace_data[it],
+                clear=True
+            )
+        self._cohtrace_access.release()
 
     def _set_piezo_voltage(self, index=None, voltage=None):
         """
@@ -396,10 +458,10 @@ class CohMeas(QWidget, object):
             If `not None`, sets the given voltage. Ignores the
             `index` parameter.
         """
-        if voltage is not None:
+        if voltage is None:
             if index is None:
                 index = ((self._piezo_trace_counter + 1)
-                         % len(self._piezo_trace_counter))
+                         % len(self._piezo_trace))
             voltage = self._piezo_trace[index]
             self._piezo_trace_counter = index
         self.piezo.set_voltage(voltage)
@@ -426,18 +488,22 @@ class CohMeas(QWidget, object):
                 self._ref_fixed_image, self._ref_scanned_image,
                 dtype="float64"
             ))
+            self._button_measure_coherence.setEnabled(True)
 
     def run_measurement(self):
         """
         Constructs a timer which periodically shifts the piezo voltage
         and acquires an image.
         """
+        self._normalized_images = []
+        for it in range(len(self._cohtrace_data)):
+            self._cohtrace_data[it] = []
         self._measurement_timer = PeriodicTimer(
             self._step_time, self._measurement_timer_callback,
             repetitions=len(self._piezo_trace)
         )
         self._measurement_timer.set_stop_action(
-            lambda: self._button_measure_coherence.setChecked(False)
+            self._uncheck_button_measure_coherence
         )
         self._measurement_timer.start()
 
@@ -468,14 +534,18 @@ class CohMeas(QWidget, object):
         with the current `mode`.
         """
         self.display_preview(np_image)
-        if self.mode == CohMeas.NORMVIEW:
-            self.append_normview(np_image)
-            self.display_normview()
-            self.display_cohtrace()
-        elif self.mode == CohMeas.REFFIXED:
-            self.set_ref_image(np_image, "fixed")
-        elif self.mode == CohMeas.REFSCANNED:
-            self.set_ref_image(np_image, "scanned")
+        # Eliminate rgb dimension
+        if self.mode != CohMeas.PREVIEW:
+            if len(np_image.shape) == 3:
+                np_image = np.mean(np_image, 2)
+            if self.mode == CohMeas.NORMVIEW:
+                self.append_normview(np_image)
+                self.display_normview()
+                self.display_cohtrace()
+            elif self.mode == CohMeas.REFFIXED:
+                self.set_ref_image(np_image, "fixed")
+            elif self.mode == CohMeas.REFSCANNED:
+                self.set_ref_image(np_image, "scanned")
 
     def display_preview(self, np_image):
         """
@@ -494,12 +564,7 @@ class CohMeas(QWidget, object):
         """
         Updates the cohtrace plots.
         """
-        for it in range(len(self._cohtrace_plots)):
-            self._cohtrace_plots[it].plot(
-                x=self._piezo_trace[: len(self._cohtrace_data[it])],
-                y=self._cohtrace_data[it],
-                clear=True
-            )
+        self.sUpdatePlot.emit()
 
     def append_normview(self, np_image):
         """
@@ -521,10 +586,22 @@ class CohMeas(QWidget, object):
         """
         if not self._ref_are_set:
             raise ERR.RUNTM_DRV(ERR.RUNTM_DRV.str("reference images not set"))
-        normview = (np_image - self._ref_mean_image) / self._ref_norm_image
+        image_zero_mean = np.subtract(
+            np_image, self._ref_mean_image, dtype="float64"
+        )
+        # custom divide: replace nan by zero
+        normview = np.divide(
+            image_zero_mean,
+            self._ref_norm_image,
+            out=np.zeros_like(image_zero_mean),
+            where=(self._ref_norm_image != 0),
+            dtype="float64"
+        )
         self._normalized_images.append(normview)
+        self._cohtrace_access.acquire()
         for it in range(len(self._cohtrace_data)):
             self._cohtrace_data[it].append(normview[self._cohtrace_coords[it]])
+        self._cohtrace_access.release()
 
     def set_ref_image(self, np_image, ref_arm):
         """
@@ -559,17 +636,18 @@ if __name__ == "__main__":
     # Test settings
     step_time = 0.1
     cohtraces = 3
-    piezo_steps = 1000
-    piezo_trace = "bilinear"
+    piezo_steps = 100
+    piezo_trace = "linear_up"
+    piezo_port = "COM2"
 
     # Run app
     app = QApplication(sys.argv)
     camera_cfg = get_camera_cfg()
-    piezo_cfg = get_piezo_cfg()
+    piezo_cfg = get_piezo_cfg(port=piezo_port)
     coh_meas = CohMeas(
         camera_cfg, piezo_cfg,
-        step_time=step_time, piezo_steps=piezo_steps, piezo_trace=piezo_trace,
-        cohtraces=cohtraces
+        step_time=step_time, piezo_steps=piezo_steps,
+        piezo_trace=piezo_trace, cohtraces=cohtraces
     )
     coh_meas.show()
     app_ret = app.exec_()
