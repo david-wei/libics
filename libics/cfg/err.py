@@ -89,8 +89,8 @@ def assertion(exception, *args, description=None):
         *args : bool
             Boolean values to be checked for validity.
         description : str
-            Exception description that overwrites the default
-            description.
+            Exception description that is appended to the
+            default description.
 
         Raises
         ------
@@ -102,8 +102,8 @@ def assertion(exception, *args, description=None):
             raise Exception("invalid type: non-exception type")
         for arg in args:
             if type(arg) != bool or arg is False:
-                if description is None and issubclass(exception, LibICSError):
-                    raise exception(exception.str())
+                if issubclass(exception, LibICSError):
+                    raise exception(exception.str(description))
                 else:
                     raise exception(description)
 
