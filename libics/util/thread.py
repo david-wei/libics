@@ -89,16 +89,18 @@ class PeriodicTimer():
         """
         target_time = time.time()
         counter = 0
-        while (
-            not self._thread.stop_event.is_set()
-            and counter != self._repetitions
-        ):
+        sleep_time = 0.0
+        while counter != self._repetitions:
             self._worker_func(*self._args, **self._kwargs)
-            diff_time = time.time() - target_time
-            sleep_time = max(0, self._period - diff_time)
-            time.sleep(sleep_time)
             target_time += self._period
+            diff_time = time.time() - target_time
+            sleep_time = max(0.0, self._period - diff_time)
             counter += 1
+            if self._thread.stop_event.wait(timeout=sleep_time):
+                break
+        self._thread.stop_event.clear()
+        if callable(self._stop_action):
+            self._stop_action()
 
     def start(self, *args, **kwargs):
         """
@@ -106,8 +108,9 @@ class PeriodicTimer():
 
         Arguments are passed on to the `Thread.start` method.
         """
+        self.stop()
         if self._thread is None:
-            self._thread = StoppableThread(stop_action=self._stop_action)
+            self._thread = StoppableThread()
             self._thread.run = self.run
             self._thread.start(*args, **kwargs)
 
@@ -115,9 +118,8 @@ class PeriodicTimer():
         """
         Stops the timer.
         """
-        if self._thread is not None and self._thread.isAlive():
+        if self._thread is not None and self._thread.is_alive():
             self._thread.stop()
-            self._thread = None
 
     def set_stop_action(self, stop_action):
         """
