@@ -116,7 +116,10 @@ class Piezo(object):
 
     def setup_piezo(self):
         if self._piezo_cfg.device.device_type.val == "mdt693":
-            self._piezo_itf = _setup_piezo_mdt693(self._piezo_cfg)
+            try:
+                self._piezo_itf = _setup_piezo_mdt693(self._piezo_cfg)
+            except mdt693.serial.SerialException as e:
+                raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str(str(e)))
         else:
             raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str())
 
@@ -133,7 +136,10 @@ class Piezo(object):
 
     def open_piezo(self):
         if self._piezo_cfg.device.device_type.val == "mdt693":
-            self._piezo_itf.open_serial()
+            try:
+                self._piezo_itf.open_serial()
+            except mdt693.serial.SerialException as e:
+                raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str(str(e)))
 
     def close_piezo(self):
         if self._piezo_cfg.device.device_type.val == "mdt693":
@@ -164,13 +170,16 @@ class Piezo(object):
     # ++++ Piezo control +++++++++++++++++++++++++++++++
 
     def set_voltage(self, voltage):
+        ERR.assertion(ERR.RUNTM_DRV_PIZ,
+                      voltage is not None,
+                      description="invalid voltage")
         if self._piezo_cfg.device.device_type.val == "mdt693":
             _set_voltage_mdt693(self._piezo_itf, self._piezo_cfg, voltage)
 
     def get_voltage(self):
         voltage = None
         if self._piezo_cfg.device.device_type.val == "mdt693":
-            voltage = _get_voltage_mdt693(self._piezo_itf)
+            voltage = _get_voltage_mdt693(self._piezo_itf, self._piezo_cfg)
         return voltage
 
 
@@ -239,7 +248,7 @@ def _write_piezo_cfg_mdt693(piezo_itf, piezo_cfg):
 
 
 def _set_voltage_mdt693(piezo_itf, piezo_cfg, voltage):
-    piezo_itf.set_voltage(voltage, channeL=piezo_cfg.device.device_id.val)
+    piezo_itf.set_voltage(voltage, channel=piezo_cfg.device.device_id.val)
 
 
 def _get_voltage_mdt693(piezo_itf, piezo_cfg):
