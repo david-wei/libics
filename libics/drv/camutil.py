@@ -250,7 +250,6 @@ def _write_camera_cfg_vimba(camera, camera_cfg):
     if camera_cfg.image_format.width.flag:
         width = camera_cfg.image_format.width.val
     if camera_cfg.image_format.height.flag:
-        print("camutil: write height:", camera_cfg.image_format.height.val)
         height = camera_cfg.image_format.height.val
     if camera_cfg.image_format.width_offset.flag:
         width_offset = camera_cfg.image_format.width_offset.val
@@ -294,7 +293,7 @@ def _write_camera_cfg_vimba(camera, camera_cfg):
 
 
 def _run_vimba(camera, callback=None):
-    camera.set_frame_buffers(count=3)
+    camera.set_frame_buffers(count=1)
     camera.start_capture(frame_callback=callback)
     camera.start_acquisition()
     return camera.get_image
