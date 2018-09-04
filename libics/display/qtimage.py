@@ -265,8 +265,9 @@ class QtImage(QWidget, object):
             np_image = self._cvt_func_bpc(np_image)
         height, width = np_image.shape[0], np_image.shape[1]
         bytes_per_line = width * self._bytes_per_pixel
+        # create deep copy of the image to retain the data
         image = QImage(np_image, width, height, bytes_per_line,
-                       self._image_format)
+                       self._image_format).copy()
         if self._rgb_swapped:
             image = image.rgbSwapped()
         self.sUpdateImage.emit(image)

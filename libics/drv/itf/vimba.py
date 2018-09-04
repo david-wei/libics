@@ -228,7 +228,7 @@ class VimbaCamera(object):
         ----------
         mode : str, optional
             "Continuous", "SingleFrame", "MultiFrame".
-        multi_count : int
+        multi_count : positive int
             Number of frames to be acquired in multiframe mode.
             Has no effect in the other modes.
 
@@ -240,7 +240,7 @@ class VimbaCamera(object):
         if (mode is not None and (mode == "Continuous" or mode == "SingleFrame"
                                   or mode == "MultiFrame")):
             self._camera.AcquisitionMode = mode
-        if multi_count is not None:
+        if multi_count is not None and multi_count > 0:
             self._camera.AcquisitionFrameCount = multi_count
 
     def get_acquisition(self):

@@ -117,7 +117,7 @@ class MDT693(object):
         time.sleep(10 * self._hw_proc_delay)
         ret_b = self._serial.readline()
         if self._debug:
-            print(ret_b)
+            print("recv:", ret_b)
         ret_str = ret_b.decode("ascii").lstrip("\n\r\*[e ").rstrip("\n\r] ")
         if ret_str == "Echo On":
             self._send("E")
