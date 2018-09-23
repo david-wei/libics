@@ -101,7 +101,9 @@ def assertion(exception, *args, description=None):
         if not issubclass(exception, Exception):
             raise Exception("invalid type: non-exception type")
         for arg in args:
-            if type(arg) != bool or arg is False:
+            if type(arg) != bool:
+                arg = bool(arg)
+            if arg is False:
                 if issubclass(exception, LibICSError):
                     raise exception(exception.str(description))
                 else:
