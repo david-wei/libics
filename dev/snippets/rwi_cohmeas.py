@@ -1,5 +1,8 @@
 # System Imports
+from collections import deque
+import json
 import numpy as np
+import os
 import sys
 import threading
 import time
@@ -8,7 +11,7 @@ import time
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout, QLabel,
-    QSizePolicy, QWidget
+    QSizePolicy, QWidget, QFileDialog
 )
 import pyqtgraph as pg
 
@@ -19,6 +22,7 @@ from libics.display import qtimage
 from libics.drv import cam, piezo
 from libics.drv.itf import camcfg
 from libics.util.thread import PeriodicTimer
+from libics.trafo import resize
 
 
 ###############################################################################
@@ -115,11 +119,12 @@ class CohMeas(QWidget, object):
     def __init__(self,
                  camera_cfg, piezo_cfg, *args,
                  step_time=1e-1, piezo_steps=1000, piezo_trace="bilinear",
-                 cohtraces=3, **kwargs):
+                 cohtraces=3, image_buffer=200, **kwargs):
         super().__init__(*args, **kwargs)
         self._init_camera(camera_cfg)
         self._init_piezo(piezo_cfg)
-        self._init_logic(step_time, piezo_steps, piezo_trace, cohtraces)
+        self._init_logic(step_time, piezo_steps, piezo_trace,
+                         cohtraces, image_buffer)
         self._init_qt_preview()
         self._init_qt_normview()
         self._init_qt_cohtrace()
@@ -136,36 +141,32 @@ class CohMeas(QWidget, object):
         self.camera.close_camera()
         self.camera.shutdown_camera()
 
-    def _init_logic(self, step_time, piezo_steps, piezo_trace, cohtraces):
+    def _init_logic(self, step_time, piezo_steps, piezo_trace,
+                    cohtraces, image_buffer):
         # Access control
         self.mode = CohMeas.PREVIEW
         self._cam_access = threading.Lock()
         self._cohtrace_access = threading.Lock()
         self._measurement_timer = None
         # Normalization images
+        self._image_buffer_count = image_buffer
         self._ref_fixed_image = None
         self._ref_scanned_image = None
         self._ref_norm_image = None
         self._ref_mean_image = None
-        self._normalized_images = []
+        self._crop_coords = ((0, 0), (self.camera_cfg.image_format.width.val,
+                                      self.camera_cfg.image_format.height.val))
+        self._normalized_images = deque(maxlen=self._image_buffer_count)
+        self._image_records = {"max": None, "min": None, "sum": None}
+        self._image_pos = {"max": None, "min": None}
+        self._image_record_counter = 0
         # Scanning settings
         self._step_time = step_time
         self._piezo_trace = []
         self._piezo_trace_counter = -1
         self.set_piezo_trace(piezo_trace=piezo_trace, piezo_steps=piezo_steps)
         self._cohtrace_coords = []
-        d_width, d_height = (
-            int(round(self.camera_cfg.image_format.width.val
-                      / (cohtraces + 1))),
-            int(round(self.camera_cfg.image_format.height.val
-                      / (cohtraces + 1)))
-        )
-        for w in range(cohtraces):
-            for h in range(cohtraces):
-                self._cohtrace_coords.append((
-                    max(0, (h + 1) * d_height - 1),
-                    max(0, (w + 1) * d_width - 1)
-                ))
+        self._update_cohtrace_coords(cohtraces)
 
     def _init_camera(self, camera_cfg):
         self.camera_cfg = camera_cfg
@@ -258,10 +259,12 @@ class CohMeas(QWidget, object):
         self._button_measure_coherence = QPushButton("Measure coherence")
         self._button_measure_coherence.setCheckable(True)
         self._button_measure_coherence.setEnabled(False)
+        self._button_save_data = QPushButton("Save data")
         self.controls_layout.addWidget(self._button_live_preview)
         self.controls_layout.addWidget(self._button_record_ref_fixed)
         self.controls_layout.addWidget(self._button_record_ref_scanned)
         self.controls_layout.addWidget(self._button_measure_coherence)
+        self.controls_layout.addWidget(self._button_save_data)
 
         # Preview layout
         self._label_preview = QLabel("Raw image")
@@ -296,6 +299,7 @@ class CohMeas(QWidget, object):
         self._button_measure_coherence.toggled.connect(
             self.toggle_measure_coherence
         )
+        self._button_save_data.clicked.connect(self.save_data)
         self.sUpdatePlot.connect(self._update_cohtrace_plots)
 
     def _uncheck_button_measure_coherence(self):
@@ -367,6 +371,55 @@ class CohMeas(QWidget, object):
             self._button_live_preview.setEnabled(True)
             self._button_record_ref_fixed.setEnabled(True)
             self._button_record_ref_scanned.setEnabled(True)
+
+    @pyqtSlot()
+    def save_data(self):
+        # Get save directory
+        dialog = QFileDialog()
+        save_dir = dialog.getExistingDirectory(
+            caption="Choose directory in which data is saved"
+        )
+        if save_dir == "":
+            return
+        _head, tail_name = os.path.split(save_dir)
+        if tail_name == "":
+            _, tail_name = os.path.split(_head)
+        # Save cohtraces
+        header = {}
+        header["piezo_trace"] = "V"
+        header["cohtrace_coords"] = self._cohtrace_coords
+        header = json.dumps(header)
+        data = np.array([self._piezo_trace] + self._cohtrace_data)
+        np.savetxt(
+            os.path.join(save_dir, tail_name + "_cohtrace.txt"),
+            data, header=header
+        )
+        # Save image records
+        np.save(
+            os.path.join(save_dir, tail_name + "_imrec_max.np"),
+            self._image_records["max"],
+            allow_pickle=False
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_impos_max.np"),
+            self._image_pos["max"],
+            allow_pickle=False
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_imrec_min.np"),
+            self._image_records["min"],
+            allow_pickle=False
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_impos_min.np"),
+            self._image_pos["min"],
+            allow_pickle=False
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_imrec_mean.np"),
+            self._image_records["sum"] / self._image_record_counter,
+            allow_pickle=False
+        )
 
     # ++++ Logic functions ++++++++++++++++++++++++
 
@@ -475,6 +528,39 @@ class CohMeas(QWidget, object):
             self._ref_scanned_image is not None
         )
 
+    def _update_cohtrace_coords(self, cohtraces, update_plot_label=False):
+        """
+        Updates the cohtrace coordinates from the crop coordinates.
+
+        Parameters
+        ----------
+        cohtraces : int
+            Linear number of cohtraces to be recorded.
+        update_plot_label : bool
+            Whether to set qt_cohtraces axes labels.
+            `False` only used at initialization.
+        """
+        d_width, d_height = (
+            int(round((self._crop_coords[1, 0] - self._crop_coords[0, 0])
+                      / (cohtraces + 1))),
+            int(round((self._crop_coords[1, 1] - self._crop_coords[0, 1])
+                      / (cohtraces + 1)))
+        )
+        self._cohtrace_coords = []
+        for w in range(cohtraces):
+            for h in range(cohtraces):
+                self._cohtrace_coords.append((
+                    max(0, (h + 1) * d_height - 1),
+                    max(0, (w + 1) * d_width - 1)
+                ))
+        if update_plot_label:
+            for it, plot in enumerate(self._cohtrace_plots):
+                plot.setLabels(
+                    left=("Pos ({:d}, {:d})"
+                          .format(*self._cohtrace_coords[it])),
+                    bottom="Piezo voltage [V]"
+                )
+
     def _update_ref_images(self):
         """
         Updates the normalization images.
@@ -484,18 +570,40 @@ class CohMeas(QWidget, object):
                 self._ref_fixed_image, self._ref_scanned_image,
                 dtype="float64"
             )
+            self._crop_coords = resize.resize_on_mass(
+                self._ref_mean_image, center="auto", total=self._crop_mass,
+                aspect_ratio="auto", aspect_mode="enlarge"
+            )
             self._ref_norm_image = 2 * np.sqrt(np.multiply(
                 self._ref_fixed_image, self._ref_scanned_image,
                 dtype="float64"
             ))
+            cohtraces = int(np.sqrt(len(self._cohtrace_coords)))
+            self._update_cohtrace_coords(cohtraces, update_plot_label=True)
             self._button_measure_coherence.setEnabled(True)
+
+    def _reset_image_records(self):
+        """
+        Resets the image records.
+        """
+        shape = (
+            (self._crop_coords[1][0] - self._crop_coords[0][0]),
+            (self._crop_coords[1][1] - self._crop_coords[0][1])
+        )
+        self._image_records["max"] = np.full(shape, 0.0, dtype="float64")
+        self._image_records["min"] = np.full(shape, 0.0, dtype="float64")
+        self._image_records["sum"] = np.full(shape, 0.0, dtype="float64")
+        self._image_pos["max"] = np.full(shape, 0.0, dtype="float64")
+        self._image_pos["min"] = np.full(shape, 0.0, dtype="float64")
+        self._image_record_counter = 0
 
     def run_measurement(self):
         """
         Constructs a timer which periodically shifts the piezo voltage
         and acquires an image.
         """
-        self._normalized_images = []
+        self._normalized_images = deque(maxlen=self._image_buffer_count)
+        self._reset_image_records()
         for it in range(len(self._cohtrace_data)):
             self._cohtrace_data[it] = []
         self._measurement_timer = PeriodicTimer(
@@ -598,10 +706,43 @@ class CohMeas(QWidget, object):
             dtype="float64"
         )
         self._normalized_images.append(normview)
+        self.add_image_records(normview)
         self._cohtrace_access.acquire()
         for it in range(len(self._cohtrace_data)):
             self._cohtrace_data[it].append(normview[self._cohtrace_coords[it]])
         self._cohtrace_access.release()
+
+    def add_image_records(self, normview):
+        """
+        Processes a normalized image for the (cropped) image records.
+
+        Parameters
+        ----------
+        normview : numpy.ndarray(dtype=float64)
+            Normalized image.
+        """
+        # Counters: i, j: indices; x, y: raw coordinates
+        for i, x in enumerate(
+            np.arange(self._crop_coords[0, 0], self._crop_coords[1, 0])
+        ):
+            for j, y in enumerate(
+                np.arange(self._crop_coords[0, 1], self._crop_coords[1, 1])
+            ):
+                if normview[x, y] > self._image_records["max"][i, j]:
+                    self._image_records["max"][i, j] = normview[x, y]
+                    self._image_pos["max"][i, j] = (
+                        self._piezo_trace[self._piezo_trace_counter]
+                    )
+                if normview[x, y] < self._image_records["min"][i, j]:
+                    self._image_records["min"][i, j] = normview[x, y]
+                    self._image_pos["min"][i, j] = (
+                        self._piezo_trace[self._piezo_trace_counter]
+                    )
+        self._image_records["sum"] = normview[
+            self._crop_coords[0, 0]:self._crop_coords[1, 0],
+            self._crop_coords[0, 1]:self._crop_coords[1, 1]
+        ]
+        self._image_record_counter += 1
 
     def set_ref_image(self, np_image, ref_arm):
         """
