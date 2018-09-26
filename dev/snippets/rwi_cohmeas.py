@@ -119,7 +119,7 @@ class CohMeas(QWidget, object):
     def __init__(self,
                  camera_cfg, piezo_cfg, *args,
                  step_time=1e-1, piezo_steps=1000, piezo_trace="bilinear",
-                 cohtraces=3, image_buffer=200, **kwargs):
+                 cohtraces=3, image_buffer=100, **kwargs):
         super().__init__(*args, **kwargs)
         self._init_camera(camera_cfg)
         self._init_piezo(piezo_cfg)
@@ -777,7 +777,7 @@ if __name__ == "__main__":
     # Test settings
     step_time = 0.1
     cohtraces = 3
-    piezo_steps = 100
+    piezo_steps = 500
     piezo_trace = "linear_up"
     piezo_port = "COM2"
 

@@ -8,7 +8,7 @@ import threading
 import time
 
 # Qt Imports
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QMetaObject, Qt
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout, QLabel,
     QSizePolicy, QWidget, QFileDialog, QMessageBox
@@ -115,16 +115,18 @@ class CohMeas(QWidget, object):
     REFSCANNED = 3
 
     sUpdatePlot = pyqtSignal()
+    sUpdateCohtraceCoords = pyqtSignal(int)
+    sButtonMeasurementUncheck = pyqtSignal()
 
     def __init__(self,
                  camera_cfg, piezo_cfg, *args,
                  step_time=1e-1, piezo_steps=1000, piezo_trace="bilinear",
-                 cohtraces=3, image_buffer=200, **kwargs):
+                 cohtraces=3, image_buffer=200, crop_mass=0.8, **kwargs):
         super().__init__(*args, **kwargs)
         self._init_camera(camera_cfg)
         self._init_piezo(piezo_cfg)
         self._init_logic(step_time, piezo_steps, piezo_trace,
-                         cohtraces, image_buffer)
+                         cohtraces, image_buffer, crop_mass)
         self._init_qt_preview()
         self._init_qt_normview()
         self._init_qt_cohtrace()
@@ -142,7 +144,7 @@ class CohMeas(QWidget, object):
         self.camera.shutdown_camera()
 
     def _init_logic(self, step_time, piezo_steps, piezo_trace,
-                    cohtraces, image_buffer):
+                    cohtraces, image_buffer, crop_mass):
         # Access control
         self.mode = CohMeas.PREVIEW
         self._cam_access = threading.Lock()
@@ -154,6 +156,7 @@ class CohMeas(QWidget, object):
         self._ref_scanned_image = None
         self._ref_norm_image = None
         self._ref_mean_image = None
+        self._crop_mass = crop_mass
         self._crop_coords = ((0, 0), (self.camera_cfg.image_format.width.val,
                                       self.camera_cfg.image_format.height.val))
         self._normalized_images = deque(maxlen=self._image_buffer_count)
@@ -166,7 +169,7 @@ class CohMeas(QWidget, object):
         self._piezo_trace_counter = -1
         self.set_piezo_trace(piezo_trace=piezo_trace, piezo_steps=piezo_steps)
         self._cohtrace_coords = []
-        self._update_cohtrace_coords(cohtraces)
+        self._update_cohtrace_coords(cohtraces, update_plot_label=False)
 
     def _init_camera(self, camera_cfg):
         self.camera_cfg = camera_cfg
@@ -184,6 +187,7 @@ class CohMeas(QWidget, object):
 
     def _init_piezo(self, piezo_cfg):
         self.piezo_cfg = piezo_cfg
+        self._msg_box_set_piezo_voltage_ret = QMessageBox.Ok
         # self.piezo = piezo.Piezo(piezo_cfg=piezo.PiezoCfg(
         #     device_type=self.piezo_cfg.device.device_type.val,
         #     device_id=self.piezo_cfg.device.device_id.val,
@@ -301,6 +305,8 @@ class CohMeas(QWidget, object):
         )
         self._button_save_data.clicked.connect(self.save_data)
         self.sUpdatePlot.connect(self._update_cohtrace_plots)
+        self.sUpdateCohtraceCoords.connect(self._update_cohtrace_coords)
+        self.sButtonMeasurementUncheck.connect(self._signal_stop_measurement)
 
     def _uncheck_button_measure_coherence(self):
         self._button_measure_coherence.setChecked(False)
@@ -310,6 +316,7 @@ class CohMeas(QWidget, object):
         self.qt_preview.show()
         self.qt_normview.show()
         self.qt_cohtrace.show()
+        self.showMaximized()
 
     @pyqtSlot(bool)
     def toggle_live_preview(self, is_checked):
@@ -388,37 +395,66 @@ class CohMeas(QWidget, object):
         header = {}
         header["piezo_trace"] = "V"
         header["cohtrace_coords"] = self._cohtrace_coords
+        header["crop_coords"] = self._crop_coords.tolist()
         header = json.dumps(header)
-        data = np.array([self._piezo_trace] + self._cohtrace_data)
+        data = np.array(
+            [self._piezo_trace[:len(self._cohtrace_data[0])]]
+            + self._cohtrace_data
+        )
         np.savetxt(
             os.path.join(save_dir, tail_name + "_cohtrace.txt"),
             data, header=header
         )
         # Save image records
         np.save(
-            os.path.join(save_dir, tail_name + "_imrec_max.np"),
+            os.path.join(save_dir, tail_name + "_imrec_max.npy"),
             self._image_records["max"],
             allow_pickle=False
         )
         np.save(
-            os.path.join(save_dir, tail_name + "_impos_max.np"),
+            os.path.join(save_dir, tail_name + "_impos_max.npy"),
             self._image_pos["max"],
             allow_pickle=False
         )
         np.save(
-            os.path.join(save_dir, tail_name + "_imrec_min.np"),
+            os.path.join(save_dir, tail_name + "_imrec_min.npy"),
             self._image_records["min"],
             allow_pickle=False
         )
         np.save(
-            os.path.join(save_dir, tail_name + "_impos_min.np"),
+            os.path.join(save_dir, tail_name + "_impos_min.npy"),
             self._image_pos["min"],
             allow_pickle=False
         )
         np.save(
-            os.path.join(save_dir, tail_name + "_imrec_mean.np"),
+            os.path.join(save_dir, tail_name + "_imrec_mean.npy"),
             self._image_records["sum"] / self._image_record_counter,
             allow_pickle=False
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_imref_mean.npy"),
+            self._ref_mean_image[
+                self._crop_coords[0][0]:self._crop_coords[1][0],
+                self._crop_coords[0][1]:self._crop_coords[1][1]
+            ],
+            allow_pickle=False
+        )
+
+    @pyqtSlot()
+    def _msg_box_set_piezo_voltage(self):
+        """
+        Invokes a modal message box waiting for manual piezo voltage
+        adjustment.
+        """
+        voltage = self._piezo_trace[self._piezo_trace_counter]
+        msg_box = QMessageBox()
+        title = "Set piezo voltage"
+        text = (
+            "Manually set piezo voltage to {:.2f}V.\n".format(float(voltage))
+            + "Press OK to continue, press abort to stop measurement."
+        )
+        self._msg_box_set_piezo_voltage_ret = msg_box.question(
+            self, title, text, QMessageBox.Ok | QMessageBox.Abort
         )
 
     # ++++ Logic functions ++++++++++++++++++++++++
@@ -518,13 +554,10 @@ class CohMeas(QWidget, object):
             voltage = self._piezo_trace[index]
             self._piezo_trace_counter = index
         # self.piezo.set_voltage(voltage)
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle("Set piezo voltage")
-        msg_box.setText("Manually set piezo voltage to {:.2f}V.\n" +
-                        "Press OK to continue, press cancel to measurement.")
-        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        ret = msg_box.exec_()
-        return ret == QMessageBox.Ok
+        QMetaObject.invokeMethod(
+            self, "_msg_box_set_piezo_voltage", Qt.BlockingQueuedConnection
+        )
+        return self._msg_box_set_piezo_voltage_ret == QMessageBox.Ok
 
     def _ref_are_set(self):
         """
@@ -535,7 +568,8 @@ class CohMeas(QWidget, object):
             self._ref_scanned_image is not None
         )
 
-    def _update_cohtrace_coords(self, cohtraces, update_plot_label=False):
+    @pyqtSlot(int)
+    def _update_cohtrace_coords(self, cohtraces, update_plot_label=True):
         """
         Updates the cohtrace coordinates from the crop coordinates.
 
@@ -548,17 +582,19 @@ class CohMeas(QWidget, object):
             `False` only used at initialization.
         """
         d_width, d_height = (
-            int(round((self._crop_coords[1, 0] - self._crop_coords[0, 0])
+            int(round((self._crop_coords[1][0] - self._crop_coords[0][0])
                       / (cohtraces + 1))),
-            int(round((self._crop_coords[1, 1] - self._crop_coords[0, 1])
+            int(round((self._crop_coords[1][1] - self._crop_coords[0][1])
                       / (cohtraces + 1)))
         )
         self._cohtrace_coords = []
         for w in range(cohtraces):
             for h in range(cohtraces):
                 self._cohtrace_coords.append((
-                    max(0, (h + 1) * d_height - 1),
-                    max(0, (w + 1) * d_width - 1)
+                    int(max(0, (h + 1) * d_height - 1)
+                        + self._crop_coords[0][0]),
+                    int(max(0, (w + 1) * d_width - 1)
+                        + self._crop_coords[0][1])
                 ))
         if update_plot_label:
             for it, plot in enumerate(self._cohtrace_plots):
@@ -578,7 +614,8 @@ class CohMeas(QWidget, object):
                 dtype="float64"
             )
             self._crop_coords = resize.resize_on_mass(
-                self._ref_mean_image, center="auto", total=self._crop_mass,
+                self._ref_mean_image, center="auto",
+                total_mass=self._crop_mass,
                 aspect_ratio="auto", aspect_mode="enlarge"
             )
             self._ref_norm_image = 2 * np.sqrt(np.multiply(
@@ -586,7 +623,7 @@ class CohMeas(QWidget, object):
                 dtype="float64"
             ))
             cohtraces = int(np.sqrt(len(self._cohtrace_coords)))
-            self._update_cohtrace_coords(cohtraces, update_plot_label=True)
+            self.sUpdateCohtraceCoords.emit(cohtraces)
             self._button_measure_coherence.setEnabled(True)
 
     def _reset_image_records(self):
@@ -622,6 +659,10 @@ class CohMeas(QWidget, object):
         )
         self._measurement_timer.start()
 
+    @pyqtSlot()
+    def _signal_stop_measurement(self):
+        self._button_measure_coherence.setChecked(False)
+
     def stop_measurement(self):
         """
         Stops the measurement timer.
@@ -637,7 +678,7 @@ class CohMeas(QWidget, object):
         single image mode.
         """
         if not self._set_piezo_voltage():
-            self._button_measure_coherence.setChecked(False)
+            self.sButtonMeasurementUncheck.emit()
         time.sleep(ENV.THREAD_DELAY_COM)
         self._cam_access.acquire()
         self.camera.stop()
@@ -731,10 +772,10 @@ class CohMeas(QWidget, object):
         """
         # Counters: i, j: indices; x, y: raw coordinates
         for i, x in enumerate(
-            np.arange(self._crop_coords[0, 0], self._crop_coords[1, 0])
+            np.arange(self._crop_coords[0][0], self._crop_coords[1][0])
         ):
             for j, y in enumerate(
-                np.arange(self._crop_coords[0, 1], self._crop_coords[1, 1])
+                np.arange(self._crop_coords[0][1], self._crop_coords[1][1])
             ):
                 if normview[x, y] > self._image_records["max"][i, j]:
                     self._image_records["max"][i, j] = normview[x, y]
@@ -785,9 +826,10 @@ if __name__ == "__main__":
     # Test settings
     step_time = 0.1
     cohtraces = 3
-    piezo_steps = 100
+    piezo_steps = 750
     piezo_trace = "linear_up"
     piezo_port = "COM2"
+    crop_mass = 0.7
 
     # Run app
     app = QApplication(sys.argv)
@@ -796,7 +838,8 @@ if __name__ == "__main__":
     coh_meas = CohMeas(
         camera_cfg, piezo_cfg,
         step_time=step_time, piezo_steps=piezo_steps,
-        piezo_trace=piezo_trace, cohtraces=cohtraces
+        piezo_trace=piezo_trace, cohtraces=cohtraces,
+        crop_mass=crop_mass
     )
     coh_meas.show()
     app_ret = app.exec_()
