@@ -16,9 +16,9 @@ class PiezoCfg(object):
 
     class Device:
 
-        DEVICE_TYPE = ["mdt693"]
+        DEVICE_TYPE = ["mdt693a", "mdt693b"]
 
-        def __init__(self, device_type="mdt693", device_id=0,
+        def __init__(self, device_type="mdt693b", device_id=0,
                      port=None, timeout_send=1.0, timeout_recv=1.0,
                      hw_proc_delay=0.05):
             self.device_type = FlaggedType(
@@ -38,7 +38,7 @@ class PiezoCfg(object):
             self.voltage_max = FlaggedType(voltage_max)
             self.range_per_volt = FlaggedType(range_per_volt)
 
-    def __init__(self, device_type="mdt693", device_id=0, port=None):
+    def __init__(self, device_type="mdt693b", device_id=0, port=None):
         self.device = PiezoCfg.Device(
             device_type=device_type, device_id=device_id, port=port
         )
@@ -115,16 +115,28 @@ class Piezo(object):
         self._piezo_itf = None
 
     def setup_piezo(self):
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             try:
-                self._piezo_itf = _setup_piezo_mdt693(self._piezo_cfg)
+                self._piezo_itf = _setup_piezo_mdt693a(self._piezo_cfg)
+            except mdt693.serial.SerialException as e:
+                raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str(str(e)))
+        elif self._piezo_cfg.device.device_type.val == "mdt693b":
+            try:
+                self._piezo_itf = _setup_piezo_mdt693b(self._piezo_cfg)
             except mdt693.serial.SerialException as e:
                 raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str(str(e)))
         else:
             raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str())
 
     def shutdown_piezo(self):
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             pass
         else:
             raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str())
@@ -135,17 +147,25 @@ class Piezo(object):
         return self._piezo_itf
 
     def open_piezo(self):
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             try:
                 self._piezo_itf.open_serial()
             except mdt693.serial.SerialException as e:
                 raise ERR.RUNTM_DRV_PIZ(ERR.RUNTM_DRV_PIZ.str(str(e)))
 
     def close_piezo(self):
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             self._piezo_itf.close_serial()
 
-    # ++++ Camera configuration ++++++++++++++++++++++++
+    # ++++ Piezo configuration +++++++++++++++++++++++++
 
     def set_piezo_cfg(self, piezo_cfg):
         self._piezo_cfg.set_config(piezo_cfg)
@@ -155,7 +175,11 @@ class Piezo(object):
 
     def read_piezo_cfg(self, overwrite_cfg=False):
         piezo_cfg = None
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             piezo_cfg = _read_piezo_cfg_mdt693(
                 self._piezo_itf, self._piezo_cfg
             )
@@ -164,7 +188,11 @@ class Piezo(object):
         return piezo_cfg
 
     def write_piezo_cfg(self):
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             _write_piezo_cfg_mdt693(self._piezo_itf, self._piezo_cfg)
 
     # ++++ Piezo control +++++++++++++++++++++++++++++++
@@ -173,12 +201,20 @@ class Piezo(object):
         ERR.assertion(ERR.RUNTM_DRV_PIZ,
                       voltage is not None,
                       description="invalid voltage")
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             _set_voltage_mdt693(self._piezo_itf, self._piezo_cfg, voltage)
 
     def get_voltage(self):
         voltage = None
-        if self._piezo_cfg.device.device_type.val == "mdt693":
+        if (
+            self._piezo_cfg.device.device_type.val == "mdt693a"
+            or self._piezo_cfg.device.device_type.val == "mdt693b"
+            or self._piezo_cfg.device.device_type.val == "mdt693"
+        ):
             voltage = _get_voltage_mdt693(self._piezo_itf, self._piezo_cfg)
         return voltage
 
@@ -187,15 +223,31 @@ class Piezo(object):
 # Initialization
 ###############################################################################
 
-# ++++++++++ MDT 693 +++++++++++++++++++++++++++++
+# ++++++++++ MDT 693 A +++++++++++++++++++++++++++
 
 
-def _setup_piezo_mdt693(piezo_cfg):
+def _setup_piezo_mdt693a(piezo_cfg):
     port = piezo_cfg.device.port.val
     # If unspecified, automatically choose first serial port
     if port is None:
         port = mdt693._list_serial_ports()[0]
-    piezo_itf = mdt693.MDT693(
+    piezo_itf = mdt693.MDT693A(
+        port=port, read_timeout=piezo_cfg.device.timeout_recv.val,
+        write_timeout=piezo_cfg.device.timeout_send.val,
+        hw_proc_delay=piezo_cfg.device.hw_proc_delay.val
+    )
+    return piezo_itf
+
+
+# ++++++++++ MDT 693 B +++++++++++++++++++++++++++
+
+
+def _setup_piezo_mdt693b(piezo_cfg):
+    port = piezo_cfg.device.port.val
+    # If unspecified, automatically choose first serial port
+    if port is None:
+        port = mdt693._list_serial_ports()[0]
+    piezo_itf = mdt693.MDT693B(
         port=port, read_timeout=piezo_cfg.device.timeout_recv.val,
         write_timeout=piezo_cfg.device.timeout_send.val,
         hw_proc_delay=piezo_cfg.device.hw_proc_delay.val

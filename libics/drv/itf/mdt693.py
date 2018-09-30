@@ -45,7 +45,7 @@ def _list_serial_ports():
 ###############################################################################
 
 
-class MDT693(object):
+class MDT693A(object):
 
     """
     RS232 (serial port) driver for Thorlabs Piezo Driver MDT693A.
@@ -141,17 +141,17 @@ class MDT693(object):
             raise RuntimeError(
                 "libics.drv.itf.mdt693.MDT693.get_voltage: invalid channel"
             )
-        self._send(MDT693._get_channel_code(channel) + "R?")
+        self._send(MDT693A._get_channel_code(channel) + "R?")
         ret_str = self._receive()
         voltage = float(ret_str)
         return voltage
 
     def set_voltage_range(self, min_volt=None, max_volt=None, channel=None):
         if min_volt is not None:
-            self._send(MDT693._get_channel_code(channel) + "L", min_volt)
+            self._send(MDT693A._get_channel_code(channel) + "L", min_volt)
             time.sleep(self._hw_proc_delay)
         if max_volt is not None:
-            self._send(MDT693._get_channel_code(channel) + "H", max_volt)
+            self._send(MDT693A._get_channel_code(channel) + "H", max_volt)
             time.sleep(self._hw_proc_delay)
 
     def get_voltage_range(self, channel=0):
@@ -168,9 +168,9 @@ class MDT693(object):
                 "libics.drv.itf.mdt693.MDT693.get_voltage: invalid channel"
             )
         else:
-            self._send(MDT693._get_channel_code(channel) + "L?")
+            self._send(MDT693A._get_channel_code(channel) + "L?")
             ret_min = float(self._receive())
-            self._send(MDT693._get_channel_code(channel) + "H?")
+            self._send(MDT693A._get_channel_code(channel) + "H?")
             ret_max = float(self._receive())
         return ret_min, ret_max
 
@@ -178,6 +178,146 @@ class MDT693(object):
         self._send("%")
         ret_str = self._receive()
         voltage_limit = float(ret_str)
+        return voltage_limit
+
+
+###############################################################################
+
+
+class MDT693B(object):
+
+    """
+    RS232 (serial port) driver for Thorlabs Piezo Driver MDT693B.
+    """
+
+    MODE_RAW = 0
+    MODE_VOLTAGE = 1
+    MODE_CODE = 2
+
+    def __init__(self,
+                 port="COM1", baudrate=115200, parity=serial.PARITY_NONE,
+                 stopbits=serial.STOPBITS_ONE,
+                 read_timeout=1.0, write_timeout=1.0,
+                 termchar="\r\n", hw_proc_delay=0.05,
+                 debug=False):
+        self._debug = debug
+        self._serial = serial.Serial(
+            port=port, baudrate=baudrate, parity=parity, stopbits=stopbits,
+            timeout=read_timeout, write_timeout=write_timeout
+        )
+        self._termchar = termchar
+        self._hw_proc_delay = hw_proc_delay
+        self._voltage_limit = 75
+
+    def open_serial(self):
+        if not self._serial.is_open:
+            self._serial.open()
+        self._turn_off_echo_mode()
+        self._voltage_limit = self.get_voltage_limit()
+        return self._serial.is_open
+
+    def close_serial(self):
+        if self._serial.is_open:
+            self._serial.close()
+        return not self._serial.is_open
+
+    @staticmethod
+    def _get_channel_code(channel):
+        if channel is None or channel == "all":
+            return "all"
+        elif channel == 0 or channel == "x":
+            return "x"
+        elif channel == 1 or channel == "y":
+            return "y"
+        elif channel == 2 or channel == "z":
+            return "Z"
+
+    def _send(self, cmd_str, voltage=None):
+        if voltage is not None:
+            cmd_str += str(voltage)
+        cmd_str += self._termchar
+        cmd_b = cmd_str.encode("ascii")
+        self._serial.write(cmd_b)
+        self._serial.flush()
+        if self._debug:
+            print("send:", cmd_b)
+
+    def _receive(self):
+        ret_b = self._serial.readline()
+        ret_str = ret_b.decode("ascii")
+        ret_str = ret_str.lstrip("\n\r\*[ \x00").rstrip("\n\r] \x00")
+        if self._debug:
+            print("recv:", ret_b)
+        return ret_str
+
+    def _turn_off_echo_mode(self):
+        self._send("echo=0")
+        time.sleep(10 * self._hw_proc_delay)
+
+    def set_voltage(self, voltage, channel=None):
+        self._send(MDT693B._get_channel_code(channel) + "voltage=", voltage)
+        time.sleep(self._hw_proc_delay)
+
+    def get_voltage(self, channel=0):
+        """
+        Reads and returns the voltage of the given channel.
+
+        Raises
+        ------
+        RuntimeError
+            If `channel` is invalid.
+        """
+        if channel is None:
+            raise RuntimeError(
+                "libics.drv.itf.mdt693.MDT693.get_voltage: invalid channel"
+            )
+        self._send(MDT693B._get_channel_code(channel) + "voltage?")
+        ret_str = self._receive()
+        voltage = float(ret_str)
+        return voltage
+
+    def set_voltage_range(self, min_volt=None, max_volt=None, channel=None):
+        if channel is None:
+            for ch in ["x", "y", "z"]:
+                self.set_voltage_range(min_volt=min_volt, max_volt=max_volt,
+                                       channel=ch)
+        if min_volt is not None:
+            self._send(MDT693B._get_channel_code(channel) + "min=", min_volt)
+            time.sleep(self._hw_proc_delay)
+        if max_volt is not None:
+            self._send(MDT693B._get_channel_code(channel) + "max=", max_volt)
+            time.sleep(self._hw_proc_delay)
+
+    def get_voltage_range(self, channel=0):
+        """
+        Returns the voltage range (min, max).
+
+        Raises
+        ------
+        RuntimeError
+            If `channel` is invalid.
+        """
+        if channel is None:
+            raise RuntimeError(
+                "libics.drv.itf.mdt693.MDT693.get_voltage: invalid channel"
+            )
+        else:
+            self._send(MDT693B._get_channel_code(channel) + "min?")
+            ret_min = float(self._receive())
+            self._send(MDT693B._get_channel_code(channel) + "max?")
+            ret_max = float(self._receive())
+        return ret_min, ret_max
+
+    def get_voltage_limit(self):
+        self._send("vlimit?")
+        ret_lim = int(self._receive())
+        ret_lim = None
+        if ret_lim == 0:
+            voltage_limit = 75.0
+        elif ret_lim == 1:
+            voltage_limit = 100.0
+        elif ret_lim == 2:
+            voltage_limit = 150.0
         return voltage_limit
 
 
