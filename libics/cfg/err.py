@@ -441,3 +441,10 @@ class RUNTM_DRV_PIZ(RUNTM):
         "runtime error: piezo interface error",
         412
     )
+
+
+class RUNTM_DRV_SPA(RUNTM):
+    _err_description = ErrorDescription(
+        "runtime error: spectrum analyzer interface error",
+        413
+    )
