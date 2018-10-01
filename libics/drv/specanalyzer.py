@@ -270,10 +270,10 @@ class UtilSr760:
     }
 
     DISPLAY_UNITS = {
-        0: "Vpk",
-        1: "Vrms",
-        2: "dBV",
-        3: "dBVrms"
+        0: "Vpk/sqrt(Hz)",
+        1: "Vrms/sqrt(Hz)",
+        2: "dBV/sqrt(Hz)",
+        3: "dBVrms/sqrt(Hz)"
     }
 
     AVERAGING_TYPES = {
@@ -304,6 +304,7 @@ if __name__ == "__main__":
     port = 1234
     file_dir = os.path.join(os.environ["USERPROFILE"], "Desktop")
     file_name = "specanalyzer_test"
+    voltage_dc = 1.0
 
     # Setup test object
     specanalyzer_cfg = SpecAnalyzerCfg(
@@ -314,6 +315,22 @@ if __name__ == "__main__":
     specanalyzer.open_specanalyzer()
 
     # Test functions
+    def normalize_spectrum(spectrum, unit, voltage_dc):
+        if unit == "Vpk/sqrt(Hz)":
+            spectrum[1] = spectrum[1] / voltage_dc / np.sqrt(2)
+            unit = "c/sqrt(Hz)"
+        elif unit == "Vrms/sqrt(Hz)":
+            spectrum[1] = spectrum[1] / voltage_dc
+            unit = "c/sqrt(Hz)"
+        elif unit == "dBVpk/sqrt(Hz)":
+            spectrum[1] = (spectrum[1] - 10 * np.log10(2)
+                           - 20 * np.log10(voltage_dc))
+            unit = "dBc/Hz"
+        elif unit == "dBVrms/sqrt(Hz)":
+            spectrum[1] = spectrum[1] - 20 * np.log10(voltage_dc)
+            unit = "dBc/Hz"
+        return spectrum, unit
+
     def save_spectrum(file_path, spectrum, unit, averaging):
         d = dict()
         d["spectrum"] = spectrum.tolist()
@@ -348,6 +365,8 @@ if __name__ == "__main__":
     averaging = specanalyzer.read_averaging()
 
     # Save, load and plot spectrum
+    plot_spectrum(spectrum, unit, averaging)
+    _spectrum, _unit = normalize_spectrum(spectrum, unit)
     file_path = os.path.join(file_dir, file_name + ".json")
     save_spectrum(file_path, spectrum, unit, averaging)
     _spectrum, _unit, _averaging = load_spectrum(file_path)
