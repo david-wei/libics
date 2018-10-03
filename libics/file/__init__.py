@@ -1,3 +1,4 @@
+from . import hdf           # noqa
 from . import image         # noqa
 from . import imageutil     # noqa
 from . import trace         # noqa

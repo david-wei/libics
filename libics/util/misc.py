@@ -149,6 +149,31 @@ def generate_fill_chars(s, fill_char=" "):
 ###############################################################################
 
 
+def get_first_elem_iter(ls):
+    """
+    Gets the first element of a (nested) iterable.
+
+    Parameters
+    ----------
+    ls : iterable
+        Indexed iterable (list, tuple).
+
+    Returns
+    -------
+    elem
+        First element of the iterable.
+    """
+    try:
+        return get_first_elem_iter(ls[0])
+    except TypeError:
+        return ls
+
+
+###############################################################################
+# Identity Functions
+###############################################################################
+
+
 def do_nothing(*args, **kwargs):
     """
     Takes any arguments and keyword arguments and does nothing.

@@ -51,3 +51,4 @@ docs/_build/
 
 # VS Code project
 \.vscode/
+\tmp/
