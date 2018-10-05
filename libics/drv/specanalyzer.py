@@ -28,9 +28,11 @@ class SpecAnalyzerCfg(object):
             self.ipv4 = FlaggedType(ipv4)
             self.port = FlaggedType(port)
 
-    def __init__(self, device_type="sr760", device_id=0):
+    def __init__(self, device_type="sr760", device_id=0,
+                 ipv4="130.183.96.12", port=1234):
         self.device = SpecAnalyzerCfg.Device(
-            device_type=device_type, device_id=device_id
+            device_type=device_type, device_id=device_id,
+            ipv4=ipv4, port=port
         )
 
     def set_all_flags(self, flag):
@@ -105,7 +107,9 @@ class SpecAnalyzer(object):
 
     def setup_specanalyzer(self):
         if self._specanalyzer_cfg.device.device_type.val == "sr760":
-            pass
+            self._specanalyzer_itf = _setup_specanalyzer_sr760(
+                self._specanalyzer_cfg
+            )
         else:
             raise ERR.RUNTM_DRV_SPA(ERR.RUNTM_DRV_SPA.str())
 
@@ -181,12 +185,12 @@ def _setup_specanalyzer_sr760(specanalyzer_cfg):
 def _open_specanalyzer_sr760(specanalyzer_itf):
     specanalyzer_itf.connect()
     specanalyzer_itf.send("++savecfg 0")
-    specanalyzer_itf("++mode 1")
-    specanalyzer_itf("++eoi 1")
-    specanalyzer_itf("++auto 0")
-    specanalyzer_itf("++eos 3")
-    specanalyzer_itf("++addr 5")
-    specanalyzer_itf("++read_tmo_ms 1000")
+    specanalyzer_itf.send("++mode 1")
+    specanalyzer_itf.send("++eoi 1")
+    specanalyzer_itf.send("++auto 0")
+    specanalyzer_itf.send("++eos 3")
+    specanalyzer_itf.send("++addr 5")
+    specanalyzer_itf.send("++read_tmo_ms 1000")
 
 
 ###############################################################################
@@ -302,7 +306,8 @@ if __name__ == "__main__":
     device_type = "sr760"
     ipv4 = "130.183.96.12"
     port = 1234
-    file_dir = os.path.join(os.environ["USERPROFILE"], "Desktop")
+    file_dir = os.path.join(os.environ["USERPROFILE"], "Desktop",
+                            "20181002_SpecAnalyzer")
     file_name = "specanalyzer_test"
     voltage_dc = 1.0
 

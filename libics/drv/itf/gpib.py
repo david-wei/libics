@@ -27,6 +27,7 @@ class ConnectionGpibEthernet(object):
         data += termchar
         if six.PY3:
             data = bytes(data, "ascii")
+        print("send:", data)
         return self.socket.send(data)
 
     @staticmethod
@@ -48,15 +49,18 @@ class ConnectionGpibEthernet(object):
             if ready[0]:
                 buffer = self.socket.recv(buffer_size)
                 data.append(buffer)
-            if ConnectionGpibEthernet._has_termchar(buffer, termchar=termchar):
-                break
+                if ConnectionGpibEthernet._has_termchar(
+                    buffer, termchar=termchar
+                ):
+                    break
             if time.time() - t0 > receiver_timeout:
                 break
 
-        self.socket.set_blocking(1)
+        self.socket.setblocking(1)
         if six.PY3:
             data = [item.decode("ascii") for item in data]
         data = "".join(data)
+        print("recv:", data[:-len(termchar)])
         return data[0:len(data) - len(termchar)]
 
 
