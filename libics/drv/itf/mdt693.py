@@ -125,7 +125,7 @@ class MDT693A(object):
             self._receive()
 
     def set_voltage(self, voltage, channel=None):
-        self._send(MDT693._get_channel_code(channel) + "V", voltage)
+        self._send(MDT693A._get_channel_code(channel) + "V", voltage)
         time.sleep(self._hw_proc_delay)
 
     def get_voltage(self, channel=0):
@@ -340,7 +340,7 @@ if __name__ == "__main__":
     debug = True
 
     # Setup test
-    piezo = MDT693(port=port, baudrate=baudrate, debug=debug)
+    piezo = MDT693A(port=port, baudrate=baudrate, debug=debug)
     piezo.open_serial()
     print("Piezo voltage limit [V]:", piezo.get_voltage_limit())
     print("Piezo voltage [V]:", piezo.get_voltage())
