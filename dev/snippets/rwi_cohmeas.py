@@ -66,6 +66,7 @@ def get_piezo_cfg(
     piezo_cfg.device.device_type.set_val(piezo_type, diff_flag=False)
     piezo_cfg.device.device_id.set_val(piezo_id, diff_flag=False)
     piezo_cfg.device.port.set_val(port, diff_flag=False)
+    piezo_cfg.device.hw_proc_delay.set_val(0.5, diff_flag=False)
 
     piezo_cfg.voltage.voltage_min.set_val(min_volt)
     piezo_cfg.voltage.voltage_max.set_val(max_volt)
@@ -597,7 +598,7 @@ class CohMeas(QWidget, object):
                     int(max(0, (h + 1) * d_height - 1)
                         + self._crop_coords[0][0]),
                     int(max(0, (w + 1) * d_width - 1)
-                        + self._crop_coords[0][1]
+                        + self._crop_coords[0][1])
                 ))
         if update_plot_label:
             for it, plot in enumerate(self._cohtrace_plots):
@@ -829,15 +830,16 @@ if __name__ == "__main__":
     # Test settings
     step_time = 0.1
     cohtraces = 3
-    piezo_steps = 750
+    piezo_steps = 1500
     piezo_trace = "linear_up"
     piezo_port = "COM2"
+    piezo_id = 0    # Channel (x: 0, y: 1, z: 2)
     crop_mass = 0.7
 
     # Run app
     app = QApplication(sys.argv)
     camera_cfg = get_camera_cfg()
-    piezo_cfg = get_piezo_cfg(port=piezo_port)
+    piezo_cfg = get_piezo_cfg(port=piezo_port, piezo_id=piezo_id)
     coh_meas = CohMeas(
         camera_cfg, piezo_cfg,
         step_time=step_time, piezo_steps=piezo_steps,

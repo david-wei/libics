@@ -95,7 +95,7 @@ class MDT693A(object):
 
     def _send(self, cmd_str, voltage=None):
         if voltage is not None:
-            cmd_str += str(voltage)
+            cmd_str += "{:.2f}".format(float(voltage))
         cmd_str += self._termchar
         cmd_b = cmd_str.encode("ascii")
         self._serial.write(cmd_b)
