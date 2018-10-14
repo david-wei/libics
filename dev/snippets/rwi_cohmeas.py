@@ -440,6 +440,20 @@ class CohMeas(QWidget, object):
             ],
             allow_pickle=False
         )
+        np.save(
+            os.path.join(save_dir, tail_name + "_imref_fixed.npy"),
+            self._ref_fixed_image[
+                self._crop_coords[0][0]:self._crop_coords[1][0],
+                self._crop_coords[0][1]:self._crop_coords[1][1]
+            ]
+        )
+        np.save(
+            os.path.join(save_dir, tail_name + "_imref_scanned.npy"),
+            self._ref_scanned_image[
+                self._crop_coords[0][0]:self._crop_coords[1][0],
+                self._crop_coords[0][1]:self._crop_coords[1][1]
+            ]
+        )
 
     @pyqtSlot()
     def _msg_box_set_piezo_voltage(self):
