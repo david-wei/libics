@@ -1,6 +1,39 @@
 # Package Imports
 from libics.cfg import err as ERR
 from libics.util import serialization as ser
+from libics.file import hdf
+
+
+###############################################################################
+
+
+class Quantity(hdf.HDFBase):
+
+    """
+    Data type for physical quantities (name and unit).
+
+    Parameters
+    ----------
+    name : `str`, optional
+        Name of physical quantity.
+    unit : `str` or `None`, optional
+        Unit of physical quantity. None is interpreted as
+        unitless quantity.
+    """
+
+    def __init__(self, name="N/A", unit=None):
+        super().__init__(pkg_name="libics", cls_name="Quantity")
+        self.name = name
+        self.unit = unit
+
+    def __str__(self):
+        s = self.name
+        if self.unit is not None:
+            s += " [" + self.unit + "]"
+        return s
+        
+    def __repr__(self):
+        return str(self)
 
 
 ###############################################################################
