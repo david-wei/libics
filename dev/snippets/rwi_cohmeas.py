@@ -66,7 +66,7 @@ def get_piezo_cfg(
     piezo_cfg.device.device_type.set_val(piezo_type, diff_flag=False)
     piezo_cfg.device.device_id.set_val(piezo_id, diff_flag=False)
     piezo_cfg.device.port.set_val(port, diff_flag=False)
-    piezo_cfg.device.hw_proc_delay.set_val(0.5, diff_flag=False)
+    piezo_cfg.device.hw_proc_delay.set_val(0.05, diff_flag=False)
 
     piezo_cfg.voltage.voltage_min.set_val(min_volt)
     piezo_cfg.voltage.voltage_max.set_val(max_volt)

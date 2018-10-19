@@ -499,6 +499,6 @@ def get_vimba_cameras(regex_id_filter=None):
                    for cam_id in camera_ids]
     else:
         for cam_id in camera_ids:
-            if re.match(regex_id_filter) is not None:
+            if re.match(regex_id_filter, cam_id) is not None:
                 cameras.append(VimbaCamera(_Vimba.getCamera(cam_id)))
     return cameras

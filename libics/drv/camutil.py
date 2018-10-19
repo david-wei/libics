@@ -1,3 +1,6 @@
+# System Imports
+import time
+
 # Package Imports
 from libics.cfg import err as ERR
 
@@ -139,7 +142,12 @@ class CameraOrigin(object):
         Stops capturing.
         """
         if self._camera_cfg.camera.camera_type.val == "vimba":
-            _stop_vimba(self._camera)
+            try:
+                _stop_vimba(self._camera)
+            except vimba.pymba.vimbaexception.VimbaException as e:
+                print("VimbaException occured:", e)
+                time.sleep(3)
+                self.setup_camera()
 
 
 ###############################################################################
@@ -161,7 +169,7 @@ def _setup_camera_vimba(camera_cfg):
             print("libics.drv.camutil._init_camera:" +
                   "non-unique Vimba camera ID")
         cam = cameras[0]
-        camera_cfg.camera.camera_id = cam.get_id()
+        camera_cfg.camera.camera_id.set_val(cam.get_id(), diff_flag=False)
         return cam
 
 
