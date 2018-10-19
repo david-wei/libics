@@ -126,12 +126,6 @@ def write_hdf(obj, file_path=None, _parent_group=None):
     TypeError
         If the given `obj` has attributes not derived from
         the `HDFBase` class.
-
-    Notes
-    -----
-    WARNING:
-        Undefined behaviour if an attribute is a list with
-        both `str` and numerical elements. (TODO: fix it)
     """
     # Create top level group (HDF file)
     if file_path is not None:
@@ -156,9 +150,12 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                 is_numpy_castable = True
                 ar = None
                 try:
-                    ar = np.array(val)
-                    if ar.dtype == "O":
+                    if type(val) == list:
                         is_numpy_castable = False
+                    else:
+                        ar = np.array(val)
+                        if ar.dtype == "O":
+                            is_numpy_castable = False
                 except ValueError:
                     is_numpy_castable = False
                 # Numpy-castable
