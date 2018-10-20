@@ -1,5 +1,6 @@
 # System Imports
 import math
+import operator
 import os
 
 # Package Imports
@@ -145,7 +146,7 @@ def generate_fill_chars(s, fill_char=" "):
 
 
 ###############################################################################
-# Identity Functions
+# List Fetcher
 ###############################################################################
 
 
@@ -186,3 +187,33 @@ def ret_id(arg):
     Takes any argument and returns the input.
     """
     return arg
+
+
+###############################################################################
+# Operator Mapping
+###############################################################################
+
+
+operator_mapping = {
+    "+": operator.add,
+    "-": operator.sub,
+    "*": operator.mul,
+    "/": operator.truediv,
+    "//": operator.floordiv,
+    "&": operator.and_,
+    "^": operator.xor,
+    "|": operator.or_,
+    "**": operator.pow,
+    "%": operator.mod,
+    "in": operator.contains,
+    "is": operator.is_,
+    "is not": operator.is_not,
+    "<<": operator.lshift,
+    ">>": operator.rshift,
+    "<": operator.lt,
+    "<=": operator.le,
+    "==": operator.eq,
+    "!=": operator.ne,
+    ">=": operator.ge,
+    ">": operator.gt
+}

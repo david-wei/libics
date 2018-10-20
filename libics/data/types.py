@@ -16,22 +16,27 @@ class Quantity(hdf.HDFBase):
     ----------
     name : `str`, optional
         Name of physical quantity.
+    symbol : str or None, optional
+        Symbol of variable.
     unit : `str` or `None`, optional
         Unit of physical quantity. None is interpreted as
         unitless quantity.
     """
 
-    def __init__(self, name="N/A", unit=None):
+    def __init__(self, name="N/A", symbol=None, unit=None):
         super().__init__(pkg_name="libics", cls_name="Quantity")
         self.name = name
+        self.symbol = symbol
         self.unit = unit
 
     def __str__(self):
         s = self.name
+        if self.symbol is not None:
+            s += " " + self.symbol
         if self.unit is not None:
             s += " [" + self.unit + "]"
         return s
-        
+
     def __repr__(self):
         return str(self)
 
