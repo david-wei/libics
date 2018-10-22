@@ -1,5 +1,7 @@
 # System Imports
+import copy
 import numpy as np
+import operator
 
 # Package Imports
 from libics.cfg import err as ERR
@@ -270,6 +272,12 @@ class ArrayData(hdf.HDFBase):
     """
     Stores a multidimensional array and its scaling information (linear
     scaling and physical quantity).
+
+    Attributes
+    ----------
+    ROUND, UNIFORM, NORM1, NORM2, NORMINF:
+        Mode determining how a float index item is retrieved,
+        i.e. whether and how the index value is interpolated.
     """
 
     ROUND = 0
@@ -287,13 +295,15 @@ class ArrayData(hdf.HDFBase):
         self.scale = ArrayScale()
         self.get_float_item_func = self.get_float_item_by_round
 
+    # ++++ Scale +++++++++++++++++++++++++
+
     def set_index_mode(self, index_mode):
         """
         Sets the mode how the `__getitem__` operator (`[]`) is interpreted.
 
         Parameters
         ----------
-        index_mode : ArrayScale.INDEX, ArrayScale.QUANTITY
+        index_mode : ArrayScale.CONST
             INDEX: Interpretation as index.
             QUANTITY: Interpretation as physical quantity.
 
@@ -303,13 +313,21 @@ class ArrayData(hdf.HDFBase):
         """
         return self.scale.set_index_mode(index_mode)
 
+    def set_max(self):
+        """
+        Determines the quantity maxima from the stored scale and data.
+        """
+        self.scale.set_max(self.data)
+
+    # ++++ Float index +++++++++++++++++++
+
     def set_float_index_mode(self, float_index_mode):
         """
         Sets the mode how a fractional index (get_float_item) is interpreted.
 
         Parameters
         ----------
-        float_index_mode : ArrayData.ROUND, ArrayData.EUCLID, ArrayData.UNIFORM
+        float_index_mode : ArrayData.CONST
             ROUND: Rounds to closest integer.
             UNIFORM: Averages uniformly with surrounding points.
             NORM1: Averages with 1-norm as weight.
@@ -333,18 +351,6 @@ class ArrayData(hdf.HDFBase):
         elif float_index_mode == ArrayData.NORMINF:
             self.float_item_norm = np.inf
             self.get_float_item_func = self.get_float_item_by_norm
-
-    def set_max(self):
-        """
-        Determines the quantity maxima from the stored scale and data.
-        """
-        self.scale.set_max(self.data)
-
-    def __getitem__(self, key):
-        return self.data[self.scale.get_index(key)]
-
-    def __setitem__(self, key, val):
-        self[key] = val
 
     def get_float_item(self, ind):
         return self.get_float_item_func(tuple(ind))
@@ -381,6 +387,8 @@ class ArrayData(hdf.HDFBase):
         weights = np.array(weights) / np.sum(weights)
         items = np.array([self.data[i] for i in inds])
         return items * weights
+
+    # ++++ Conversion +++++++++++++++++++++
 
     def cv_unit(self, dim, new_unit, op, val):
         """
@@ -419,6 +427,20 @@ class ArrayData(hdf.HDFBase):
         else:
             self.data = op(self.data, val)
 
+    # ++++ Self operations ++++++++++++++++
+
+    def __getitem__(self, key):
+        return self.data[self.scale.get_index(key)]
+
+    def __setitem__(self, key, val):
+        self[key] = val
+
+    def __str__(self):
+        return str(self.scale) + "\nData:\n" + str(self.data)
+
+    def __repr__(self):
+        return str(self)
+
     def chk_attr(self):
         """
         Checks the object's attribute consistency (data and scale dimension).
@@ -435,24 +457,213 @@ class ArrayData(hdf.HDFBase):
             ret = False
         return ret
 
-    def chk_unit(self, other):
+    # ++++ Combination operations ++++++++
+
+    def cmp_attr(self, other):
+        return self.chk_attr() and other.chk_attr()
+
+    def cmp_unit(self, other):
         """
-        Checks whether the units of two ArrayData objects are identical.
+        Compares whether the units of two ArrayData objects are identical.
         """
-        ret = self.chk_attr() and other.chk_attr()
-        if ret:
-            for dim, quantity in enumerate(self.scale.quantity):
-                ret &= quantity.unit == other.quantity[dim].unit
-        return ret
+        for dim, quantity in enumerate(self.scale.quantity):
+            if not quantity.unit == other.quantity[dim].unit:
+                return False
+        return True
 
-    def __str__(self):
-        return str(self.scale) + "\nData:\n" + str(self.data)
+    def cmp_shape(self, other):
+        """
+        Compares whether the shapes of two ArrayData objects are identical.
+        """
+        return self.data.shape == other.data.shape
 
-    def __repr__(self):
-        return str(self)
+    def cmp_scale(self, other):
+        """
+        Compares whether the scales of two ArrayData objects are identical.
+        """
+        return np.all(np.isclose(self.scale.scale, other.scale.scale))
 
-    # TODO: __add__, __sub__, __mul__, __truediv__, __div__, __pow__
-    # TODO: calculation mode: change of resolution
+    def cmp_offset(self, other):
+        """
+        Compares whether the offsets of two ArrayData objects are identical.
+        """
+        return np.all(np.isclose(self.scale.offset, other.scale.offset))
+
+    def cmp_necessary(self, other):
+        """
+        Performs necessary pre-combination comparison checks.
+        """
+        return (
+            self.cmp_attr(other)
+            and self.cmp_unit(other)
+        )
+
+    def chk_commensurable(self, other):
+        """
+        Checks whether two ArrayData objects are commensurable, i.e. can be
+        combined based on arrays (without index interpolation by quantity).
+        """
+        scale_multiple = (
+            (np.array(other.scale.offset) - np.array(self.scale.offset))
+            / np.array(other.scale.scale)
+        )
+        return (
+            self.cmp_scale(other)
+            and np.all(np.isclose(scale_multiple, np.round(scale_multiple)))
+        )
+
+    def get_common_rect(self, other):
+        """
+        Gets the common offset and max values.
+
+        Returns
+        -------
+        offset : list
+            Offset of common rectangle.
+        max_ : list
+            Max of common rectangle (excluding index).
+        self_offset_index
+        self_max_index
+        other_offset_index
+        other_max_index
+        """
+        offset, max_ = [], []
+        for i, _ in enumerate(self.scale.offset):
+            offset.append(max(self.scale.offset[i], other.scale.offset[i]))
+            max_.append(min(self.scale.max[i], other.scale.max[i]))
+        return (
+            offset, max_,
+            self.scale.get_index_by_quantity(offset),
+            self.scale.get_index_by_quantity(max_),
+            other.scale.get_index_by_quantity(offset),
+            other.scale.get_index_by_quantity(max_)
+        )
+
+    def get_common_obj(self, other, op):
+        """
+        Creates a copy of self.
+
+        The data space is chosen to be common to both ArrayData objects.
+        The given operation is performed to combine both.
+
+        Parameters
+        ----------
+        op : callable
+            Function signature:
+            op(numpy.ndarray, numpy.ndarray) -> numpy.ndarray.
+
+        Returns
+        -------
+        obj : ArrayData
+            Processed object.
+
+        Raises
+        ------
+        ValueError:
+            If the two ArrayData objects cannot be combined.
+        """
+        if not self.cmp_necessary(other):
+            raise ValueError("Invalid necessary values")
+        obj = ArrayData()
+        obj.scale = copy.deepcopy(self.scale)
+        # FIXME: including/excluding max index ambiguity
+        (
+            obj.scale.offset, obj.scale.max,
+            si_offset, si_max,
+            oi_offset, oi_max
+         ) = self.get_common_rect(other)
+        obj.data = self.data[
+            [slice(si_offset[i], si_max[i]) for i in range(len(si_offset))]
+        ]
+        if self.chk_commensurable():
+            obj.data = op(
+                obj.data,
+                other.data[
+                    [slice(oi_offset[i], oi_max[i])
+                     for i in range(len(oi_offset))]
+                ]
+            )
+        else:
+            it = np.nditer(obj.data, flags=["multi_index"])
+            while not it.finished:
+                ind = other.get_index_by_quantity(
+                    obj.scale.cv_index_to_quantity(it.multi_index)
+                )
+                obj.data[it.multi_index] = op(
+                    obj.data[it.multi_index],
+                    other.data[ind]
+                )
+                it.iternext()
+        return obj
+
+    def __add__(self, other):
+        return self.get_common_obj(other, operator.__add__)
+
+    def __sub__(self, other):
+        return self.get_common_obj(other, operator.__sub__)
+
+    def __mul__(self, other):
+        return self.get_common_obj(other, operator.__mul__)
+
+    def __truediv__(self, other):
+        return self.get_common_obj(other, operator.__truediv__)
+
+    def __floordiv__(self, other):
+        return self.get_common_obj(other, operator.__floordiv__)
+
+    def __and__(self, other):
+        return self.get_common_obj(other, operator.__and__)
+
+    def __xor__(self, other):
+        return self.get_common_obj(other, operator.__xor__)
+
+    def __or__(self, other):
+        return self.get_common_obj(other, operator.__or__)
+
+    def __pow__(self, other):
+        return self.get_common_obj(other, operator.__pow__)
+
+    def __lt__(self, other):
+        return self.get_common_obj(other, operator.__lt__).data
+
+    def __le__(self, other):
+        return self.get_common_obj(other, operator.__le__).data
+
+    def __eq__(self, other):
+        return self.get_common_obj(other, operator.__eq__).data
+
+    def __ne__(self, other):
+        return self.get_common_obj(other, operator.__ne__).data
+
+    def __ge__(self, other):
+        return self.get_common_obj(other, operator.__ge__).data
+
+    def __gt__(self, other):
+        return self.get_common_obj(other, operator.__gt__).data
+
+    def get_copy_obj(self, op):
+        """
+        Creates a copy of self object and applies given operation on it.
+
+        Parameters
+        ----------
+        op : callable
+            Function signature:
+            op(numpy.ndarray) -> numpy.ndarray
+
+        Returns
+        -------
+        obj : ArrayData
+        """
+        obj = copy.deepcopy(self)
+        obj.data = op(obj.data)
+        return obj
+
+    def __invert__(self):
+        return self.get_copy_obj(operator.__invert__)
+
+    def __neg__(self):
+        return self.get_copy_obj(operator.__neg__)
 
 
 ###############################################################################
