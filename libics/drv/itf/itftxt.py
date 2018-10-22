@@ -6,7 +6,7 @@ import socket
 import time
 
 # Package Imports
-from libics.itf import itf
+from libics.drv.itf import itf
 
 
 ###############################################################################
