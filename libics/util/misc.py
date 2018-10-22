@@ -170,6 +170,41 @@ def get_first_elem_iter(ls):
         return ls
 
 
+def _gcrec(prev_comb, rem_ls):
+    ls = []
+    if len(rem_ls) > 1:
+        for cur_val in rem_ls[0]:
+            ls += _gcrec(prev_comb + [cur_val], rem_ls[1:])
+    else:
+        for cur_val in rem_ls[0]:
+            ls.append(prev_comb + [cur_val])
+    return ls
+
+
+def get_combinations(ls):
+    """
+    Takes an iterable of iterables and returns a list with all possible
+    mutual, ordered combinations.
+
+    Parameters
+    ----------
+    ls : iterable
+        Iterable from which combinations are constructed.
+
+    Returns
+    -------
+    comb : list
+        Combinations list.
+
+    Example
+    -------
+    >>>> ls = [(1, 2), (5, ), (7, 8)]
+    >>>> get_combinations(ls)
+    [[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]
+    """
+    return _gcrec([], ls)
+
+
 ###############################################################################
 # Identity Functions
 ###############################################################################
