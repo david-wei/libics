@@ -71,6 +71,21 @@ class ArrayScale(hdf.HDFBase):
         elif index_mode == ArrayScale.QUANTITY:
             self.get_index_func = self.get_index_by_quantity
 
+    def set_max(self, ar):
+        """
+        Determines the quantity maxima from the stored scaling and a given
+        array.
+
+        Parameters
+        ----------
+        ar : numpy.ndarray or tuple
+            Array (or its shape) from which the maximum is determined.
+        """
+        if type(ar) == np.ndarray:
+            ar = ar.shape
+        self.max = [self.cv_index_to_quantity(ind, dim)
+                    for dim, ind in enumerate(ar)]
+
     def get_index_by_index(self, val, **kwargs):
         """
         Identity function.
@@ -257,6 +272,12 @@ class ArrayData(hdf.HDFBase):
     scaling and physical quantity).
     """
 
+    ROUND = 0
+    UNIFORM = 1
+    NORM1 = 2
+    NORM2 = 3
+    NORMINF = 4
+
     def __init__(self):
         super().__init__(pkg_name="libics", cls_name="ArrayData")
         self.init()
@@ -264,6 +285,7 @@ class ArrayData(hdf.HDFBase):
     def init(self):
         self.data = None
         self.scale = ArrayScale()
+        self.get_float_item_func = self.get_float_item_by_round
 
     def set_index_mode(self, index_mode):
         """
@@ -281,11 +303,84 @@ class ArrayData(hdf.HDFBase):
         """
         return self.scale.set_index_mode(index_mode)
 
+    def set_float_index_mode(self, float_index_mode):
+        """
+        Sets the mode how a fractional index (get_float_item) is interpreted.
+
+        Parameters
+        ----------
+        float_index_mode : ArrayData.ROUND, ArrayData.EUCLID, ArrayData.UNIFORM
+            ROUND: Rounds to closest integer.
+            UNIFORM: Averages uniformly with surrounding points.
+            NORM1: Averages with 1-norm as weight.
+            NORM2: Averages with Euclidean distance as weight.
+            NORMINF: Averages with inf-norm as weight.
+
+        Notes
+        -----
+        If an invalid parameter is given, the index mode remains unchanged.
+        """
+        if float_index_mode == ArrayData.ROUND:
+            self.get_float_item_func = self.get_float_item_by_round
+        elif float_index_mode == ArrayData.UNIFORM:
+            self.get_float_item_func = self.get_float_item_by_uniform
+        elif float_index_mode == ArrayData.NORM1:
+            self.float_item_norm = 1
+            self.get_float_item_func = self.get_float_item_by_norm
+        elif float_index_mode == ArrayData.NORM2:
+            self.float_item_norm = 2
+            self.get_float_item_func = self.get_float_item_by_norm
+        elif float_index_mode == ArrayData.NORMINF:
+            self.float_item_norm = np.inf
+            self.get_float_item_func = self.get_float_item_by_norm
+
+    def set_max(self):
+        """
+        Determines the quantity maxima from the stored scale and data.
+        """
+        self.scale.set_max(self.data)
+
     def __getitem__(self, key):
         return self.data[self.scale.get_index(key)]
 
     def __setitem__(self, key, val):
         self[key] = val
+
+    def get_float_item(self, ind):
+        return self.get_float_item_func(tuple(ind))
+
+    def get_float_item_by_round(self, ind):
+        ind = [round(x) for x in ind]
+        if len(ind) == 1:
+            ind = ind[0]
+        return self.data[ind]
+
+    @staticmethod
+    def _cv_float_index_to_int_index(ind):
+        inds = []
+        for x in ind:
+            xx = int(x)
+            if np.isclose(x, xx):
+                inds.append((xx, ))
+            else:
+                inds.append((xx, xx + 1))
+        return inds
+
+    def get_float_item_by_uniform(self, ind):
+        inds = ArrayData._cv_float_index_to_int_index(ind)
+        items = [self.data[ind] for ind in misc.get_combinations(inds)]
+        return np.mean(items)
+
+    def get_float_item_by_norm(self, ind):
+        inds = ArrayData._cv_float_index_to_int_index(ind)
+        inds = misc.get_combinations(inds)
+        weights = []
+        ind = np.array(ind)
+        for i in inds:
+            weights.append(np.linalg.norm(ind - np.array(i)))
+        weights = np.array(weights) / np.sum(weights)
+        items = np.array([self.data[i] for i in inds])
+        return items * weights
 
     def cv_unit(self, dim, new_unit, op, val):
         """
@@ -335,9 +430,19 @@ class ArrayData(hdf.HDFBase):
         """
         ret = True
         try:
-            ret = (len(self.data.shape) == self.get_dim() - 1)
+            ret = (len(self.data.shape) == self.scale.get_dim() - 1)
         except(TypeError, AttributeError):
             ret = False
+        return ret
+
+    def chk_unit(self, other):
+        """
+        Checks whether the units of two ArrayData objects are identical.
+        """
+        ret = self.chk_attr() and other.chk_attr()
+        if ret:
+            for dim, quantity in enumerate(self.scale.quantity):
+                ret &= quantity.unit == other.quantity[dim].unit
         return ret
 
     def __str__(self):
@@ -345,6 +450,9 @@ class ArrayData(hdf.HDFBase):
 
     def __repr__(self):
         return str(self)
+
+    # TODO: __add__, __sub__, __mul__, __truediv__, __div__, __pow__
+    # TODO: calculation mode: change of resolution
 
 
 ###############################################################################
