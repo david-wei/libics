@@ -1,3 +1,10 @@
+# Package Imports
+from libics import cfg
+
+
+###############################################################################
+
+
 class ITF_PROTOCOL:
 
     """
@@ -15,7 +22,7 @@ class ITF_PROTOCOL:
     BINARY = 1
 
 
-class ProtocolCfgBase(object):
+class ProtocolCfgBase(cfg.CfgBase):
 
     """
     Interface configuration base class.
@@ -38,6 +45,7 @@ class ProtocolCfgBase(object):
     """
 
     def __init__(self, protocol=ITF_PROTOCOL.TEXT, interface=None, **kwargs):
+        super().__init__()
         self.protocol = protocol
         self.interface = interface
         self.kwargs = kwargs
@@ -144,15 +152,15 @@ class BinCfgBase(ProtocolCfgBase):
 
     Parameters
     ----------
-    device_id : str
+    device : str
         String identifier for device (cf. address).
     """
 
-    def __init__(self, device_id=None, ll_obj=None, **kwargs):
+    def __init__(self, device=None, ll_obj=None, **kwargs):
         super().__init__(**kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
-        self.device_id = device_id
+        self.device = device
 
     def get_hl_cfg(self):
         obj = ITF_BIN.MAP[self.interface](ll_obj=self, **self.kwargs)
@@ -199,6 +207,9 @@ class TxtSerialCfg(TxtCfgBase):
         self.parity = parity
         self.stopbits = stopbits
 
+    def get_hl_cfg(self):
+        return self
+
 
 class TxtEthernetCfg(TxtCfgBase):
 
@@ -218,6 +229,9 @@ class TxtEthernetCfg(TxtCfgBase):
         self.port = port
         self.blocking = blocking
 
+    def get_hl_cfg(self):
+        return self
+
 
 class BinVimbaCfg(BinCfgBase):
 
@@ -225,3 +239,6 @@ class BinVimbaCfg(BinCfgBase):
         super().__init__(**kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
+
+    def get_hl_cfg(self):
+        return self
