@@ -210,7 +210,7 @@ def _read_spectrum_sr760(specanalyzer_itf):
     specanalyzer_itf.send("SPEC? 0")
     spectrum = specanalyzer_itf.receive()
     spectrum = re.split(r",", spectrum)
-    spectrum = spectrum[0:len(spectrum) - 1]
+    spectrum = np.array(spectrum[0:len(spectrum) - 1])
     # Read frequencies
     specanalyzer_itf.send("STRF?")
     strf = float(specanalyzer_itf.receive())

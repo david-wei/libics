@@ -278,6 +278,32 @@ class ArrayData(hdf.HDFBase):
     ROUND, UNIFORM, NORM1, NORM2, NORMINF:
         Mode determining how a float index item is retrieved,
         i.e. whether and how the index value is interpolated.
+
+    Example
+    -------
+    >>> # Required steps
+    >>> # 1) Create an instance using the default constructor
+    >>> ard = ArrayData()
+    >>> # 2) Set the data
+    >>> some_data = np.arange(24).reshape((4, 6))
+    >>> offset, scale = [10.0, -20.0], [4.0, 2.5]
+    >>> ard.data = some_data
+    >>> # 3) Add metadata (data description)
+    >>> ard.scale.add_dim(
+    ...     offset=offset[0], scale=scale[0],
+    ...     name="some variable", symbol="x", unit="mm"
+    ... )
+    >>> ard.scale.add_dim(
+    ...     offset=offset[1], scale=scale[1],
+    ...     name="other variable", symbol="y", unit="kV"
+    ... )
+    >>> # 4) Update scale maxima
+    >>> ard.set_max()
+    >>> # Optionally set modes
+    >>> # A) Index mode
+    >>> ard.set_index_mode(ArrayScale.QUANTITY)
+    >>> # B) Float index mode
+    >>> ard.set_float_index_mode(ArrayData.ROUND)
     """
 
     ROUND = 0

@@ -3,5 +3,7 @@ from . import cam           # noqa
 from . import camutil       # noqa
 from . import drv           # noqa
 from . import drvcam        # noqa
+from . import drvosc        # noqa
 from . import drvpiezo      # noqa
+from . import drvspan       # noqa
 from . import piezo         # noqa
