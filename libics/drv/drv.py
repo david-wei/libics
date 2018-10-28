@@ -47,6 +47,10 @@ class DrvCfgBase(cfg.CfgBase):
         Device model.
     """
 
+    driver = cfg.CfgItemDesc()
+    identifier = cfg.CfgItemDesc()
+    model = cfg.CfgItemDesc()
+
     def __init__(
         self,
         driver=DRV_DRIVER.CAM, interface=None, identifier="", model=""
@@ -127,6 +131,19 @@ class CamCfg(DrvCfgBase):
     * Horizontal (hrzt) and vertical (vert) directions.
     """
 
+    pixel_hrzt_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_hrzt_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_hrzt_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    format_color = cfg.CfgItemDesc(group="format")
+    channel_bitdepth = cfg.CfgItemDesc(group="format", val_check=int)
+    exposure_mode = cfg.CfgItemDesc(group="capture")
+    exposure_time = cfg.CfgItemDesc(group="capture", val_check=(0, None))
+    acquisition_frames = cfg.CfgItemDesc(group="capture", val_check=int)
+    sensitivity = cfg.CfgItemDesc(group="capture")
+
     def __init__(
         self,
         pixel_hrzt_count=1338, pixel_hrzt_size=6.45e-6,
@@ -182,6 +199,12 @@ class PiezoCfg(DrvCfgBase):
         Feedback operation mode.
     """
 
+    limit_min = cfg.CfgItemDesc(group="limit")
+    limit_max = cfg.CfgItemDesc(group="limit")
+    displacement = cfg.CfgItemDesc(group="property")
+    channel = cfg.CfgItemDesc()
+    feedback_mode = cfg.CfgItemDesc(group="property")
+
     def __init__(
         self,
         limit_min=0.0, limit_max=75.0,
@@ -218,7 +241,7 @@ class SpAnCfg(DrvCfgBase):
 
     Parameters
     ----------
-    bandwith : float
+    bandwidth : float
         Spectral bandwidth in Hertz (Hz).
     frequency_start, frequency_stop : float
         Frequency range (start, stop) in Hertz (Hz).
@@ -227,6 +250,12 @@ class SpAnCfg(DrvCfgBase):
     average_count : int
         Number of averages.
     """
+
+    bandwidth = cfg.CfgItemDesc(group="frequency", val_check=(0, None))
+    frequency_start = cfg.CfgItemDesc(group="frequency")
+    frequency_stop = cfg.CfgItemDesc(group="frequency")
+    average_mode = cfg.CfgItemDesc(group="average")
+    average_count = cfg.CfgItemDesc(group="average", val_check=(0, None))
 
     def __init__(
         self,

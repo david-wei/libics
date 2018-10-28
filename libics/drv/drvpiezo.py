@@ -3,6 +3,7 @@ import abc
 import time
 
 # Package Imports
+from libics.cfg import CFG_MSG_TYPE
 from libics.drv import drv, itf
 
 
@@ -36,12 +37,26 @@ class PiezoDrvBase(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def write(self):
+    def write(self, msg):
         pass
 
     @abc.abstractmethod
-    def read(self):
+    def read(self, msg):
         pass
+
+    def process(self):
+        """
+        Processes the message queue in the configuration object.
+        """
+        msg = self.cfg._pop_msg()
+        while (msg is not None):
+            if (msg.msg_type == CFG_MSG_TYPE.WRITE or
+                    msg.msg_type == CFG_MSG_TYPE.VALIDATE):
+                self.write(msg)
+            if (msg.msg_type == CFG_MSG_TYPE.READ or
+                    msg.msg_type == CFG_MSG_TYPE.VALIDATE):
+                self.read(msg)
+            msg = self.cfg._pop_msg()
 
     @abc.abstractmethod
     def set_voltage(self, voltage):
@@ -78,10 +93,10 @@ class ThorlabsMDT69XA(PiezoDrvBase):
     def close(self):
         self._interface.close()
 
-    def write(self):
+    def write(self, msg):
         pass
 
-    def read(self):
+    def read(self, msg):
         pass
 
     def set_voltage(self, voltage):
