@@ -151,6 +151,8 @@ class CohMeas(QWidget, object):
         self._cam_access = threading.Lock()
         self._cohtrace_access = threading.Lock()
         self._measurement_timer = None
+        self._busy_set_volt = threading.Lock()
+        self._busy_calc_im = threading.Lock()
         # Normalization images
         self._image_buffer_count = image_buffer
         self._ref_fixed_image = None
@@ -562,6 +564,9 @@ class CohMeas(QWidget, object):
             If `not None`, sets the given voltage. Ignores the
             `index` parameter.
         """
+        self._busy_calc_im.acquire()
+        self._busy_set_volt.acquire()
+        self._busy_calc_im.release()
         if voltage is None:
             if index is None:
                 index = ((self._piezo_trace_counter + 1)
@@ -569,6 +574,7 @@ class CohMeas(QWidget, object):
             voltage = self._piezo_trace[index]
             self._piezo_trace_counter = index
         self.piezo.set_voltage(voltage)
+        self._busy_set_volt.release()
         return True
         """
         # TODO: implement manual voltage change option
@@ -714,9 +720,13 @@ class CohMeas(QWidget, object):
             if len(np_image.shape) == 3:
                 np_image = np.mean(np_image, 2)
             if self.mode == CohMeas.NORMVIEW:
+                self._busy_set_volt.acquire()
+                self._busy_calc_im.acquire()
+                self._busy_set_volt.release()
                 self.append_normview(np_image)
                 self.display_normview()
                 self.display_cohtrace()
+                self._busy_calc_im.release()
             elif self.mode == CohMeas.REFFIXED:
                 self.set_ref_image(np_image, "fixed")
             elif self.mode == CohMeas.REFSCANNED:
@@ -844,7 +854,7 @@ if __name__ == "__main__":
     # Test settings
     step_time = 0.1
     cohtraces = 3
-    piezo_steps = 1500
+    piezo_steps = 500
     piezo_trace = "linear_up"
     piezo_port = "COM2"
     piezo_id = 0    # Channel (x: 0, y: 1, z: 2)
