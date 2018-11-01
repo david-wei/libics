@@ -5,7 +5,7 @@ import re
 
 # Package Imports
 from libics.data import arraydata
-from libics.drv import drv, itf
+from libics.drv import drv
 
 
 ###############################################################################
@@ -16,37 +16,54 @@ def get_span_drv(cfg):
         return StanfordSR760(cfg)
 
 
-class SpAnDrvBase(abc.ABC):
+class SpAnDrvBase(drv.DrvBase):
 
-    def __init__(self, cfg=None):
-        self.cfg = cfg
+    def __init__(self, cfg):
+        assert(isinstance(cfg, drv.SpAnCfg))
+        super().__init__(cfg=cfg)
 
     @abc.abstractmethod
-    def setup(self):
+    def read_powerspectraldensity(self, read_meta=True):
+        """read_meta flag determines whether to perform a read call for the
+        metadata accompanying the spectral data (e.g. frequency)"""
         pass
 
-    @abc.abstractmethod
-    def shutdown(self):
+    # ++++ Write/read methods +++++++++++
+
+    def _write_bandwidth(self, value):
         pass
 
-    @abc.abstractmethod
-    def connect(self):
+    def _read_bandwidth(self):
         pass
 
-    @abc.abstractmethod
-    def close(self):
+    def _write_frequency_start(self, value):
         pass
 
-    @abc.abstractmethod
-    def write(self):
+    def _read_frequency_start(self):
         pass
 
-    @abc.abstractmethod
-    def read(self):
+    def _write_frequency_stop(self, value):
         pass
 
-    @abc.abstractmethod
-    def get_powerspectraldensity(self):
+    def _read_frequency_stop(self):
+        pass
+
+    def _write_average_mode(self, value):
+        pass
+
+    def _read_average_mode(self):
+        pass
+
+    def _write_average_count(self, value):
+        pass
+
+    def _read_average_count(self):
+        pass
+
+    def _write_voltage_max(self, value):
+        pass
+
+    def _read_voltage_max(self):
         pass
 
 
@@ -104,49 +121,72 @@ class StanfordSR760(SpAnDrvBase):
     }
 
     def __init__(self, cfg):
-        super().__init__(cfg=cfg)
-        self._interface = None
-        self.setup()
+        super().__init__(cfg)
 
-    def setup(self, cfg=None):
-        if cfg is not None:
-            self.cfg = cfg
-        self._interface = itf.get_itf(cfg.interface)
-        self._interface.setup()
-
-    def shutdown(self):
-        self._interface.shutdown()
-
-    def connect(self):
-        self._interface.connect()
-
-    def close(self):
-        self._interface.close()
-
-    def write(self):
-        pass
-
-    def read(self):
-        pass
-
-    def get_powerspectraldensity(self):
-        # self._interface.send("MEAS 1")    # Measure psd
-        # self._interface.send("STRT")      # Start measurement
-        # TODO: wait for measurement to finish
+    def read_powerspectraldensity(self, read_meta=True):
         self._interface.send("SPEC? 0")
         pwr_spectrum = re.split(",", self._interface.recv())[:-1]
-        self._interface.send("STRF?")
-        f_start = float(self._interface.recv())
-        self._interface.send("SPAN?")
-        f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
+        if read_meta:
+            self.cfg.bandwidth.val = self._read_bandwidth()
+            self.cfg.frequency_start.val = self._read_frequency_start()
+            self.cfg.frequency_stop.val = self._read_frequency_stop()
+            self.cfg.average_mode.val = self._read_average_mode()
+            self.cfg.average_count.val = self._read_average_count()
+            self.cfg.voltage_max.val = self._read_voltage_max()
         self._interface.send("UNIT?")
         unit = StanfordSR760.UNIT[int(self._interface.recv())]
 
         psd = arraydata.ArrayData()
         psd.data = np.array(pwr_spectrum)
-        psd.data.scale.add_dim(
-            f_start, f_range / (len(pwr_spectrum) - 1),
-            name="power spectral density", symbol="PSD", unit=unit
+        psd.scale.add_dim(
+            offset=self.cfg.frequency_start,
+            scale=((self.cfg.frequency_stop - self.cfg.frequency_start) / 399),
+            name="power spectral density",
+            symbol="PSD",
+            unit=unit
         )
         psd.set_max()
         return psd
+
+    # ++++ Write/read methods +++++++++++
+
+    def _read_bandwidth(self):
+        self._interface.send("SPAN?")
+        f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
+        return f_range / 400
+
+    def _read_frequency_start(self):
+        self._interface.send("STRF?")
+        return float(self._interface.recv())
+
+    def _read_frequency_stop(self):
+        f_start = self._read_frequency_start()
+        self._interface.send("SPAN?")
+        f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
+        return f_start + f_range
+
+    def _read_average_mode(self):
+        self._interface.send("AVGM?")
+        return StanfordSR760.AVERAGING_MODE(int(self.recv()))
+
+    def _write_average_count(self, value):
+        if value == 1:
+            self._interface.send("AVGO0")
+        else:
+            self._interface.send("AVGO1")
+            self._interface.send("NAVG{:d}".format(int(value)))
+
+    def _read_average_count(self):
+        self._interface.send("AVGO?")
+        if int(self._interface.recv()) == 1:
+            self._interface.send("NAVG?")
+            return int(self._interface.recv())
+        else:
+            return 1
+
+    def _write_voltage_max(self, value):
+        self._interface.send("IRNG{:.0f}".format(value))
+
+    def _read_voltage_max(self):
+        self._interface.send("IRNG?")
+        return float(self._interface.recv())

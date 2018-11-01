@@ -3,8 +3,7 @@ import abc
 import time
 
 # Package Imports
-from libics.cfg import CFG_MSG_TYPE
-from libics.drv import drv, itf
+from libics.drv import drv
 
 
 ###############################################################################
@@ -15,55 +14,54 @@ def get_piezo_drv(cfg):
         return ThorlabsMDT69XA(cfg)
 
 
-class PiezoDrvBase(abc.ABC):
+class PiezoDrvBase(drv.DrvBase):
 
-    def __init__(self, cfg=None):
-        self.cfg = cfg
+    """
+    Piezo driver API.
+    """
+
+    def __init__(self, cfg):
+        assert(isinstance(cfg, drv.PiezoCfg))
+        super().__init__(cfg=cfg)
 
     @abc.abstractmethod
-    def setup(self):
+    def write_voltage(self, voltage):
         pass
 
     @abc.abstractmethod
-    def shutdown(self):
+    def read_voltage(self):
         pass
 
-    @abc.abstractmethod
-    def connect(self):
+    # ++++ Write/read methods +++++++++++
+
+    def _write_limit_min(self, value):
         pass
 
-    @abc.abstractmethod
-    def close(self):
+    def _read_limit_min(self):
         pass
 
-    @abc.abstractmethod
-    def write(self, msg):
+    def _write_limit_max(self, value):
         pass
 
-    @abc.abstractmethod
-    def read(self, msg):
+    def _read_limit_max(self):
         pass
 
-    def process(self):
-        """
-        Processes the message queue in the configuration object.
-        """
-        msg = self.cfg._pop_msg()
-        while (msg is not None):
-            if (msg.msg_type == CFG_MSG_TYPE.WRITE or
-                    msg.msg_type == CFG_MSG_TYPE.VALIDATE):
-                self.write(msg)
-            if (msg.msg_type == CFG_MSG_TYPE.READ or
-                    msg.msg_type == CFG_MSG_TYPE.VALIDATE):
-                self.read(msg)
-            msg = self.cfg._pop_msg()
-
-    @abc.abstractmethod
-    def set_voltage(self, voltage):
+    def _write_displacement(self, value):
         pass
 
-    @abc.abstractmethod
-    def get_voltage(self):
+    def _read_displacement(self):
+        pass
+
+    def _write_channel(self, value):
+        pass
+
+    def _read_channel(self):
+        pass
+
+    def _write_feedback_mode(self, value):
+        pass
+
+    def _read_feedback_mode(self):
         pass
 
 
@@ -73,45 +71,74 @@ class PiezoDrvBase(abc.ABC):
 class ThorlabsMDT69XA(PiezoDrvBase):
 
     def __init__(self, cfg):
-        super().__init__(cfg=cfg)
-        self._interface = None
-        self.setup()
-
-    def setup(self, cfg=None):
-        if cfg is not None:
-            self.cfg = cfg
-        self._interface = itf.get_itf(cfg.interface)
-        self._interface.setup()
-
-    def shutdown(self):
-        self._interface.shutdown()
+        super().__init__(cfg)
+        ThorlabsMDT69XA._assert_channel(cfg.channel.val)
+        self.__channel = cfg.channel.val
 
     def connect(self):
-        self._interface.connect()
+        super().connect()
         self._turn_off_echo_mode()
 
-    def close(self):
-        self._interface.close()
-
-    def write(self, msg):
-        pass
-
-    def read(self, msg):
-        pass
-
-    def set_voltage(self, voltage):
+    def write_voltage(self, voltage):
+        self.interface_access.acquire()
         self._interface.send(
             "{:s}V{:.3f}".format(str(self.cfg.channel), voltage)
         )
         time.sleep(0.05)
+        self.interface_access.release()
 
-    def get_voltage(self):
+    def read_voltage(self):
+        self.interface_access.acquire()
         self._interface.send("{:s}VR?".format(str(self.cfg.channel)))
-        s_data = self._interface.recv()
-        voltage = float(s_data)
+        voltage = float(self._interface.recv())
+        self.interface_access.release()
         return voltage
 
+    # ++++ Write/read methods +++++++++++
+
+    def _write_limit_min(self, value):
+        self._interface.send(
+            "{:s}L{:.3f}".format(str(self.cfg.channel), value)
+        )
+
+    def _read_limit_min(self):
+        self._interface.send("{:s}L?")
+        return float(self._interface.recv())
+
+    def _write_limit_max(self, value):
+        self._interface.send(
+            "{:s}H{:.3f}".format(str(self.cfg.channel), value)
+        )
+
+    def _read_limit_max(self):
+        self._interface.send("{:s}H?")
+        return float(self._interface.recv())
+
+    def _write_channel(self, value):
+        self.__channel = ThorlabsMDT69XA._assert_channel(value)
+
+    def _read_channel(self):
+        return self.__channel
+
+    def _write_feedback_mode(self, value):
+        ThorlabsMDT69XA._assert_feedback_mode(value)
+
+    def _read_feedback_mode(self):
+        return drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP
+
     # ++++ Helper methods +++++++++++++++
+
+    @staticmethod
+    def _assert_channel(value):
+        if value not in ["x", "y", "z", "X", "Y", "Z"]:
+            raise ValueError("invalid channel: {:s}".format(str(value)))
+        return value
+
+    @staticmethod
+    def _assert_feedback_mode(value):
+        if value != drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP:
+            raise ValueError("invalid feedback mode: {:s}".format(str(value)))
+        return value
 
     def _turn_off_echo_mode(self):
         self._interface.send("E")

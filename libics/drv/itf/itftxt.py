@@ -57,7 +57,6 @@ class TxtSerialItf(TxtItfBase):
     def __init__(self, cfg):
         super().__init__(cfg=cfg)
         self._serial = None
-        self.setup()
 
     def setup(self, cfg=None):
         if cfg is not None:
@@ -120,7 +119,6 @@ class TxtEthernetItf(TxtItfBase):
     def __init__(self, cfg):
         super().__init__(cfg=cfg)
         self._socket = None
-        self.setup()
 
     def setup(self, cfg=None):
         if cfg is not None:

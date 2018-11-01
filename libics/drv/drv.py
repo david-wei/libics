@@ -1,5 +1,101 @@
+# System Imports
+import abc
+import threading
+
 # Package Imports
 from libics import cfg
+from libics import drv
+
+
+###############################################################################
+
+
+class DrvBase(abc.ABC):
+
+    """
+    Driver base class.
+
+    Provides an API to communicate with the external interface. Communication
+    is serialized with a message queue that can be processed. Immediate
+    thread-safe communication is enabled by acquiring the `interface_access`
+    lock and calling the `read`/`write` methods directly.
+
+    The initialization functions (`setup`, `shutdown`, `connect`, `close`) have
+    to be implemented as well as the actual functional methods. Methods using
+    the message queue system have to implement I/O functions for each attribute
+    and should be named `_write_<attr_name>` and `_read_<attr_name>`. The
+    write function takes one value parameter and the read function returns a
+    corresponding value parameter. When implementing direct access methods,
+    guard the method with lock access.
+
+    Parameters
+    ----------
+    cfg : DrvBaseCfg
+        Driver configuration object.
+    """
+
+    def __init__(self, cfg=None):
+        self.cfg = cfg
+        self._interface = None
+        self.interface_access = threading.Lock()
+
+    def __enter__(self):
+        self.setup()
+        self.connect()
+
+    def __exit__(self, *args):
+        self.close()
+        self.shutdown()
+
+    def setup(self, cfg=None):
+        if cfg is not None:
+            self.cfg = cfg
+        self._interface = drv.itf.get_itf(self.cfg.interface)
+        self._interface.setup()
+
+    def shutdown(self):
+        self._interface.shutdown()
+
+    def connect(self):
+        self._interface.connect()
+
+    def close(self):
+        self._interface.close()
+
+    def write(self, msg):
+        func = getattr(self, "_write_" + msg.name)
+        self.interface_access.acquire()
+        if msg.value is None:
+            func()
+        else:
+            func(msg.value)
+        self.interface_access.release()
+
+    def read(self, msg):
+        func = getattr(self, "_read_" + msg.name)
+        self.interface_access.acquire()
+        ret = func()
+        self.interface_access.release()
+        msg.callback(ret)
+
+    def process(self):
+        """
+        Processes the message queue in the configuration object.
+        """
+        msg = self.cfg._pop_msg()
+        while (msg is not None):
+            if (msg.msg_type == cfg.CFG_MSG_TYPE.WRITE or
+                    msg.msg_type == cfg.CFG_MSG_TYPE.VALIDATE):
+                self.write(msg)
+            if (msg.msg_type == cfg.CFG_MSG_TYPE.READ or
+                    msg.msg_type == cfg.CFG_MSG_TYPE.VALIDATE):
+                self.read(msg)
+            msg = self.cfg._pop_msg()
+
+    def get_drv(self, cfg=None):
+        if cfg is None:
+            cfg = self.cfg
+        return drv.get_drv(cfg)
 
 
 ###############################################################################
@@ -43,7 +139,7 @@ class DrvCfgBase(cfg.CfgBase):
         Connection interface configuration.
     identifier : str
         Unique identifier of device.
-    model : str
+    model : DRV_MODEL
         Device model.
     """
 
@@ -53,16 +149,24 @@ class DrvCfgBase(cfg.CfgBase):
 
     def __init__(
         self,
-        driver=DRV_DRIVER.CAM, interface=None, identifier="", model=""
+        driver=DRV_DRIVER.CAM, interface=None, identifier="", model="",
+        **kwargs
     ):
         super().__init__()
         self.driver = driver
         self.interface = interface
         self.identifier = identifier
         self.model = model
+        self.kwargs = kwargs
 
     def get_hl_cfg(self):
-        obj = DRV_DRIVER.MAP[self.interface](ll_obj=self, **self.kwargs)
+        MAP = {
+            DRV_DRIVER.CAM: CamCfg,
+            DRV_DRIVER.PIEZO: PiezoCfg,
+            DRV_DRIVER.SPAN: SpAnCfg,
+            DRV_DRIVER.OSC: OscCfg
+        }
+        obj = MAP[self.driver.val](ll_obj=self, **self.kwargs)
         return obj.get_hl_cfg()
 
 
@@ -249,6 +353,8 @@ class SpAnCfg(DrvCfgBase):
         Averaging mode.
     average_count : int
         Number of averages.
+    voltage_max : float
+        Voltage input max range in decibel volts (dBV).
     """
 
     bandwidth = cfg.CfgItemDesc(group="frequency", val_check=(0, None))
@@ -256,12 +362,14 @@ class SpAnCfg(DrvCfgBase):
     frequency_stop = cfg.CfgItemDesc(group="frequency")
     average_mode = cfg.CfgItemDesc(group="average")
     average_count = cfg.CfgItemDesc(group="average", val_check=(0, None))
+    voltage_max = cfg.CfgItemDesc(group="amplitude")
 
     def __init__(
         self,
         bandwidth=1e3,
         frequency_start=0.0, frequency_stop=1e5,
         average_mode=DRV_SPAN.AVERAGE_MODE.LIN, average_count=100,
+        voltage_max=-30.0,
         ll_obj=None, **kwargs
     ):
         super().__init__(**kwargs)
@@ -272,6 +380,7 @@ class SpAnCfg(DrvCfgBase):
         self.frequency_stop = frequency_stop
         self.average_mode = average_mode
         self.average_count = average_count
+        self.voltage_max = voltage_max
 
     def get_hl_cfg(self):
         return self
@@ -296,14 +405,3 @@ class OscCfg(DrvCfgBase):
 
     def get_hl_cfg(self):
         return self
-
-
-# +++++++++++++++++++++++++++++
-
-
-DRV_DRIVER.MAP = {
-    DRV_DRIVER.CAM: CamCfg,
-    DRV_DRIVER.PIEZO: PiezoCfg,
-    DRV_DRIVER.SPAN: SpAnCfg,
-    DRV_DRIVER.OSC: OscCfg
-}

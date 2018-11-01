@@ -78,19 +78,17 @@ class CfgBase(abc.ABC):
         level object can be dynamically created.
         """
 
-    def _add_msg(self, msg_type, callback=None):
+    def _add_msg(self, msg):
         """
         Adds a message to a message queue (appends to last position) for
         subsequent processing.
 
         Parameters
         ----------
-        msg_type : CFG_MSG_TYPE
-            Read/write message types.
-        callback : callable or None
-            Callback function if required.
+        msg : CfgMsg
+            Message to be processed.
         """
-        self._msg_queue.append(CfgMsg(msg_type, callback=callback))
+        self._msg_queue.append(msg)
 
     def _pop_msg(self):
         """
@@ -129,9 +127,14 @@ class CFG_MSG_TYPE:
 
 class CfgMsg(object):
 
-    def __init__(self, msg_type, callback=None):
+    def __init__(self, msg_type, value=None, callback=None):
         self.msg_type = msg_type
-        self.callback = callback
+        self.value = value
+        self._callback = callback
+
+    def callback(self, *args, **kwargs):
+        if self._callback is not None:
+            return self._callback(*args, **kwargs)
 
 
 class CfgItem(object):
@@ -141,6 +144,8 @@ class CfgItem(object):
     ----------
     cfg : CfgBase
         Configuration class containing this item.
+    name : str
+        Name of the attribute represented by the instance.
     group : str
         Group name the attribute belongs to.
     val_check : None or list or tuple or type
@@ -155,10 +160,11 @@ class CfgItem(object):
             Checks type of value.
     """
 
-    def __init__(self, cfg, group="general", val_check=None):
+    def __init__(self, cfg, name, group="general", val_check=None, val=None):
         self.cfg = cfg
+        self.name = name
         self.group = group
-        self._val = None
+        self._val = val
         self.val_check = None
         self.status = CFG_MSG_TYPE.IGNORE
         self.set_val_check(val_check=val_check)
@@ -195,18 +201,32 @@ class CfgItem(object):
     def read(self):
         """appends read msg"""
         self.status = CFG_MSG_TYPE.READ
-        self.cfg._add_msg(CFG_MSG_TYPE.READ,
-                          callback=(lambda x: setattr(self, "val", x)))
+        self.cfg._add_msg(CfgMsg(
+            CFG_MSG_TYPE.READ,
+            value=None,
+            callback=(lambda x: setattr(self, "val", x))
+        ))
 
-    def write(self, validate=False):
+    def write(self, val=None, validate=False):
         """appends write msg, potentially with validate read call"""
+        if val is None:
+            val = self.val
+        elif not validate:
+            self.val = val
         if validate:
             self.status = CFG_MSG_TYPE.VALIDATE
-            self.cfg._add_msg(CFG_MSG_TYPE.VALIDATE,
-                              callback=(lambda x: setattr(self, "val", x)))
+            self.cfg._add_msg(CfgMsg(
+                CFG_MSG_TYPE.VALIDATE,
+                value=self.val,
+                callback=(lambda x: setattr(self, "val", x))
+            ))
         else:
             self.status = CFG_MSG_TYPE.IGNORE
-            self.cfg._add_msg(CFG_MSG_TYPE.WRITE, callback=None)
+            self.cfg._add_msg(CfgMsg(
+                CFG_MSG_TYPE.WRITE,
+                value=self.val,
+                callback=None
+            ))
 
     def __lt__(self, other):
         if type(other) == CfgItem:
@@ -283,6 +303,8 @@ class CfgItemDesc:
         else:
             instance.__dict__[self.name] = CfgItem(
                 instance,
+                self.name,
                 group=self.group,
-                val_check=self.val_check
+                val_check=self.val_check,
+                val=value
             )

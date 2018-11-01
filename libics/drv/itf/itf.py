@@ -64,7 +64,11 @@ class ProtocolCfgBase(cfg.CfgBase):
         KeyError:
             If highest level object could not be constructed.
         """
-        obj = ITF_PROTOCOL.MAP[self.protocol](ll_obj=self, **self.kwargs)
+        MAP = {
+            ITF_PROTOCOL.TEXT: TxtCfgBase,
+            ITF_PROTOCOL.BINARY: BinCfgBase
+        }
+        obj = MAP[self.protocol](ll_obj=self, **self.kwargs)
         return obj.get_hl_cfg()
 
 
@@ -124,7 +128,11 @@ class TxtCfgBase(ProtocolCfgBase):
         self.recv_termchar = recv_termchar
 
     def get_hl_cfg(self):
-        obj = ITF_TXT.MAP[self.interface](ll_obj=self, **self.kwargs)
+        MAP = {
+            ITF_TXT.SERIAL: TxtSerialCfg,
+            ITF_TXT.ETHERNET: TxtEthernetCfg
+        }
+        obj = MAP[self.interface](ll_obj=self, **self.kwargs)
         return obj.get_hl_cfg()
 
 
@@ -163,17 +171,11 @@ class BinCfgBase(ProtocolCfgBase):
         self.device = device
 
     def get_hl_cfg(self):
-        obj = ITF_BIN.MAP[self.interface](ll_obj=self, **self.kwargs)
+        MAP = {
+            ITF_BIN.VIMBA: BinVimbaCfg,
+        }
+        obj = MAP[self.interface](ll_obj=self, **self.kwargs)
         return obj.get_hl_cfg()
-
-
-# +++++++++++++++++++++++++++++
-
-
-ITF_PROTOCOL.MAP = {
-    ITF_PROTOCOL.TEXT: TxtCfgBase,
-    ITF_PROTOCOL.BINARY: BinCfgBase
-}
 
 
 ###############################################################################
