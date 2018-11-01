@@ -2,6 +2,7 @@
 import abc
 import numpy as np
 import re
+from scipy import constants
 
 # Package Imports
 from libics.data import arraydata
@@ -14,6 +15,8 @@ from libics.drv import drv
 def get_span_drv(cfg):
     if cfg.model == drv.DRV_MODEL.STANFORD_SR760:
         return StanfordSR760(cfg)
+    elif cfg.model == drv.DRV_MODEL.YOKAGAWA_AQ6315:
+        return YokagawaAQ6315(cfg)
 
 
 class SpAnDrvBase(drv.DrvBase):
@@ -24,6 +27,12 @@ class SpAnDrvBase(drv.DrvBase):
 
     @abc.abstractmethod
     def read_powerspectraldensity(self, read_meta=True):
+        """read_meta flag determines whether to perform a read call for the
+        metadata accompanying the spectral data (e.g. frequency)"""
+        pass
+
+    @abc.abstractmethod
+    def read_spectraldensity(self, read_meta=True):
         """read_meta flag determines whether to perform a read call for the
         metadata accompanying the spectral data (e.g. frequency)"""
         pass
@@ -148,6 +157,9 @@ class StanfordSR760(SpAnDrvBase):
         psd.set_max()
         return psd
 
+    def read_spectraldensity(self, read_meta=True):
+        pass
+
     # ++++ Write/read methods +++++++++++
 
     def _read_bandwidth(self):
@@ -190,3 +202,45 @@ class StanfordSR760(SpAnDrvBase):
     def _read_voltage_max(self):
         self._interface.send("IRNG?")
         return float(self._interface.recv())
+
+
+###############################################################################
+
+
+class YokagawaAQ6315(SpAnDrvBase):
+
+    def __init__(self, cfg):
+        super().__init__(cfg)
+
+    def read_powerspectraldensity(self, read_meta=True):
+        pass
+
+    def read_spectraldensity(self, read_meta=True):
+        self._interface.send("DDATA R1-R1001")
+        spectrum = [float(x) for x in self._interface.recv().split(", ")][1:]
+        if read_meta:
+            self.cfg.frequency_start.val = self._read_frequency_start()
+            self.cfg.frequency_stop.val = self._read_frequency_stop()
+
+        sp = arraydata.ArrayData()
+        sp.data = np.array(spectrum)
+        sp.scale.add_dim(
+            offset=self.cfg.frequency_start,
+            scale=((self.cfg.frequency_stop - self.cfg.frequency_start)
+                   / (len(spectrum) - 1)),
+            name="spectral density",
+            symbol="S",
+            unit="rel."
+        )
+        sp.set_max()
+        return sp
+
+    # ++++ Write/read methods +++++++++++
+
+    def _read_frequency_start(self):
+        self._interface.send("STAWL?")
+        return constants.speed_of_light / float(self._interface.recv())
+
+    def _read_frequency_stop(self):
+        self._interface.send("STPWL?")
+        return constants.speed_of_light / float(self._interface.recv())

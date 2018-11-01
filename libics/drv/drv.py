@@ -121,6 +121,7 @@ class DRV_MODEL:
 
     # SpAn
     STANFORD_SR760 = 2101
+    YOKAGAWA_AQ6315 = 2201
 
     # Osc
     TEKTRONIX_TDS100X = 3101
