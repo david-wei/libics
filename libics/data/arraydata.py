@@ -1,7 +1,6 @@
 # System Imports
 import copy
 import numpy as np
-import operator
 
 # Package Imports
 from libics.cfg import err as ERR
@@ -105,6 +104,11 @@ class ArrayScale(hdf.HDFBase):
         dim : int or None
             None: Dimension starting from 0.
             int: dimension for scalar.
+
+        Returns
+        -------
+        ind : scalar, slice, tuple
+            Requested index in a format depending on val.
         """
         ind = None
         if type(val) == tuple or type(val) == list or type(val) == np.ndarray:
@@ -565,9 +569,9 @@ class ArrayData(hdf.HDFBase):
             other.scale.get_index_by_quantity(max_)
         )
 
-    def get_common_obj(self, other, op):
+    def get_common_obj(self, other, op, in_place=False):
         """
-        Creates a copy of self.
+        Creates the common result after operation.
 
         The data space is chosen to be common to both ArrayData objects.
         The given operation is performed to combine both.
@@ -577,6 +581,8 @@ class ArrayData(hdf.HDFBase):
         op : callable
             Function signature:
             op(numpy.ndarray, numpy.ndarray) -> numpy.ndarray.
+        in_place : bool
+            Flag whether to store result in same instance.
 
         Returns
         -------
@@ -588,19 +594,35 @@ class ArrayData(hdf.HDFBase):
         ValueError:
             If the two ArrayData objects cannot be combined.
         """
+        obj = self
+
+        # Non-homogeneous operation
+        if not isinstance(other, ArrayData):
+            if not in_place:
+                obj = copy.deepcopy(self)
+            obj.data = op(self.data, other)
+            return obj
+
+        # Check homogeneous operation validity
         if not self.cmp_necessary(other):
             raise ValueError("Invalid necessary values")
-        obj = ArrayData()
-        obj.scale = copy.deepcopy(self.scale)
-        # FIXME: including/excluding max index ambiguity
-        (
-            obj.scale.offset, obj.scale.max,
-            si_offset, si_max,
-            oi_offset, oi_max
-         ) = self.get_common_rect(other)
-        obj.data = self.data[
-            [slice(si_offset[i], si_max[i]) for i in range(len(si_offset))]
-        ]
+        # Initialize minimal ArrayData object
+        if not in_place:
+            obj = ArrayData()
+            obj.scale = copy.deepcopy(self.scale)
+            # FIXME: including/excluding max index ambiguity
+            (
+                obj.scale.offset, obj.scale.max,
+                si_offset, si_max,
+                oi_offset, oi_max
+            ) = self.get_common_rect(other)
+            obj.data = self.data[
+                [slice(si_offset[i], si_max[i]) for i in range(len(si_offset))]
+            ]
+
+        # Perform operation on data array
+        # TODO: Add efficient on-array operations for integer-shifted and
+        #       commensurately scaled data (m + n -> f * m + n + n')
         if self.chk_commensurable():
             obj.data = op(
                 obj.data,
@@ -609,6 +631,7 @@ class ArrayData(hdf.HDFBase):
                      for i in range(len(oi_offset))]
                 ]
             )
+        # Interpolate between data arrays
         else:
             it = np.nditer(obj.data, flags=["multi_index"])
             while not it.finished:
@@ -621,51 +644,6 @@ class ArrayData(hdf.HDFBase):
                 )
                 it.iternext()
         return obj
-
-    def __add__(self, other):
-        return self.get_common_obj(other, operator.__add__)
-
-    def __sub__(self, other):
-        return self.get_common_obj(other, operator.__sub__)
-
-    def __mul__(self, other):
-        return self.get_common_obj(other, operator.__mul__)
-
-    def __truediv__(self, other):
-        return self.get_common_obj(other, operator.__truediv__)
-
-    def __floordiv__(self, other):
-        return self.get_common_obj(other, operator.__floordiv__)
-
-    def __and__(self, other):
-        return self.get_common_obj(other, operator.__and__)
-
-    def __xor__(self, other):
-        return self.get_common_obj(other, operator.__xor__)
-
-    def __or__(self, other):
-        return self.get_common_obj(other, operator.__or__)
-
-    def __pow__(self, other):
-        return self.get_common_obj(other, operator.__pow__)
-
-    def __lt__(self, other):
-        return self.get_common_obj(other, operator.__lt__).data
-
-    def __le__(self, other):
-        return self.get_common_obj(other, operator.__le__).data
-
-    def __eq__(self, other):
-        return self.get_common_obj(other, operator.__eq__).data
-
-    def __ne__(self, other):
-        return self.get_common_obj(other, operator.__ne__).data
-
-    def __ge__(self, other):
-        return self.get_common_obj(other, operator.__ge__).data
-
-    def __gt__(self, other):
-        return self.get_common_obj(other, operator.__gt__).data
 
     def get_copy_obj(self, op):
         """
@@ -685,11 +663,165 @@ class ArrayData(hdf.HDFBase):
         obj.data = op(obj.data)
         return obj
 
+    # ++++ Arithmetics ++++++++++++
+
+    def __add__(self, other):
+        return self.get_common_obj(other, np.add)
+
+    def __sub__(self, other):
+        return self.get_common_obj(other, np.subtract)
+
+    def __mul__(self, other):
+        return self.get_common_obj(other, np.multiply)
+
+    def __truediv__(self, other):
+        return self.get_common_obj(other, np.true_divide)
+
+    def __floordiv__(self, other):
+        return self.get_common_obj(other, np.floor_divide)
+
+    def __mod__(self, other):
+        return self.get_common_obj(other, np.mod)
+
+    def __pow__(self, other):
+        return self.get_common_obj(other, np.power)
+
+    # ++++ Comparisons +++++++++++
+
+    def __lt__(self, other):
+        return np.all(self.get_common_obj(other, np.less).data)
+
+    def __le__(self, other):
+        return np.all(self.get_common_obj(other, np.less_equal).data)
+
+    def __eq__(self, other):
+        try:
+            return np.all(self.get_common_obj(other, np.equal).data)
+        except ValueError:
+            return False
+
+    def __ne__(self, other):
+        try:
+            return np.all(self.get_common_obj(other, np.not_equal).data)
+        except ValueError:
+            return True
+
+    def __ge__(self, other):
+        return np.all(self.get_common_obj(other, np.greater_equal).data)
+
+    def __gt__(self, other):
+        return np.all(self.get_common_obj(other, np.greater).data)
+
+    # ++++ Binary operations +++++
+
+    def __and__(self, other):
+        return self.get_common_obj(other, np.bitwise_and)
+
+    def __or__(self, other):
+        return self.get_common_obj(other, np.bitwise_or)
+
+    def __xor__(self, other):
+        return self.get_common_obj(other, np.bitwise_xor)
+
+    # ++++ Unary operations ++++++
+
+    def __abs__(self):
+        return self.get_copy_obj(np.abs)
+
+    def __round__(self):
+        return self.get_copy_obj(np.round)
+
     def __invert__(self):
-        return self.get_copy_obj(operator.__invert__)
+        return self.get_copy_obj(np.invert)
+
+    def __lshift__(self):
+        return self.get_copy_obj(np.left_shift)
+
+    def __rshift__(self):
+        return self.get_copy_obj(np.right_shift)
 
     def __neg__(self):
-        return self.get_copy_obj(operator.__neg__)
+        return self.get_copy_obj(np.negative)
+
+    def __bool__(self):
+        return isinstance(self.data, np.ndarray) and len(self.data) > 0
+
+    def __len__(self):
+        return len(self.data)
+
+    @property
+    def shape(self):
+        return self.data.shape
+
+    # ++++ Type conversions ++++++
+
+    def __int__(self):
+        self.data = self.data.astype(int)
+        return self
+
+    def __float__(self):
+        self.data = self.data.astype(float)
+        return self
+
+    def __complex__(self):
+        self.data = self.data.astype(complex)
+        return self
+
+    # ++++ In-place arithmetics ++
+
+    def __iadd__(self, other):
+        return self.get_common_obj(other, np.add, in_place=True)
+
+    def __isub__(self, other):
+        return self.get_common_obj(other, np.subtract, in_place=True)
+
+    def __imul__(self, other):
+        return self.get_common_obj(other, np.multiply, in_place=True)
+
+    def __itruediv__(self, other):
+        return self.get_common_obj(other, np.true_divide, in_place=True)
+
+    def __ifloordiv__(self, other):
+        return self.get_common_obj(other, np.floor_divide, in_place=True)
+
+    def __imod__(self, other):
+        return self.get_common_obj(other, np.mod, in_place=True)
+
+    def __ipow__(self, other):
+        return self.get_common_obj(other, np.power, in_place=True)
+
+    def __iand__(self, other):
+        return self.get_common_obj(other, np.bitwise_and, in_place=True)
+
+    def __ior__(self, other):
+        return self.get_common_obj(other, np.bitwise_or, in_place=True)
+
+    def __ixor__(self, other):
+        return self.get_common_obj(other, np.bitwise_xor, in_place=True)
+
+    # ++++ Numpy universal functions
+
+    def __array_ufunc__(self, ufunc, method, i, *inputs, **kwargs):
+        # Convert ArrayData inputs into np.ndarray inputs
+        inputs = tuple([(it.data if isinstance(it, ArrayData) else it)
+                        for it in inputs])
+        # Declare output object
+        obj = None
+        # Allocated memory already declared
+        if "out" in kwargs.keys():
+            obj = kwargs["out"]
+            kwargs["out"] = tuple([
+                (it.data if isinstance(it, ArrayData) else it) for it in obj
+            ])
+            self.data.__array_ufunc__(ufunc, method, i, *inputs, **kwargs)
+        # Construct new object
+        else:
+            obj = copy.deepcopy(self)
+            obj.data = self.data.__array_ufunc__(
+                ufunc, method, i, *inputs, **kwargs
+            )
+        # Return ArrayData object with data as calculated by the ufunc
+        return obj
 
 
 ###############################################################################
