@@ -110,7 +110,7 @@ class TxtSerialItf(TxtItfBase):
 
     def recv(self):
         b_data = self._serial.readline()
-        s_data = b_data.decode("ascii").rstrip(self.cfg.recv_termchar)
+        s_data = b_data.decode("ascii").strip(self.cfg.recv_termchar)
         return s_data
 
 

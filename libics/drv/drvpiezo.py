@@ -89,8 +89,8 @@ class ThorlabsMDT69XA(PiezoDrvBase):
 
     def read_voltage(self):
         self.interface_access.acquire()
-        self._interface.send("{:s}VR?".format(str(self.cfg.channel)))
-        voltage = float(self._interface.recv())
+        self._interface.send("{:s}R?".format(str(self.cfg.channel)))
+        voltage = float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
         self.interface_access.release()
         return voltage
 
@@ -100,19 +100,21 @@ class ThorlabsMDT69XA(PiezoDrvBase):
         self._interface.send(
             "{:s}L{:.3f}".format(str(self.cfg.channel), value)
         )
+        time.sleep(0.05)
 
     def _read_limit_min(self):
         self._interface.send("{:s}L?")
-        return float(self._interface.recv())
+        return float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
 
     def _write_limit_max(self, value):
         self._interface.send(
             "{:s}H{:.3f}".format(str(self.cfg.channel), value)
         )
+        time.sleep(0.05)
 
     def _read_limit_max(self):
-        self._interface.send("{:s}H?")
-        return float(self._interface.recv())
+        self._interface.send("{:s}H?".format(str(self.cfg.channel)))
+        return float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
 
     def _write_channel(self, value):
         self.__channel = ThorlabsMDT69XA._assert_channel(value)
@@ -140,11 +142,15 @@ class ThorlabsMDT69XA(PiezoDrvBase):
             raise ValueError("invalid feedback mode: {:s}".format(str(value)))
         return value
 
+    @staticmethod
+    def _strip_recv(value):
+        return value.lstrip("\n\r*[ \x00").rstrip("\n\r] \x00")
+
     def _turn_off_echo_mode(self):
         self._interface.send("E")
-        time.sleep(0.1)
-        s_recv = self._interface.recv().lstrip("\n\r\*[e ").rstrip("\n\r] ")
+        time.sleep(0.5)
+        s_recv = self._interface.recv().lstrip("\n\r*[e ").rstrip("\n\r] ")
         if s_recv == "Echo On":
             self._interface.send("E")
-            time.sleep(0.1)
+            time.sleep(0.5)
             self._interface.recv()

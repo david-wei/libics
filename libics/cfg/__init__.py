@@ -127,8 +127,9 @@ class CFG_MSG_TYPE:
 
 class CfgMsg(object):
 
-    def __init__(self, msg_type, value=None, callback=None):
+    def __init__(self, msg_type, name, value=None, callback=None):
         self.msg_type = msg_type
+        self.name = name
         self.value = value
         self._callback = callback
 
@@ -203,6 +204,7 @@ class CfgItem(object):
         self.status = CFG_MSG_TYPE.READ
         self.cfg._add_msg(CfgMsg(
             CFG_MSG_TYPE.READ,
+            self.name,
             value=None,
             callback=(lambda x: setattr(self, "val", x))
         ))
@@ -217,6 +219,7 @@ class CfgItem(object):
             self.status = CFG_MSG_TYPE.VALIDATE
             self.cfg._add_msg(CfgMsg(
                 CFG_MSG_TYPE.VALIDATE,
+                self.name,
                 value=self.val,
                 callback=(lambda x: setattr(self, "val", x))
             ))
@@ -224,6 +227,7 @@ class CfgItem(object):
             self.status = CFG_MSG_TYPE.IGNORE
             self.cfg._add_msg(CfgMsg(
                 CFG_MSG_TYPE.WRITE,
+                self.name,
                 value=self.val,
                 callback=None
             ))
