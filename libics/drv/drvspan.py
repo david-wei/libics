@@ -134,6 +134,7 @@ class StanfordSR760(SpAnDrvBase):
 
     def read_powerspectraldensity(self, read_meta=True):
         self._interface.send("SPEC? 0")
+        self._interface.send("++read")
         pwr_spectrum = re.split(",", self._interface.recv())[:-1]
         if read_meta:
             self.cfg.bandwidth.val = self._read_bandwidth()
@@ -142,14 +143,15 @@ class StanfordSR760(SpAnDrvBase):
             self.cfg.average_mode.val = self._read_average_mode()
             self.cfg.average_count.val = self._read_average_count()
             self.cfg.voltage_max.val = self._read_voltage_max()
-        self._interface.send("UNIT?")
+        self._interface.send("UNIT? 0")
+        self._interface.send("++read")
         unit = StanfordSR760.UNIT[int(self._interface.recv())]
 
         psd = arraydata.ArrayData()
         psd.data = np.array(pwr_spectrum)
         psd.scale.add_dim(
-            offset=self.cfg.frequency_start,
-            scale=((self.cfg.frequency_stop - self.cfg.frequency_start) / 399),
+            offset=self.cfg.frequency_start.val,
+            scale=((self.cfg.frequency_stop.val - self.cfg.frequency_start.val) / 399),
             name="power spectral density",
             symbol="PSD",
             unit=unit
@@ -164,22 +166,26 @@ class StanfordSR760(SpAnDrvBase):
 
     def _read_bandwidth(self):
         self._interface.send("SPAN?")
+        self._interface.send("++read")
         f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
         return f_range / 400
 
     def _read_frequency_start(self):
         self._interface.send("STRF?")
+        self._interface.send("++read")
         return float(self._interface.recv())
 
     def _read_frequency_stop(self):
         f_start = self._read_frequency_start()
         self._interface.send("SPAN?")
+        self._interface.send("++read")
         f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
         return f_start + f_range
 
     def _read_average_mode(self):
         self._interface.send("AVGM?")
-        return StanfordSR760.AVERAGING_MODE(int(self.recv()))
+        self._interface.send("++read")
+        return StanfordSR760.AVERAGING_MODE[int(self._interface.recv())]
 
     def _write_average_count(self, value):
         if value == 1:
@@ -190,8 +196,10 @@ class StanfordSR760(SpAnDrvBase):
 
     def _read_average_count(self):
         self._interface.send("AVGO?")
+        self._interface.send("++read")
         if int(self._interface.recv()) == 1:
             self._interface.send("NAVG?")
+            self._interface.send("++read")
             return int(self._interface.recv())
         else:
             return 1
@@ -201,6 +209,7 @@ class StanfordSR760(SpAnDrvBase):
 
     def _read_voltage_max(self):
         self._interface.send("IRNG?")
+        self._interface.send("++read")
         return float(self._interface.recv())
 
 

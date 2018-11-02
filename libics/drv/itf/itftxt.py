@@ -131,7 +131,7 @@ class TxtEthernetItf(TxtItfBase):
         self._socket.setblocking(self.cfg.blocking)
 
     def shutdown(self):
-        self._socket.shutdown()
+        self._socket.close()
         return True
 
     def connect(self):
@@ -142,7 +142,7 @@ class TxtEthernetItf(TxtItfBase):
             return False
 
     def close(self):
-        self._socket.close()
+        self._socket.shutdown(socket.SHUT_RDWR)
         return True
 
     def send(self, s_data):
@@ -155,6 +155,7 @@ class TxtEthernetItf(TxtItfBase):
         s_data = ""
         t0 = time.time()
         len_recv_termchar = len(self.cfg.recv_termchar)
+        self._socket.setblocking(0)
         while True:
             ready = select.select(
                 [self._socket], [], [],
@@ -168,6 +169,8 @@ class TxtEthernetItf(TxtItfBase):
                     l_data[-1] = l_data[-1][:-len_recv_termchar]
                     s_data = "".join(l_data)
                     break
-                if time.time() - t0 > self.cfg.recv_timeout:
-                    break
+            dt = time.time() - t0
+            if dt > self.cfg.recv_timeout:
+                break
+        self._socket.setblocking(self.cfg.blocking)
         return s_data
