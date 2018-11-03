@@ -150,7 +150,7 @@ class DrvCfgBase(cfg.CfgBase):
     ----------
     driver : DRV_DRIVER
         Driver type.
-    interface : itf.itf.ProtocolCfgBase
+    interface : drv.itf.itf.ProtocolCfgBase
         Connection interface configuration.
     identifier : str
         Unique identifier of device.
@@ -169,10 +169,15 @@ class DrvCfgBase(cfg.CfgBase):
     ):
         super().__init__()
         self.driver = driver
-        self.interface = interface
         self.identifier = identifier
         self.model = model
         self.kwargs = kwargs
+        if isinstance(interface, dict):
+            self.interface = (
+                drv.itf.itf.ProtocolCfgBase(**interface).get_hl_cfg()
+            )
+        else:
+            self.interface = interface
 
     def get_hl_cfg(self):
         MAP = {

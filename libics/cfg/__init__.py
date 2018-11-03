@@ -36,9 +36,11 @@ class CfgBase(abc.ABC):
             Nested configuration dictionary.
         """
         d = copy.deepcopy(self.__dict__)
+        del d["_msg_queue"]
+        del d["kwargs"]
         for attr, val in d.items():
             if isinstance(val, CfgBase):
-                d[attr] = val.to_json()
+                d[attr] = val.to_obj_dict()
         return d
 
     def from_obj_dict(self, d):
