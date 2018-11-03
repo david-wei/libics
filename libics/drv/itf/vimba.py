@@ -1,9 +1,17 @@
-# System Imports
-import numpy as np
-import pymba
 import re
 import six
 import time
+
+import numpy as np
+
+try:
+    import pymba
+except ImportError as e:
+    print("""\
+    Could not load AlliedVision Vimba API.
+        If you are using a Vimba camera, install the Vimba C API and the
+        Python wrapper `pymba`.
+    """)
 
 
 ###############################################################################
@@ -14,6 +22,7 @@ import time
 # Global variable for Vimba API object
 _Vimba = None
 _VimbaSystem = None
+_VimbaReferenceCount = 0        # Logs how many active objects depend on Vimba
 TIMEOUT_DISCOVERY_GIGE = 0.2
 
 
@@ -29,7 +38,8 @@ def startup():
     _Vimba : pymba.vimba.Vimba
         Vimba API object.
     """
-    global _Vimba, _VimbaSystem
+    global _Vimba, _VimbaSystem, _VimbaReferenceCount
+    _VimbaReferenceCount += 1
     if _Vimba is None:
         _Vimba = pymba.vimba.Vimba()
         _Vimba.startup()
@@ -49,12 +59,14 @@ def shutdown():
         `True`: Vimba API was successfully closed.
         `False`: Vimba API was closed already.
     """
-    global _Vimba, _VimbaSystem
+    global _Vimba, _VimbaSystem, _VimbaReferenceCount
     success = False
-    if _Vimba is not None:
-        _Vimba.shutdown()
-        _Vimba = None
-        _VimbaSystem = None
+    _VimbaReferenceCount -= 1
+    if _VimbaReferenceCount >= 0:
+        if _Vimba is not None:
+            _Vimba.shutdown()
+            _Vimba = None
+            _VimbaSystem = None
         success = True
     return success
 
