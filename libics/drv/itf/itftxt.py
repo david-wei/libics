@@ -16,7 +16,7 @@ def get_txt_itf(cfg):
     if cfg.interface == itf.ITF_TXT.SERIAL:
         return TxtSerialItf(cfg)
     elif cfg.interface == itf.ITF_TXT.ETHERNET:
-        return TxtEthernetItf(cfg)
+        return get_txt_ethernet_itf(cfg)
 
 
 class TxtItfBase(abc.ABC):
@@ -47,6 +47,10 @@ class TxtItfBase(abc.ABC):
     @abc.abstractmethod
     def recv(self):
         return self.connection.recv()
+
+    def query(self, s_data):
+        self.send(s_data)
+        return self.recv()
 
 
 ###############################################################################
@@ -114,6 +118,17 @@ class TxtSerialItf(TxtItfBase):
         return s_data
 
 
+def get_txt_ethernet_itf(cfg):
+    if cfg.txt_ethernet_type == itf.TXT_ETHERNET_TYPE.GENERIC:
+        return TxtEthernetItf(cfg)
+    elif cfg.txt_ethernet_type == itf.TXT_ETHERNET_TYPE.GPIB:
+        if cfg.ctrl_model == itf.TXT_ETHERNET_GPIB.MODEL.GENERIC:
+            return TxtEthernetItf(cfg)
+        elif (cfg.ctrl_model ==
+              itf.TXT_ETHERNET_GPIB.MODEL.PROLOGIX_GPIB_ETHERNET):
+            return PrologixGpibEthernetItf(cfg)
+
+
 class TxtEthernetItf(TxtItfBase):
 
     def __init__(self, cfg):
@@ -135,15 +150,10 @@ class TxtEthernetItf(TxtItfBase):
         return True
 
     def connect(self):
-        try:
-            self._socket.connect((self.cfg.address, self.cfg.port))
-            return True
-        except(socket.timeout, InterruptedError):
-            return False
+        self._socket.connect((self.cfg.address, self.cfg.port))
 
     def close(self):
         self._socket.shutdown(socket.SHUT_RDWR)
-        return True
 
     def send(self, s_data):
         s_data = str(s_data) + self.cfg.send_termchar
@@ -174,3 +184,36 @@ class TxtEthernetItf(TxtItfBase):
                 break
         self._socket.setblocking(self.cfg.blocking)
         return s_data
+
+
+class PrologixGpibEthernetItf(TxtEthernetItf):
+
+    def __init__(self, cfg):
+        super().__init__(cfg)
+
+    def connect(self):
+        super().connect()
+        # Disable in-device cfg saving
+        self.send("++savecfg 0")
+        # Set GPIB mode
+        GPIB_MODE = {
+            itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER: 1,
+            itf.TXT_ETHERNET_GPIB.MODE.DEVICE: 0
+        }
+        self.send("++mode {:d}".format(GPIB_MODE[self.cfg.gpib_mode]))
+        # Enable EOI assertion
+        self.send("++eoi 1")
+        # Disable automatic read after write mode
+        self.send("++auto 0")
+        # Disable auto-appending termchars
+        self.send("++eos 3")
+        # Set GPIB address
+        self.send("++addr {:d}".format(self.cfg.gpib_address))
+        # Set read timeout
+        self.send("++read_tmo_ms {:d}"
+                  .format(round(1000 * self.cfg.recv_timeout)))
+
+    def recv(self):
+        if self.cfg.gpib_mode == itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER:
+            self.send("++read")
+        return super().recv()

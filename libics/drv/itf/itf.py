@@ -213,6 +213,12 @@ class TxtSerialCfg(TxtCfgBase):
         return self
 
 
+class TXT_ETHERNET_TYPE:
+
+    GENERIC = 0
+    GPIB = 1
+
+
 class TxtEthernetCfg(TxtCfgBase):
 
     """
@@ -220,27 +226,99 @@ class TxtEthernetCfg(TxtCfgBase):
 
     Parameters
     ----------
+    txt_ethernet_type : TXT_ETHERNET_TYPE
+        Type of text-based Ethernet interface.
     port : int
         Ethernet port number.
+    blocking : bool
+        Whether to block Ethernet socket.
     """
 
-    def __init__(self, port=None, blocking=False, ll_obj=None, **kwargs):
+    def __init__(self, txt_ethernet_type=TXT_ETHERNET_TYPE.GENERIC,
+                 port=None, blocking=False,
+                 ll_obj=None, **kwargs):
         super().__init__(**kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
+        self.txt_ethernet_type = txt_ethernet_type
         self.port = port
         self.blocking = blocking
+
+    def get_hl_cfg(self):
+        if self.txt_ethernet_type == TXT_ETHERNET_TYPE.GPIB:
+            return TxtEthernetGpibCfg(ll_obj=self, **self.kwargs)
+        else:
+            return self
+
+
+class BinVimbaCfg(BinCfgBase):
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
+
+    Parameters
+    ----------
+    frame_count : int
+        Number of frames provided to the Vimba API.
+    frame_requeue : bool
+        Whether to automatically requeue frames to the Vimba API.
+    """
+
+    def __init__(self, frame_count=1, frame_requeue=True,
+                 ll_obj=None, **kwargs):
+        super().__init__(**kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+        self.frame_count = frame_count
+        self.frame_requeue = frame_requeue
 
     def get_hl_cfg(self):
         return self
 
 
-class BinVimbaCfg(BinCfgBase):
+###############################################################################
 
-    def __init__(self, ll_obj=None, **kwargs):
+
+class TXT_ETHERNET_GPIB:
+
+    class MODE:
+
+        CONTROLLER = 0
+        DEVICE = 1
+
+    class MODEL:
+
+        GENERIC = 0
+        PROLOGIX_GPIB_ETHERNET = 11
+
+
+class TxtEthernetGpibCfg(TxtEthernetCfg):
+
+    """
+    ProtocolCfgBase -> TxtCfgBase -> TxtEthernetCfg -> TxtEthernetGpibCfg.
+
+    Parameters
+    ----------
+    gpib_mode : TXT_ETHERNET_GPIB.MODE
+        Whether device is in controller or device mode.
+    gpib_address : int
+        GPIB address.
+    ctrl_model : TXT_ETHERNET_GPIB.MODEL
+        Controller device model providing the interface.
+    """
+
+    def __init__(
+        self,
+        gpib_mode=TXT_ETHERNET_GPIB.MODE, gpib_address=1,
+        ctrl_model=TXT_ETHERNET_GPIB.MODEL.GENERIC,
+        ll_obj=None, **kwargs
+    ):
         super().__init__(**kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
+        self.gpib_mode = gpib_mode
+        self.gpib_address = gpib_address
+        self.ctrl_model = ctrl_model
 
     def get_hl_cfg(self):
         return self

@@ -40,8 +40,22 @@ class DrvBase(abc.ABC):
         self.interface_access = threading.Lock()
 
     def __enter__(self):
-        self.setup()
-        self.connect()
+        try:
+            self.setup()
+        except Exception:
+            try:
+                self.shutdown()
+            except Exception:
+                pass
+            raise
+        try:
+            self.connect()
+        except Exception:
+            try:
+                self.close()
+            except Exception:
+                pass
+            raise
 
     def __exit__(self, *args):
         self.close()

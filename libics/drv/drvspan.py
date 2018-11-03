@@ -151,7 +151,8 @@ class StanfordSR760(SpAnDrvBase):
         psd.data = np.array(pwr_spectrum)
         psd.scale.add_dim(
             offset=self.cfg.frequency_start.val,
-            scale=((self.cfg.frequency_stop.val - self.cfg.frequency_start.val) / 399),
+            scale=((self.cfg.frequency_stop.val - self.cfg.frequency_start.val)
+                   / 399),
             name="power spectral density",
             symbol="PSD",
             unit=unit
