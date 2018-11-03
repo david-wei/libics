@@ -21,9 +21,8 @@ setup(name='libics',
       license='',
       packages=find_packages(),
       install_requires=[
-            'PyQt5',
             'matplotlib', 'numpy', 'scipy',
-            'pyserial'
+            'pyserial', 'h5py', 'Pillow'
       ],
       dependency_links=['https://github.com/morefigs/pymba'],
       include_package_data=True,
