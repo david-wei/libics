@@ -1,11 +1,14 @@
-# System Imports
-import h5py
+import copy
 import inspect
+import json
+
+import h5py
 import numpy as np
 
-# Package Imports
 from libics.cfg import env as ENV
 
+
+# FIXME: Implement self-construction of objects from _hdf_cls_name
 
 ###############################################################################
 
@@ -50,13 +53,13 @@ class HDFList(HDFBase):
 
     Example
     -------
-    # Serialization procedure
-    ls = [1, 2, [3, 4], "bla"]
-    hdf_ls = HDFList()
-    hdf_ls.from_list(ls)
-    hdf_ls.__dict__
+    >>> # Serialization procedure
+    >>> ls = [1, 2, [3, 4], "bla"]
+    >>> hdf_ls = HDFList()
+    >>> hdf_ls.from_list(ls)
+    >>> hdf_ls.__dict__
     {"it0": 1, "it1": 2, "it2": [3, 4], "it3": "bla"}
-    hdf_ls.to_list() == ls
+    >>> hdf_ls.to_list() == ls
     True
     """
 
@@ -95,6 +98,51 @@ class HDFList(HDFBase):
             else:
                 break
         return ls
+
+
+class HDFDict(HDFBase):
+
+    """
+    Conversion class to allow built-in dictionaries to be HDF serialized.
+
+    Converts the dictionary to an HDFDict object that has the dictionary
+    key-value pairs as attributes.
+
+    Notes
+    -----
+    * This indirect HDF serialization allows coherent procedures for all
+      classes.
+    * Only strings are allowed as keys.
+    """
+
+    def __init__(self):
+        super().__init__(pkg_name="libics", cls_name="HDFDict")
+
+    def from_dict(self, d):
+        """
+        Loads a given dictionary into the object's attributes.
+
+        Parameters
+        ----------
+        d : dict
+            Dictionary to be loaded into object dictionary.
+        """
+        self.__dict__.update(d)
+
+    def to_dict(self):
+        """
+        Constructs a dictionary from the object dictionary. Removes
+        serialization metadata elements.
+
+        Returns
+        -------
+        d : dict
+            Reconstructed dictionary.
+        """
+        d = copy.deepcopy(self.__dict__)
+        del d["_hdf_pkg_name"]
+        del d["_hdf_cls_name"]
+        return d
 
 
 ###############################################################################
@@ -144,6 +192,14 @@ def write_hdf(obj, file_path=None, _parent_group=None):
             # Binary numpy data
             elif type(val) == np.ndarray:
                 _parent_group.create_dataset(key, data=val)
+            # Python dictionary
+            elif type(val) == dict:
+                dict_obj = HDFDict()
+                dict_obj.from_dict(val)
+                write_hdf(
+                    dict_obj, file_path=None,
+                    _parent_group=_parent_group.create_group(key)
+                )
             # Unstructured Python list
             elif type(val) == list or type(val) == tuple:
                 # Check if numpy castable
@@ -183,10 +239,8 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                 _parent_group.attrs[key] = val
 
 
-###############################################################################
-
-
-def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
+def read_hdf(cls_or_obj, file_path=None,
+             _parent_group=None, _ignore_undeclared_attrs=True):
     """
     Reads an HDF5 file into an object.
 
@@ -202,6 +256,9 @@ def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
         HDF5 parent group used for recursive file writing.
         If `file_path` is specified, this parameter is
         ignored.
+    _ignore_undeclared_attrs : bool
+        Whether to read attributes that have not been specified
+        in the class definition.
 
     Raises
     ------
@@ -214,7 +271,9 @@ def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
     Notes
     -----
     * Object attributes which are saved in the HDF5 file but not
-      declared in the given object are silently ignored.
+      declared in the given object are silently ignored if the
+      `_ignore_undeclared_attrs` flag is set.
+      Otherwise the respective attributes are copied.
     * Attributes of HDF5 data sets are silently ignored.
     """
     # Check if class or object
@@ -228,11 +287,17 @@ def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
     else:
         # Simple (built-in) data types
         for key, val in _parent_group.attrs.items():
-            if key in cls_or_obj.__dict__.keys():
+            if (
+                not _ignore_undeclared_attrs
+                or key in cls_or_obj.__dict__.keys()
+            ):
                 cls_or_obj.__dict__[key] = val
         # Groups or data sets
         for key, val in _parent_group.items():
-            if key in cls_or_obj.__dict__.keys():
+            if (
+                not _ignore_undeclared_attrs
+                or key in cls_or_obj.__dict__.keys()
+            ):
                 # Data sets
                 if isinstance(val, h5py.Dataset):
                     cls_or_obj.__dict__[key] = val[()]
@@ -243,12 +308,19 @@ def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
                         hdf_ls = HDFList()
                         hdf_ls.from_list([None] * (
                             len(val) + len(val.attrs)
-                            - HDFBase.HDFBase_ATTRS_LEN)
-                        )
+                            - HDFBase.HDFBase_ATTRS_LEN
+                        ))
                         hdf_ls = read_hdf(
                             hdf_ls, file_path=None, _parent_group=val
                         )
                         cls_or_obj.__dict__[key] = hdf_ls.to_list()
+                    # Python dictionary
+                    elif val.attrs["_hdf_cls_name"] == "HDFDict":
+                        hdf_d = read_hdf(
+                            HDFDict, file_path=None, _parent_group=val,
+                            _ignore_undeclared_attrs=False
+                        )
+                        cls_or_obj.__dict__[key] = hdf_d.to_dict()
                     # Custom objects
                     else:
                         cls_or_obj.__dict__[key] = read_hdf(
@@ -257,6 +329,136 @@ def read_hdf(cls_or_obj, file_path=None, _parent_group=None):
                         )
     # Return reconstructed object
     return cls_or_obj
+
+
+###############################################################################
+
+
+def _to_dict(obj):
+    """
+    Serializes a given object into a dictionary.
+
+    Parameters
+    ----------
+    obj : object
+        Object to be serialized.
+
+    Returns
+    -------
+    d : dict or self
+        Dictionary serialized object.
+    """
+    # Check if obj is an object
+    if not hasattr(obj, "__dict__"):
+        return obj
+    d = {}
+    for key, val in obj.__dict__.items():
+        # HDFBase object
+        if isinstance(val, HDFBase):
+            d[key] = _to_dict(val)
+        # Python list
+        elif isinstance(val, list) or isinstance(val, tuple):
+            ls = list(val[:])
+            for i, item in enumerate(val):
+                ls[i] = _to_dict(item)
+            d[key] = ls + ["_hdf_is_list"]
+        # Python dict
+        elif isinstance(val, dict):
+            d[key] = val
+            d[key]["_hdf_is_dict"] = True
+        # Numpy array
+        elif isinstance(val, np.ndarray):
+            d[key] = val.tolist()
+        # Simple types
+        else:
+            d[key] = val
+    return d
+
+
+def _from_dict(obj, d):
+    """
+    Deserializes a dictionary into a given object.
+
+    Parameters
+    ----------
+    obj : object
+        Object to be reconstructed.
+    d : dict
+        Dictionary to be deserialized.
+
+    Returns
+    -------
+    obj : object
+        Reconstructed object.
+    """
+    for key, val in d.items():
+        # Dictionary
+        if isinstance(val, dict):
+            # HDFBase object
+            if "_hdf_cls_name" in val.keys():
+                obj.__dict__[key] = _from_dict(obj.__dict__[key], val)
+            # Python dict
+            else:
+                obj.__dict__[key] = val
+                del obj.__dict__[key]["_hdf_is_dict"]
+        # List
+        elif isinstance(val, list):
+            # Python list
+            if val[-1] == "_hdf_is_list":
+                obj.__dict__[key] = val[:-1]
+            # Numpy array
+            else:
+                obj.__dict__[key] = np.array(val)
+        # Simple types
+        else:
+            obj.__dict__[key] = val
+    return obj
+
+
+def write_json(obj, file_path):
+    """
+    Writes a given object into a json file.
+
+    Parameters
+    ----------
+    obj : object
+        The object to be written. Needs to be json serializable.
+        This includes built-in types, `numpy.ndarray` and classes
+        derived from the `HDFBase` class.
+    file_path : str
+        The file path of the json file to be written.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist.
+    TypeError
+        If the given `obj` has attributes not derived from
+        the `HDFBase` class.
+    """
+    json.dump(_to_dict(obj), open(file_path, "w"))
+
+
+def read_json(cls_or_obj, file_path):
+    """
+    Reads a json file into an object.
+
+    Parameters
+    ----------
+    cls_or_obj : class or object
+        The object to which the read data is stored.
+        If a class is given, a default object of it is created.
+    file_path : str
+        The file path of the json file to be read from.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist.
+    """
+    if inspect.isclass(cls_or_obj):
+        cls_or_obj = cls_or_obj()
+    return _from_dict(cls_or_obj, json.load(open(file_path, "r")))
 
 
 ###############################################################################
@@ -275,7 +477,7 @@ if __name__ == "__main__":
 
     # Test class configuration
     import os
-    file_name = "file_hdf_test.hdf5"
+    file_name = "file_hdf_test"
     tmp_dir = os.path.join(ENV.DIR_PKGROOT, "tmp")
     if not os.path.exists(tmp_dir):
         os.makedirs(tmp_dir)
@@ -299,6 +501,7 @@ if __name__ == "__main__":
             self.x_float = 3.14159
             self.x_tuple_str = ("bli", "bla", "blub°°")
             self.x_nestedlist_float = [1.23, 4.56, [7.89, 0.12], 3.45]
+            self.x_dict_mixed = {"a": 0, "b": "b", "3": "c", "4": 4, "5.0": -5}
             self.x_subtest = SubTest()
 
         def reset(self):
@@ -307,6 +510,7 @@ if __name__ == "__main__":
             self.x_float = 0.0
             self.x_tuple_str = ("",)
             self.x_nestedlist_float = [1.0, [2.0]]
+            self.x_dict_mixed = {"reset": "reset"}
             self.x_subtest.reset()
 
         def __str__(self):
@@ -315,6 +519,7 @@ if __name__ == "__main__":
             s += "x_float: " + str(self.x_float) + "\n"
             s += "x_tuple_str: " + str(self.x_tuple_str) + "\n"
             s += "x_nestedlist_float: " + str(self.x_nestedlist_float) + "\n"
+            s += "x_dict_mixed: " + str(self.x_dict_mixed) + "\n"
             s += "x_subtest.y_list: " + str(self.x_subtest.y_list)
             return s
 
@@ -323,7 +528,7 @@ if __name__ == "__main__":
     print("--------------\n x (to write)\n--------------")
     print(str(x))
     print("")
-    write_hdf(x, file_path=file_path)
+    write_hdf(x, file_path=(file_path + ".hdf5"))
 
     # Test read_hdf
     y = Test()
@@ -331,7 +536,25 @@ if __name__ == "__main__":
     print("--------------\n y (reset)\n--------------")
     print(str(y))
     print("")
-    read_hdf(y, file_path=file_path)
+    read_hdf(y, file_path=(file_path + ".hdf5"))
     print("--------------\n y (read)\n--------------")
     print(str(y))
+    print("")
+
+    # Test write_json
+    z = Test()
+    print("--------------\n z (to write)\n--------------")
+    print(str(z))
+    print("")
+    write_json(z, file_path + ".json")
+
+    # Test read_json
+    u = Test()
+    u.reset()
+    print("--------------\n u (reset)\n--------------")
+    print(str(u))
+    print("")
+    read_json(u, file_path + ".json")
+    print("--------------\n u (read)\n--------------")
+    print(str(u))
     print("")
