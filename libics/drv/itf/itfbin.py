@@ -1,4 +1,7 @@
 import abc
+import collections
+
+import numpy as np
 
 from libics.drv.itf import itf, vimba
 
@@ -46,6 +49,7 @@ class VimbaItf(BinItfBase):
         self._callback = {}
         self.__index_counter = -1
         self.__latest_index = -1
+        self.__queue_order = collections.deque([-1], maxlen=1)
         self.__frame_buffer = {}
 
     def setup(self):
@@ -67,6 +71,16 @@ class VimbaItf(BinItfBase):
         Gets the last updated index.
         """
         return self.__latest_index
+
+    @property
+    def next_index(self):
+        """
+        Gets the frame index next to be filled.
+        """
+        try:
+            return self.__queue_order[0]
+        except IndexError:
+            return self.__index_counter
 
     @property
     def cam(self):
@@ -111,6 +125,7 @@ class VimbaItf(BinItfBase):
             will be called.
         """
         self.__index_counter += 1
+        self.__queue_order = collections.deque(maxlen=len(self._frames))
         self._frames[self.__index_counter] = self._camera.getFrame()
         self._requeue[self.__index_counter] = requeue
         self._callback[self.__index_counter] = lambda frame: (
@@ -125,12 +140,16 @@ class VimbaItf(BinItfBase):
         self._frames = {}
         self._requeue = {}
         self._callback = {}
+        self.__queue_order = collections.deque([-1], maxlen=1)
 
     def start_capture(self):
         """
         Prepares the Vimba API for incoming frames.
         """
         self._camera.startCapture()
+        for key, val in self._requeue:
+            if val:
+                self.queue_frame_capture(index=key)
 
     def end_capture(self):
         """
@@ -182,6 +201,11 @@ class VimbaItf(BinItfBase):
             del self._frames[index]
             del self._requeue[index]
             del self._callback[index]
+            _queue = np.array(self.__queue_order)
+            _queue = _queue[_queue != index]
+            self.__queue_order = collections.deque(
+                _queue, maxlen=len(self._frames)
+            )
         return err
 
     def queue_frame_capture(self, index=None):
@@ -197,6 +221,7 @@ class VimbaItf(BinItfBase):
             err = self._frames[index].queueFrameCapture(
                 frameCallback=self._callback[index]
             )
+            self.__queue_order.append(index)
         return err
 
     def wait_frame_capture(self, index=None, timeout=2.0):

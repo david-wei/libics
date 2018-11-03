@@ -19,16 +19,28 @@ class CamDrvBase(drv.DrvBase):
         super().__init__(cfg=cfg)
 
     @abc.abstractmethod
-    def grab(self):
-        pass
-
-    @abc.abstractmethod
     def run(self):
-        pass
+        """
+        Start capturing images.
+        """
 
     @abc.abstractmethod
     def stop(self):
-        pass
+        """
+        Stop capturing images.
+        """
+
+    @abc.abstractmethod
+    def grab(self):
+        """
+        Grab image from camera (wait for next image).
+        """
+
+    @abc.abstractmethod
+    def get(self):
+        """
+        Get image from internal buffer (previously taken image).
+        """
 
     # ++++ Write/read methods +++++++++++
 
@@ -131,6 +143,16 @@ class CamDrvBase(drv.DrvBase):
             MAP[self.cfg.format_color]
         )
 
+    def _cv_buffer_to_numpy(self, buffer):
+        return np.ndarray(
+            buffer=buffer,
+            dtype=self._numpy_dtype,
+            shape=self._numpy_shape
+        )
+
+    def _callback_delegate(self, buffer):
+        self._callback(self._cv_buffer_to_numpy(buffer))
+
 
 ###############################################################################
 
@@ -140,11 +162,6 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
     def __init__(self, cfg):
         super().__init__(cfg)
         self._callback = None
-
-    def grab(self):
-        return self._cv_buffer_to_numpy(
-            self._interface.grab_data(index=self._interface.latest_index)
-        )
 
     def run(self, callback=None):
         self._callback = callback
@@ -158,6 +175,20 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
         self._interface.flush_capture_queue()
         self._interface.end_capture()
         self._interface.revoke_all_frames()
+
+    def grab(self):
+        _index = self._interface.cam.next_index
+        if not self._interface.cam.frame_requeue:
+            self._interface.cam.queue_frame_capture(index=_index)
+        if self._interface.cam.wait_frame_capture(index=_index) == 0:
+            return self._cv_buffer_to_numpy(
+                self._interface.get_buffer_byte_data(index=_index)
+            )
+
+    def get(self):
+        return self._cv_buffer_to_numpy(
+            self._interface.grab_data(index=self._interface.latest_index)
+        )
 
     # ++++ Write/read methods +++++++++++
 
@@ -264,15 +295,3 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
             "On_HighQuality": drv.DRV_CAM.SENSITIVITY.NIR_HQ
         }
         return MAP[self._interface.cam.NirMode]
-
-    # ++++ Helper methods +++++++++++++++
-
-    def _cv_buffer_to_numpy(self, buffer):
-        return np.ndarray(
-            buffer=buffer,
-            dtype=self._numpy_dtype,
-            shape=self._numpy_shape
-        )
-
-    def _callback_delegate(self, buffer):
-        self._callback(self._cv_buffer_to_numpy(buffer))

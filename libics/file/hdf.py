@@ -415,7 +415,7 @@ def _from_dict(obj, d):
     return obj
 
 
-def write_json(obj, file_path):
+def write_json(obj, file_path, indent=2):
     """
     Writes a given object into a json file.
 
@@ -427,6 +427,9 @@ def write_json(obj, file_path):
         derived from the `HDFBase` class.
     file_path : str
         The file path of the json file to be written.
+    indent : int or None
+        JSON pretty-printing indent spaces. None uses
+        no newlines.
 
     Raises
     ------
@@ -436,7 +439,7 @@ def write_json(obj, file_path):
         If the given `obj` has attributes not derived from
         the `HDFBase` class.
     """
-    json.dump(_to_dict(obj), open(file_path, "w"))
+    json.dump(_to_dict(obj), open(file_path, "w"), indent=indent)
 
 
 def read_json(cls_or_obj, file_path):
