@@ -1,3 +1,4 @@
+import abc
 import copy
 import inspect
 import json
@@ -29,6 +30,8 @@ class HDFBase(object):
         Package name of serialized class.
     cls_name : str
         Class name of serialized class.
+    is_delegate : bool
+        Whether this class is a serialization delegate class.
 
     Notes
     -----
@@ -38,11 +41,49 @@ class HDFBase(object):
       type list elements
     """
 
-    HDFBase_ATTRS_LEN = 2
+    HDFBase_ATTRS_LEN = 3
 
-    def __init__(self, pkg_name="libics", cls_name="HDFBase"):
+    def __init__(self, pkg_name="libics", cls_name="HDFBase",
+                 is_delegate=False):
         self._hdf_pkg_name = pkg_name
         self._hdf_cls_name = cls_name
+        self._hdf_is_delegate = is_delegate
+
+    def _from_delegate(self):
+        """
+        Implementation
+        --------------
+        Implement if the class is a delegate class. This method shall construct
+        and return the object it is a delegate of.
+        """
+        pass
+
+
+class HDFDelegate(abc.ABC):
+
+    """
+    Base class for objects that need a delegate serialization class.
+
+    To serialize a non-trivial object, a delegate object can be created
+    which consists of only serializable objects.
+    """
+
+    @abc.abstractmethod
+    def _to_delegate(self):
+        """
+        Implementation
+        --------------
+        This method shall construct and return the fully serializable
+        delegate object.
+        """
+
+    @abc.abstractproperty
+    def _delegate_cls(self):
+        """
+        Implementation
+        --------------
+        This property shall return the class of the delegate object.
+        """
 
 
 class HDFList(HDFBase):
@@ -189,6 +230,12 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                     val, file_path=None,
                     _parent_group=_parent_group.create_group(key)
                 )
+            # Delegate class
+            elif isinstance(val, HDFDelegate):
+                write_hdf(
+                    val._to_delegate(), file_path=None,
+                    _parent_group=_parent_group.create_group(key)
+                )
             # Binary numpy data
             elif type(val) == np.ndarray:
                 _parent_group.create_dataset(key, data=val)
@@ -321,6 +368,12 @@ def read_hdf(cls_or_obj, file_path=None,
                             _ignore_undeclared_attrs=False
                         )
                         cls_or_obj.__dict__[key] = hdf_d.to_dict()
+                    # Delegate object
+                    elif val.attrs["_hdf_is_delegate"]:
+                        cls_or_obj.__dict__[key] = read_hdf(
+                            cls_or_obj.__dict__[key]._delegate_cls,
+                            file_path=None, _parent_group=val
+                        )._from_delegate()
                     # Custom objects
                     else:
                         cls_or_obj.__dict__[key] = read_hdf(
@@ -356,6 +409,9 @@ def _to_dict(obj):
         # HDFBase object
         if isinstance(val, HDFBase):
             d[key] = _to_dict(val)
+        # HDFDelegate object
+        elif isinstance(val, HDFDelegate):
+            d[key] = _to_dict(val._to_delegate())
         # Python list
         elif isinstance(val, list) or isinstance(val, tuple):
             ls = list(val[:])
@@ -394,8 +450,13 @@ def _from_dict(obj, d):
     for key, val in d.items():
         # Dictionary
         if isinstance(val, dict):
+            # HDFDelegate object
+            if "_hdf_is_delegate" in val.keys():
+                obj.__dict__[key] = _from_dict(
+                    obj.__dict__[key]._delegate_cls, val
+                )._from_delegate()
             # HDFBase object
-            if "_hdf_cls_name" in val.keys():
+            elif "_hdf_cls_name" in val.keys():
                 obj.__dict__[key] = _from_dict(obj.__dict__[key], val)
             # Python dict
             else:

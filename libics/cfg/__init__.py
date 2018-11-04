@@ -54,7 +54,6 @@ class CfgBase(abc.ABC):
             Nested configuration dictionary.
         """
         for attr, val in d.items():
-            # FIXME: handle if attribute itself is a dictionary?!
             if type(val) == dict:
                 self.__dict__[attr] = val.from_obj_dict()
             else:
