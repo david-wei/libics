@@ -90,6 +90,35 @@ def assume_dir(path):
     return path
 
 
+def assume_construct_obj(obj, cls_):
+    """
+    Asserts that the given object is of `cls_` class. If not and `obj` is a
+    dictionary, an instance of the class is constructed with the dictionary
+    as keyword arguments. If construction fails, the object is returned.
+
+    Parameters
+    ----------
+    obj : object or dict
+        Object or keyword argument dictionary.
+    cls_ : class
+        Class of instance to be constructed.
+
+    Returns
+    -------
+    obj : cls_
+        Instance of given class or object itself.
+    """
+    if isinstance(obj, cls_):
+        return obj
+    elif isinstance(obj, dict):
+        try:
+            return cls_(**obj)
+        except TypeError:
+            return obj
+    else:
+        return obj
+
+
 ###############################################################################
 # Dictionary Manipulations
 ###############################################################################
