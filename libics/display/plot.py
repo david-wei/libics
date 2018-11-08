@@ -11,104 +11,418 @@ from libics.util import misc
 ###############################################################################
 
 
-def _plot_tuple(data, plot):
-    pass
+class AttrBase(object):
 
-
-def _plot_list(data, plot):
-    pass
-
-
-def _plot_numpy_ndarray(data, plot):
-    pass
-
-
-def _plot_arraydata(data, plot):
-    pass
-
-
-def _plot_seriesdata(data, plot):
-    pass
-
-
-def plot(data, plot=None):
     """
-    Plots the data according to the plot object.
+    Base class for plot value representations. Stores the required attributes.
+    """
+
+    def __init__(self, **attrs):
+        self.__dict__.update(attrs)
+
+
+class AttrPosition(AttrBase):
+
+    """
+    Position attribute.
 
     Parameters
     ----------
-    data : list, tuple, numpy.ndarray, ArrayData, SeriesData
-        Data to be plotted.
-    plot : Plot
-        Plot wrapper object.
+    dim : int
+        Data dimension.
+    scale : "lin", "log"
+        Scale type.
+    min, max : float
+        Minimum, maximum plotted position.
     """
-    mpl_rcc = None, None, None
-    # Assert existing plot axes
-    if plot is None:
-        plot_cfg = PlotCfg()
-        plot = Plot(plot_cfg, mpl_ax=plt.gca())
-        plot.setup()
-    if plot.ax is None:
-        plot.setup()
-    # Enable style
-    if plot.mpl_rc is not None:
-        mpl_rcc = mpl.rc_context(rc=plot.mpl_rc)
-    # Perform plot
-    if isinstance(data, seriesdata.SeriesData):
-        _plot_seriesdata(data, plot)
-    elif isinstance(data, arraydata.ArrayData):
-        _plot_arraydata(data, plot)
-    elif isinstance(data, np.ndarray):
-        _plot_numpy_ndarray(data, plot)
-    elif isinstance(data, list):
-        _plot_list(data, plot)
-    elif isinstance(data, tuple):
-        _plot_tuple(data, plot)
-    # Disable style
-    if mpl_rcc is not None:
-        mpl_rcc.__exit__(None, None, None)
+
+    def __init__(self, dim=None, scale="lin", **attrs):
+        super().__init__(
+            dim=dim, scale=scale, **attrs
+        )
 
 
-def plot_multi(data_ls, plot_ls=None):
+class AttrColor(AttrBase):
+
     """
-    Plots multiple data sets.
+    Color attribute.
+
+    Parameters
+    ----------
+    dim : int
+        Data dimension.
+    scale : "const", "lin", "log"
+        Color map scaling or static color.
+    map : cfg.colors
+        Color map string.
+    alpha : float
+        Opacity.
+    min, max : float
+        Minimum, maximum of color normalization.
     """
-    if plot_ls is None:
-        plot_ls = len(data_ls) * [None]
-    assert(len(data_ls) == len(plot_ls))
-    for i, data in enumerate(data_ls):
-        plot(data, plot=plot_ls[i])
+
+    def __init__(self, dim=None, scale="const", map=None, alpha=1, **attrs):
+        super().__init__(
+            dim=dim, scale=scale, map=map, alpha=alpha, **attrs
+        )
+
+
+class AttrSize(AttrBase):
+
+    """
+    Size scaling attribute.
+
+    Parameters
+    ----------
+    xdim, ydim, zdim : int
+        Data dimension for scaling in (x, y, z) plot direction.
+    xscale, yscale, zscale : "const", "lin", "log"
+        Size scaling type or static size.
+    xmap, ymap, zmap : float
+        Numeric scale or static size.
+    """
+
+    def __init__(self,
+                 xdim=None, ydim=None, zdim=None,
+                 xscale="const", yscale="const", zscale="const",
+                 xmap=None, ymap=None, zmap=None, **attrs):
+        super().__init__(
+            self, xdim=xdim, ydim=ydim, zdim=zdim,
+            xscale=xscale, yscale=yscale, zscale=zscale,
+            xmap=xmap, ymap=ymap, zmap=zmap, **attrs
+        )
+
+
+class AttrLine(AttrBase):
+
+    """
+    Line style attribute.
+
+    Parameters
+    ----------
+    shape : "-", "--", "-.", ":"
+        Line style: continuous, dashed, dot-dashed, dotted.
+    thickness : float
+        Line thickness.
+    """
+
+    def __init__(self, shape=None, thickness=None, **attrs):
+        super().__init__(shape=shape, thickness=thickness, **attrs)
+
+
+class AttrFill(AttrBase):
+
+    """
+    TODO: Point/line/surface fill attribute.
+    """
+
+    def __init__(self, **attrs):
+        super().__init__(**attrs)
+
+
+# ++++++++++++++++++++++++
+
+
+class AttrPoint(object):
+
+    """
+    Plot type: point plot.
+    0D objects embedded in 2D/3D plot.
+
+    Parameters
+    ----------
+    xpos, ypos, zpos : AttrPosition
+        Plot value position.
+    color : AttrColor
+        Color of point.
+    shape : matplotlib.markers
+        Point type.
+    size : AttrSize
+        Point size.
+    """
+
+    def __init__(self,
+                 xpos=None, ypos=None, zpos=None,
+                 color=None, shape=None, size=None):
+        self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
+        self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
+        self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
+        self.color = misc.assume_construct_obj(color, AttrColor)
+        self.shape = shape
+        self.size = misc.assume_construct_obj(size, AttrSize)
+
+
+class AttrCurve(object):
+
+    """
+    Plot type: curve plot.
+    1D object embedded in 2D/3D plot.
+
+    Parameters
+    ----------
+    xpos, ypos, zpos : AttrPosition
+        Plot value position.
+    color : AttrColor
+        Color of curve.
+    line : AttrLine
+        Line style.
+    """
+
+    def __init__(self,
+                 xpos=None, ypos=None, zpos=None,
+                 color=None, line=None):
+        self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
+        self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
+        self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
+        self.color = misc.assume_construct_obj(color, AttrColor)
+        self.line = misc.assume_construct_obj(line, AttrLine)
+
+
+class AttrMatrix(object):
+
+    """
+    Plot type: matrix (color) plot.
+    2D object embedded in 2D plot.
+
+    Parameters
+    ----------
+    xpos, ypos : AttrPosition
+        Plot value position.
+    color : AttrColor
+        Color of matrix fill.
+    mesh : AttrLine
+        Mesh (i.e. grid) lines.
+    meshcolor : AttrColor
+        Color of mesh.
+    """
+
+    def __init__(self,
+                 xpos=None, ypos=None, color=None,
+                 mesh=None, meshcolor=None):
+        self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
+        self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
+        self.color = misc.assume_construct_obj(color, AttrColor)
+        self.mesh = misc.assume_construct_obj(mesh, AttrLine)
+        self.meshcolor = misc.assume_construct_obj(meshcolor, AttrColor)
+
+
+class AttrSurface(object):
+
+    """
+    Plot type: surface plot.
+    2D object embedded in 3D plot.
+
+    Parameters
+    ----------
+    xpos, ypos, zpos : AttrPosition
+        Plot value position.
+    color : AttrColor
+        Color of surface.
+    mesh : AttrLine
+        Mesh (i.e. grid) lines.
+    meshcolor : AttrColor
+        Color of mesh.
+    """
+
+    def __init__(self,
+                 xpos=None, ypos=None, zpos=None, color=None,
+                 mesh=None, meshcolor=None):
+        self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
+        self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
+        self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
+        self.color = misc.assume_construct_obj(color, AttrColor)
+        self.mesh = misc.assume_construct_obj(mesh, AttrLine)
+        self.meshcolor = misc.assume_construct_obj(meshcolor, AttrColor)
+
+
+class AttrContour(object):
+
+    """
+    Plot type: contour plot.
+    2D/3D object embedded in 2D/3D plot.
+
+    Parameters
+    ----------
+    xpos, ypos, zpos : AttrPosition
+        Plot value position.
+    color : AttrColor
+        Color of contours.
+    """
+
+    def __init__(self,
+                 xpos=None, ypos=None, zpos=None, color=None):
+        self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
+        self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
+        self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
+        self.color = misc.assume_construct_obj(color, AttrColor)
 
 
 ###############################################################################
 
 
-class FigCfg(cfg.CfgBase):
+class PlotCfg(object):
 
     """
-    Matplotlib figure configuration.
+    Parameters
+    ----------
+    xgridspec, ygridspec : tuple(int) or int
+        Matplotlib gridspec usage (row, column).
+        Scalars represent a single grid item,
+        tuples are interpreted as slices.
+    point : list(AttrPoint)
+        Point plots.
+    curve : list(AttrCurve)
+        Curve plots.
+    matrix : list(AttrMatrix)
+        Matrix plots.
+    surface : list(AttrSurface)
+        Surface plots.
+    contour : list(AttrContour)
+        Contour plots.
+
+    Notes
+    -----
+    2D (2D point, 2D curve, matrix, 2D contour) and 3D (3D point, 3D curve,
+    surface, 3D contour) plots are incompatible to each other. Specifying both
+    leads to undefined behaviour.
+    """
+
+    def __init__(self,
+                 xgridspec=1, ygridspec=1,
+                 point=None, curve=None, matrix=None,
+                 surface=None, contour=None):
+        self.xgridspec = xgridspec
+        self.ygridspec = ygridspec
+        self.point = misc.assume_construct_obj(point, AttrPoint)
+        self.curve = misc.assume_construct_obj(curve, AttrCurve)
+        self.matrix = misc.assume_construct_obj(matrix, AttrMatrix)
+        self.surface = misc.assume_construct_obj(surface, AttrSurface)
+        self.contour = misc.assume_construct_obj(contour, AttrContour)
+
+    def get_gridspec_param(self):
+        """
+        Gets parameters for the `matplotlib.gridspec.GridSpec.new_subplotspec`
+        method.
+
+        Returns
+        -------
+        loc : tuple(int)
+            (x, y) location of subplotspec.
+        span : tuple(int)
+            (xspan, yspan) span of subplotspec.
+
+        Notes
+        -----
+        GridSpec coordinates count from left-top, thus x-axis (y-axis)
+        corresponds to rows (columns).
+        """
+        xloc, xspan = (
+            (self.xgridspec, 1) if np.isscalar(self.xgridspec)
+            else (self.xgridspec[0], self.xgridspec[1] - self.xgridspec[0])
+        )
+        yloc, yspan = (
+            (self.ygridspec, 1) if np.isscalar(self.ygridspec)
+            else (self.ygridspec[0], self.ygridspec[1] - self.ygridspec[0])
+        )
+        return (xloc, yloc), (xspan, yspan)
+
+
+# ++++++++++++++++++++++++
+
+
+def _plot_meta():
+    pass
+
+
+def _plot_data():
+    pass
+
+
+def _plot(cfg, data):
+    pass
+
+
+class Plot(object):
+
+    """
+    TODO: Implement plotting logic.
 
     Parameters
     ----------
-    gridspec_rows : int
-        Rows of matplotlib figure's gridspec.
-    gridspec_cols : int
-        Columns of matplotlib figure's gridspec.
-    spacing_rows : float or None
-        Vertical spacing between subplots in
-        fractions of average axis height.
-    spacing_cols : float or None
-        Horiontal spacing between subplots in
-        fractions of average axis width.
+    cfg : list(PlotCfg)
+        Plot configurations.
+    data : list(object)
+        Corresponding data to be plotted.
     """
 
-    def __init__(self, gridspec_rows=1, gridspec_cols=1,
-                 spacing_rows=None, spacing_cols=None):
-        super().__init__(group="plot_configuration")
-        self.gridspec_rows = gridspec_rows
-        self.gridspec_cols = gridspec_cols
-        self.spacing_rows = spacing_rows
-        self.spacing_cols = spacing_cols
+    def __init__(self, cfg, data):
+        self.cfg = cfg
+        self.data = data
+
+    def plot(self):
+        pass
+
+
+###############################################################################
+
+
+class FigureCfg(object):
+
+    """
+    Figure configuration.
+
+    Parameters
+    ----------
+    hrzt_size, vert_size : int
+        Horizontal and vertical figure size in points (pt).
+    resolution : float
+        Resolution in dots per point (1/pt).
+    format_ : str
+        Plot format when saved.
+    """
+
+    def __init__(self,
+                 hrzt_size=None, vert_size=None, resolution=2.0,
+                 format_="pdf"):
+        self.hrzt_size = hrzt_size
+        self.vert_size = vert_size
+        self.resolution = resolution
+        self.format = format_
+
+    def get_size(self, unit="pt"):
+        """
+        Gets the (horizontal, vertical) size.
+
+        Parameters
+        ----------
+        unit : "pt", "mm", "cm", "in"
+            Unit in points, millimeter, centimeter,
+            meter, inch.
+        """
+        if self.hrzt_size is None or self.vert_size is None:
+            return None
+        else:
+            cv_factor = 1
+            if unit == "in":
+                cv_factor = 72
+            elif unit == "mm":
+                cv_factor = 72 / 25.4
+            elif unit == "cm":
+                cv_factor = 72 / 2.54
+            return (self.hrzt_size * cv_factor, self.vert_size * cv_factor)
+
+    def get_resolution(self, unit="pt"):
+        if self.resolution is None:
+            return None
+        else:
+            cv_factor = 1
+            if unit == "in":
+                cv_factor = 1 / 72
+            elif unit == "mm":
+                cv_factor = 25.4 / 72
+            elif unit == "cm":
+                cv_factor = 2.54 / 72
+            return self.resolution * cv_factor
 
 
 class Figure(object):
@@ -116,109 +430,55 @@ class Figure(object):
     """
     Parameters
     ----------
-    fig_cfg : FigCfg
+    figure_cfg : FigureCfg
         Figure configuration.
-    fig : matplotlib.figure.Figure
-        Matplotlib figure.
+    plot_cfgs : list(PlotCfg)
+        List of plot configurations.
+    plot_style_cfg : PlotStyleCfg or None
+        Matplotlib rc plot style configuration.
     """
 
-    def __init__(self, fig_cfg, mpl_fig=None):
-        self.fig_cfg
-        self.mpl_fig = mpl_fig
-        self.gridspec = None
+    def __init__(self,
+                 figure_cfg, plot_cfgs, plot_style_cfg=None):
+        self.figure_cfg = misc.assume_construct_obj(figure_cfg, FigureCfg)
+        self.plot_cfgs = misc.assume_list(plot_cfgs)
+        self.plots = []
+        self.plot_style_cfg = None
+        self.mpl_fig = None
+        self.mpl_gs = None
+        self.mpl_ax = []
 
-    def setup(self):
+    def setup_mpl(self):
         """
-        Sets up matplotlib figure and gridspec.
+        Sets up the matplotlib figure environment to enable plotting.
         """
-        if self.mpl_fig is None:
-            self.mpl_fig = plt.figure()
-        self.gridspec = mpl.gridspec.GridSpec(
-            self.fig_cfg.gridspec_rows, self.fig_cfg.gridspec_cols,
-            wspace=self.fig_cfg.spacing_cols, hspace=self.fig_cfg.spacing_rows
+        # Create matplotlib figure
+        self.mpl_fig = plt.figure(
+            figsize=self.figure_cfg.get_size(unit="in"),
+            dpi=self.figure_cfg.get_resolution(unit="in")
         )
-
-
-class PLOT_TYPE:
-
-    DEFAULT = 0
-    NONE = 10
-    LINE = 101
-    SCATTER = 102
-    COLOR = 103
-    BAR = 104
-
-
-class PlotCfg(cfg.CfgBase):
-
-    """
-    Matplotlib axes configuration.
-
-    Parameters
-    ----------
-    plot_type : PLOT_TYPE or list(PLOT_TYPE)
-        Plot type for each dimension of data.
-    plot_style : PlotStyleCfg or None
-        Matplotlib plot style configuration.
-        If None, default rc_params are chosen.
-    plot_xlayout : tuple(int) or int
-        Matplotlib gridspec usage (row slice).
-    plot_ylayout : tuple(int) or int
-        Matplotlib gridspec usage (column slice).
-    """
-
-    def __init__(self, plot_type=PLOT_TYPE.DEFAULT, plot_style=None,
-                 plot_xlayout=1, plot_ylayout=1):
-        super().__init__(group="plot_configuration")
-        self.plot_type = plot_type
-        self.plot_style = misc.assume_construct_obj(plot_style, PlotStyleCfg)
-        self.plot_xlayout = plot_xlayout
-        self.plot_ylayout = plot_ylayout
-
-
-class Plot(object):
-
-    """
-    Parameters
-    ----------
-    plot_cfg : PlotCfg
-        Plot configuration.
-    figure : Figure
-        Figure wrapper object.
-    """
-
-    def __init__(self, plot_cfg, figure=None, mpl_ax=None):
-        self.plot_cfg = plot_cfg
-        self.mpl_ax = mpl_ax
-        self.figure = figure
-        self.mpl_rc = None
-
-    def setup(self):
-        """
-        Sets up matplotlib axes and style dictionary.
-        """
-        xlayout = self.plot_cfg.plot_xlayout
-        ylayout = self.plot_cfg.plot_ylayout
-        xmax, ymax = None, None
-        if isinstance(xlayout, tuple):
-            xmax = max(xlayout)
-            xlayout = slice(*xlayout)
-        if isinstance(ylayout, tuple):
-            ymax = max(ylayout)
-            ylayout = slice(*ylayout)
-        if self.figure is None:
-            fig_cfg = FigCfg(gridspec_rows=ymax, gridspec_cols=xmax)
-            self.figure = Figure(fig_cfg, mpl_fig=plt.gcf())
-            self.figure.setup()
-            if self.mpl_ax is None:
-                self.mpl_ax = self.figure.fig.add_subplot(
-                    self.figure.gridspec[xlayout, ylayout]
-                )
-        else:
-            self.mpl_ax = self.figure.fig.add_subplot(
-                self.figure.gridspec[xlayout, ylayout]
+        # Create matplotlib gridspec
+        xmax, ymax = 0, 0
+        for item in self.plot_cfgs:
+            if np.isscalar(item.xgridspec):
+                xmax = np.max(xmax, item.xgridspec + 1)
+            else:
+                xmax = np.max(xmax, *item.xgridspec)
+            if np.isscalar(item.ygridspec):
+                ymax = np.max(ymax, item.ygridspec + 1)
+            else:
+                ymax = np.max(ymax, *item.ygridspec)
+        self.mpl_gs = mpl.gridspec.GridSpec(xmax, ymax, figure=self.mpl_fig)
+        # Create matplotlib axes
+        self.mpl_ax = len(self.plot_cfgs) * [None]
+        for i, plot_cfg in enumerate(self.plot_cfgs):
+            loc, span = plot_cfg.get_gridspec_param()
+            self.mpl_ax[i] = mpl.subplot(
+                self.mpl_gs.new_subplotspec(loc, *span)
             )
-        self.mpl_rc = cv_plotstylecfg_to_mplrc(self.plot_cfg.plot_style)
+
+    def plot(self):
+        pass
 
 
 ###############################################################################
