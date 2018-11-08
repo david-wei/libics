@@ -340,6 +340,7 @@ class RenameWidget(QWidget):
     def on_qbutton_apply_rename_clicked(self):
         _rename(self.folder, self.match_folder_ls, self.new_folder_ls)
         _rename(self.folder, self.match_file_ls, self.new_file_ls)
+        self.on_qline_regex_filter_textchanged(self.regex_filter)
 
     @pyqtSlot(str)
     def on_qline_regex_filter_textchanged(self, s):
