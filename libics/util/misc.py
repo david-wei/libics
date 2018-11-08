@@ -34,6 +34,29 @@ def assume_iter(data):
     return data
 
 
+def assume_list(data):
+    """
+    Asserts that data is a list. If the given data is a tuple, it is cast to a list.
+    If not, a list is created with the data as single item.
+
+    Parameters
+    ----------
+    data
+        Input data to be checked for list.
+
+    Returns
+    -------
+    data : list
+        Returns a list containing `data`.
+    """
+    if isinstance(data, list):
+        return data
+    elif isinstance(data, tuple):
+        return list(data)
+    else:
+        return [data]
+
+
 def assume_endswith(string, suffix):
     """
     Asserts that the passed `string` ends with with `suffix`. If it does not,
@@ -90,11 +113,11 @@ def assume_dir(path):
     return path
 
 
-def assume_construct_obj(obj, cls_):
+def assume_construct_obj(obj, cls_, raise_exception=None):
     """
     Asserts that the given object is of `cls_` class. If not and `obj` is a
     dictionary, an instance of the class is constructed with the dictionary
-    as keyword arguments. If construction fails, the object is returned.
+    as keyword arguments.
 
     Parameters
     ----------
@@ -102,11 +125,22 @@ def assume_construct_obj(obj, cls_):
         Object or keyword argument dictionary.
     cls_ : class
         Class of instance to be constructed.
+    raise_exception : Exception or None
+        Specifies the behaviour if object construction fails.
+        None:
+            Returns the input object.
+        Exception:
+            Raises the given exception.
 
     Returns
     -------
     obj : cls_
         Instance of given class or object itself.
+
+    Raises
+    ------
+    raise_exception
+        Specified exception, if applicable.
     """
     if isinstance(obj, cls_):
         return obj
@@ -114,9 +148,15 @@ def assume_construct_obj(obj, cls_):
         try:
             return cls_(**obj)
         except TypeError:
-            return obj
+            if raise_exception is None:
+                return obj
+            else:
+                raise raise_exception
     else:
-        return obj
+        if raise_exception is None:
+            return obj
+        else:
+            raise raise_exception
 
 
 ###############################################################################
@@ -200,6 +240,16 @@ def get_first_elem_iter(ls):
 
 
 def _gcrec(prev_comb, rem_ls):
+    """
+    Get combinations recursively.
+
+    Parameters
+    ----------
+    prev_comb
+        Previous combination.
+    rem_ls
+        Remaining list.
+    """
     ls = []
     if len(rem_ls) > 1:
         for cur_val in rem_ls[0]:
