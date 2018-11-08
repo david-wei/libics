@@ -34,10 +34,33 @@ def assume_iter(data):
     return data
 
 
+def assume_tuple(data):
+    """
+    Asserts that data is a tuple. If the given data is a list, it is cast to a
+    tuple. If not, a tuple is created with the data as single item.
+
+    Parameters
+    ----------
+    data
+        Input data to be checked for list.
+
+    Returns
+    -------
+    data : tuple
+        Returns a tuple containing `data`.
+    """
+    if isinstance(data, tuple):
+        return data
+    elif isinstance(data, list):
+        return tuple(data)
+    else:
+        return tuple(data)
+
+
 def assume_list(data):
     """
-    Asserts that data is a list. If the given data is a tuple, it is cast to a list.
-    If not, a list is created with the data as single item.
+    Asserts that data is a list. If the given data is a tuple, it is cast to a
+    list. If not, a list is created with the data as single item.
 
     Parameters
     ----------
