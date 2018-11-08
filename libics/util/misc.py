@@ -54,7 +54,7 @@ def assume_tuple(data):
     elif isinstance(data, list):
         return tuple(data)
     else:
-        return tuple(data)
+        return (data, )
 
 
 def assume_list(data):
