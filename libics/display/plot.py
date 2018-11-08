@@ -139,17 +139,20 @@ class AttrPoint(object):
         Point type.
     size : AttrSize
         Point size.
+    fill : AttrFill
+        Fill to point.
     """
 
     def __init__(self,
                  xpos=None, ypos=None, zpos=None,
-                 color=None, shape=None, size=None):
+                 color=None, shape=None, size=None, fill=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
         self.shape = shape
         self.size = misc.assume_construct_obj(size, AttrSize)
+        self.fill = misc.assume_construct_obj(fill, AttrFill)
 
 
 class AttrCurve(object):
@@ -166,16 +169,19 @@ class AttrCurve(object):
         Color of curve.
     line : AttrLine
         Line style.
+    fill : AttrFill
+        Fill to line.
     """
 
     def __init__(self,
                  xpos=None, ypos=None, zpos=None,
-                 color=None, line=None):
+                 color=None, line=None, fill=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
         self.line = misc.assume_construct_obj(line, AttrLine)
+        self.fill = misc.assume_construct_obj(fill, AttrFill)
 
 
 class AttrMatrix(object):
@@ -222,17 +228,20 @@ class AttrSurface(object):
         Mesh (i.e. grid) lines.
     meshcolor : AttrColor
         Color of mesh.
+    fill : AttrFill
+        Fill to surface.
     """
 
     def __init__(self,
                  xpos=None, ypos=None, zpos=None, color=None,
-                 mesh=None, meshcolor=None):
+                 mesh=None, meshcolor=None, fill=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
         self.mesh = misc.assume_construct_obj(mesh, AttrLine)
         self.meshcolor = misc.assume_construct_obj(meshcolor, AttrColor)
+        self.fill = misc.assume_construct_obj(fill, AttrFill)
 
 
 class AttrContour(object):
@@ -326,11 +335,45 @@ class PlotCfg(object):
         )
         return (xloc, yloc), (xspan, yspan)
 
+    def get_projection(self):
+        pass
+
 
 # ++++++++++++++++++++++++
 
 
 def _plot_meta():
+    pass
+
+
+def _plot_data_array(ax, cfg, x, y, data):
+    """
+    ax : matplotlib.axes.Axes
+        Matplotlib axes to which to plot.
+    cfg : PlotCfg
+        Plot configuration.
+    x : numpy.ndarray(1)
+        1D xdim array.
+    y : numpy.ndarray(1)
+        1D ydim array.
+    data : numpy.ndarray(2)
+        2D plottable data. Each data element may be higher
+        dimensional.
+    """
+    # projection = 2D/3D?
+    if cfg.point is not None:
+        pass
+    if cfg.curve is not None:
+        pass
+    if cfg.matrix is not None:
+        pass
+    if cfg.surface is not None:
+        pass
+    if cfg.contour is not None:
+        pass
+
+
+def _plot_data_series(data):
     pass
 
 
@@ -446,7 +489,33 @@ class Figure(object):
         self.plot_style_cfg = None
         self.mpl_fig = None
         self.mpl_gs = None
-        self.mpl_ax = []
+        self.mpl_ax = {}
+        self._mpl_ax_ref = []
+        self._mpl_ax_proj = {}
+
+    def add_mpl_ax(self, loc, xspan=None, yspan=None, projection=None):
+        """
+        Adds an internal reference to already created axes to avoid
+        matplotlib axes-reuse deprecation warning.
+
+        Parameters
+        ----------
+        loc : tuple(int)
+            Gridspec location.
+        xspan, yspan : int
+            Gridspec span (x, y).
+        projection: None or "3d"
+            Axes projection.
+        """
+        self._mpl_ax_ref.append(loc)
+        if loc not in self.mpl_ax.keys():
+            self.mpl_ax[loc] = self.mpl_fig.add_subplot(
+                self.mpl_gs.new_subplotspec(loc, xspan, yspan),
+                projection=projection
+            )
+            self._mpl_ax_proj[loc] = projection
+        elif projection != self._mpl_ax_proj[loc]:
+            raise ValueError("incompatible projection")
 
     def setup_mpl(self):
         """
@@ -473,8 +542,9 @@ class Figure(object):
         self.mpl_ax = len(self.plot_cfgs) * [None]
         for i, plot_cfg in enumerate(self.plot_cfgs):
             loc, span = plot_cfg.get_gridspec_param()
-            self.mpl_ax[i] = mpl.subplot(
-                self.mpl_gs.new_subplotspec(loc, *span)
+            self.add_mpl_ax(
+                loc, xspan=span[0], yspan=span[1],
+                projection=plot_cfg.get_projection()
             )
 
     def plot(self):
