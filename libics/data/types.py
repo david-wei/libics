@@ -40,6 +40,13 @@ class Quantity(hdf.HDFBase):
     def __repr__(self):
         return str(self)
 
+    def mathstr(self):
+        s = self.name
+        if self.symbol is not None:
+            s += " $" + self.symbol
+        if self.unit is not None:
+            s += " [" + self.unit + "]"
+
 
 ###############################################################################
 # Physical Quantity
