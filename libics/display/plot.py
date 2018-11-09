@@ -616,28 +616,168 @@ def _plot_data_array(mpl_ax, plot_dim, cfg, x, y, data):
 
 def _plot_data_series(mpl_ax, plot_dim, cfg, data):
     if plot_dim == 2:
+        # 2D point scatter plot
         if cfg.point is not None:
-            pass
+            if cfg.point.xpos is None or cfg.point.ypos is None:
+                return
+            xx, yy = data[cfg.point.xpos.dim], data[cfg.point.ypos.dim]
+            s, c, marker, cmap, vmin, vmax, alpha = 7 * [None]
+            if cfg.point.size is not None:
+                for size in _param_size(cfg.point.size, data):
+                    if size is not None:
+                        s = size
+                        break
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                _, c, cmap, vmin, vmax, alpha = _color
+            if cfg.point.shape is not None:
+                marker = cfg.point.shape
+            mpl_ax.scatter(
+                xx, yy, s=s, c=c, marker=marker, cmap=cmap,
+                vmin=vmin, vmax=vmax, alpha=alpha,
+            )
+        # 2D curve line plot
         if cfg.curve is not None:
-            pass
+            if cfg.curve.xpos is None or cfg.curve.ypos is None:
+                return
+            xx, yy = data[cfg.point.xpos.dim], data[cfg.point.ypos.dim]
+            c, alpha, linestyle, linewidth = 4 * [None]
+            if (cfg.point.color is not None
+                    and cfg.point.color.scale == "const"):
+                c = cfg.point.color.map
+                alpha = cfg.point.color.alpha
+            if cfg.point.line is not None:
+                linestyle = cfg.curve.line.shape
+                linewidth = cfg.curve.line.thickness
+            mpl_ax.plot(
+                xx, yy, color=c, alpha=alpha,
+                linestyle=linestyle, linewidth=linewidth
+            )
+        # 2D color matrix plot
         if cfg.matrix is not None:
-            pass
+            if cfg.matrix.xpos is None or cfg.matrix.ypos is None:
+                return
+            xx, yy = data[cfg.matrix.xpos.dim], data[cfg.matrix.ypos.dim]
+            c, cmap, vmin, vmax, alpha = 5 * [None]
+            if (cfg.matrix.color is not None
+                    and cfg.matrix.color.dim is not None):
+                _color = _param_color(cfg.matrix.color, data)
+                c, _, cmap, vmin, vmax, alpha = _color
+            else:
+                c = np.full_like(xx, 0)
+                alpha = 0
+            mpl_ax.tripcolor(
+                xx, yy, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha
+            )
+            if (cfg.matrix.meshcolor is not None
+                    and cfg.matrix.meshcolor.scale == "const"):
+                linestyle = cfg.matrix.mesh.shape
+                linewidth = cfg.matrix.mesh.thickness
+                mpl_ax.triplot(
+                    xx, yy, color=c, alpha=alpha,
+                    linestyle=linestyle, linewidth=linewidth
+                )
+        # 2D contour plot
         if cfg.contour is not None:
-            pass
+            if cfg.contour.xdim is None or cfg.contour.ydim is None:
+                return
+            xx, yy = data[cfg.contour.xdim], data[cfg.contour.ydim]
+            _color = _param_color(cfg.contour.color, data)
+            z, _, cmap, vmin, vmax, alpha = _color
+            levels = cfg.contour.levels
+            mpl_ax.tricontour(
+                xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
+                vmin=vmin, vmax=vmax
+            )
     elif plot_dim == 3:
+        # 3D point scatter plot
         if cfg.point is not None:
-            pass
+            if (cfg.point.xpos is None or cfg.point.ypos is None
+                    or cfg.point.zpos is None):
+                return
+            xx, yy = data[cfg.point.xpos.dim], data[cfg.point.ypos.dim]
+            zz = data[cfg.point.zpos.dim]
+            s, c, marker, cmap, vmin, vmax, alpha = 7 * [None]
+            if cfg.point.size is not None:
+                for size in _param_size(cfg.point.size, data):
+                    if size is not None:
+                        s = size
+                        break
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                _, c, cmap, vmin, vmax, alpha = _color
+            if cfg.point.shape is not None:
+                marker = cfg.point.shape
+            mpl_ax.scatter(
+                xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
+                vmin=vmin, vmax=vmax, alpha=alpha,
+            )
         # 3D curve line plot
         if cfg.curve is not None:
-            pass
-            # mpl_ax.plot(
-            #     xx, yy, zz, color=color,
-            #     linestyle=linestyle, linewidth=linewidth,
-            # )
+            if (cfg.curve.xpos is None or cfg.curve.ypos is None
+                    or cfg.curve.zpos is None):
+                return
+            xx, yy = data[cfg.point.xpos.dim], data[cfg.point.ypos.dim]
+            zz = data[cfg.point.zpos.dim]
+            c, alpha, linestyle, linewidth = 4 * [None]
+            if (cfg.point.color is not None
+                    and cfg.point.color.scale == "const"):
+                c = cfg.point.color.map
+                alpha = cfg.point.color.alpha
+            if cfg.point.line is not None:
+                linestyle = cfg.curve.line.shape
+                linewidth = cfg.curve.line.thickness
+            mpl_ax.plot(
+                xx, yy, zz, color=c, alpha=alpha,
+                linestyle=linestyle, linewidth=linewidth
+            )
+        # 3D surface plot
         if cfg.surface is not None:
-            pass
+            if (cfg.surface.xpos is None or cfg.surface.ypos is None
+                    or cfg.surface.zpos is None):
+                return
+            xx, yy = data[cfg.surface.xpos.dim], data[cfg.surface.ypos.dim]
+            zz = data[cfg.surface.zpos.dim]
+            cdata, color, cmap, vmin, vmax, alpha = 6 * [None]
+            mcolor = None
+            # Surface plot
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                cdata, color, cmap, vmin, vmax, alpha = _color
+                if (cfg.point.meshcolor is not None
+                        and cfg.point.meshcolor.scale == "const"):
+                    mcolor = cfg.point.meshcolor.map
+            # Wireframe plot
+            else:
+                if (cfg.point.meshcolor is not None
+                        and cfg.point.meshcolor.dim is not None):
+                    _color = _param_color(cfg.point.meshcolor, data)
+                    cdata, _, cmap, _, _, _ = _color
+            # Surface plot
+            if alpha != 0:
+                mpl_ax.plot_trisurf(
+                    xx, yy, zz, color=color, cmap=cmap,
+                    vmin=vmin, vmax=vmax, edgecolor=mcolor
+                )
+            # Wireframe plot
+            else:
+                cdata = (cdata - cdata.min()) / (cdata.max() - cdata.min())
+                surf = mpl_ax.plot_trisurf(
+                    xx, yy, zz, facecolors=cdata
+                )
+                surf.set_facecolors((0, 0, 0, 0))
+        # 3D contour plot
         if cfg.contour is not None:
-            pass
+            if cfg.contour.xdim is None or cfg.contour.ydim is None:
+                return
+            xx, yy = data[cfg.contour.xdim], data[cfg.contour.ydim]
+            _color = _param_color(cfg.contour.color, data)
+            z, _, cmap, vmin, vmax, alpha = _color
+            levels = cfg.contour.levels
+            mpl_ax.tricontour(
+                xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
+                vmin=vmin, vmax=vmax
+            )
 
 
 def _plot(mpl_ax, plot_dim, cfg, data):
