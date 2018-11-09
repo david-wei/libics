@@ -227,8 +227,16 @@ class AttrSurface(object):
         Mesh (i.e. grid) lines.
     meshcolor : AttrColor
         Color of mesh.
+        Color maps can only be used when the
+        surface is transparent. With finite
+        surface opacity, only static colors
+        are allowed.
     fill : AttrFill
         Fill to surface.
+
+    Notes
+    -----
+    Does not support partial transparency.
     """
 
     def __init__(self,
@@ -515,6 +523,7 @@ def _plot_data_array(mpl_ax, plot_dim, cfg, x, y, data):
                 x, y, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=edgecolors
             )
+        # 2D contour plot
         if cfg.contour is not None:
             z, levels, alpha, cmap, vmin, vmax = 6 * [None]
             if (cfg.contour.color is not None
@@ -531,14 +540,78 @@ def _plot_data_array(mpl_ax, plot_dim, cfg, x, y, data):
             )
     # 3D plots
     elif plot_dim == 3:
+        # 3D point scatter plot
         if cfg.point is not None:
-            pass
-        if cfg.curve is not None:
-            pass
+            xx, yy = xgrid.flatten(), ygrid.flatten()
+            zz = None
+            if cfg.point.zpos is not None and cfg.point.zpos.dim is not None:
+                zz = data[cfg.point.zpos.dim].flatten()
+            s, c, marker, cmap, vmin, vmax, alpha = 7 * [None]
+            if cfg.point.size is not None:
+                for size in _param_size(cfg.point.size, data):
+                    if size is not None:
+                        s = size
+                        break
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                _, c, cmap, vmin, vmax, alpha = _color
+            if cfg.point.shape is not None:
+                marker = cfg.point.shape
+            mpl_ax.scatter(
+                xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
+                vmin=vmin, vmax=vmax, alpha=alpha,
+            )
+        # 3D surface plot
         if cfg.surface is not None:
-            pass
+            z = None
+            if (cfg.surface.zpos is not None
+                    and cfg.surface.zpos.dim is not None):
+                z = data[cfg.surface.zpos.dim]
+            else:
+                return
+            cdata, color, cmap, vmin, vmax, alpha = 6 * [None]
+            mcolor = None
+            # Surface plot
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                cdata, color, cmap, vmin, vmax, alpha = _color
+                if (cfg.point.meshcolor is not None
+                        and cfg.point.meshcolor.scale == "const"):
+                    mcolor = cfg.point.meshcolor.map
+            # Wireframe plot
+            else:
+                if (cfg.point.meshcolor is not None
+                        and cfg.point.meshcolor.dim is not None):
+                    _color = _param_color(cfg.point.meshcolor, data)
+                    cdata, _, cmap, _, _, _ = _color
+            # Surface plot
+            if alpha != 0:
+                mpl_ax.plot_surface(
+                    xgrid, ygrid, z, color=color, cmap=cmap,
+                    vmin=vmin, vmax=vmax, edgecolor=mcolor
+                )
+            # Wireframe plot
+            else:
+                cdata = (cdata - cdata.min()) / (cdata.max() - cdata.min())
+                surf = mpl_ax.plot_surface(
+                    xgrid, ygrid, z, facecolors=cdata
+                )
+                surf.set_facecolors((0, 0, 0, 0))
+        # 3D contour plot
         if cfg.contour is not None:
-            pass
+            z, levels, alpha, cmap, vmin, vmax = 6 * [None]
+            if (cfg.contour.color is not None
+                    and cfg.contour.color.dim is not None):
+                _color = _param_color(cfg.contour.color, data)
+                z, _, cmap, vmin, vmax, alpha = _color
+            else:
+                z = np.full_like(x, 0)
+                alpha = 0
+            levels = cfg.contour.levels
+            mpl_ax.contour(
+                xgrid, ygrid, z, levels=levels, alpha=alpha, cmap=cmap,
+                vmin=vmin, vmax=vmax
+            )
 
 
 def _plot_data_series(mpl_ax, plot_dim, cfg, data):
@@ -554,8 +627,13 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
     elif plot_dim == 3:
         if cfg.point is not None:
             pass
+        # 3D curve line plot
         if cfg.curve is not None:
             pass
+            # mpl_ax.plot(
+            #     xx, yy, zz, color=color,
+            #     linestyle=linestyle, linewidth=linewidth,
+            # )
         if cfg.surface is not None:
             pass
         if cfg.contour is not None:
