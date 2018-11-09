@@ -54,16 +54,18 @@ class AttrColor(AttrBase):
     scale : "const", "lin", "log"
         Color map scaling or static color.
     map : cfg.colors
-        Color map string.
+        Color map string or static color.
     alpha : float
         Opacity.
     min, max : float
         Minimum, maximum of color normalization.
     """
 
-    def __init__(self, dim=None, scale="const", map=None, alpha=1, **attrs):
+    def __init__(self, dim=None, scale="const", map=None, alpha=1,
+                 min=None, max=None, **attrs):
         super().__init__(
-            dim=dim, scale=scale, map=map, alpha=alpha, **attrs
+            dim=dim, scale=scale, map=map, alpha=alpha,
+            min=min, max=max, **attrs
         )
 
 
@@ -87,7 +89,7 @@ class AttrSize(AttrBase):
                  xscale="const", yscale="const", zscale="const",
                  xmap=None, ymap=None, zmap=None, **attrs):
         super().__init__(
-            self, xdim=xdim, ydim=ydim, zdim=zdim,
+            xdim=xdim, ydim=ydim, zdim=zdim,
             xscale=xscale, yscale=yscale, zscale=zscale,
             xmap=xmap, ymap=ymap, zmap=zmap, **attrs
         )
@@ -196,8 +198,6 @@ class AttrMatrix(object):
         Plot value position.
     color : AttrColor
         Color of matrix fill.
-    mesh : AttrLine
-        Mesh (i.e. grid) lines.
     meshcolor : AttrColor
         Color of mesh.
     """
@@ -208,7 +208,6 @@ class AttrMatrix(object):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
-        self.mesh = misc.assume_construct_obj(mesh, AttrLine)
         self.meshcolor = misc.assume_construct_obj(meshcolor, AttrColor)
 
 
@@ -256,14 +255,17 @@ class AttrContour(object):
         Plot value position.
     color : AttrColor
         Color of contours.
+    levels : int
+        Number of contour colors.
     """
 
     def __init__(self,
-                 xpos=None, ypos=None, zpos=None, color=None):
+                 xpos=None, ypos=None, zpos=None, color=None, levels=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
+        self.levels = levels
 
 
 ###############################################################################
@@ -335,8 +337,32 @@ class PlotCfg(object):
         )
         return (xloc, yloc), (xspan, yspan)
 
-    def get_projection(self):
-        pass
+    def get_plot_dim(self):
+        """
+        Gets the plot dimension (2D or 3D canvas).
+
+        Returns
+        -------
+        dim : 2 or 3 or None
+            Plot dimension. None if no plot is specified.
+
+        Notes
+        -----
+        Assumes correctness of configuration, particularly that dimensions are
+        consistent across plot types.
+        """
+        dim = None
+        if self.point is not None:
+            dim = 2 if self.point.zpos is None else 3
+        elif self.curve is not None:
+            dim = 2 if self.curve.zpos is None else 3
+        elif self.matrix is not None:
+            dim = 2
+        elif self.surface is not None:
+            dim = 3
+        elif self.contour is not None:
+            dim = 2 if self.contour.zpos is None else 3
+        return dim
 
 
 # ++++++++++++++++++++++++
@@ -346,10 +372,100 @@ def _plot_meta():
     pass
 
 
-def _plot_data_array(ax, cfg, x, y, data):
+def _cv_layered_2d_array(data):
     """
-    ax : matplotlib.axes.Axes
+    Transposes a 2D array with items of arbitrary dimension (length) into
+    a list (not necessarily Python list) of 2D arrays, where each array
+    corresponds to one item dimension.
+
+    Notes
+    -----
+    The following transposition is performed: [x, y, c] -> [c, x, y].
+    If the original array items are scalar: [x, y] -> [c=1, x, y].
+    """
+    data_dim = len(data[0][0]) if hasattr(data[0][0], "__len__") else None
+    if data_dim is None:
+        data = [data]
+    else:
+        try:
+            _data = np.array(data)
+            if _data.dtype == "O":
+                raise ValueError
+            else:
+                data = data.transpose((2, 0, 1))
+        except ValueError:
+            _data = [np.empty((len(data), len(data[0])), type(item))
+                     for item in data[0][0]]
+            for x in range(len(data)):
+                for y in range(len(data[x])):
+                    for i in range(len(data[x][y])):
+                        _data[i][x][y] = data[x][y][i]
+            data = _data
+    return data
+
+
+def _param_size(size, data):
+    """
+    Parameters
+    ----------
+    size : AttrSize
+        Size attribute configuration.
+    data : numpy.ndarray(2)
+        2D data array.
+
+    Returns
+    -------
+    xsize, ysize, zsize
+        Matplotlib parameter: s.
+    """
+    s = {"x": None, "y": None, "z": None}
+    for p in ("x", "y", "z"):
+        if getattr(size, p + "dim") is not None:
+            if getattr(size, p + "scale") == "const":
+                s[p] = getattr(size, p + "map")
+            elif size.xscale == "lin":
+                s[p] = (getattr(size, p + "map")
+                        * data[getattr(size, p + "dim")].flatten())
+    return s["x"], s["y"], s["z"]
+
+
+def _param_color(color, data):
+    """
+    Parameters
+    ----------
+    color : AttrColor
+        Color attribute configuration.
+    data : numpy.ndarray(2)
+        2D data array.
+
+    Returns
+    -------
+    data : numpy.ndarray
+        Array values in color dimension.
+    static_color, color_map, val_min, val_max, alpha
+        Matplotlib parameters: c, cmap, vmin, vmax, alpha
+    """
+    data = data[color.dim]
+    static_color, color_map = None, None
+    if color.scale == "const":
+        static_color = color.map
+    elif color.scale == "lin":
+        color_map = color.map
+    val_min, val_max = color.min, color.max
+    alpha = color.alpha
+    return data, static_color, color_map, val_min, val_max, alpha
+
+
+def _plot_data_array(mpl_ax, plot_dim, cfg, x, y, data):
+    """
+    Plot 2D array.
+
+    Parameters
+    ----------
+    mpl_ax : matplotlib.axes.Axes
         Matplotlib axes to which to plot.
+    plot_dim : 2 or 3
+        Plot dimension.
     cfg : PlotCfg
         Plot configuration.
     x : numpy.ndarray(1)
@@ -360,49 +476,111 @@ def _plot_data_array(ax, cfg, x, y, data):
         2D plottable data. Each data element may be higher
         dimensional.
     """
-    # projection = 2D/3D?
-    if cfg.point is not None:
-        pass
-    if cfg.curve is not None:
-        pass
-    if cfg.matrix is not None:
-        pass
-    if cfg.surface is not None:
-        pass
-    if cfg.contour is not None:
-        pass
+    xgrid, ygrid = np.meshgrid(x, y)
+    data = _cv_layered_2d_array(data)
+    # 2D plots
+    if plot_dim == 2:
+        # 2D point scatter plot
+        if cfg.point is not None:
+            xx, yy = xgrid.flatten(), ygrid.flatten()
+            s, c, marker, cmap, vmin, vmax, alpha = 7 * [None]
+            if cfg.point.size is not None:
+                for size in _param_size(cfg.point.size, data):
+                    if size is not None:
+                        s = size
+                        break
+            if cfg.point.color is not None and cfg.point.color.dim is not None:
+                _color = _param_color(cfg.point.color, data)
+                _, c, cmap, vmin, vmax, alpha = _color
+            if cfg.point.shape is not None:
+                marker = cfg.point.shape
+            mpl_ax.scatter(
+                xx, yy, s=s, c=c, marker=marker, cmap=cmap,
+                vmin=vmin, vmax=vmax, alpha=alpha,
+            )
+        # 2D color matrix plot
+        if cfg.matrix is not None:
+            c, cmap, vmin, vmax, alpha, edgecolors = 6 * [None]
+            if (cfg.matrix.color is not None
+                    and cfg.matrix.color.dim is not None):
+                _color = _param_color(cfg.matrix.color, data)
+                c, _, cmap, vmin, vmax, alpha = _color
+            else:
+                c = np.full_like(x, 0)
+                alpha = 0
+            if (cfg.matrix.meshcolor is not None
+                    and cfg.matrix.meshcolor.scale == "const"):
+                edgecolors = cfg.matrix.meshcolor.cmap   # only static colors
+            mpl_ax.pcolormesh(
+                x, y, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
+                edgecolors=edgecolors
+            )
+        if cfg.contour is not None:
+            z, levels, alpha, cmap, vmin, vmax = 6 * [None]
+            if (cfg.contour.color is not None
+                    and cfg.contour.color.dim is not None):
+                _color = _param_color(cfg.contour.color, data)
+                z, _, cmap, vmin, vmax, alpha = _color
+            else:
+                z = np.full_like(x, 0)
+                alpha = 0
+            levels = cfg.contour.levels
+            mpl_ax.contourf(
+                x, y, z, levels=levels, alpha=alpha, cmap=cmap,
+                vmin=vmin, vmax=vmax
+            )
+    # 3D plots
+    elif plot_dim == 3:
+        if cfg.point is not None:
+            pass
+        if cfg.curve is not None:
+            pass
+        if cfg.surface is not None:
+            pass
+        if cfg.contour is not None:
+            pass
 
 
-def _plot_data_series(data):
-    pass
+def _plot_data_series(mpl_ax, plot_dim, cfg, data):
+    if plot_dim == 2:
+        if cfg.point is not None:
+            pass
+        if cfg.curve is not None:
+            pass
+        if cfg.matrix is not None:
+            pass
+        if cfg.contour is not None:
+            pass
+    elif plot_dim == 3:
+        if cfg.point is not None:
+            pass
+        if cfg.curve is not None:
+            pass
+        if cfg.surface is not None:
+            pass
+        if cfg.contour is not None:
+            pass
 
 
-def _plot_data():
-    pass
-
-
-def _plot(cfg, data):
-    pass
-
-
-class Plot(object):
-
+def _plot(mpl_ax, plot_dim, cfg, data):
     """
-    TODO: Implement plotting logic.
+    Diverts function call depending on data type.
 
     Parameters
     ----------
-    cfg : list(PlotCfg)
-        Plot configurations.
-    data : list(object)
-        Corresponding data to be plotted.
+    mpl_ax : matplotlib.axes.Axes
+        Matplotlib plot axes.
+    plot_dim : 2 or 3
+        Plot dimension.
+    cfg : PlotCfg
+        Plot configuration
+    data : tuple, list, numpy.ndarray, arraydata.ArrayData, \
+           seriesdata.SeriesData
+        Data to be plotted.
     """
-
-    def __init__(self, cfg, data):
-        self.cfg = cfg
-        self.data = data
-
-    def plot(self):
+    if isinstance(data, arraydata.ArrayData):
+        pass
+    elif isinstance(data, seriesdata.SeriesData):
         pass
 
 
@@ -482,18 +660,18 @@ class Figure(object):
     """
 
     def __init__(self,
-                 figure_cfg, plot_cfgs, plot_style_cfg=None):
+                 figure_cfg, plot_cfgs, plot_style_cfg=None, data=None):
         self.figure_cfg = misc.assume_construct_obj(figure_cfg, FigureCfg)
         self.plot_cfgs = misc.assume_list(plot_cfgs)
-        self.plots = []
+        self.plot_dim = {}
         self.plot_style_cfg = None
         self.mpl_fig = None
         self.mpl_gs = None
         self.mpl_ax = {}
-        self._mpl_ax_ref = []
-        self._mpl_ax_proj = {}
+        self.mpl_ax_loc = []
+        self.data = misc.assume_list(data)
 
-    def add_mpl_ax(self, loc, xspan=None, yspan=None, projection=None):
+    def add_mpl_ax(self, loc, xspan=None, yspan=None, plot_dim=None):
         """
         Adds an internal reference to already created axes to avoid
         matplotlib axes-reuse deprecation warning.
@@ -504,18 +682,19 @@ class Figure(object):
             Gridspec location.
         xspan, yspan : int
             Gridspec span (x, y).
-        projection: None or "3d"
-            Axes projection.
+        plot_dim: 2 or 3
+            Plot dimension.
         """
-        self._mpl_ax_ref.append(loc)
+        self.mpl_ax_loc.append(loc)
         if loc not in self.mpl_ax.keys():
+            self.plot_dim[loc] = plot_dim
+            projection = "3d" if plot_dim == 3 else None
             self.mpl_ax[loc] = self.mpl_fig.add_subplot(
                 self.mpl_gs.new_subplotspec(loc, xspan, yspan),
                 projection=projection
             )
-            self._mpl_ax_proj[loc] = projection
-        elif projection != self._mpl_ax_proj[loc]:
-            raise ValueError("incompatible projection")
+        elif plot_dim != self.plot_dim[loc]:
+            raise ValueError("incompatible plot dimensions")
 
     def setup_mpl(self):
         """
@@ -544,11 +723,34 @@ class Figure(object):
             loc, span = plot_cfg.get_gridspec_param()
             self.add_mpl_ax(
                 loc, xspan=span[0], yspan=span[1],
-                projection=plot_cfg.get_projection()
+                plot_dim=plot_cfg.get_plot_dim()
             )
 
-    def plot(self):
-        pass
+    def plot(self, data=None):
+        """
+        Plots the figure.
+
+        Parameters
+        ----------
+        data : list(obj) or None
+            Data to be plotted. If None, uses the internal
+            data variable.
+
+        Raises
+        ------
+        AssertionError
+            If data length is incompatible with plot
+            configurations.
+        """
+        if data is not None:
+            self.data = misc.assume_list(data)
+        assert(len(self.data) == len(self.plot_cfgs))
+        for i, plot_cfg in enumerate(self.plot_cfgs):
+            _plot(
+                self.mpl_ax[self.mpl_ax_loc[i]],
+                self.plot_dim[self.mpl_ax_loc[i]],
+                plot_cfg, self.data[i]
+            )
 
 
 ###############################################################################
