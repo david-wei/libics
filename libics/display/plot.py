@@ -376,8 +376,48 @@ class PlotCfg(object):
 # ++++++++++++++++++++++++
 
 
-def _plot_meta():
-    pass
+def _plot_meta(mpl_ax, plot_dim, cfg, data):
+    if isinstance(data, arraydata.ArrayData):
+        mpl_ax.set_xlabel(data.scale.quantity[0].mathstr())
+        mpl_ax.set_ylabel(data.scale.quantity[1].mathstr())
+        if plot_dim == 3:
+            zlabel = None
+            if cfg.point is not None:
+                zlabel = data.scale.quantity[cfg.point.zpos.dim].mathstr()
+            elif cfg.surface is not None:
+                zlabel = data.scale.quantity[cfg.surface.zpos.dim].mathstr()
+            elif cfg.contour is not None:
+                zlabel = data.scale.quantity[cfg.contour.zpos.dim].mathstr()
+            if zlabel is not None:
+                mpl_ax.set_zlabel(zlabel)
+    elif isinstance(data, seriesdata.SeriesData):
+        xlabel, ylabel, zlabel = 3 * [None]
+        if cfg.point is not None:
+            xlabel = data.values[cfg.point.xpos.dim]
+            ylabel = data.values[cfg.point.ypos.dim]
+            if plot_dim == 3:
+                zlabel = data.values[cfg.point.zpos.dim]
+        elif cfg.matrix is not None:
+            xlabel = data.values[cfg.matrix.xpos.dim]
+            ylabel = data.values[cfg.matrix.ypos.dim]
+            if plot_dim == 3:
+                zlabel = data.values[cfg.matrix.zpos.dim]
+        elif cfg.contour is not None:
+            xlabel = data.values[cfg.contour.xpos.dim]
+            ylabel = data.values[cfg.contour.ypos.dim]
+            if plot_dim == 3:
+                zlabel = data.values[cfg.contour.zpos.dim]
+        elif cfg.surface is not None:
+            xlabel = data.values[cfg.surface.xpos.dim]
+            ylabel = data.values[cfg.surface.ypos.dim]
+            if plot_dim == 3:
+                zlabel = data.values[cfg.surface.zpos.dim]
+        if xlabel is not None:
+            mpl_ax.set_xlabel(xlabel)
+        if ylabel is not None:
+            mpl_ax.set_ylabel(ylabel)
+        if zlabel is not None:
+            mpl_ax.set_ylabel(zlabel)
 
 
 def _cv_layered_2d_array(data):
@@ -628,8 +668,13 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                         s = size
                         break
             if cfg.point.color is not None and cfg.point.color.dim is not None:
-                _color = _param_color(cfg.point.color, data)
-                _, c, cmap, vmin, vmax, alpha = _color
+                if cfg.point.color.scale == "const":
+                    c = cfg.point.color.map
+                elif cfg.point.color.scale == "lin":
+                    cmap = cfg.point.color.map
+                    c = data[cfg.point.color.dim]
+                    vmin, vmax = cfg.point.color.min, cfg.point.color.max
+                alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
             mpl_ax.scatter(
@@ -659,10 +704,11 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                 return
             xx, yy = data[cfg.matrix.xpos.dim], data[cfg.matrix.ypos.dim]
             c, cmap, vmin, vmax, alpha = 5 * [None]
-            if (cfg.matrix.color is not None
-                    and cfg.matrix.color.dim is not None):
-                _color = _param_color(cfg.matrix.color, data)
-                c, _, cmap, vmin, vmax, alpha = _color
+            if cfg.matrix.color is not None:
+                c = data[cfg.point.color.dim]
+                cmap = cfg.point.color.map
+                vmin, vmax = cfg.point.color.min, cfg.point.color.max
+                alpha = cfg.point.color.alpha
             else:
                 c = np.full_like(xx, 0)
                 alpha = 0
@@ -682,11 +728,13 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             if cfg.contour.xdim is None or cfg.contour.ydim is None:
                 return
             xx, yy = data[cfg.contour.xdim], data[cfg.contour.ydim]
-            _color = _param_color(cfg.contour.color, data)
-            z, _, cmap, vmin, vmax, alpha = _color
+            zz = data[cfg.contour.color.dim]
+            cmap = cfg.contour.color.map
+            vmin, vmax = cfg.contour.color.min, cfg.contour.color.max
+            alpha = cfg.contour.color.alpha
             levels = cfg.contour.levels
             mpl_ax.tricontour(
-                xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
+                xx, yy, zz, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
     elif plot_dim == 3:
@@ -704,8 +752,13 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                         s = size
                         break
             if cfg.point.color is not None and cfg.point.color.dim is not None:
-                _color = _param_color(cfg.point.color, data)
-                _, c, cmap, vmin, vmax, alpha = _color
+                if cfg.point.color.scale == "const":
+                    c = cfg.point.color.map
+                elif cfg.point.color.scale == "lin":
+                    cmap = cfg.point.color.map
+                    c = data[cfg.point.color.dim]
+                    vmin, vmax = cfg.point.color.min, cfg.point.color.max
+                alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
             mpl_ax.scatter(
@@ -741,18 +794,23 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             cdata, color, cmap, vmin, vmax, alpha = 6 * [None]
             mcolor = None
             # Surface plot
-            if cfg.point.color is not None and cfg.point.color.dim is not None:
-                _color = _param_color(cfg.point.color, data)
-                cdata, color, cmap, vmin, vmax, alpha = _color
-                if (cfg.point.meshcolor is not None
-                        and cfg.point.meshcolor.scale == "const"):
-                    mcolor = cfg.point.meshcolor.map
+            if cfg.surface.color is not None:
+                if cfg.surface.color.scale == "lin":
+                    color = data[cfg.surface.color.dim]
+                    cmap = cfg.surface.color.map
+                else:
+                    color = cfg.surface.color.map
+                vmin, vmax = cfg.surface.color.min, cfg.surface.color.max
+                alpha = cfg.surface.color.alpha
+                if (cfg.surface.meshcolor is not None
+                        and cfg.surface.meshcolor.scale == "const"):
+                    mcolor = cfg.surface.meshcolor.map
             # Wireframe plot
             else:
-                if (cfg.point.meshcolor is not None
-                        and cfg.point.meshcolor.dim is not None):
-                    _color = _param_color(cfg.point.meshcolor, data)
-                    cdata, _, cmap, _, _, _ = _color
+                if (cfg.surface.meshcolor is not None
+                        and cfg.surface.meshcolor.dim is not None):
+                    cdata = data[cfg.surface.meshcolor.dim]
+                    cmap = cfg.surface.meshcolor.map
             # Surface plot
             if alpha != 0:
                 mpl_ax.plot_trisurf(
@@ -771,8 +829,10 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             if cfg.contour.xdim is None or cfg.contour.ydim is None:
                 return
             xx, yy = data[cfg.contour.xdim], data[cfg.contour.ydim]
-            _color = _param_color(cfg.contour.color, data)
-            z, _, cmap, vmin, vmax, alpha = _color
+            z = data[cfg.contour.color.dim]
+            cmap = cfg.contour.color.map
+            vmin, vmax = cfg.contour.color.min, cfg.contour.color.max
+            alpha = cfg.contour.color.alpha
             levels = cfg.contour.levels
             mpl_ax.tricontour(
                 xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
@@ -780,7 +840,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             )
 
 
-def _plot(mpl_ax, plot_dim, cfg, data):
+def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     """
     Diverts function call depending on data type.
 
@@ -795,11 +855,40 @@ def _plot(mpl_ax, plot_dim, cfg, data):
     data : tuple, list, numpy.ndarray, arraydata.ArrayData, \
            seriesdata.SeriesData
         Data to be plotted.
+    _data_type_hint : "array" or "series"
+        Hint for ambiguous data types whether to interpret
+        data as array or series, e.g. for 2D numpy arrays.
     """
+    data_type = None
+    x, y = None
+    # Distinguish data types
     if isinstance(data, arraydata.ArrayData):
-        pass
+        data_type = "array"
+        _plot_meta(mpl_ax, plot_dim, cfg, data)
+        data = data.data
+        x, y = (
+            np.linspace(data.scale.offset[0], data.scale.max[0],
+                        num=data.data.shape[0]),
+            np.linspace(data.scale.offset[1], data.scale.max[1],
+                        num=data.data.shape[1])
+        )
     elif isinstance(data, seriesdata.SeriesData):
-        pass
+        data_type = "series"
+        _plot_meta(mpl_ax, plot_dim, cfg, data)
+    elif isinstance(data, list):
+        data_type = "series"
+    elif isinstance(data, np.ndarray):
+        if len(data.shape) == 1:
+            data_type = "series"
+        elif len(data.shape) > 2:
+            data_type = "array"
+        else:
+            data_type = _data_type_hint
+    # Call plot functions
+    if data_type == "array":
+        _plot_data_array(mpl_ax, plot_dim, cfg, x, y, data)
+    elif data_type == "series":
+        _plot_data_series(mpl_ax, plot_dim, cfg, data)
 
 
 ###############################################################################
@@ -875,6 +964,8 @@ class Figure(object):
         List of plot configurations.
     plot_style_cfg : PlotStyleCfg or None
         Matplotlib rc plot style configuration.
+    data : list(obj)
+        List of data to be plotted.
     """
 
     def __init__(self,
@@ -964,7 +1055,7 @@ class Figure(object):
             self.data = misc.assume_list(data)
         assert(len(self.data) == len(self.plot_cfgs))
         for i, plot_cfg in enumerate(self.plot_cfgs):
-            _plot(
+            plot(
                 self.mpl_ax[self.mpl_ax_loc[i]],
                 self.plot_dim[self.mpl_ax_loc[i]],
                 plot_cfg, self.data[i]
