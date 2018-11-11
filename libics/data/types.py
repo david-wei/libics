@@ -43,9 +43,10 @@ class Quantity(hdf.HDFBase):
     def mathstr(self):
         s = self.name
         if self.symbol is not None:
-            s += " $" + self.symbol
+            s += " $" + self.symbol + "$"
         if self.unit is not None:
             s += " [" + self.unit + "]"
+        return s
 
 
 ###############################################################################

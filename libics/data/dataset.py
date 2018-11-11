@@ -1,0 +1,25 @@
+from libics.file import hdf
+
+
+###############################################################################
+
+
+class DataSet(hdf.HDFBase):
+
+    """
+    Container class wrapping actual data with configuration/setup data.
+
+    Parameters
+    ----------
+    data : arraydata.ArrayData or seriesdata.SeriesData
+        Storage for actual data.
+    cfg : drv.drv.DrvCfgBase
+        Storage for driver configuration.
+    stp : stp.SetupCfgBase
+        Storage for (measurement) setup configuration.
+    """
+
+    def __init__(self, data=None, cfg=None, stp=None):
+        self.data = data
+        self.cfg = cfg
+        self.stp = stp
