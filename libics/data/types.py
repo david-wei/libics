@@ -23,8 +23,10 @@ class Quantity(hdf.HDFBase):
         unitless quantity.
     """
 
-    def __init__(self, name="N/A", symbol=None, unit=None):
-        super().__init__(pkg_name="libics", cls_name="Quantity")
+    def __init__(self,
+                 name="N/A", symbol=None, unit=None,
+                 cls_name="Quantity"):
+        super().__init__(pkg_name="libics", cls_name=cls_name)
         self.name = name
         self.symbol = symbol
         self.unit = unit
@@ -46,6 +48,45 @@ class Quantity(hdf.HDFBase):
             s += " $" + self.symbol + "$"
         if self.unit is not None:
             s += " [" + self.unit + "]"
+        return s
+
+
+class ValQuantity(Quantity):
+
+    def __init__(self, name="N/A", symbol=None, unit=None, val=None):
+        super().__init__(
+            name=name, symbol=symbol, unit=unit, cls_name="ValQuantity"
+        )
+        self.val = val
+
+    def __str__(self):
+        s = self.name
+        if self.symbol is not None:
+            s += " " + self.symbol
+            if self.val is not None:
+                s += " ="
+        if self.val is not None:
+            s += " " + str(self.val)
+        if self.unit is not None:
+            if self.val is not None:
+                s += " " + self.unit
+            else:
+                s += " [" + self.unit + "]"
+        return s
+
+    def mathstr(self):
+        s = self.name
+        if self.symbol is not None:
+            s += " " + self.symbol
+            if self.val is not None:
+                s += " ="
+        if self.val is not None:
+            s += " $" + str(self.val) + "$"
+        if self.unit is not None:
+            if self.val is not None:
+                s += " " + self.unit
+            else:
+                s += " [" + self.unit + "]"
         return s
 
 

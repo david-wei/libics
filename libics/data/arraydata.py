@@ -332,7 +332,7 @@ class ArrayData(hdf.HDFBase):
         self.init()
 
     def init(self):
-        self.data = None
+        self._data = np.empty(0)
         self.scale = ArrayScale()
         self.get_float_item_func = self.get_float_item_by_round
 
@@ -357,8 +357,13 @@ class ArrayData(hdf.HDFBase):
     def set_max(self):
         """
         Determines the quantity maxima from the stored scale and data.
+
+        Notes
+        -----
+        Only sets the maximum quantity values if the dimensions correspond.
         """
-        self.scale.set_max(self.data)
+        if self._data.ndim == len(self.scale.quantity) - 1:
+            self.scale.set_max(self.data)
 
     # ++++ Float index +++++++++++++++++++
 
@@ -470,6 +475,15 @@ class ArrayData(hdf.HDFBase):
 
     # ++++ Self operations ++++++++++++++++
 
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, val):
+        self._data = val
+        self.set_max()
+
     def __getitem__(self, key):
         return self.data[self.scale.get_index(key)]
 
@@ -481,6 +495,35 @@ class ArrayData(hdf.HDFBase):
 
     def __repr__(self):
         return str(self)
+
+    def add_dim(self,
+                offset=0.0, scale=1.0, max=None,
+                quantity=None, name="N/A", symbol=None, unit=None):
+        """
+        Appends a dimension to the object.
+
+        Parameters
+        ----------
+        offset : float or int
+            Scaling offset.
+        scale : float or int
+            Linear scaling.
+        max : float or int or None
+            Maximum quantity.
+        quantity : types.Quantity or None
+            Quantity. If specified, overwrites name and unit.
+        name : str
+            Quantity name.
+        symbol : str or None
+            Quantity symbol.
+        unit : str or None
+            Quantity unit.
+        """
+        self.scale.add_dim(
+            offset=offset, scale=scale, max=max,
+            quantity=quantity, name=name, symbol=symbol, unit=unit
+        )
+        self.set_max()
 
     def chk_attr(self):
         """

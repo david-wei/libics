@@ -1,3 +1,5 @@
+import numpy as np
+
 from libics.data import types
 from libics.file import hdf
 
@@ -12,7 +14,7 @@ class SeriesData(hdf.HDFBase):
         self.init(dim)
 
     def init(self, dim):
-        self.data = None
+        self._data = np.empty((0, 0))
         self.quantity = dim * [types.Quantity()]
 
     def add_dim(self, quantity=None, name="N/A", symbol=None, unit=None):
