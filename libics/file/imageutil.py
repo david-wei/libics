@@ -6,7 +6,7 @@ import pandas as pd
 from libics.cfg import default as DEF
 from libics.cfg import err as ERR
 from libics.data import matrixdata as mdata
-from libics.data import types
+from libics.data import types, arraydata
 
 
 ###############################################################################
@@ -60,6 +60,39 @@ def create_default_val_pquant():
         dtype=DEF.DATA.IMAGE.VALUE_DATATYPE
     )
     return pquant
+
+
+def create_default_arraydata():
+    """
+    Creates an instance of `data.matrixdata.MatrixData` with the metadata as
+    defined in `cfg.default`.
+
+    Returns
+    -------
+    array_data : `data.arraydata.ArrayData`
+        Image default initialized ArrayData.
+    """
+    array_data = arraydata.ArrayData()
+    array_data.add_dim(
+        offset=DEF.DATA.IMAGE.PIXEL_OFFSET[0],
+        scale=DEF.DATA.IMAGE.PIXEL_SIZE[0],
+        name=DEF.DATA.IMAGE.PIXEL_PQUANT[0],
+        symbol="x",
+        unit=DEF.DATA.IMAGE.PIXEL_UNIT[0]
+    )
+    array_data.add_dim(
+        offset=DEF.DATA.IMAGE.PIXEL_OFFSET[1],
+        scale=DEF.DATA.IMAGE.PIXEL_SIZE[1],
+        name=DEF.DATA.IMAGE.PIXEL_PQUANT[1],
+        symbol="y",
+        unit=DEF.DATA.IMAGE.PIXEL_UNIT[1]
+    )
+    array_data.add_dim(
+        name=DEF.DATA.IMAGE.VALUE_PQUANT,
+        symbol="I",
+        unit=DEF.DATA.IMAGE.VALUE_UNIT
+    )
+    return array_data
 
 
 ###############################################################################

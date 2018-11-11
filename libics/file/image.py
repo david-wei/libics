@@ -72,6 +72,45 @@ def load_bmp_to_matrixdata(file_path, matrixdata=None):
     return matrixdata
 
 
+def load_bmp_to_arraydata(file_path, arraydata=None):
+    """
+    Reads a bitmap (bmp) file and loads the data as grayscale image into a
+    `data.arraydata.ArrayData` structure.
+
+    Parameters
+    ----------
+    file_path : `str`
+        Path to the bitmap image file.
+    arraydata : `data.arraydata.ArrayData` or `None
+        Sets the array data to the loaded bitmap values.
+        If `None`, creates a new ArrayData object using the
+        default values as defined in `cfg.default`.
+
+    Returns
+    -------
+    arraydata : `data.arraydata.ArrayData`
+        Image grayscales as ArrayData.
+
+    Raises
+    ------
+    FileNotFoundError
+        If `file_path` does not exist.
+    AttributeError
+        If given file is not a bitmap file.
+    """
+    # Check file (path)
+    file_path = misc.assume_endswith(file_path, ".bmp")
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(file_path)
+    # Setup matrixdata
+    if arraydata is None:
+        arraydata = imageutil.create_default_arraydata()
+    # Load bitmap
+    image = np.array(PIL.Image.open(file_path).convert("L"))
+    arraydata.data = image
+    return arraydata
+
+
 ###############################################################################
 # WinCamD
 ###############################################################################
@@ -134,3 +173,47 @@ def load_wct_to_matrixdata(file_path, matrixdata=None):
         image,
         val_pquant=imageutil.create_default_val_pquant()
     )
+
+
+def load_wct_to_arraydata(file_path, arraydata=None):
+    """
+    Reads a WinCamD text (wct) file and loads the data as grayscale image into
+    a `data.arraydata.ArrayData` structure.
+
+    Parameters
+    ----------
+    file_path : `str`
+        Path to the WinCamD text file.
+    arraydata : `data.arraydata.ArrayData` or `None
+        Sets the array data to the loaded WinCamD values.
+        If `None`, creates a new ArrayData object using the
+        default values as defined in `cfg.default`.
+        When available, the wct header data overwrites
+        the current metadata.
+
+    Returns
+    -------
+    arraydata : `data.arraydata.ArrayData`
+        Image grayscales as ArrayData.
+
+    Raises
+    ------
+    FileNotFoundError
+        If `file_path` does not exist.
+    AttributeError
+        If the wct file is corrupt.
+    """
+    # Check file (path)
+    file_path = misc.assume_endswith(file_path, ".wct")
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(file_path)
+    # Setup matrixdata
+    if arraydata is None:
+        arraydata = imageutil.create_default_arraydata()
+    # Load WinCamD text file
+    image, settings = imageutil.parse_wct_to_numpy_array(file_path)
+    arraydata.data = image
+    arraydata.scale.scale[0] = settings["pxsize_x"]
+    arraydata.scale.scale[1] = settings["pxsize_y"]
+    arraydata.set_max()
+    return arraydata

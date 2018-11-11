@@ -362,7 +362,11 @@ class ArrayData(hdf.HDFBase):
         -----
         Only sets the maximum quantity values if the dimensions correspond.
         """
-        if self._data.ndim == len(self.scale.quantity) - 1:
+        if (
+            self._data.ndim == len(self.scale.quantity) - 1
+            and self._data.ndim > 0
+            and np.all(0 != np.array(self._data.shape))
+        ):
             self.scale.set_max(self.data)
 
     # ++++ Float index +++++++++++++++++++

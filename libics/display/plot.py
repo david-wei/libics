@@ -797,6 +797,8 @@ class Figure(object):
         if data is not None:
             self.data = misc.assume_list(data)
         assert(len(self.data) == len(self.plot_cfgs))
+        if self.mpl_fig is None:
+            self.setup_mpl()
         for i, plot_cfg in enumerate(self.plot_cfgs):
             plot(
                 self.mpl_ax[self.mpl_ax_loc[i]],
