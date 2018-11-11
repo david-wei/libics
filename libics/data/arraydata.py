@@ -84,7 +84,9 @@ class ArrayScale(hdf.HDFBase):
         """
         if type(ar) == np.ndarray:
             ar = ar.shape
-        self.max = [self.cv_index_to_quantity(ind, dim)
+        # Add 0.1 * scale to avoid floating point imprecision
+        # (i.e. ensure integer cutoff keeps same index as integer rounding)
+        self.max = [self.cv_index_to_quantity(ind, dim) + self.scale[dim] * 0.1
                     for dim, ind in enumerate(ar)]
 
     def get_index_by_index(self, val, **kwargs):
@@ -93,7 +95,7 @@ class ArrayScale(hdf.HDFBase):
         """
         return val
 
-    def get_index_by_quantity(self, val, dim=None):
+    def get_index_by_quantity(self, val, dim=None, _incl_max=True):
         """
         Gets an index combination.
 
@@ -104,6 +106,10 @@ class ArrayScale(hdf.HDFBase):
         dim : int or None
             None: Dimension starting from 0.
             int: dimension for scalar.
+        _incl_max: bool, optional
+            Flag: whether to limit the returned index to be
+            smaller or equal to the length of the array
+            (i.e. whether to include stop in [start, stop]).
 
         Returns
         -------
@@ -112,17 +118,15 @@ class ArrayScale(hdf.HDFBase):
         """
         ind = None
         if type(val) == tuple or type(val) == list or type(val) == np.ndarray:
-            ind = tuple([self.get_index_by_quantity(v, dim=d)
+            ind = tuple([self.get_index_by_quantity(v, dim=d, _incl_max=True)
                          for d, v in enumerate(val)])
         elif type(val) == slice:
             ind = slice(
-                self.get_index_by_quantity(val.start, dim=dim),
-                self.get_index_by_quantity(val.stop + self.scale[dim],
-                                           dim=dim),
-                self.get_index_by_quantity(val.step, dim=dim)
+                self.get_index_by_quantity(val.start, dim=dim, _incl_max=True),
+                self.get_index_by_quantity(val.stop, dim=dim, _incl_max=False),
             )
         elif val is not None:
-            ind = self.cv_quantity_to_index(val, dim)
+            ind = self.cv_quantity_to_index(val, dim, incl_maxpoint=_incl_max)
         return ind
 
     def get_index(self, val):
@@ -160,7 +164,8 @@ class ArrayScale(hdf.HDFBase):
         """
         return self.offset[dim] + self.scale[dim] * ind
 
-    def cv_quantity_to_index(self, val, dim, round_index=True):
+    def cv_quantity_to_index(self, val, dim,
+                             round_index=True, incl_maxpoint=False):
         """
         Converts a physical quantity value to an array index.
 
@@ -172,6 +177,10 @@ class ArrayScale(hdf.HDFBase):
             Dimension.
         round_index : bool, optional
             Flag: whether to round to nearest index integer.
+        incl_maxpoint: bool, optional
+            Flag: whether to limit the returned index to be
+            smaller or equal to the length of the array
+            (i.e. whether to include stop in [start, stop]).
 
         Returns
         -------
@@ -187,6 +196,8 @@ class ArrayScale(hdf.HDFBase):
         val = max(val, self.offset[dim])
         if self.max[dim] is not None:
             val = min(val, self.max[dim])
+            if val == self.max[dim] and not incl_maxpoint:
+                val -= self.scale[dim]
         ind = (val - self.offset[dim]) / self.scale[dim]
         if round_index:
             ind = round(ind)
@@ -610,7 +621,6 @@ class ArrayData(hdf.HDFBase):
         if not in_place:
             obj = ArrayData()
             obj.scale = copy.deepcopy(self.scale)
-            # FIXME: including/excluding max index ambiguity
             (
                 obj.scale.offset, obj.scale.max,
                 si_offset, si_max,
