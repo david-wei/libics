@@ -1,17 +1,17 @@
-from . import default   # noqa
-from . import env       # noqa
-from . import err       # noqa
-
-# System Imports
 import abc
 import collections
 import copy
+
+from . import default   # noqa
+from . import err       # noqa
+
+from libics.file import hdf
 
 
 ###############################################################################
 
 
-class CfgBase(abc.ABC):
+class CfgBase(abc.ABC, hdf.HDFBase):
 
     """
     Base class for attribute based configuration classes.
@@ -23,6 +23,7 @@ class CfgBase(abc.ABC):
     """
 
     def __init__(self, group="configuration"):
+        super().__init__(pkg_name="libics", cls_name="CfgBase")
         self.group = group
         self._msg_queue = collections.deque()
 

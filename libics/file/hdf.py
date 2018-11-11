@@ -6,7 +6,7 @@ import json
 import h5py
 import numpy as np
 
-from libics.cfg import env as ENV
+from libics import env as ENV
 
 
 # FIXME: Implement self-construction of objects from _hdf_cls_name
