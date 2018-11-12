@@ -180,7 +180,7 @@ class TxtEthernetItf(TxtItfBase):
                     s_data = "".join(l_data)
                     break
             dt = time.time() - t0
-            if dt > self.cfg.recv_timeout:
+            if dt > 10 * self.cfg.recv_timeout:
                 break
         self._socket.setblocking(self.cfg.blocking)
         return s_data
@@ -212,6 +212,7 @@ class PrologixGpibEthernetItf(TxtEthernetItf):
         # Set read timeout
         self.send("++read_tmo_ms {:d}"
                   .format(round(1000 * self.cfg.recv_timeout)))
+        time.sleep(2)
 
     def recv(self):
         if self.cfg.gpib_mode == itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER:
