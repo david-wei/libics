@@ -19,7 +19,7 @@ def get_figurecfg(
 
 
 def get_plotcfg_arraydata_1d(
-    hrzt_subplot_pos=1, vert_subplot_pos=1
+    hrzt_subplot_pos=0, vert_subplot_pos=0
 ):
     curve_cfg = plotcfg.AttrCurve(
         ypos={"dim": -1, "scale": "lin"}
@@ -31,7 +31,7 @@ def get_plotcfg_arraydata_1d(
 
 
 def get_plotcfg_arraydata_2d(
-    hrzt_subplot_pos=1, vert_subplot_pos=1
+    hrzt_subplot_pos=0, vert_subplot_pos=0
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         color={"dim": -1, "scale": "lin", "map": "viridis", "alpha": 1}
@@ -43,7 +43,7 @@ def get_plotcfg_arraydata_2d(
 
 
 def get_plotcfg_seriesdata_1d(
-    hrzt_subplot_pos=1, vert_subplot_pos=1
+    hrzt_subplot_pos=0, vert_subplot_pos=0
 ):
     curve_cfg = plotcfg.AttrCurve(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"}
@@ -55,7 +55,7 @@ def get_plotcfg_seriesdata_1d(
 
 
 def get_plotcfg_seriesdata_2d(
-    hrzt_subplot_pos=1, vert_subplot_pos=1
+    hrzt_subplot_pos=0, vert_subplot_pos=0
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},

@@ -1,4 +1,5 @@
 import abc
+import collections
 import copy
 import inspect
 import json
@@ -281,8 +282,8 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                         list_obj, file_path=None,
                         _parent_group=_parent_group.create_group(key)
                     )
-            # Simple (built-in) data type
-            else:
+            # Simple (built-in) data type (ignore functions)
+            elif not callable(val):
                 _parent_group.attrs[key] = val
 
 
@@ -413,8 +414,9 @@ def _to_dict(obj):
         elif isinstance(val, HDFDelegate):
             d[key] = _to_dict(val._to_delegate())
         # Python list
-        elif isinstance(val, list) or isinstance(val, tuple):
-            ls = list(val[:])
+        elif (isinstance(val, list) or isinstance(val, tuple)
+                or isinstance(val, collections.deque)):
+            ls = list(val)
             for i, item in enumerate(val):
                 ls[i] = _to_dict(item)
             d[key] = ls + ["_hdf_is_list"]
@@ -425,8 +427,8 @@ def _to_dict(obj):
         # Numpy array
         elif isinstance(val, np.ndarray):
             d[key] = val.tolist()
-        # Simple types
-        else:
+        # Simple types (ignore functions)
+        elif not callable(val):
             d[key] = val
     return d
 
