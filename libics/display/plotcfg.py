@@ -89,6 +89,8 @@ class PlotCfg(object):
         Surface plots.
     contour : AttrContour
         Contour plots.
+    label : str or None
+        Label of plot item.
 
     Notes
     -----
@@ -100,7 +102,7 @@ class PlotCfg(object):
     def __init__(self,
                  xgridspec=1, ygridspec=1,
                  point=None, curve=None, matrix=None,
-                 surface=None, contour=None):
+                 surface=None, contour=None, label=None):
         self.xgridspec = xgridspec
         self.ygridspec = ygridspec
         self.point = misc.assume_construct_obj(point, AttrPoint)
@@ -108,6 +110,7 @@ class PlotCfg(object):
         self.matrix = misc.assume_construct_obj(matrix, AttrMatrix)
         self.surface = misc.assume_construct_obj(surface, AttrSurface)
         self.contour = misc.assume_construct_obj(contour, AttrContour)
+        self.label = label
 
     def get_gridspec_param(self):
         """

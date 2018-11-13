@@ -1,5 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 import numpy as np
 
 from libics.data import arraydata, seriesdata
@@ -207,7 +208,13 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
     data : numpy.ndarray(1)
         1D plottable data. Each data element may be higher
         dimensional.
+
+    Returns
+    -------
+    mpl_artist : matplotlib.artist.Artist
+        Matplotlib plot object.
     """
+    mpl_artist = None
     data = _cv_layered_1d_array(data)
     # 2D plots
     if plot_dim == 2:
@@ -232,7 +239,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
                 alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 x, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -249,10 +256,10 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
             if cfg.curve.line is not None:
                 linestyle = cfg.curve.line.shape
                 linewidth = cfg.curve.line.thickness
-            mpl_ax.plot(
+            mpl_artist = mpl_ax.plot(
                 x, yy, color=c, alpha=alpha,
                 linestyle=linestyle, linewidth=linewidth
-            )
+            )[0]
     # 3D plots
     elif plot_dim == 3:
         # 3D point scatter plot
@@ -278,7 +285,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
                 alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 x, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -295,10 +302,11 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
             if cfg.curve.line is not None:
                 linestyle = cfg.curve.line.shape
                 linewidth = cfg.curve.line.thickness
-            mpl_ax.plot(
+            mpl_artist = mpl_ax.plot(
                 x, yy, zz, color=c, alpha=alpha,
                 linestyle=linestyle, linewidth=linewidth
-            )
+            )[0]
+    return mpl_artist
 
 
 def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
@@ -320,7 +328,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
     data : numpy.ndarray(2)
         2D plottable data. Each data element may be higher
         dimensional.
+
+    Returns
+    -------
+    mpl_artist : matplotlib.artist.Artist
+        Matplotlib plot object.
     """
+    mpl_artist = None
     xgrid, ygrid = np.meshgrid(x, y)
     data = _cv_layered_2d_array(data)
     # 2D plots
@@ -339,7 +353,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 _, c, cmap, vmin, vmax, alpha = _color
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 xx, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -351,12 +365,12 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 _color = _param_color(cfg.matrix.color, data)
                 c, _, cmap, vmin, vmax, alpha = _color
             else:
-                c = np.full_like(x, 0)
+                c = np.full_like(xgrid, 0)
                 alpha = 0
             if (cfg.matrix.meshcolor is not None
                     and cfg.matrix.meshcolor.scale == "const"):
                 edgecolors = cfg.matrix.meshcolor.cmap   # only static colors
-            mpl_ax.pcolormesh(
+            mpl_artist = mpl_ax.pcolormesh(
                 x, y, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=edgecolors
             )
@@ -368,10 +382,10 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 _color = _param_color(cfg.contour.color, data)
                 z, _, cmap, vmin, vmax, alpha = _color
             else:
-                z = np.full_like(x, 0)
+                z = np.full_like(xgrid, 0)
                 alpha = 0
             levels = cfg.contour.levels
-            mpl_ax.contourf(
+            mpl_artist = mpl_ax.contourf(
                 x, y, z, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
@@ -394,7 +408,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 _, c, cmap, vmin, vmax, alpha = _color
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -424,17 +438,17 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                     cdata, _, cmap, _, _, _ = _color
             # Surface plot
             if alpha != 0:
-                mpl_ax.plot_surface(
+                mpl_artist = mpl_ax.plot_surface(
                     xgrid, ygrid, z, color=color, cmap=cmap,
                     vmin=vmin, vmax=vmax, edgecolor=mcolor
                 )
             # Wireframe plot
             else:
                 cdata = (cdata - cdata.min()) / (cdata.max() - cdata.min())
-                surf = mpl_ax.plot_surface(
+                mpl_artist = mpl_ax.plot_surface(
                     xgrid, ygrid, z, facecolors=cdata
                 )
-                surf.set_facecolors((0, 0, 0, 0))
+                mpl_artist.set_facecolors((0, 0, 0, 0))
         # 3D contour plot
         if cfg.contour is not None:
             z, levels, alpha, cmap, vmin, vmax = 6 * [None]
@@ -446,13 +460,35 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 z = np.full_like(x, 0)
                 alpha = 0
             levels = cfg.contour.levels
-            mpl_ax.contour(
+            mpl_artist = mpl_ax.contour(
                 xgrid, ygrid, z, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
+    return mpl_artist
 
 
 def _plot_data_series(mpl_ax, plot_dim, cfg, data):
+    """
+    Plot series data (tabular).
+
+    Parameters
+    ----------
+    mpl_ax : matplotlib.axes.Axes
+        Matplotlib axes to which to plot.
+    plot_dim : 2 or 3
+        Plot dimension.
+    cfg : PlotCfg
+        Plot configuration.
+    data : list or numpy.ndarray(1) or numpy.ndarray(2)
+        1D plottable data. Each data element may be higher
+        dimensional.
+
+    Returns
+    -------
+    mpl_artist : matplotlib.artist.Artist
+        Matplotlib plot object.
+    """
+    mpl_artist = None
     if plot_dim == 2:
         # 2D point scatter plot
         if cfg.point is not None:
@@ -475,7 +511,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                 alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 xx, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -492,10 +528,10 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             if cfg.curve.line is not None:
                 linestyle = cfg.curve.line.shape
                 linewidth = cfg.curve.line.thickness
-            mpl_ax.plot(
+            mpl_artist = mpl_ax.plot(
                 xx, yy, color=c, alpha=alpha,
                 linestyle=linestyle, linewidth=linewidth
-            )
+            )[0]
         # 2D color matrix plot
         if cfg.matrix is not None:
             if cfg.matrix.xpos is None or cfg.matrix.ypos is None:
@@ -510,14 +546,14 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             else:
                 c = np.full_like(xx, 0)
                 alpha = 0
-            mpl_ax.tripcolor(
+            mpl_artist = mpl_ax.tripcolor(
                 xx, yy, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha
             )
             if (cfg.matrix.meshcolor is not None
                     and cfg.matrix.meshcolor.scale == "const"):
                 linestyle = cfg.matrix.mesh.shape
                 linewidth = cfg.matrix.mesh.thickness
-                mpl_ax.triplot(
+                mpl_artist = mpl_ax.triplot(
                     xx, yy, color=c, alpha=alpha,
                     linestyle=linestyle, linewidth=linewidth
                 )
@@ -531,7 +567,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             vmin, vmax = cfg.contour.color.min, cfg.contour.color.max
             alpha = cfg.contour.color.alpha
             levels = cfg.contour.levels
-            mpl_ax.tricontour(
+            mpl_artist = mpl_ax.tricontour(
                 xx, yy, zz, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
@@ -559,7 +595,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                 alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
-            mpl_ax.scatter(
+            mpl_artist = mpl_ax.scatter(
                 xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
@@ -578,10 +614,10 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             if cfg.curve.line is not None:
                 linestyle = cfg.curve.line.shape
                 linewidth = cfg.curve.line.thickness
-            mpl_ax.plot(
+            mpl_artist = mpl_ax.plot(
                 xx, yy, zz, color=c, alpha=alpha,
                 linestyle=linestyle, linewidth=linewidth
-            )
+            )[0]
         # 3D surface plot
         if cfg.surface is not None:
             if (cfg.surface.xpos is None or cfg.surface.ypos is None
@@ -611,17 +647,17 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                     cmap = cfg.surface.meshcolor.map
             # Surface plot
             if alpha != 0:
-                mpl_ax.plot_trisurf(
+                mpl_artist = mpl_ax.plot_trisurf(
                     xx, yy, zz, color=color, cmap=cmap,
                     vmin=vmin, vmax=vmax, edgecolor=mcolor
                 )
             # Wireframe plot
             else:
                 cdata = (cdata - cdata.min()) / (cdata.max() - cdata.min())
-                surf = mpl_ax.plot_trisurf(
+                mpl_artist = mpl_ax.plot_trisurf(
                     xx, yy, zz, facecolors=cdata
                 )
-                surf.set_facecolors((0, 0, 0, 0))
+                mpl_artist.set_facecolors((0, 0, 0, 0))
         # 3D contour plot
         if cfg.contour is not None:
             if cfg.contour.xdim is None or cfg.contour.ydim is None:
@@ -632,10 +668,11 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             vmin, vmax = cfg.contour.color.min, cfg.contour.color.max
             alpha = cfg.contour.color.alpha
             levels = cfg.contour.levels
-            mpl_ax.tricontour(
+            mpl_artist = mpl_ax.tricontour(
                 xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
+    return mpl_artist
 
 
 ###############################################################################
@@ -659,6 +696,11 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     _data_type_hint : "array2d", "array1d" or "series"
         Hint for ambiguous data types whether to interpret
         data as array or series, e.g. for 2D numpy arrays.
+
+    Returns
+    -------
+    mpl_artist : matplotlib.artist.Artist
+        Matplotlib plot object.
     """
     data_type = None
     x, y = None, None
@@ -683,11 +725,11 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
         data_type = _data_type_hint
     # Call plot functions
     if data_type == "array2d":
-        _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data)
+        return _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data)
     elif data_type == "array1d":
-        _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data)
+        return _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data)
     elif data_type == "series":
-        _plot_data_series(mpl_ax, plot_dim, cfg, data)
+        return _plot_data_series(mpl_ax, plot_dim, cfg, data)
 
 
 ###############################################################################
@@ -718,14 +760,16 @@ class Figure(object):
         self.plot_style_cfg = None
         self.mpl_fig = None
         self.mpl_gs = None
-        self.mpl_ax = {}
         self.mpl_ax_loc = []
+        self.mpl_ax = {}
+        self.mpl_art = {}
         self.data = misc.assume_list(data)
 
     def add_mpl_ax(self, loc, xspan=None, yspan=None, plot_dim=None):
         """
         Adds an internal reference to already created axes to avoid
         matplotlib axes-reuse deprecation warning.
+        Also sets up matplotlib artist dictionary.
 
         Parameters
         ----------
@@ -744,6 +788,7 @@ class Figure(object):
                 self.mpl_gs.new_subplotspec(loc, xspan, yspan),
                 projection=projection
             )
+            self.mpl_art[loc] = []
         elif plot_dim != self.plot_dim[loc]:
             raise ValueError("incompatible plot dimensions")
 
@@ -800,11 +845,38 @@ class Figure(object):
         if self.mpl_fig is None:
             self.setup_mpl()
         for i, plot_cfg in enumerate(self.plot_cfgs):
-            plot(
+            mpl_art = plot(
                 self.mpl_ax[self.mpl_ax_loc[i]],
                 self.plot_dim[self.mpl_ax_loc[i]],
                 plot_cfg, self.data[i]
             )
+            if mpl_art is not None and plot_cfg.label is not None:
+                self.mpl_art[self.mpl_ax_loc[i]].append(
+                    (mpl_art, plot_cfg.label)
+                )
+
+    def legend(self):
+        """
+        Creates legends as set by the `plot` method.
+        """
+        for loc, ax in self.mpl_ax.items():
+            if not self.mpl_art[loc]:
+                continue
+            artists, labels = [], []
+            for val in self.mpl_art[loc]:
+                if (
+                    isinstance(val, mpl.lines.Line2D)
+                    or isinstance(val, mpl.collections.PathCollection)
+                    or isinstance(val, mplot3d.art3d.Line3D)
+                    or isinstance(val, mplot3d.art3d.Path3DCollection)
+                ):
+                    artists.append(val[0])
+                    labels.append(val[1])
+                # TODO: Implement colorbar creation and annotation
+                elif len(self.mpl_art[loc]) == 1:
+                    ax.set_title(val[1])
+            if artists:
+                ax.legend(artists, labels)
 
 
 ###############################################################################

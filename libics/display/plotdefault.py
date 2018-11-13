@@ -19,43 +19,43 @@ def get_figurecfg(
 
 
 def get_plotcfg_arraydata_1d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
 ):
     curve_cfg = plotcfg.AttrCurve(
         ypos={"dim": -1, "scale": "lin"}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        curve=curve_cfg
+        curve=curve_cfg, label=label
     )
 
 
 def get_plotcfg_arraydata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         color={"dim": -1, "scale": "lin", "map": "viridis", "alpha": 1}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        matrix=matrix_cfg
+        matrix=matrix_cfg, label=label
     )
 
 
 def get_plotcfg_seriesdata_1d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
 ):
     curve_cfg = plotcfg.AttrCurve(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        curve=curve_cfg
+        curve=curve_cfg, label=label
     )
 
 
 def get_plotcfg_seriesdata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
@@ -63,7 +63,7 @@ def get_plotcfg_seriesdata_2d(
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        matrix=matrix_cfg
+        matrix=matrix_cfg, label=label
     )
 
 
@@ -114,10 +114,10 @@ if __name__ == "__main__":
 
     # Create figure/plot configuration
     fig_cfg = get_figurecfg(2, 2)
-    sd_plot_cfg = get_plotcfg_seriesdata_1d(0, 0)
-    ad_plot_cfg = get_plotcfg_arraydata_1d(0, 1)
-    sd2_plot_cfg = get_plotcfg_seriesdata_2d(1, 0)
-    ad2_plot_cfg = get_plotcfg_arraydata_2d(1, 1)
+    sd_plot_cfg = get_plotcfg_seriesdata_1d(0, 0, "sd")
+    ad_plot_cfg = get_plotcfg_arraydata_1d(0, 1, "ad")
+    sd2_plot_cfg = get_plotcfg_seriesdata_2d(1, 0, "sd2")
+    ad2_plot_cfg = get_plotcfg_arraydata_2d(1, 1, "ad2")
     # Plot
     fig = plot.Figure(
         fig_cfg,
@@ -126,5 +126,6 @@ if __name__ == "__main__":
     )
     fig.setup_mpl()
     fig.plot()
+    fig.legend()
     plt.tight_layout()
     plt.show()
