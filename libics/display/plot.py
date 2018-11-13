@@ -865,10 +865,10 @@ class Figure(object):
             artists, labels = [], []
             for val in self.mpl_art[loc]:
                 if (
-                    isinstance(val, mpl.lines.Line2D)
-                    or isinstance(val, mpl.collections.PathCollection)
-                    or isinstance(val, mplot3d.art3d.Line3D)
-                    or isinstance(val, mplot3d.art3d.Path3DCollection)
+                    isinstance(val[0], mpl.lines.Line2D)
+                    or isinstance(val[0], mpl.collections.PathCollection)
+                    or isinstance(val[0], mplot3d.art3d.Line3D)
+                    or isinstance(val[0], mplot3d.art3d.Path3DCollection)
                 ):
                     artists.append(val[0])
                     labels.append(val[1])
