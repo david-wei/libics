@@ -165,9 +165,9 @@ class DrvCfgBase(cfg.CfgBase):
     def __init__(
         self,
         driver=DRV_DRIVER.CAM, interface=None, identifier="", model="",
-        **kwargs
+        cls_name="DrvCfgBase", **kwargs
     ):
-        super().__init__()
+        super().__init__(cls_name=cls_name)
         self.driver = driver
         self.identifier = identifier
         self.model = model
@@ -276,9 +276,11 @@ class CamCfg(DrvCfgBase):
         format_color=DRV_CAM.FORMAT_COLOR.GS, channel_bitdepth=8,
         exposure_mode=DRV_CAM.EXPOSURE_MODE.MANUAL, exposure_time=1e-3,
         acquisition_frames=0, sensitivity=DRV_CAM.SENSITIVITY.NORMAL,
-        ll_obj=None, **kwargs
+        cls_name="CamCfg", ll_obj=None, **kwargs
     ):
-        super().__init__(**kwargs)
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.CAM
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.pixel_hrzt_count = pixel_hrzt_count
@@ -335,9 +337,11 @@ class PiezoCfg(DrvCfgBase):
         displacement=2.67e-7,
         channel=None,
         feedback_mode=DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP,
-        ll_obj=None, **kwargs
+        cls_name="PiezoCfg", ll_obj=None, **kwargs
     ):
-        super().__init__(**kwargs)
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.PIEZO
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.limit_min = limit_min
@@ -390,9 +394,11 @@ class SpAnCfg(DrvCfgBase):
         frequency_start=0.0, frequency_stop=1e5,
         average_mode=DRV_SPAN.AVERAGE_MODE.LIN, average_count=100,
         voltage_max=-30.0,
-        ll_obj=None, **kwargs
+        cls_name="SpAnCfg", ll_obj=None, **kwargs
     ):
-        super().__init__(**kwargs)
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.SPAN
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.bandwidth = bandwidth
@@ -417,9 +423,11 @@ class OscCfg(DrvCfgBase):
 
     def __init__(
         self,
-        ll_obj=None, **kwargs
+        cls_name="OscCfg", ll_obj=None, **kwargs
     ):
-        super().__init__(**kwargs)
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.OSC
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
 

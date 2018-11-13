@@ -17,6 +17,7 @@ class SetupCfgBase(cfg.CfgBase):
     """
 
     def __init__(self, **attrs):
+        super().__init__(cls_name="SetupCfgBase")
         for key, val in attrs.items():
             if isinstance(val, types.ValQuantity):
                 pass

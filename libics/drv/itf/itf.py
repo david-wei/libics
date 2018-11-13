@@ -44,8 +44,9 @@ class ProtocolCfgBase(cfg.CfgBase):
       constructors and check for base class objects.
     """
 
-    def __init__(self, protocol=ITF_PROTOCOL.TEXT, interface=None, **kwargs):
-        super().__init__()
+    def __init__(self, protocol=ITF_PROTOCOL.TEXT, interface=None,
+                 cls_name="ProtocolCfgBase", **kwargs):
+        super().__init__(cls_name=cls_name)
         self.protocol = protocol
         self.interface = interface
         self.kwargs = kwargs
@@ -116,8 +117,10 @@ class TxtCfgBase(ProtocolCfgBase):
     def __init__(self, address=None, buffer_size=None,
                  send_timeout=None, send_termchar=None,
                  recv_timeout=None, recv_termchar=None,
-                 ll_obj=None, **kwargs):
-        super().__init__(**kwargs)
+                 cls_name="TxtCfgBase", ll_obj=None, **kwargs):
+        if "protocol" not in kwargs.keys():
+            kwargs["protocol"] = ITF_PROTOCOL.TEXT
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.address = address
@@ -164,8 +167,11 @@ class BinCfgBase(ProtocolCfgBase):
         String identifier for device (cf. address).
     """
 
-    def __init__(self, device=None, ll_obj=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, device=None,
+                 cls_name="BinCfgBase", ll_obj=None, **kwargs):
+        if "protocol" not in kwargs.keys():
+            kwargs["protocol"] = ITF_PROTOCOL.BINARY
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.device = device
@@ -200,8 +206,10 @@ class TxtSerialCfg(TxtCfgBase):
 
     def __init__(self, baudrate=115200, bytesize=8, parity="none",
                  stopbits=1,
-                 ll_obj=None, **kwargs):
-        super().__init__(**kwargs)
+                 cls_name="TxtSerialCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_TXT.SERIAL
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.baudrate = baudrate
@@ -236,8 +244,10 @@ class TxtEthernetCfg(TxtCfgBase):
 
     def __init__(self, txt_ethernet_type=TXT_ETHERNET_TYPE.GENERIC,
                  port=None, blocking=False,
-                 ll_obj=None, **kwargs):
-        super().__init__(**kwargs)
+                 cls_name="TxtEthernetCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_TXT.ETHERNET
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.txt_ethernet_type = txt_ethernet_type
@@ -265,8 +275,10 @@ class BinVimbaCfg(BinCfgBase):
     """
 
     def __init__(self, frame_count=1, frame_requeue=True,
-                 ll_obj=None, **kwargs):
-        super().__init__(**kwargs)
+                 cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VIMBA
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.frame_count = frame_count
@@ -311,9 +323,11 @@ class TxtEthernetGpibCfg(TxtEthernetCfg):
         self,
         gpib_mode=TXT_ETHERNET_GPIB.MODE, gpib_address=1,
         ctrl_model=TXT_ETHERNET_GPIB.MODEL.GENERIC,
-        ll_obj=None, **kwargs
+        cls_name="TxtEthernetGpibCfg", ll_obj=None, **kwargs
     ):
-        super().__init__(**kwargs)
+        if "txt_ethernet_type" not in kwargs.keys():
+            kwargs["txt_ethernet_type"] = TXT_ETHERNET_TYPE.GPIB
+        super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)
         self.gpib_mode = gpib_mode

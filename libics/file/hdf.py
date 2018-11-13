@@ -10,7 +10,7 @@ import numpy as np
 from libics import env as ENV
 
 
-# FIXME: Implement self-construction of objects from _hdf_cls_name
+# FIXME: reconstruct actual types (e.g. deque instead of array)
 
 ###############################################################################
 
@@ -43,12 +43,14 @@ class HDFBase(object):
     """
 
     HDFBase_ATTRS_LEN = 3
+    HDFBase_CLS_MAP = {}
 
     def __init__(self, pkg_name="libics", cls_name="HDFBase",
                  is_delegate=False):
         self._hdf_pkg_name = pkg_name
         self._hdf_cls_name = cls_name
         self._hdf_is_delegate = is_delegate
+        HDFBase.HDFBase_CLS_MAP[(pkg_name, cls_name)] = type(self)
 
     def _from_delegate(self):
         """
@@ -78,12 +80,14 @@ class HDFDelegate(abc.ABC):
         delegate object.
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def _delegate_cls(self):
         """
         Implementation
         --------------
-        This property shall return the class of the delegate object.
+        This property shall return the class of the delegate object. Note
+        that the returned class must have a default constructor.
         """
 
 
@@ -187,6 +191,17 @@ class HDFDict(HDFBase):
         return d
 
 
+class HDFNone(HDFBase):
+
+    """
+    Object representing Python built-in type `None` which is not natively
+    supported in `h5py`.
+    """
+
+    def __init__(self):
+        super().__init__(pkg_name="libics", cls_name="HDFNone")
+
+
 ###############################################################################
 
 
@@ -282,6 +297,12 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                         list_obj, file_path=None,
                         _parent_group=_parent_group.create_group(key)
                     )
+            # Python None
+            elif val is None:
+                write_hdf(
+                    HDFNone(), file_path=None,
+                    _parent_group=_parent_group.create_group(key)
+                )
             # Simple (built-in) data type (ignore functions)
             elif not callable(val):
                 _parent_group.attrs[key] = val
@@ -369,6 +390,9 @@ def read_hdf(cls_or_obj, file_path=None,
                             _ignore_undeclared_attrs=False
                         )
                         cls_or_obj.__dict__[key] = hdf_d.to_dict()
+                    # Python None
+                    elif val.attrs["_hdf_cls_name"] == "HDFNone":
+                        cls_or_obj.__dict__[key] = None
                     # Delegate object
                     elif val.attrs["_hdf_is_delegate"]:
                         cls_or_obj.__dict__[key] = read_hdf(
@@ -377,9 +401,17 @@ def read_hdf(cls_or_obj, file_path=None,
                         )._from_delegate()
                     # Custom objects
                     else:
+                        if (
+                            key not in cls_or_obj.__dict__ or
+                            not isinstance(cls_or_obj.__dict__[key], HDFBase)
+                        ):
+                            cls_or_obj.__dict__[key] = HDFBase.HDFBase_CLS_MAP[
+                                (val.attrs["_hdf_pkg_name"],
+                                 val.attrs["_hdf_cls_name"])
+                            ]
                         cls_or_obj.__dict__[key] = read_hdf(
                             cls_or_obj.__dict__[key], file_path=None,
-                            _parent_group=val
+                            _parent_group=val, _ignore_undeclared_attrs=False
                         )
     # Return reconstructed object
     return cls_or_obj
@@ -452,14 +484,19 @@ def _from_dict(obj, d):
     for key, val in d.items():
         # Dictionary
         if isinstance(val, dict):
-            # HDFDelegate object
-            if "_hdf_is_delegate" in val.keys():
-                obj.__dict__[key] = _from_dict(
-                    obj.__dict__[key]._delegate_cls, val
-                )._from_delegate()
             # HDFBase object
-            elif "_hdf_cls_name" in val.keys():
-                obj.__dict__[key] = _from_dict(obj.__dict__[key], val)
+            if "_hdf_cls_name" in val.keys():
+                # HDFDelegate object
+                if val["_hdf_is_delegate"]:
+                    obj.__dict__[key] = _from_dict(
+                        obj.__dict__[key]._delegate_cls(), val
+                    )._from_delegate()
+                else:
+                    if key not in obj.__dict__.keys():
+                        obj.__dict__[key] = HDFBase.HDFBase_CLS_MAP[(
+                            val["_hdf_pkg_name"], val["_hdf_cls_name"]
+                        )]
+                    obj.__dict__[key] = _from_dict(obj.__dict__[key], val)
             # Python dict
             else:
                 obj.__dict__[key] = val
@@ -474,7 +511,7 @@ def _from_dict(obj, d):
                 obj.__dict__[key] = np.array(val)
         # Simple types
         else:
-            obj.__dict__[key] = val
+            setattr(obj, key, val)
     return obj
 
 

@@ -22,8 +22,8 @@ class CfgBase(abc.ABC, hdf.HDFBase):
         Group name this configuration belongs to.
     """
 
-    def __init__(self, group="configuration"):
-        super().__init__(pkg_name="libics", cls_name="CfgBase")
+    def __init__(self, group="configuration", cls_name="CfgBase"):
+        super().__init__(pkg_name="libics", cls_name=cls_name)
         self.group = group
         self._msg_queue = collections.deque()
 
@@ -140,7 +140,7 @@ class CfgMsg(object):
             return self._callback(*args, **kwargs)
 
 
-class CfgItem(object):
+class CfgItem(hdf.HDFDelegate):
 
     """
     Parameters
@@ -164,6 +164,7 @@ class CfgItem(object):
     """
 
     def __init__(self, cfg, name, group="general", val_check=None, val=None):
+        super().__init__()
         self.cfg = cfg
         self.name = name
         self.group = group
@@ -269,6 +270,35 @@ class CfgItem(object):
 
     def __repr__(self):
         return str(self)
+
+    def _to_delegate(self):
+        return _CfgItemHDFDelegate(val=self.val)
+
+    @property
+    def _delegate_cls(self):
+        return _CfgItemHDFDelegate
+
+
+class _CfgItemHDFDelegate(hdf.HDFBase):
+
+    def __init__(self, val=None):
+        super().__init__(
+            pkg_name="libics", cls_name="_CfgItemHDFDelegate",
+            is_delegate=True
+        )
+        self.val = val
+
+    def _from_delegate(self):
+        """
+        Notes
+        -----
+        Implementation details: Does not construct the actual `CfgItem`
+        object because a cross-reference to the parent `CfgBase` class
+        would be necessary. Instead returns only the value to make use
+        of the descriptor mechanism (`CfgItemDesc`) as `CfgItem` is
+        never directly used.
+        """
+        return self.val
 
 
 class CfgItemDesc:
