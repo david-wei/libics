@@ -214,6 +214,11 @@ class PrologixGpibEthernetItf(TxtEthernetItf):
                   .format(round(1000 * self.cfg.recv_timeout)))
         time.sleep(2)
 
+    def close(self):
+        # Set local
+        self.send("++loc")
+        super().close()
+
     def recv(self):
         if self.cfg.gpib_mode == itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER:
             self.send("++read")
