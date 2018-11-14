@@ -62,7 +62,7 @@ class HDFBase(object):
         pass
 
 
-class HDFDelegate(abc.ABC):
+class HDFDelegate(HDFBase, abc.ABC):
 
     """
     Base class for objects that need a delegate serialization class.
@@ -70,6 +70,9 @@ class HDFDelegate(abc.ABC):
     To serialize a non-trivial object, a delegate object can be created
     which consists of only serializable objects.
     """
+
+    def __init__(self, cls_name="HDFDelegate", is_delegate=False):
+        super().__init__(cls_name=cls_name, is_delegate=is_delegate)
 
     @abc.abstractmethod
     def _to_delegate(self):
@@ -395,8 +398,12 @@ def read_hdf(cls_or_obj, file_path=None,
                         cls_or_obj.__dict__[key] = None
                     # Delegate object
                     elif val.attrs["_hdf_is_delegate"]:
+                        delegate_cls = HDFBase.HDFBase_CLS_MAP[
+                            (val.attrs["_hdf_pkg_name"],
+                             val.attrs["_hdf_cls_name"])
+                        ]
                         cls_or_obj.__dict__[key] = read_hdf(
-                            cls_or_obj.__dict__[key]._delegate_cls,
+                            delegate_cls._delegate_cls,
                             file_path=None, _parent_group=val
                         )._from_delegate()
                     # Custom objects

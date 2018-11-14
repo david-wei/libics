@@ -164,7 +164,7 @@ class CfgItem(hdf.HDFDelegate):
     """
 
     def __init__(self, cfg, name, group="general", val_check=None, val=None):
-        super().__init__()
+        super().__init__(cls_name="CfgItem")
         self.cfg = cfg
         self.name = name
         self.group = group
