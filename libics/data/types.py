@@ -80,7 +80,7 @@ class ValQuantity(Quantity):
     def mathstr(self):
         s = self.name
         if self.symbol is not None:
-            s += " " + self.symbol
+            s += " $" + self.symbol + "$"
             if self.val is not None:
                 s += " ="
         if self.val is not None:

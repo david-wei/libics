@@ -44,6 +44,8 @@ class HDFBase(object):
       type list elements
     """
 
+    ATTRS_LEN = 3
+
     def __init__(self, pkg_name="libics", cls_name="HDFBase",
                  is_delegate=False):
         self._hdf_pkg_name = pkg_name
@@ -378,7 +380,7 @@ def read_hdf(cls_or_obj, file_path=None,
                         hdf_ls = HDFList()
                         hdf_ls.from_list([None] * (
                             len(val) + len(val.attrs)
-                            - HDFBase.HDFBase_ATTRS_LEN
+                            - HDFBase.ATTRS_LEN
                         ))
                         hdf_ls = read_hdf(
                             hdf_ls, file_path=None, _parent_group=val
@@ -401,8 +403,7 @@ def read_hdf(cls_or_obj, file_path=None,
                              val.attrs["_hdf_cls_name"])
                         ]
                         cls_or_obj.__dict__[key] = read_hdf(
-                            delegate_cls._delegate_cls,
-                            file_path=None, _parent_group=val
+                            delegate_cls, file_path=None, _parent_group=val
                         )._from_delegate()
                     # Custom objects
                     else:
