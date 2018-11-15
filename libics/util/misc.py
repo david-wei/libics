@@ -1,10 +1,6 @@
-# System Imports
 import math
 import operator
 import os
-
-# Package Imports
-from libics.cfg import err as ERR
 
 
 ###############################################################################
@@ -99,12 +95,10 @@ def assume_endswith(string, suffix):
 
     Raises
     ------
-    cfg.err.DTYPE_STR
+    AssertionError
         If the parameters are invalid.
     """
-    ERR.assertion(ERR.DTYPE_STR,
-                  type(string) == str,
-                  type(suffix) == str)
+    assert(type(string) == str and type(suffix) == str)
     if not string.endswith(suffix):
         string += suffix
     return string

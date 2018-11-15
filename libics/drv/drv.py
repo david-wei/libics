@@ -5,6 +5,7 @@ import threading
 # Package Imports
 from libics import cfg
 from libics import drv
+from libics.util import InheritMap
 
 
 ###############################################################################
@@ -141,6 +142,7 @@ class DRV_MODEL:
     TEKTRONIX_TDS100X = 3101
 
 
+@InheritMap(map_key=("libics", "DrvCfgBase"))
 class DrvCfgBase(cfg.CfgBase):
 
     """
@@ -189,6 +191,14 @@ class DrvCfgBase(cfg.CfgBase):
         obj = MAP[self.driver.val](ll_obj=self, **self.kwargs)
         return obj.get_hl_cfg()
 
+    def read_all(self):
+        """
+        Update all configuration items by reading all values from interface.
+        """
+        for key, val in self.__dict__.items():
+            if isinstance(val, cfg.CfgItem):
+                val.read()
+
 
 ###############################################################################
 
@@ -215,6 +225,7 @@ class DRV_CAM:
         NIR_HQ = 2
 
 
+@InheritMap(map_key=("libics", "CamCfg"))
 class CamCfg(DrvCfgBase):
 
     """
@@ -308,6 +319,7 @@ class DRV_PIEZO:
         CLOSED_LOOP = 1
 
 
+@InheritMap(map_key=("libics", "PiezoCfg"))
 class PiezoCfg(DrvCfgBase):
 
     """
@@ -362,6 +374,7 @@ class DRV_SPAN:
         EXP = 1
 
 
+@InheritMap(map_key=("libics", "SpAnCfg"))
 class SpAnCfg(DrvCfgBase):
 
     """
@@ -412,6 +425,7 @@ class SpAnCfg(DrvCfgBase):
         return self
 
 
+@InheritMap(map_key=("libics", "OscCfg"))
 class OscCfg(DrvCfgBase):
 
     """

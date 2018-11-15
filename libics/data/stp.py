@@ -1,11 +1,12 @@
 from libics import cfg
 from libics.data import types
-from libics.util import misc
+from libics.util import misc, InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "SetupCfgBase"))
 class SetupCfgBase(cfg.CfgBase):
 
     """

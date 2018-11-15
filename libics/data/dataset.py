@@ -1,11 +1,13 @@
 from libics.data import stp
 from libics.drv import drv
 from libics.file import hdf
+from libics.util import InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "DataSet"))
 class DataSet(hdf.HDFBase):
 
     """

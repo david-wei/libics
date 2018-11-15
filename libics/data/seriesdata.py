@@ -2,11 +2,13 @@ import numpy as np
 
 from libics.data import types
 from libics.file import hdf
+from libics.util import InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "SeriesData"))
 class SeriesData(hdf.HDFBase):
 
     def __init__(self, dim=0):

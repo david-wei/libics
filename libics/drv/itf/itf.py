@@ -1,5 +1,6 @@
 # Package Imports
 from libics import cfg
+from libics.util import InheritMap
 
 
 ###############################################################################
@@ -22,6 +23,7 @@ class ITF_PROTOCOL:
     BINARY = 1
 
 
+@InheritMap(map_key=("libics", "ProtocolCfgBase"))
 class ProtocolCfgBase(cfg.CfgBase):
 
     """
@@ -93,6 +95,7 @@ class ITF_TXT:
     ETHERNET = 12
 
 
+@InheritMap(map_key=("libics", "TxtCfgBase"))
 class TxtCfgBase(ProtocolCfgBase):
 
     """
@@ -156,6 +159,7 @@ class ITF_BIN:
     VIMBA = 101
 
 
+@InheritMap(map_key=("libics", "BinCfgBase"))
 class BinCfgBase(ProtocolCfgBase):
 
     """
@@ -187,6 +191,7 @@ class BinCfgBase(ProtocolCfgBase):
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "TxtSerialCfg"))
 class TxtSerialCfg(TxtCfgBase):
 
     """
@@ -227,6 +232,7 @@ class TXT_ETHERNET_TYPE:
     GPIB = 1
 
 
+@InheritMap(map_key=("libics", "TxtEthernetCfg"))
 class TxtEthernetCfg(TxtCfgBase):
 
     """
@@ -261,6 +267,7 @@ class TxtEthernetCfg(TxtCfgBase):
             return self
 
 
+@InheritMap(map_key=("libics", "BinVimbaCfg"))
 class BinVimbaCfg(BinCfgBase):
 
     """
@@ -304,6 +311,7 @@ class TXT_ETHERNET_GPIB:
         PROLOGIX_GPIB_ETHERNET = 11
 
 
+@InheritMap(map_key=("libics", "TxtEthernetGpibCfg"))
 class TxtEthernetGpibCfg(TxtEthernetCfg):
 
     """

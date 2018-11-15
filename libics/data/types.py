@@ -1,12 +1,14 @@
 # Package Imports
 from libics.cfg import err as ERR
-from libics.util import serialization as ser
 from libics.file import hdf
+from libics.util import serialization as ser
+from libics.util import InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "Quantity"))
 class Quantity(hdf.HDFBase):
 
     """
@@ -51,6 +53,7 @@ class Quantity(hdf.HDFBase):
         return s
 
 
+@InheritMap(map_key=("libics", "ValQuantity"))
 class ValQuantity(Quantity):
 
     def __init__(self, name="N/A", symbol=None, unit=None, val=None):

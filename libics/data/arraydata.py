@@ -1,19 +1,17 @@
-# System Imports
 import copy
+
 import numpy as np
 
-# Package Imports
 from libics.cfg import err as ERR
-from libics.file import hdf
-from libics.util import misc
-
-# Subpackage Imports
 from libics.data import types
+from libics.file import hdf
+from libics.util import misc, InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "ArrayScale"))
 class ArrayScale(hdf.HDFBase):
 
     """
@@ -282,6 +280,7 @@ class ArrayScale(hdf.HDFBase):
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "ArrayData"))
 class ArrayData(hdf.HDFBase):
 
     """

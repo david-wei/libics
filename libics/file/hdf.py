@@ -8,6 +8,7 @@ import h5py
 import numpy as np
 
 from libics import env as ENV
+from libics.util import InheritMap
 
 
 # FIXME: reconstruct actual types (e.g. deque instead of array)
@@ -15,6 +16,7 @@ from libics import env as ENV
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "HDFBase"))
 class HDFBase(object):
 
     """
@@ -42,15 +44,11 @@ class HDFBase(object):
       type list elements
     """
 
-    HDFBase_ATTRS_LEN = 3
-    HDFBase_CLS_MAP = {}
-
     def __init__(self, pkg_name="libics", cls_name="HDFBase",
                  is_delegate=False):
         self._hdf_pkg_name = pkg_name
         self._hdf_cls_name = cls_name
         self._hdf_is_delegate = is_delegate
-        HDFBase.HDFBase_CLS_MAP[(pkg_name, cls_name)] = type(self)
 
     def _from_delegate(self):
         """
@@ -62,7 +60,7 @@ class HDFBase(object):
         pass
 
 
-class HDFDelegate(HDFBase, abc.ABC):
+class HDFDelegate(abc.ABC):
 
     """
     Base class for objects that need a delegate serialization class.
@@ -70,9 +68,6 @@ class HDFDelegate(HDFBase, abc.ABC):
     To serialize a non-trivial object, a delegate object can be created
     which consists of only serializable objects.
     """
-
-    def __init__(self, cls_name="HDFDelegate", is_delegate=False):
-        super().__init__(cls_name=cls_name, is_delegate=is_delegate)
 
     @abc.abstractmethod
     def _to_delegate(self):
@@ -94,6 +89,7 @@ class HDFDelegate(HDFBase, abc.ABC):
         """
 
 
+@InheritMap(map_key=("libics", "HDFList"))
 class HDFList(HDFBase):
 
     """
@@ -149,6 +145,7 @@ class HDFList(HDFBase):
         return ls
 
 
+@InheritMap(map_key=("libics", "HDFDict"))
 class HDFDict(HDFBase):
 
     """
@@ -194,6 +191,7 @@ class HDFDict(HDFBase):
         return d
 
 
+@InheritMap(map_key=("libics", "HDFNone"))
 class HDFNone(HDFBase):
 
     """
@@ -398,7 +396,7 @@ def read_hdf(cls_or_obj, file_path=None,
                         cls_or_obj.__dict__[key] = None
                     # Delegate object
                     elif val.attrs["_hdf_is_delegate"]:
-                        delegate_cls = HDFBase.HDFBase_CLS_MAP[
+                        delegate_cls = HDFBase.INH_MAP[
                             (val.attrs["_hdf_pkg_name"],
                              val.attrs["_hdf_cls_name"])
                         ]
@@ -412,7 +410,7 @@ def read_hdf(cls_or_obj, file_path=None,
                             key not in cls_or_obj.__dict__ or
                             not isinstance(cls_or_obj.__dict__[key], HDFBase)
                         ):
-                            cls_or_obj.__dict__[key] = HDFBase.HDFBase_CLS_MAP[
+                            cls_or_obj.__dict__[key] = HDFBase.INH_MAP[
                                 (val.attrs["_hdf_pkg_name"],
                                  val.attrs["_hdf_cls_name"])
                             ]
@@ -500,7 +498,7 @@ def _from_dict(obj, d):
                     )._from_delegate()
                 else:
                     if key not in obj.__dict__.keys():
-                        obj.__dict__[key] = HDFBase.HDFBase_CLS_MAP[(
+                        obj.__dict__[key] = HDFBase.INH_MAP[(
                             val["_hdf_pkg_name"], val["_hdf_cls_name"]
                         )]
                     obj.__dict__[key] = _from_dict(obj.__dict__[key], val)

@@ -6,11 +6,13 @@ from . import default   # noqa
 from . import err       # noqa
 
 from libics.file import hdf
+from libics.util import InheritMap
 
 
 ###############################################################################
 
 
+@InheritMap(map_key=("libics", "CfgBase"))
 class CfgBase(abc.ABC, hdf.HDFBase):
 
     """
@@ -164,7 +166,7 @@ class CfgItem(hdf.HDFDelegate):
     """
 
     def __init__(self, cfg, name, group="general", val_check=None, val=None):
-        super().__init__(cls_name="CfgItem")
+        super().__init__()
         self.cfg = cfg
         self.name = name
         self.group = group
@@ -279,6 +281,7 @@ class CfgItem(hdf.HDFDelegate):
         return _CfgItemHDFDelegate
 
 
+@InheritMap(map_key=("libics", "_CfgItemHDFDelegate"))
 class _CfgItemHDFDelegate(hdf.HDFBase):
 
     def __init__(self, val=None):
