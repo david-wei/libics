@@ -1,5 +1,3 @@
-from libics.data import stp
-from libics.drv import drv
 from libics.file import hdf
 from libics.util import InheritMap
 
@@ -23,11 +21,7 @@ class DataSet(hdf.HDFBase):
         Storage for (measurement) setup configuration.
     """
 
-    def __init__(
-        self,
-        data=None,
-        cfg=drv.DrvCfgBase(), stp=stp.SetupCfgBase()
-    ):
+    def __init__(self, data=None, cfg=None, stp=None):
         self.data = data
         self.cfg = cfg
         self.stp = stp
