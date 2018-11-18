@@ -39,8 +39,9 @@ class CfgBase(abc.ABC, hdf.HDFBase):
             Nested configuration dictionary.
         """
         d = copy.deepcopy(self.__dict__)
-        del d["_msg_queue"]
-        del d["kwargs"]
+        for key in ["_msg_queue", "_kwargs"]:
+            if key in d.keys():
+                del d[key]
         for attr, val in d.items():
             if isinstance(val, CfgBase):
                 d[attr] = val.to_obj_dict()
@@ -74,12 +75,10 @@ class CfgBase(abc.ABC, hdf.HDFBase):
 
         Notes
         ------
-        Implement construction of higher level configuration class by defining
-        a variable that classifies the next configuration level.
-        This variable should be a class attribute of an enum-like class.
-        This enum-class should have a dictionary MAP as attribute that maps
-        the enum key to the class to be constructed. Using this map the higher
-        level object can be dynamically created.
+        Implement construction of higher level configuration class by
+        getting the child class corresponding to a given variable value.
+        Call and return the `get_hl_cfg` method of this child class to
+        recursively obtain the highest level configuration object.
         """
 
     def _add_msg(self, msg):
@@ -116,6 +115,19 @@ class CfgBase(abc.ABC, hdf.HDFBase):
         Unnecessary property function to obtain same behaviour as CfgItem.
         """
         return self
+
+    def __str__(self, indent=0):
+        s = str(type(self))
+        for key, val in self.__dict__.items():
+            if key[0] != "_":
+                s += "\n" + (2 + indent) * " "
+                if not hasattr(val, "name") or key != val.name:
+                    s += key + ": "
+                if isinstance(val, CfgBase):
+                    s += val.__str__(indent=(indent + 2))
+                else:
+                    s += str(val)
+        return s
 
 
 ###############################################################################
