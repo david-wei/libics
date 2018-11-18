@@ -51,7 +51,7 @@ class ProtocolCfgBase(cfg.CfgBase):
         super().__init__(cls_name=cls_name)
         self.protocol = protocol
         self.interface = interface
-        self.kwargs = kwargs
+        self._kwargs = kwargs
 
     def get_hl_cfg(self):
         """
@@ -71,7 +71,7 @@ class ProtocolCfgBase(cfg.CfgBase):
             ITF_PROTOCOL.TEXT: TxtCfgBase,
             ITF_PROTOCOL.BINARY: BinCfgBase
         }
-        obj = MAP[self.protocol](ll_obj=self, **self.kwargs)
+        obj = MAP[self.protocol](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
 
 
@@ -138,7 +138,7 @@ class TxtCfgBase(ProtocolCfgBase):
             ITF_TXT.SERIAL: TxtSerialCfg,
             ITF_TXT.ETHERNET: TxtEthernetCfg
         }
-        obj = MAP[self.interface](ll_obj=self, **self.kwargs)
+        obj = MAP[self.interface](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
 
 
@@ -184,7 +184,7 @@ class BinCfgBase(ProtocolCfgBase):
         MAP = {
             ITF_BIN.VIMBA: BinVimbaCfg,
         }
-        obj = MAP[self.interface](ll_obj=self, **self.kwargs)
+        obj = MAP[self.interface](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
 
 
@@ -262,7 +262,7 @@ class TxtEthernetCfg(TxtCfgBase):
 
     def get_hl_cfg(self):
         if self.txt_ethernet_type == TXT_ETHERNET_TYPE.GPIB:
-            return TxtEthernetGpibCfg(ll_obj=self, **self.kwargs)
+            return TxtEthernetGpibCfg(ll_obj=self, **self._kwargs)
         else:
             return self
 

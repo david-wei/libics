@@ -273,9 +273,6 @@ class ArrayScale(hdf.HDFBase):
             + "Quantity: " + str(self.quantity)
         )
 
-    def __repr__(self):
-        return str(self)
-
 
 ###############################################################################
 
@@ -495,9 +492,6 @@ class ArrayData(hdf.HDFBase):
 
     def __str__(self):
         return str(self.scale) + "\nData:\n" + str(self.data)
-
-    def __repr__(self):
-        return str(self)
 
     def add_dim(self,
                 offset=0.0, scale=1.0, max=None,

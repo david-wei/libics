@@ -42,7 +42,7 @@ class Quantity(hdf.HDFBase):
         return s
 
     def __repr__(self):
-        return str(self)
+        return str(type(self)) + ": " + str(self)
 
     def mathstr(self):
         s = self.name
@@ -56,6 +56,22 @@ class Quantity(hdf.HDFBase):
 @InheritMap(map_key=("libics", "ValQuantity"))
 class ValQuantity(Quantity):
 
+    """
+    Data type for physical quantities with values.
+
+    Parameters
+    ----------
+    name : `str`, optional
+        Name of physical quantity.
+    symbol : str or None, optional
+        Symbol of variable.
+    unit : `str` or `None`, optional
+        Unit of physical quantity. None is interpreted as
+        unitless quantity.
+    val
+        Value of physical quantity.
+    """
+
     def __init__(self, name="N/A", symbol=None, unit=None, val=None):
         super().__init__(
             name=name, symbol=symbol, unit=unit, cls_name="ValQuantity"
@@ -68,6 +84,8 @@ class ValQuantity(Quantity):
             s += " " + self.symbol
             if self.val is not None:
                 s += " ="
+        elif self.val is not None:
+            s += ":"
         if self.val is not None:
             s += " " + str(self.val)
         if self.unit is not None:
