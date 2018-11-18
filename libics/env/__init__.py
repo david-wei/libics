@@ -1,5 +1,6 @@
 # System Imports
 import inspect
+import json
 import os
 
 
@@ -32,6 +33,11 @@ DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
 DIR_DOC_LIBICS = os.path.join(DIR_DOCUMENTS, "libics")
 if not os.path.exists(DIR_DOC_LIBICS):
     os.makedirs(DIR_DOC_LIBICS)
+DIRS = {}
+if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
+    DIRS = json.load(
+        open(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics"), "r")
+    )
 
 ###############################################################################
 # File format

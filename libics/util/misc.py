@@ -199,6 +199,62 @@ def reverse_dict(d):
     return {val: key for key, val in d.items()}
 
 
+def flatten_nested_dict(d, delim="."):
+    """
+    Flattens a nested dictionary into a top-level dictionary. Levels are
+    separated by the specified delimiter. Note that dictionary keys may
+    only be of `str` type.
+
+    Parameters
+    ----------
+    d : dict
+        Dictionary to be flattened.
+    delim : str
+        Level delimiter for keys.
+
+    Returns
+    -------
+    d : dict
+        Flattened dictionary.
+    """
+    for key, val in list(d.items()):
+        if isinstance(val, dict):
+            for k, v in list(flatten_nested_dict(val, delim=delim).items()):
+                d[key + delim + k] = v
+            del d[key]
+    return d
+
+
+def nest_flattened_dict(d, delim="."):
+    """
+    Nests ("unflattens") a flattened dictionary. Levels are assumed to be
+    separated by the specified delimiter.
+
+    Parameters
+    ----------
+    d : dict
+        Flattened dictionary.
+    delim : str
+        Level delimiter of keys.
+
+    Returns
+    -------
+    d : dict
+        Nested dictionary.
+    """
+    for key, val in list(d.items()):
+        if delim in key:
+            key_top, key_next = delim.split(key, 1)
+            if key_top not in d.keys():
+                d[key_top] = {}
+            d[key_top][key_next] = val
+            del d[key]
+    for key, val in list(d.items()):
+        if isinstance(val, dict):
+            nest_flattened_dict(val, delim=delim)
+    return d
+
+
 ###############################################################################
 # String Functions
 ###############################################################################

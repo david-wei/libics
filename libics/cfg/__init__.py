@@ -1,6 +1,5 @@
 import abc
 import collections
-import copy
 
 from . import default   # noqa
 from . import err       # noqa
@@ -29,7 +28,7 @@ class CfgBase(abc.ABC, hdf.HDFBase):
         self.group = group
         self._msg_queue = collections.deque()
 
-    def to_obj_dict(self):
+    def to_obj_dict(self, ignore_protected=True):
         """
         Converts object dictionary to nested dictionary.
 
@@ -37,10 +36,17 @@ class CfgBase(abc.ABC, hdf.HDFBase):
         -------
         d : dict
             Nested configuration dictionary.
+        ignore_protected : bool
+            Flag whether to ignore protected attributes
+            (i.e. object attribute names starting with `"_"`).
         """
-        d = copy.deepcopy(self.__dict__)
-        for key in ["_msg_queue", "_kwargs"]:
-            if key in d.keys():
+        d = dict(self.__dict__)
+        if ignore_protected:
+            del_keys = []
+            for key in d.keys():
+                if key[0] == "_":
+                    del_keys.append(key)
+            for key in del_keys:
                 del d[key]
         for attr, val in d.items():
             if isinstance(val, CfgBase):

@@ -438,25 +438,12 @@ class AttrContour(object):
 ###############################################################################
 
 
-def _flatten_nested_dict(d, delim="."):
-    """
-    Flattens a nested dictionary into a top-level dictionary. Levels are
-    separated by the specified delimiter.
-    """
-    for key, val in d.items():
-        if isinstance(val, dict):
-            for k, v in _flatten_nested_dict(val, delim=delim).items():
-                d[key + delim + k] = v
-            del d[key]
-    return d
-
-
 def cv_plotstylecfg_to_mplrc(cfg):
     """
     Converts a PlotStyleCfg to a matplotlib resource dictionary.
     """
     d = cfg.to_obj_dict()
-    return _flatten_nested_dict(d, delim=".")
+    return misc.flatten_nested_dict(d, delim=".")
 
 
 class PlotStyleBaseCfg(cfg.CfgBase):
