@@ -17,8 +17,8 @@ class SetupCfgBase(cfg.CfgBase):
     `data.types.ValQuantity` type.
     """
 
-    def __init__(self, **attrs):
-        super().__init__(cls_name="SetupCfgBase")
+    def __init__(self, cls_name="SetupCfgBase", **attrs):
+        super().__init__(cls_name=cls_name)
         for key, val in attrs.items():
             if isinstance(val, ValQuantity):
                 pass
@@ -35,7 +35,11 @@ class SetupCfgBase(cfg.CfgBase):
         self.__dict__.update(attrs)
 
     def get_hl_cfg(self):
-        return self
+        InhType = self.INH_MAP[(self._hdf_pkg_name, self._hdf_cls_name)]
+        if type(self) != InhType:
+            return InhType(**self.to_obj_dict()).get_hl_cfg()
+        else:
+            return self
 
 
 ###############################################################################
@@ -65,10 +69,11 @@ class ModulationCfg(SetupCfgBase):
     def __init__(
         self,
         method=None, magnitude=None, rate=None,
-        **attrs
+        cls_name="ModulationCfg", **attrs
     ):
         super().__init__(
-            method=method, magnitude=magnitude, rate=rate, **attrs
+            method=method, magnitude=magnitude, rate=rate,
+            cls_name=cls_name, **attrs
         )
 
 
@@ -104,13 +109,13 @@ class SignalCfg(SetupCfgBase):
         device_name=None, mixer_name=None, amplifier_name=None,
         carrier_magnitude=None, carrier_frequency=None,
         amplitude_mod=None, frequency_mod=None,
-        **attrs
+        cls_name="SignalCfg", **attrs
     ):
         super().__init__(
             device_name=device_name, mixer_name=mixer_name,
             amplifier_name=amplifier_name, carrier_magnitude=carrier_magnitude,
             carrier_frequency=carrier_frequency,
-            **attrs
+            cls_name=cls_name, **attrs
         )
         self.amplitude_mod = misc.assume_construct_obj(
             amplitude_mod, ModulationCfg
@@ -140,10 +145,12 @@ class PhotodiodeCfg(SetupCfgBase):
 
     def __init__(
         self,
-        device_name=None, gain=None, voltage_dc=None, **attrs
+        device_name=None, gain=None, voltage_dc=None,
+        cls_name="PhotodiodeCfg", **attrs
     ):
         super().__init__(
-            device_name=device_name, gain=gain, voltage_dc=voltage_dc, **attrs
+            device_name=device_name, gain=gain, voltage_dc=voltage_dc,
+            cls_name=cls_name, **attrs
         )
 
 
@@ -162,10 +169,11 @@ class AcoustoOpticModulatorCfg(SetupCfgBase):
     """
 
     def __init__(
-        self, device_name=None, rf_driver=None, **attrs
+        self, device_name=None, rf_driver=None,
+        cls_name="AcoustoOpticModulatorCfg", **attrs
     ):
         super().__init__(
-            device_name=device_name, **attrs
+            device_name=device_name, cls_name=cls_name, **attrs
         )
         self.rf_driver = misc.assume_construct_obj(rf_driver, SignalCfg)
 
@@ -193,7 +201,7 @@ class PIDControllerCfg(SetupCfgBase):
     def __init__(
         self,
         device_name=None, process=None, setpoint=None, control=None,
-        **attrs
+        cls_name="PIDControllerCfg", **attrs
     ):
         try:
             self.process = misc.assume_construct_obj(
@@ -213,4 +221,4 @@ class PIDControllerCfg(SetupCfgBase):
             )
         except ValueError:
             attrs["control"] = control
-        super().__init__(device_name=device_name, **attrs)
+        super().__init__(device_name=device_name, cls_name=cls_name, **attrs)
