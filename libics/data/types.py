@@ -52,6 +52,20 @@ class Quantity(hdf.HDFBase):
             s += " [" + self.unit + "]"
         return s
 
+    def __eq__(self, other):
+        return (
+            self.name == other.name
+            and self.symbol == other.symbol
+            and self.unit == other.unit
+        )
+
+    def __ne__(self, other):
+        return (
+            self.name != other.name
+            or self.symbol != other.symbol
+            or self.unit != other.unit
+        )
+
 
 @InheritMap(map_key=("libics", "ValQuantity"))
 class ValQuantity(Quantity):
@@ -109,6 +123,30 @@ class ValQuantity(Quantity):
             else:
                 s += " [" + self.unit + "]"
         return s
+
+    def __eq__(self, other):
+        return (
+            self.val == other.val
+            and super().__eq__(other)
+        )
+
+    def __ne__(self, other):
+        return (
+            self.val != other.val
+            or super().__ne__(other)
+        )
+
+    def __lt__(self, other):
+        return self.val < other.val
+
+    def __le__(self, other):
+        return self.val <= other.val
+
+    def __gt__(self, other):
+        return self.val > other.val
+
+    def __ge__(self, other):
+        return self.val >= other.val
 
 
 ###############################################################################

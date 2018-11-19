@@ -1,10 +1,13 @@
 import copy
+import os
+import uuid
 
 import numpy as np
 import pandas as pd
 
 from libics.file import hdf
 from libics.util import misc
+from libics import env
 
 
 ###############################################################################
@@ -180,9 +183,9 @@ class _DataSequenceHDFDelegate(hdf.HDFBase):
 
     def __init__(self, cfg_d={}, stp_d={}, data_d={}):
         super().__init__(cls_name="_DataSequenceHDFDelegate")
-        self.cfg_d = {}
-        self.stp_d = {}
-        self.data_d = {}
+        self.cfg_d = cfg_d
+        self.stp_d = stp_d
+        self.data_d = data_d
 
     def _from_delegate(self):
         return DataSequence(
@@ -262,7 +265,7 @@ def cv_list_to_datasequence(ls):
         del_keys = []
         for key, val in _stp.items():
             for item in _stp_dicts:
-                if key not in item.keys() and item[key] != val:
+                if key not in item.keys() or item[key] != val:
                     _col_stp.append(key)
                     break
         for key in del_keys:
@@ -291,3 +294,91 @@ def cv_datasequence_to_list(ds):
         Data list.
     """
     return list(ds.data)
+
+
+###############################################################################
+
+
+@hdf.InheritMap(map_key=("libics", "DataSequenceFileMap"))
+class DataSequenceFileMap(hdf.HDFBase):
+
+    """
+    Intermediate class for multi-file storage of DataSequence.
+
+    Parameters
+    ----------
+    ds : DataSequence
+        DataSequence object to be written.
+    file_path : str
+        File path of the DataSequence file.
+    data_dir : str or None
+        Directory where data is saved. If the data items have
+        a non-`None` `file_path` attribute, this parameter is
+        ignored.
+        `None` chooses the directory of the DataSequence file.
+    force_dir : bool
+        Flag whether the data should be saved in `data_dir`
+        regardless of its `file_path` attribute.
+        Creates random file names.
+    """
+
+    def __init__(self,
+                 ds=None, file_path=None, data_dir=None, force_dir=True):
+        self.ds = ds
+        self.file_path = file_path
+        self.data_dir = data_dir
+        self.force_dir = force_dir
+        self.data_file_paths = None
+
+    def write(self):
+        """
+        Writes each item from the data column to an HDF5 file and saves a JSON
+        file map listing each data item's relative location.
+        """
+        if self.data_dir is None:
+            self.data_dir = os.path.dirname(self.file_path)
+        file_paths = []
+        for d in self.ds.data:
+            if not hasattr(d, "file_path") or getattr(d, "file_path") is None:
+                file_paths.append(os.path.join(
+                    self.data_dir, str(uuid.uuid1()) + ".hdf5"
+                ))
+            elif self.force_dir:
+                file_paths.append(os.path.join(
+                    self.data_dir, os.path.basename(getattr(d, "file_path"))
+                ))
+            else:
+                file_paths.append(getattr(d, "file_path"))
+            hdf.write_hdf(d, file_path=file_paths[-1])
+        self.ds = None
+        self.data_dir = os.path.relpath(self.data_dir, start=self.file_path)
+        self.data_file_paths = [
+            os.path.relpath(fp, start=os.path.dirname(self.file_path))
+            for fp in file_paths
+        ]
+        hdf.write_json(self, self.file_path, indent=env.FORMAT_JSON_INDENT)
+
+    def read(self, data_cls, file_path=None):
+        """
+        Reads a DataSequence from a JSON file map.
+
+        Parameters
+        ----------
+        data_cls : class
+            Class of the data items.
+        file_path : str
+            File path of the file map.
+
+        Returns
+        -------
+        ds : DataSequence
+            The DataSequence reconstructed from the file map.
+        """
+        if file_path is not None:
+            self.file_path = file_path
+        hdf.read_json(self, self.file_path)
+        self.ds = [hdf.read_hdf(
+            data_cls,
+            os.path.join(os.path.dirname(self.file_path), fp)
+        ) for fp in self.data_file_paths]
+        return cv_list_to_datasequence(self.ds)

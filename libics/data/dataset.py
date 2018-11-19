@@ -19,9 +19,12 @@ class DataSet(hdf.HDFBase):
         Storage for driver configuration.
     stp : stp.SetupCfgBase
         Storage for (measurement) setup configuration.
+    file_path : str
+        File path of DataSet.
     """
 
-    def __init__(self, data=None, cfg=None, stp=None):
+    def __init__(self, data=None, cfg=None, stp=None, file_path=None):
         self.data = data
         self.cfg = cfg
         self.stp = stp
+        self.file_path = file_path

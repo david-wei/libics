@@ -355,6 +355,8 @@ def read_hdf(cls_or_obj, file_path=None,
     if file_path is not None:
         with h5py.File(file_path, "r") as file_group:
             read_hdf(cls_or_obj, file_path=None, _parent_group=file_group)
+            if hasattr(cls_or_obj, "file_path"):
+                setattr(cls_or_obj, "file_path", file_path)
     # Process child data
     else:
         # Simple (built-in) data types
