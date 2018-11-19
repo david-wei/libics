@@ -108,6 +108,14 @@ class DrvBase(abc.ABC):
                 self.read(msg)
             msg = self.cfg._pop_msg()
 
+    def read_all(self):
+        """
+        Reads all configuration items from interface.
+        Automatically processes the message queue.
+        """
+        self.cfg.read_all()
+        self.process()
+
     def get_drv(self, cfg=None):
         if cfg is None:
             cfg = self.cfg
