@@ -57,6 +57,7 @@ class DrvBase(abc.ABC):
             except Exception:
                 pass
             raise
+        return self
 
     def __exit__(self, *args):
         self.close()
@@ -291,9 +292,13 @@ class CamCfg(DrvCfgBase):
     ):
         if "driver" not in kwargs.keys():
             kwargs["driver"] = DRV_DRIVER.CAM
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
         super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
         self.pixel_hrzt_count = pixel_hrzt_count
         self.pixel_hrzt_size = pixel_hrzt_size
         self.pixel_hrzt_offset = pixel_hrzt_offset
@@ -353,9 +358,13 @@ class PiezoCfg(DrvCfgBase):
     ):
         if "driver" not in kwargs.keys():
             kwargs["driver"] = DRV_DRIVER.PIEZO
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
         super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
         self.limit_min = limit_min
         self.limit_max = limit_max
         self.displacement = displacement
@@ -411,9 +420,13 @@ class SpAnCfg(DrvCfgBase):
     ):
         if "driver" not in kwargs.keys():
             kwargs["driver"] = DRV_DRIVER.SPAN
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
         super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
         self.bandwidth = bandwidth
         self.frequency_start = frequency_start
         self.frequency_stop = frequency_stop
@@ -441,9 +454,13 @@ class OscCfg(DrvCfgBase):
     ):
         if "driver" not in kwargs.keys():
             kwargs["driver"] = DRV_DRIVER.OSC
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
         super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
 
     def get_hl_cfg(self):
         return self

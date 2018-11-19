@@ -25,6 +25,11 @@ def get_drv(cfg):
     -------
     drv : drv.DrvBase
         Requested driver object.
+
+    Raises
+    ------
+    KeyError
+        If cfg.driver is invalid.
     """
     if cfg.driver == drv.DRV_DRIVER.CAM:
         return drvcam.get_cam_drv(cfg)
@@ -34,3 +39,5 @@ def get_drv(cfg):
         return drvspan.get_span_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.OSC:
         return drvosc.get_osc_drv(cfg)
+    else:
+        raise KeyError("Invalid cfg.driver: {}".format(cfg.driver))

@@ -17,6 +17,8 @@ def get_span_drv(cfg):
         return StanfordSR760(cfg)
     elif cfg.model == drv.DRV_MODEL.YOKAGAWA_AQ6315:
         return YokagawaAQ6315(cfg)
+    else:
+        return SpAnDrvBase(cfg)
 
 
 class SpAnDrvBase(drv.DrvBase):

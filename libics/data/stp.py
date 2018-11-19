@@ -20,7 +20,7 @@ class SetupCfgBase(cfg.CfgBase):
     def __init__(self, cls_name="SetupCfgBase", **attrs):
         super().__init__(cls_name=cls_name)
         for key, val in attrs.items():
-            if isinstance(val, ValQuantity):
+            if isinstance(val, ValQuantity) or isinstance(val, SetupCfgBase):
                 pass
             elif isinstance(val, Quantity):
                 attrs[key] = ValQuantity(
