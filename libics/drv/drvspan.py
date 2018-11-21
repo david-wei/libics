@@ -172,7 +172,7 @@ class StanfordSR760(SpAnDrvBase):
     def _read_bandwidth(self):
         self._interface.send("SPAN?")
         f_range = StanfordSR760.FREQUENCY_SPAN[int(self._interface.recv())]
-        return f_range / 400
+        return f_range / 399
 
     def _read_frequency_start(self):
         self._interface.send("STRF?")

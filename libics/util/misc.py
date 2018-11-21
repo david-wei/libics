@@ -1,6 +1,7 @@
 import math
 import operator
 import os
+import re
 
 
 ###############################################################################
@@ -285,6 +286,72 @@ def generate_fill_chars(s, fill_char=" "):
     rep = math.ceil(float(s) / lfch)
     fs = (rep * fill_char)[:s]
     return fs
+
+
+def split_strip(s, delim=",", strip=" \t\n\r"):
+    """
+    Splits a given string and strips each list element from given characters.
+
+    Parameters
+    ----------
+    s : str
+        String to be split.
+    delim : str or None
+        String delimiter. If None, string will not be split.
+    strip : str
+        Strip characters.
+
+    Returns
+    -------
+    ls : list(str) or str
+        Returns stripped (list of) string depending on delim
+        parameter.
+    """
+    if delim is None:
+        return s.strip(strip)
+    else:
+        ls = s.split(delim)
+        return [item.strip(strip) for item in ls]
+
+
+def split_unit(s):
+    """
+    Splits a given string into a tuple of numerical value and unit.
+
+    Parameters
+    ----------
+    s : str
+        String to be split.
+
+    Returns
+    -------
+    val : int or float or str
+        Numerical value or unchanged string.
+    unit : str
+        Unit.
+
+    Notes
+    -----
+    If no numerical value could be determined, unit is None and the given
+    string is returned as value.
+    If only a numerical value could be determined, unit is None and the
+    given string is cast to numerical format.
+    """
+    val, unit = None, None
+    match = re.search(r"([+-]?\d*(?:\.\d+)?)(.*)", s)
+    if match:
+        val, unit = match.group(1), match.group(2)
+        if val is None:
+            val = unit
+            unit = None
+        else:
+            try:
+                val = int(val)
+            except ValueError:
+                val = float(val)
+    else:
+        val = s
+    return val, unit
 
 
 ###############################################################################
