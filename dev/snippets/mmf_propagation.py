@@ -64,6 +64,10 @@ class Fiber(abc.ABC, hdf.HDFBase):
     def mode(self):
         return self.__mode_number_map
 
+    @property
+    def mode_count(self):
+        return len(self.mode_numbers)
+
     @abc.abstractmethod
     def __call__(*coords):
         """
@@ -142,10 +146,15 @@ class RoundStepIndexFiber(Fiber):
         l = ev_azimuthal    # noqa
         # Test value for radial eigenvalue in cladding
         g = np.sqrt((na * k0)**2 - k**2)
-        return (
-            k * special.jv(l + 1, k * a) / special.jv(l, var_ev_radial * a)
-            - g * special.kn(l + 1, g * a) / special.kn(l, g * a)
-        )
+        core_term = special.jv(l + 1, k * a)
+        if core_term != 0:  # finite scipy precision issues
+            core_term *= k / special.jv(l, k * a)
+        clad_term = special.kn(l + 1, g * a)
+        if clad_term == np.inf:  # finite scipy precision issues
+            clad_term = 2 * abs(core_term)
+        else:
+            clad_term *= g / special.kn(l, g * a)
+        return core_term - clad_term
 
     def squared_mode_radial_core(self,
                                  radius, ev_azimuthal, ev_radial, factor):
@@ -244,6 +253,45 @@ class RoundStepIndexFiber(Fiber):
         )
         return res_azimuthal * res_radial
 
+    def calc_char_eq_singularities(self, mn_l, _add_sing_count=5):
+        """
+        Calculates and returns the characteristic equation singularities
+        up to the maximal radial eigenvalue fulfilling the guiding condition.
+
+        Parameters
+        ----------
+        mn_l : int
+            Azimuthal eigenvalue (or mode number).
+        _add_sing_count : int
+            Additional singularities to limiting estimate.
+            Used recursively to include all characteristic
+            equation solutions.
+        """
+        max_k = self.numerical_aperture * self.vacuum_wavenumber
+        a = self.core_radius
+        sing = (special.jn_zeros(
+            mn_l,
+            max(_add_sing_count,
+                int(max_k * a / np.pi - mn_l / 2 + _add_sing_count))
+        ) / a)
+        if sing[-1] < max_k:
+            sing = self.calc_char_eq_singularities(
+                mn_l, _add_sing_count=(2 * _add_sing_count)
+            )
+        else:
+            sing = np.insert(sing, 0, 0.0)
+        try:
+            pop_index = len(sing)
+            for i in reversed(range(pop_index)):
+                if sing[i - 1] >= max_k:
+                    pop_index -= 1
+                else:
+                    break
+            sing = sing[:pop_index]
+        except IndexError:
+            sing = []
+        return sing
+
     def calc_modes(self):
         """
         Calculates the propagation eigensystem.
@@ -258,23 +306,14 @@ class RoundStepIndexFiber(Fiber):
         Ccl_ls = []  # Cladding factors
         # Iterate azimuthal mode number l
         l = 0   # noqa
-        continue_l_loop = True
-        while continue_l_loop:
+        while True:
             # Find k intervals with exactly one solution
-            k_bins = np.insert(
-                special.jn_zeros(
-                    l, int(na * k0 * a / np.pi - l / 2 + 5)
-                ) / a,   # Add 5 to include all char. eq. sol. singularities
-                0, 0.0   # Insert 0 to include sol. before first singularity
-            )
+            k_bins = self.calc_char_eq_singularities(l)
+            if len(k_bins) == 0:
+                break
             # Iterate radial mode number m(l)
-            m = 0
-            for i, k_bin_left in enumerate(k_bins):
-                m += 1
-                # Break if k value does not fulfill guiding condition
-                if k_bin_left > na * k0:
-                    m -= 1
-                    break
+            k, m = None, None
+            for i, k_bin_left in enumerate(k_bins[:-1]):
                 k_bin_right = min(k_bins[i + 1], na * k0)
                 # Find k eigenvalue by finding roots of characteristic equation
                 try:
@@ -285,8 +324,8 @@ class RoundStepIndexFiber(Fiber):
                         args=(l, )
                     )
                 except ValueError:
-                    m -= 1
                     break
+                m = i + 1
                 # Demand continuity at core-cladding interface
                 Cco = 1.0
                 Ccl = (special.jv(l, k * a)
@@ -301,10 +340,9 @@ class RoundStepIndexFiber(Fiber):
                     mn_ls.append((-l, m))
                     Cco_ls.append(Cco)
                     Ccl_ls.append(Ccl)
-            if m > 0:
-                l += 1  # noqa
-            else:
-                continue_l_loop = False
+            if m is None:
+                break
+            l += 1  # noqa
         # Iterate results
         for i, (l, m) in enumerate(mn_ls):
             # Calculate normalization (2π from polar integration)
@@ -335,25 +373,32 @@ class RoundStepIndexFiber(Fiber):
 def main():
     core_refr = 1.50
     clad_refr = 1.4838
-    # core_radius = 52.5
-    core_radius = 5.0e-6
+    core_radius = 52.5e-6
     wavelength = 780e-9
-    plot_mode_number = (2, 2)
+    plot_mode_number = (-3, 2)
     plot_linear_pixels = 250
+
+    import cProfile
+    profiler = cProfile.Profile()
 
     mmf = RoundStepIndexFiber(
         opt_freq=(constants.speed_of_light / wavelength),
         core_radius=core_radius,
         core_refr=core_refr, clad_refr=clad_refr
     )
+    profiler.enable()
     mmf.calc_modes()
+    profiler.disable()
+    profiler.print_stats(sort="time")
 
     import matplotlib.pyplot as plt
     r = np.linspace(-1.1 * core_radius, 1.1 * core_radius, plot_linear_pixels)
     xx, yy = np.meshgrid(r, r)
     zz = mmf(xx, yy, plot_mode_number, coord=COORD.CARTESIAN)
-    plt.pcolormesh(np.real(zz)**2)
-    title = "Mode (real part squared): $\\left|l, m\\right> = "
+    plt_zz = np.real(zz)**2
+    plt.pcolormesh(plt_zz)
+    title = "Re[Mode]² (total: {:d}): ".format(mmf.mode_count)
+    title += "$\\left|l, m\\right> = "
     title += "\\left|{:d}, {:d}\\right>$, ".format(*plot_mode_number)
     title += "$n_{co} " + "k_0 / \\beta = {:.3f}$".format(
         mmf.core_refr * mmf.vacuum_wavenumber
