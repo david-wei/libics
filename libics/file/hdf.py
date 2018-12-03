@@ -61,6 +61,15 @@ class HDFBase(object):
         """
         pass
 
+    def _hdf_init_write(self):
+        """
+        Method that is called before the writing process.
+
+        Implementation
+        --------------
+        Implement handlers which clean up the class before writing to file.
+        """
+
 
 class HDFDelegate(abc.ABC):
 
@@ -245,6 +254,7 @@ def write_hdf(obj, file_path=None, _parent_group=None):
         for key, val in obj.__dict__.items():
             # Custom implemented class
             if isinstance(val, HDFBase):
+                val._hdf_init_write()
                 write_hdf(
                     val, file_path=None,
                     _parent_group=_parent_group.create_group(key)
