@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import numpy as np
 
+from libics import env
 from libics.data import arraydata, seriesdata
 from libics.display import plotcfg
 from libics.util import misc
@@ -883,6 +884,7 @@ class Figure(object):
 
 
 _MplRcParam = None
+plt.style.use(env.FILE_MPLRC)
 
 
 def enable_plot_style(plot_style):
