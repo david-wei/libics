@@ -384,7 +384,7 @@ class RoundStepIndexFiber(Fiber):
     def calc_overlap(
         self,
         input_field, *args,
-        coord=COORD.CARTESIAN, **kwargs
+        coord=COORD.CARTESIAN, algorithm="dblquad", **kwargs
     ):
         """
         Parameters
@@ -395,6 +395,8 @@ class RoundStepIndexFiber(Fiber):
             Parameters passed to input_field.
         coord : COORD
             Coordinate system of input_field.
+        algorithm : "dblquad", "hybrid", "simps"
+            Overlap integration algorithm.
         **kwargs
             Keyword arguments passed to input_field.
 
@@ -403,48 +405,138 @@ class RoundStepIndexFiber(Fiber):
         overlap : numpy.ndarray(1)
             Overlap vector corresponding to the fiber modes.
         """
-        _input_field = input_field
-        # Convert input_field to take polar coordinates
-        if coord == COORD.CARTESIAN:
-            input_field = np.frompyfunc(
-                lambda r, phi: _input_field(
-                    r * np.cos(phi), r * np.sin(phi), *args, **kwargs
-                ), 2, 1
-            )
         # Perform overlap integral
         print("Calculating overlap integral")
         overlap = np.full_like(self.mode_propconsts, np.nan, dtype=complex)
         t0 = time.time()
-        for i, item in enumerate(overlap):
-            print("\r{: >4d}/{:d} ({:d}s)"
-                  .format(i + 1, len(overlap), int(time.time() - t0)), end="")
-            # Integrate core
-            overlap[i] = integrate.dblquad(
-                lambda r, phi:
-                np.real(np.conjugate(self(r, phi, i)) * input_field(r, phi)),
-                0, 2 * np.pi,
-                0, self.core_radius,
-            )[0]
-            overlap[i] += 1j * integrate.dblquad(
-                lambda r, phi:
-                np.imag(np.conjugate(self(r, phi, i)) * input_field(r, phi)),
-                0, 2 * np.pi,
-                0, self.core_radius
-            )[0]
-            # Integrate cladding
-            overlap[i] += integrate.dblquad(
-                lambda r, phi:
-                np.real(np.conjugate(self(r, phi, i)) * input_field(r, phi)),
-                0, 2 * np.pi,
-                self.core_radius, 1.5 * self.core_radius
-            )[0]
-            overlap[i] += 1j * integrate.dblquad(
-                lambda r, phi:
-                np.imag(np.conjugate(self(r, phi, i)) * input_field(r, phi)),
-                0, 2 * np.pi,
-                self.core_radius, 1.5 * self.core_radius
-            )[0]
-        print()
+        V = self.numerical_aperture * self.vacuum_wavenumber * self.core_radius
+
+        # Simpsons integration
+        if algorithm == "simps":
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >4d}/{:d} ({:d}s)"
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                var_azimuthal = np.linspace(
+                    0, 2 * np.pi, num=max(32, 16 * abs(l)), endpoint=False
+                )
+                var_radial = np.linspace(
+                    0, 1.2 * self.core_radius,
+                    num=max(24, 8 * round(V - abs(l) / 2 + 2)),
+                    endpoint=False
+                )
+                r, phi = np.meshgrid(var_radial, var_azimuthal)
+                overlap[i] = 2 * np.pi * integrate.simps(
+                    integrate.simps(np.conjugate(self(r, phi, i))
+                                    * input_field(r, phi, coord=coord),
+                                    var_radial),
+                    var_azimuthal
+                )
+
+        # Hybrid integration
+        if algorithm == "hybrid":
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >4d}/{:d} ({:d}s)"
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                var_azimuthal = np.linspace(
+                    0, 2 * np.pi, num=max(16, 8 * abs(l)), endpoint=False
+                )
+                # Integrate core
+                overlap[i] = integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.real(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=coord)
+                        ), 0, self.core_radius, n=round(V - abs(l) / 2 + 2)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] += 1j * integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.imag(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=coord)
+                        ), 0, self.core_radius, n=round(V - abs(l) / 2 + 2)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                # Integrate cladding
+                overlap[i] += integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.real(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=coord)
+                        ),
+                        self.core_radius, 1.2 * self.core_radius,
+                        n=round(V - abs(l) / 2 + 2)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] += 1j * integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.imag(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=coord)
+                        ),
+                        self.core_radius, 1.2 * self.core_radius,
+                        n=round(V - abs(l) / 2 + 2)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] *= 2 * np.pi
+
+        # Library quad integration
+        if algorithm == "dblquad":
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >4d}/{:d} ({:d}s)"
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                # Integrate core
+                overlap[i] = integrate.dblquad(
+                    lambda r, phi: np.real(
+                        np.conjugate(self(r, phi, i))
+                        * input_field(r, phi, coord=coord)
+                    ),
+                    0, 2 * np.pi,
+                    0, self.core_radius,
+                )[0]
+                overlap[i] += 1j * integrate.dblquad(
+                    lambda r, phi: np.imag(
+                        np.conjugate(self(r, phi, i))
+                        * input_field(r, phi, coord=coord)
+                    ),
+                    0, 2 * np.pi,
+                    0, self.core_radius
+                )[0]
+                # Integrate cladding
+                overlap[i] += integrate.dblquad(
+                    lambda r, phi: np.real(
+                        np.conjugate(self(r, phi, i))
+                        * input_field(r, phi, coord=coord)
+                    ),
+                    0, 2 * np.pi,
+                    self.core_radius, 1.5 * self.core_radius
+                )[0]
+                overlap[i] += 1j * integrate.dblquad(
+                    lambda r, phi: np.imag(
+                        np.conjugate(self(r, phi, i))
+                        * input_field(r, phi, coord=coord)
+                    ),
+                    0, 2 * np.pi,
+                    self.core_radius, 1.5 * self.core_radius
+                )[0]
+                overlap[i] *= 2 * np.pi
+        print(
+            "\r{: >4d}/{:d} ({:d}s)"
+            .format(len(overlap), len(overlap), int(time.time() - t0))
+        )
         return overlap
 
     def output(self, radius, azimuth, overlap, length, coord=COORD.POLAR):
@@ -538,57 +630,67 @@ class GaussianBeam(hdf.HDFBase):
     def rayleigh_range(self):
         return np.pi * self.waist / self.vacuum_wavelength
 
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, ra):
+        self._rotation = ra
+        self._rotation_matrix = np.matmul(np.matmul(
+            np.array([
+                [1, 0, 0],
+                [0, np.cos(ra[0]), -np.sin(ra[0])],
+                [0, np.sin(ra[0]), np.cos(ra[0])]
+            ]),
+            np.array([
+                [np.cos(ra[0]), 0, np.sin(ra[0])],
+                [0, 1, 0],
+                [-np.sin(ra[0]), 0, np.cos(ra[0])]
+            ])
+        ), np.array([
+            [np.cos(ra[0]), -np.sin(ra[0]), 0],
+            [np.sin(ra[0]), np.cos(ra[0]), 0],
+            [0, 0, 1]
+        ]))
+
     def cv_coordinates(self, x, y, z):
         """
         Performs inverse coordinate system rotation and translation
         as specified by the offset and rotation attributes.
         """
-        vec = np.array([x, y, z])
-        ra = self.rotation
-        vec_rotated = np.matmul(
-            np.matmul(
-                np.array([
-                    [1, 0, 0],
-                    [0, np.cos(ra[0]), -np.sin(ra[0])],
-                    [0, np.sin(ra[0]), np.cos(ra[0])]
-                ]),
-                np.array([
-                    [np.cos(ra[0]), 0, np.sin(ra[0])],
-                    [0, 1, 0],
-                    [-np.sin(ra[0]), 0, np.cos(ra[0])]
-                ])
-            ),
-            np.matmul(
-                np.array([
-                    [np.cos(ra[0]), -np.sin(ra[0]), 0],
-                    [np.sin(ra[0]), np.cos(ra[0]), 0],
-                    [0, 0, 1]
-                ]),
-                vec
-            )
-        )
-        vec_translated = vec_rotated - self.offset
-        return vec_translated
+        var = np.array([x, y, z])
+        # Numpy broadcasting support
+        if len(var.shape) > 1:
+            var = np.moveaxis(var, 0, 1)
+            res = np.dot(self._rotation_matrix, var)
+            res = np.moveaxis(np.moveaxis(res, 0, -1) - self.offset, -1, 0)
+        else:
+            res = np.dot(self._rotation_matrix, var) - self.offset
+        return res
 
-    def __call__(self, x, y, z=0.0):
+    def __call__(self, x, y, z=0.0, coord=COORD.CARTESIAN):
         """
         Calculates the Gaussian beam field with stored transformations.
         """
-        xx, yy, zz = self.cv_coordinates(x, y, z)
-        r = np.sqrt(xx**2 + yy**2)
         k = self.vacuum_wavenumber
         w0 = self.waist
         zR = self.rayleigh_range
+
+        if coord == COORD.POLAR:
+            x, y = x * np.cos(y), x * np.sin(y)
+        z = np.full_like(x, z)
+
+        xx, yy, zz = self.cv_coordinates(x, y, z)
+        r = np.sqrt(xx**2 + yy**2)
         wn = np.sqrt(1 + (zz / zR)**2)
-
-        divergence = 1
-        if zz != 0:
-            R = zz + zR**2 / zz
-            divergence = np.exp(-1j * k * r**2 / 2 / R)
-
+        R = np.piecewise(
+            zz, [zz == 0, zz != 0],
+            [np.inf, lambda var: var + zR**2 / var]
+        )
         res = (
             1 / wn * np.exp(-(r / w0 / wn)**2)
-            * divergence
+            * np.exp(-1j * k * r**2 / 2 / R)
             * np.exp(-1j * (k * zz + np.arctan(zz / zR)))
         )
         return res.astype(complex)
@@ -611,12 +713,12 @@ class OverlapFiberBeam(hdf.HDFBase):
         """
         self.fiber.calc_modes()
 
-    def calc_overlap(self):
+    def calc_overlap(self, *args, **kwargs):
         """
         Calculates the overlap based on the stored beam and fiber.
         """
         self.overlap = self.fiber.calc_overlap(
-            self.beam, coord=COORD.CARTESIAN
+            self.beam, *args, coord=COORD.CARTESIAN, **kwargs
         )
 
     def field(self, radius=None, points=250, length=1):
@@ -869,7 +971,7 @@ def gb_main():
 def prop_main():
     core_refr = 1.50
     clad_refr = 1.4838
-    core_radius = 52.5e-6
+    core_radius = 20e-6
     prop_length = 20.0
     wavelength = 780e-9
     waist = 20e-6
@@ -877,6 +979,9 @@ def prop_main():
     offset = [0.0, 0.0, 0.0]
     file_path = os.path.join(env.DIRS["rzgdatashare"], "RZG_libics",
                              "mmf_propagation", "overlap_1.hdf5")
+
+    import cProfile
+    profiler = cProfile.Profile()
 
     gb = GaussianBeam(
         opt_freq=(constants.speed_of_light / wavelength), waist=waist,
@@ -889,7 +994,10 @@ def prop_main():
     )
     overlap = OverlapFiberBeam(beam=gb, fiber=mmf)
     overlap.calc_modes()
-    overlap.calc_overlap()
+    profiler.enable()
+    overlap.calc_overlap(algorithm="dblquad")
+    profiler.disable()
+    profiler.print_stats(sort="time")
     hdf.write_hdf(overlap, file_path=file_path)
     plot_overlap(overlap, length=prop_length, data="field")
 
