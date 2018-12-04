@@ -384,18 +384,21 @@ class RoundStepIndexFiber(Fiber):
     def calc_overlap(
         self,
         input_field, *args,
-        coord=COORD.CARTESIAN, algorithm="dblquad", **kwargs
+        algorithm="dblquad", **kwargs
     ):
         """
         Parameters
         ----------
         input_field : callable
             Function representing the input light field.
+            Call signature : f (var_1, var_2, coord)
+                var_1, var_2 : float
+                    2D spatial variables.
+                coord : COORD
+                    Coordinate system type (must accept polar).
         *args
             Parameters passed to input_field.
-        coord : COORD
-            Coordinate system of input_field.
-        algorithm : "dblquad", "hybrid", "simps"
+        algorithm : "dblquad", "hybrid", "simpson"
             Overlap integration algorithm.
         **kwargs
             Keyword arguments passed to input_field.
@@ -409,28 +412,27 @@ class RoundStepIndexFiber(Fiber):
         print("Calculating overlap integral")
         overlap = np.full_like(self.mode_propconsts, np.nan, dtype=complex)
         t0 = time.time()
-        V = self.numerical_aperture * self.vacuum_wavenumber * self.core_radius
 
         # Simpsons integration
-        if algorithm == "simps":
+        if algorithm == "simpson":
             for i, (l, m) in enumerate(self.mode_numbers):
                 print(
-                    "\r{: >4d}/{:d} ({:d}s)"
+                    "\r{: >6d}/{:d} ({:d}s)      "
                     .format(i, len(overlap), int(time.time() - t0)),
                     end=""
                 )
                 var_azimuthal = np.linspace(
-                    0, 2 * np.pi, num=max(32, 16 * abs(l)), endpoint=False
+                    0, 2 * np.pi, num=max(16, 8 * abs(l)), endpoint=False
                 )
                 var_radial = np.linspace(
                     0, 1.2 * self.core_radius,
-                    num=max(24, 8 * round(V - abs(l) / 2 + 2)),
+                    num=int(max(24, 6 * m)),
                     endpoint=False
                 )
                 r, phi = np.meshgrid(var_radial, var_azimuthal)
                 overlap[i] = 2 * np.pi * integrate.simps(
                     integrate.simps(np.conjugate(self(r, phi, i))
-                                    * input_field(r, phi, coord=coord),
+                                    * input_field(r, phi, coord=COORD.POLAR),
                                     var_radial),
                     var_azimuthal
                 )
@@ -451,8 +453,8 @@ class RoundStepIndexFiber(Fiber):
                     [integrate.fixed_quad(
                         lambda r: np.real(
                             np.conjugate(self(r, phi, i))
-                            * input_field(r, phi, coord=coord)
-                        ), 0, self.core_radius, n=round(V - abs(l) / 2 + 2)
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ), 0, self.core_radius, n=max(6, 6 * m)
                     )[0] for phi in var_azimuthal],
                     x=var_azimuthal
                 )
@@ -460,8 +462,8 @@ class RoundStepIndexFiber(Fiber):
                     [integrate.fixed_quad(
                         lambda r: np.imag(
                             np.conjugate(self(r, phi, i))
-                            * input_field(r, phi, coord=coord)
-                        ), 0, self.core_radius, n=round(V - abs(l) / 2 + 2)
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ), 0, self.core_radius, n=max(6, 6 * m)
                     )[0] for phi in var_azimuthal],
                     x=var_azimuthal
                 )
@@ -470,10 +472,10 @@ class RoundStepIndexFiber(Fiber):
                     [integrate.fixed_quad(
                         lambda r: np.real(
                             np.conjugate(self(r, phi, i))
-                            * input_field(r, phi, coord=coord)
+                            * input_field(r, phi, coord=COORD.POLAR)
                         ),
                         self.core_radius, 1.2 * self.core_radius,
-                        n=round(V - abs(l) / 2 + 2)
+                        n=max(6, 6 * m)
                     )[0] for phi in var_azimuthal],
                     x=var_azimuthal
                 )
@@ -481,10 +483,10 @@ class RoundStepIndexFiber(Fiber):
                     [integrate.fixed_quad(
                         lambda r: np.imag(
                             np.conjugate(self(r, phi, i))
-                            * input_field(r, phi, coord=coord)
+                            * input_field(r, phi, coord=COORD.POLAR)
                         ),
                         self.core_radius, 1.2 * self.core_radius,
-                        n=round(V - abs(l) / 2 + 2)
+                        n=max(6, 6 * m)
                     )[0] for phi in var_azimuthal],
                     x=var_azimuthal
                 )
@@ -502,7 +504,7 @@ class RoundStepIndexFiber(Fiber):
                 overlap[i] = integrate.dblquad(
                     lambda r, phi: np.real(
                         np.conjugate(self(r, phi, i))
-                        * input_field(r, phi, coord=coord)
+                        * input_field(r, phi, coord=COORD.POLAR)
                     ),
                     0, 2 * np.pi,
                     0, self.core_radius,
@@ -510,7 +512,7 @@ class RoundStepIndexFiber(Fiber):
                 overlap[i] += 1j * integrate.dblquad(
                     lambda r, phi: np.imag(
                         np.conjugate(self(r, phi, i))
-                        * input_field(r, phi, coord=coord)
+                        * input_field(r, phi, coord=COORD.POLAR)
                     ),
                     0, 2 * np.pi,
                     0, self.core_radius
@@ -519,7 +521,7 @@ class RoundStepIndexFiber(Fiber):
                 overlap[i] += integrate.dblquad(
                     lambda r, phi: np.real(
                         np.conjugate(self(r, phi, i))
-                        * input_field(r, phi, coord=coord)
+                        * input_field(r, phi, coord=COORD.POLAR)
                     ),
                     0, 2 * np.pi,
                     self.core_radius, 1.5 * self.core_radius
@@ -527,14 +529,14 @@ class RoundStepIndexFiber(Fiber):
                 overlap[i] += 1j * integrate.dblquad(
                     lambda r, phi: np.imag(
                         np.conjugate(self(r, phi, i))
-                        * input_field(r, phi, coord=coord)
+                        * input_field(r, phi, coord=COORD.POLAR)
                     ),
                     0, 2 * np.pi,
                     self.core_radius, 1.5 * self.core_radius
                 )[0]
                 overlap[i] *= 2 * np.pi
         print(
-            "\r{: >4d}/{:d} ({:d}s)"
+            "\r{: >6d}/{:d} ({:d}s)"
             .format(len(overlap), len(overlap), int(time.time() - t0))
         )
         return overlap
@@ -644,13 +646,13 @@ class GaussianBeam(hdf.HDFBase):
                 [0, np.sin(ra[0]), np.cos(ra[0])]
             ]),
             np.array([
-                [np.cos(ra[0]), 0, np.sin(ra[0])],
+                [np.cos(ra[1]), 0, np.sin(ra[1])],
                 [0, 1, 0],
-                [-np.sin(ra[0]), 0, np.cos(ra[0])]
+                [-np.sin(ra[1]), 0, np.cos(ra[1])]
             ])
         ), np.array([
-            [np.cos(ra[0]), -np.sin(ra[0]), 0],
-            [np.sin(ra[0]), np.cos(ra[0]), 0],
+            [np.cos(ra[2]), -np.sin(ra[2]), 0],
+            [np.sin(ra[2]), np.cos(ra[2]), 0],
             [0, 0, 1]
         ]))
 
@@ -662,7 +664,7 @@ class GaussianBeam(hdf.HDFBase):
         var = np.array([x, y, z])
         # Numpy broadcasting support
         if len(var.shape) > 1:
-            var = np.moveaxis(var, 0, 1)
+            var = np.moveaxis(var, 0, -2)
             res = np.dot(self._rotation_matrix, var)
             res = np.moveaxis(np.moveaxis(res, 0, -1) - self.offset, -1, 0)
         else:
@@ -702,10 +704,15 @@ class GaussianBeam(hdf.HDFBase):
 @InheritMap(map_key=("libics-dev", "OverlapFiberBeam"))
 class OverlapFiberBeam(hdf.HDFBase):
 
-    def __init__(self, beam=None, fiber=None, overlap=None):
+    def __init__(
+        self,
+        beam=None, fiber=None, length=1, overlap=None, correlation=None
+    ):
         self.beam = beam
         self.fiber = fiber
-        self.overlap = overlap
+        self.length = length            # fiber length
+        self.overlap = overlap          # overlap vector
+        self.correlation = correlation  # phase-delayed correlation
 
     def calc_modes(self):
         """
@@ -721,7 +728,14 @@ class OverlapFiberBeam(hdf.HDFBase):
             self.beam, *args, coord=COORD.CARTESIAN, **kwargs
         )
 
-    def field(self, radius=None, points=250, length=1):
+    def calc_correlation(self):
+        """
+        Calculates the phase-delayed modal correlation.
+        """
+        mode_vec = self.overlap * np.exp(-1j * self.fiber.mode_propconsts)
+        self.correlation = np.outer(mode_vec, np.conjugate(mode_vec))
+
+    def field(self, radius=None, points=250, length=None):
         """
         Gets a sampled fiber output field.
 
@@ -736,6 +750,8 @@ class OverlapFiberBeam(hdf.HDFBase):
         """
         if radius is None:
             radius = 1.1 * self.fiber.core_radius
+        if length is None:
+            length = self.length
         r = np.linspace(-radius, radius, num=points)
         x, y = np.meshgrid(r, r)
         field = self.fiber.output(
@@ -743,7 +759,7 @@ class OverlapFiberBeam(hdf.HDFBase):
         )
         return field
 
-    def intensity(self, radius=None, points=250, length=1):
+    def intensity(self, radius=None, points=250, length=None):
         """
         Gets a sampled fiber output intensity.
 
@@ -756,10 +772,12 @@ class OverlapFiberBeam(hdf.HDFBase):
         length : float
             Propagation length in meter (m).
         """
+        if length is None:
+            length = self.length
         field = self.field(radius=radius, points=points, length=length)
         return np.abs(field)**2
 
-    def correlation(self, displacement, radius=None, points=250, length=1):
+    def correlation(self, displacement, radius=None, points=250, length=None):
         """
         Gets a sampled fiber output correlation.
 
@@ -776,6 +794,8 @@ class OverlapFiberBeam(hdf.HDFBase):
         """
         if radius is None:
             radius = 1.1 * self.fiber.core_radius
+        if length is None:
+            length = self.length
         r = np.linspace(-radius, radius, num=points)
         x, y = np.meshgrid(r, r)
         field_orig = self.fiber.output(
@@ -788,7 +808,7 @@ class OverlapFiberBeam(hdf.HDFBase):
         correlation = np.conjugate(field_orig) * field_disp
         return correlation
 
-    def coherence(self, displacement, radius=None, points=250, length=1):
+    def coherence(self, displacement, radius=None, points=250, length=None):
         """
         Gets a sampled fiber output coherence.
 
@@ -805,6 +825,8 @@ class OverlapFiberBeam(hdf.HDFBase):
         """
         if radius is None:
             radius = 1.1 * self.fiber.core_radius
+        if length is None:
+            length = self.length
         r = np.linspace(-radius, radius, num=points)
         x, y = np.meshgrid(r, r)
         field_orig = self.fiber.output(
@@ -823,7 +845,154 @@ class OverlapFiberBeam(hdf.HDFBase):
 ###############################################################################
 
 
-def plot_overlap(overlap, length=1, data="field", **kwargs):
+class SpectralOverlap(object):
+
+    def __init__(
+        self,
+        opt_freqs=[780e-9], opt_weights=[1],
+        core_refrs=None, clad_refrs=None, core_radius=52.5e-6,
+        fiber_length=1, fiber_type="round_step",
+        beam_offset=[0, 0, 0], beam_rotation=[0, 0, 0], beam_waist=30e-6,
+        overlaps=None
+    ):
+        self.opt_freqs = opt_freqs
+        self.opt_weights = opt_weights
+        self.core_refrs = core_refrs
+        self.clad_refrs = clad_refrs
+        self.core_radius = core_radius
+        self.fiber_length = fiber_length
+        self.beam_offset = beam_offset
+        self.beam_rotation = beam_rotation
+        self.beam_waist = beam_waist
+        self.overlaps = overlaps
+        self.set_fibers(fiber_type)
+        self.set_beams()
+
+    @property
+    def opt_weights(self):
+        return self._opt_weights
+
+    @opt_weights.setter
+    def opt_weights(self, val):
+        val = np.array(val)
+        val = val / np.sum(val)
+        self._opt_weights = val
+        self._center_index = np.argmax(self._opt_weights)
+
+    @property
+    def center_freq(self):
+        return self.opt_freqs[self._center_index]
+
+    @property
+    def fwhm_freq(self):
+        diff = self.opt_weights.max() - self.opt_weights.min()
+        fwhm_index = np.abs(self.opt_weights - diff / 2).argmin()
+        fwhm = abs(self.opt_freqs[fwhm_index] - self.center_freq)
+        return fwhm
+
+    def set_fibers(self, fiber_type="round_step"):
+        """
+        Parameters
+        ----------
+        fiber_type : "round_step", "square_step"
+        """
+        fiber_cls = None
+        if fiber_type == "round_step":
+            fiber_cls = RoundStepIndexFiber
+        self.fibers = [
+            fiber_cls(
+                opt_freq=self.opt_freqs[i], core_radius=self.core_radius,
+                core_refr=self.core_refrs[i], clad_refr=self.clad_refrs[i]
+            )
+            for i, _ in enumerate(self.opt_freqs)
+        ]
+
+    def set_beams(self):
+        self.beams = [
+            GaussianBeam(
+                opt_freq=opt_freq, waist=self.beam_waist,
+                offset=self.beam_offset, rotation=self.beam_rotation
+            )
+            for opt_freq in self.opt_freqs
+        ]
+
+    def calc_modes(self):
+        print("Calculating modes")
+        t0 = time.time()
+        for i, _ in enumerate(self.opt_freqs):
+            print("\r{: >4d}/{:d} ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            self.fibers[i].calc_modes()
+        print("\r{: >4d}/{:d} ({:d}s)              ".format(
+              len(self.opt_freqs), len(self.opt_freqs), int(time.time() - t0)))
+
+    def calc_overlaps(self, algorithm="simpson"):
+        self.overlaps = [
+            OverlapFiberBeam(
+                beam=self.beams[i],
+                fiber=self.fibers[i],
+                length=self.fiber_length
+            )
+            for i, _ in enumerate(self.opt_freqs)
+        ]
+        for i, overlap in enumerate(self.overlaps):
+            print("{:.1f} nm".format(constants.c / self.opt_freqs[i] * 1e9),
+                  end=": ")
+            overlap.calc_overlap(algorithm=algorithm)
+
+    def field(self, displacement=(0, 0), radius=None, points=250, length=None):
+        if radius is None:
+            radius = 1.1 * self.core_radius
+        if length is None:
+            length = self.fiber_length
+        r = np.linspace(-radius, radius, num=points)
+        x, y = np.meshgrid(r + displacement[0], r + displacement[1])
+        fields = []
+        print("Calculating output field ({:d} x {:d})".format(points, points))
+        t0 = time.time()
+        for i, _ in enumerate(self.opt_freqs):
+            print("\r{: >4d}/{:d} ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields.append(self.fibers[i].output(
+                x, y, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+        print("\r{: >4d}/{:d} ({:d}s)              ".format(
+              len(self.opt_freqs), len(self.opt_freqs), int(time.time() - t0)))
+        fields = np.array(fields)
+        field = np.sum(np.moveaxis(fields, 0, -1) * self.opt_weights, axis=-1)
+        return field
+
+    def intensity(self, *args, **kwargs):
+        intensity = np.abs(self.field(*args, **kwargs))**2
+        return intensity
+
+    def correlation(self, *args, displacement=(0, 0), **kwargs):
+        print("Reference: ", end="")
+        field1 = self.field(*args, **kwargs)
+        print("Displaced: ", end="")
+        field2 = self.field(*args, displacement=displacement, **kwargs)
+        correlation = np.conjugate(field1) * field2
+        return correlation
+
+    def coherence(self, *args, displacement=(0, 0), **kwargs):
+        print("Reference: ", end="")
+        field1 = self.field(*args, **kwargs)
+        print("Displaced: ", end="")
+        field2 = self.field(*args, displacement=displacement, **kwargs)
+        coherence = (np.conjugate(field1) * field2
+                     / np.abs(field1) / np.abs(field2))
+        return coherence
+
+
+###############################################################################
+
+
+def plot_overlap(overlap, length=1, data="field", points=250, **kwargs):
     """
     data : "field", "intensity", "correlation", "coherence"
     length : float
@@ -833,14 +1002,15 @@ def plot_overlap(overlap, length=1, data="field", **kwargs):
     dtype = data
     import matplotlib.pyplot as plt
     if dtype == "field":
-        data = np.real(overlap.field(length=length))
+        data = np.real(overlap.field(length=length, points=points))
     elif dtype == "intensity":
-        data = overlap.intensity(length=length)
+        data = overlap.intensity(length=length, points=points)
     elif dtype == "correlation":
         data = np.abs(overlap.correlation(kwargs["displacement"],
-                                          length=length))
+                                          length=length, points=points))
     elif dtype == "coherence":
-        data = np.abs(overlap.coherence(kwargs["displacement"], length=length))
+        data = np.abs(overlap.coherence(kwargs["displacement"],
+                                        length=length, points=points))
     vmax, vmin, cmap = 1, 0, "viridis"
     if dtype != "coherence":
         vmax = max(data.max(), -data.min())
@@ -850,21 +1020,42 @@ def plot_overlap(overlap, length=1, data="field", **kwargs):
             vmin = 0
             cmap = "Oranges"
     plt.pcolormesh(data, cmap=cmap, vmin=vmin, vmax=vmax)
-    title = dtype + " $"
-    title += "w_0 = {:.0f} μm, ".format(overlap.beam.waist * 1e6)
-    title += "\\theta = {:.0f}°, ".format(
-        np.linalg.norm(overlap.beam.rotation) * 180 / np.pi
-    )
-    title += "\\Delta x_0 = {:.0f} μm, ".format(
-        np.linalg.norm(overlap.beam.offset) * 1e6
-    )
-    title += "$NA $= {:.2f}, ".format(overlap.fiber.numerical_aperture)
-    title += "a = {:.0f} µm, ".format(overlap.fiber.core_radius * 1e6)
-    title += "L = {:.1f} m".format(length)
-    if dtype == "coherence" or dtype == "correlation":
-        title += ", \\Delta x = ({:.0f}, {:.0f}) µm$".format(
-            kwargs["displacement"][0] * 1e6, kwargs["displacement"][1] * 1e6
+    if isinstance(overlap, OverlapFiberBeam):
+        title = dtype + ": "
+        title += r"$w_0 = " + "{:.0f}".format(overlap.beam.waist * 1e6)
+        title += r" \mathrm{\mu m}, \theta = " + "{:.0f}".format(
+            np.linalg.norm(overlap.beam.rotation) * 180 / np.pi
         )
+        title += r"^\circ, \Delta x_0 = " + "{:.0f}".format(
+            np.linalg.norm(overlap.beam.offset) * 1e6
+        ) + r" \mathrm{\mu m}, \mathrm{NA} = "
+        title += "{:.2f}".format(overlap.fiber.numerical_aperture)
+        title += r", a = " + "{:.0f}".format(overlap.fiber.core_radius * 1e6)
+        title += r" \mathrm{\mu m}, L = " + "{:.1f}".format(length)
+        title += r" \mathrm{m}"
+    elif isinstance(overlap, SpectralOverlap):
+        title = dtype + ": "
+        title += r"$w_0 = " + "{:.0f}".format(overlap.beam_waist * 1e6)
+        title += r" \mathrm{\mu m}, \theta = " + "{:.0f}".format(
+            np.linalg.norm(overlap.beam_rotation) * 180 / np.pi
+        )
+        title += r"^\circ, \Delta x_0 = " + "{:.0f}".format(
+            np.linalg.norm(overlap.beam_offset) * 1e6
+        ) + r" \mathrm{\mu m}, \mathrm{NA} = "
+        title += "{:.2f}".format(overlap.fibers[0].numerical_aperture)
+        title += r", a = " + "{:.0f}".format(overlap.core_radius * 1e6)
+        title += r" \mathrm{\mu m}, L = "
+        title += "{:.1f}".format(overlap.fiber_length)
+        title += r" \mathrm{m}, \lambda (\Delta \lambda) = "
+        title += "{:.1f} ({:.1f})".format(
+            constants.c / overlap.center_freq * 1e9,
+            constants.c * overlap.fwhm_freq / overlap.center_freq**2 * 1e9
+        )
+        title += " \mathrm{nm}"
+    if dtype == "coherence" or dtype == "correlation":
+        title += r", \Delta x = " + "({:.0f}, {:.0f}) ".format(
+            kwargs["displacement"][0] * 1e6, kwargs["displacement"][1] * 1e6
+        ) + r"\mathrm{\mu m}$"
     else:
         title += "$"
     plt.title(title)
@@ -947,8 +1138,8 @@ def gb_main():
     plot_position_z = 0.0
 
     gb = GaussianBeam(
-        opt_freq=(constants.speed_of_light / wavelength),
-        propagation_angle=propagation_angle, waist=waist,
+        opt_freq=(constants.speed_of_light / wavelength), waist=waist,
+        rotation_x=propagation_angle,
         offset_x=offset_x, offset_y=offset_y
     )
 
@@ -957,11 +1148,12 @@ def gb_main():
     xx, yy = np.meshgrid(r, r)
     zz = gb(xx, yy, plot_position_z)
     plt_zz = np.real(zz)
-    plt.pcolormesh(plt_zz, cmap="RdBu")
+    vmax = max(plt_zz.max(), -plt_zz.min())
+    plt.pcolormesh(plt_zz, cmap="RdBu", vmin=-vmax, vmax=vmax)
     title = "Re[Gaussian beam]: $w_0 = {:.0f} μm, ".format(gb.waist * 1e6)
     title += ("\\theta = {:.0f}°, (x_0, y_0) = ({:.0f}, {:.0f}) μm$"
-              .format(gb.propagation_angle * 180 / np.pi,
-                      gb.offset_x * 1e6, gb.offset_y * 1e6))
+              .format(gb.rotation[0] * 180 / np.pi,
+                      gb.offset[0] * 1e6, gb.offset[1] * 1e6))
     plt.title(title)
     plt.gca().set_aspect("equal")
     plt.colorbar()
@@ -971,7 +1163,7 @@ def gb_main():
 def prop_main():
     core_refr = 1.50
     clad_refr = 1.4838
-    core_radius = 20e-6
+    core_radius = 10e-6
     prop_length = 20.0
     wavelength = 780e-9
     waist = 20e-6
@@ -995,7 +1187,7 @@ def prop_main():
     overlap = OverlapFiberBeam(beam=gb, fiber=mmf)
     overlap.calc_modes()
     profiler.enable()
-    overlap.calc_overlap(algorithm="dblquad")
+    overlap.calc_overlap(algorithm="simpson")
     profiler.disable()
     profiler.print_stats(sort="time")
     hdf.write_hdf(overlap, file_path=file_path)
@@ -1075,12 +1267,62 @@ def monocoh_main():
     plt.show()
 
 
+def polycoh_main():
+    """polychromatic coherence"""
+    # Fiber
+    numerical_aperture = 0.22
+    clad_refr = 1.45
+    core_refr = np.sqrt(clad_refr**2 + numerical_aperture**2)
+    core_radius = 10e-6
+    fiber_length = 200.0
+    fiber_type = "round_step"
+    # Light source
+    center_freq = constants.speed_of_light / 780e-9
+    fwhm_freq = 8e-9 * center_freq**2 / constants.speed_of_light
+    spec_num = 500
+    opt_freqs = np.linspace(
+        center_freq - fwhm_freq, center_freq + fwhm_freq,
+        num=spec_num
+    )
+    opt_weights = np.exp(-2 * (opt_freqs - center_freq)**2 / fwhm_freq**2)
+    # opt_freqs = [center_freq]
+    # opt_weights = [1]
+    beam_rotation = [1e-1, 0, 0]
+    beam_offset = [0, 0, 0]
+    beam_waist = 10e-6
+    # Coherence
+    coh_dx = [10e-6, 0.0]
+    # Plotting
+    plot_data = "intensity"
+    points = max(50, round(2 * core_radius / constants.c * center_freq))
+
+    # Calculation
+    spec_overlap = SpectralOverlap(
+        opt_freqs=opt_freqs, opt_weights=opt_weights,
+        core_refrs=(spec_num * [core_refr]),
+        clad_refrs=(spec_num * [clad_refr]),
+        core_radius=core_radius,
+        fiber_length=fiber_length, fiber_type=fiber_type,
+        beam_offset=beam_offset, beam_rotation=beam_rotation,
+        beam_waist=beam_waist, overlaps=None
+    )
+    spec_overlap.calc_modes()
+    spec_overlap.calc_overlaps()
+
+    # Result
+    plot_overlap(spec_overlap, length=None, data=plot_data,
+                 displacement=coh_dx, points=points)
+
+    return spec_overlap
+
+
 ###############################################################################
 
 
 if __name__ == "__main__":
     # gb_main()
     # rsif_main()
-    prop_main()
-    overlap_load()
+    # prop_main()
+    # overlap_load()
     # monocoh_main()
+    polycoh_main()
