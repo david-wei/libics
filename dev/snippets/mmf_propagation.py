@@ -1163,10 +1163,10 @@ def gb_main():
 def prop_main():
     core_refr = 1.50
     clad_refr = 1.4838
-    core_radius = 10e-6
+    core_radius = 52.5e-6
     prop_length = 20.0
     wavelength = 780e-9
-    waist = 20e-6
+    waist = 52.5e-6
     rotation = [1e-1, 0.0, 0.0]
     offset = [0.0, 0.0, 0.0]
     file_path = os.path.join(env.DIRS["rzgdatashare"], "RZG_libics",
@@ -1190,6 +1190,22 @@ def prop_main():
     overlap.calc_overlap(algorithm="simpson")
     profiler.disable()
     profiler.print_stats(sort="time")
+    import matplotlib.pyplot as plt
+    plt.plot(overlap.fiber.mode_propconsts
+             / 2 / np.pi / overlap.fiber.opt_freq * 1e12)
+    plt.xlabel(r"Mode number")
+    plt.ylabel(r"Delay per length $\tau / L$ ($\mathrm{ps/m}$)")
+    plt.show()
+    plt.scatter(
+        overlap.fiber.mode_propconsts
+        / 2 / np.pi / overlap.fiber.opt_freq * 1e12,
+        abs(overlap.overlap)
+    )
+    plt.xlabel(r"Delay per length $\tau / L$ ($\mathrm{ps/m}$)")
+    plt.ylabel(r"Mode overlap")
+    max_overlap = max(abs(overlap.overlap))
+    plt.ylim(-0.1 * max_overlap, 1.1 * max_overlap)
+    plt.show()
     hdf.write_hdf(overlap, file_path=file_path)
     plot_overlap(overlap, length=prop_length, data="field")
 
@@ -1322,7 +1338,7 @@ def polycoh_main():
 if __name__ == "__main__":
     # gb_main()
     # rsif_main()
-    # prop_main()
+    prop_main()
     # overlap_load()
     # monocoh_main()
     polycoh_main()
