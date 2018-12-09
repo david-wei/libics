@@ -55,3 +55,25 @@ def get_folder_contents(folder, regex=None):
             except re.error:
                 folders_rest.append(item)
     return folders, files, folders_match, files_match, folders_rest, files_rest
+
+
+def assume_file_exists(file_path):
+    """
+    Checks if a file exists. Creates an empty file if not.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the file to be checked.
+
+    Returns
+    -------
+    existed : bool
+        True if file has existed before.
+    """
+    if os.path.exists(file_path):
+        return True
+    if not os.path.exists(os.path.dirname(file_path)):
+        os.makedirs(os.path.dirname(file_path))
+    open(file_path, "a").close()
+    return False

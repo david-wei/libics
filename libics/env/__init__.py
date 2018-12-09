@@ -24,6 +24,7 @@ LIBICS_VERSION = (
 ###############################################################################
 
 
+DIR_CWD = os.getcwd()
 DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
 ))))

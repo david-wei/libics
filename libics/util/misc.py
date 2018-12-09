@@ -256,6 +256,78 @@ def nest_flattened_dict(d, delim="."):
     return d
 
 
+def map_dicts(
+    func, *arg_dicts, kwarg_dicts={},
+    pre_args=(), post_args=(), **kwargs
+):
+    """
+    Constructs a new dictionary containing all common keys. Calls the given
+    function with the key's corresponding values and assigns the return value
+    to the new dictionary.
+
+    Parameters
+    ----------
+    func : callable
+        Function to be mapped.
+    *arg_dicts : dict
+        Dictionaries whose values are mapped as arguments.
+    kwarg_dicts : dict(dict)
+        Dictionaries whose values are mapped as keyword arguments.
+        The keys of kwarg_dicts correspond to the keywords.
+    pre_args, post_args : tuple
+        Arguments passed to func (before, after) dict
+        values, i.e. func(*pre_args, *dict_vals, *post_args).
+    **kwargs
+        Keyword arguments passed to func.
+
+    Returns
+    -------
+    d : dict
+        Mapped dictionary.
+
+    Example
+    -------
+    map_dicts(func, d1, d2) performs new_dict[key] = func(d1, d2) for all
+    keys common to both d1 and d2.
+    """
+    d = {}
+    all_dicts = list(arg_dicts) + list(kwarg_dicts.values())
+    if len(all_dicts) == 1:
+        kw = None
+        if len(kwarg_dicts) == 1:
+            kw = next(iter(kwarg_dicts.keys()))
+        for key, val in all_dicts[0].items():
+            if kw:
+                kwd = {kw: val}
+                d[key] = func(*pre_args, *post_args, **kwd, **kwargs)
+            else:
+                d[key] = func(*pre_args, val, *post_args, **kwargs)
+    else:
+        for key, val in all_dicts[0].items():
+            vals = []
+            kw_vals = {}
+            is_common_key = True
+            if is_common_key:
+                for dd in arg_dicts:
+                    if key in dd.keys():
+                        vals.append(dd[key])
+                    else:
+                        is_common_key = False
+                        break
+            if is_common_key:
+                for kw, dd in kwarg_dicts.items():
+                    if key in dd.keys():
+                        kw_vals[kw] = dd[key]
+                    else:
+                        is_common_key = False
+                        break
+            if is_common_key:
+                d[key] = func(
+                    *pre_args, *vals, *post_args, **kw_vals, **kwargs
+                )
+    return d
+
+
 ###############################################################################
 # String Functions
 ###############################################################################
@@ -354,6 +426,25 @@ def split_unit(s):
     return val, unit
 
 
+def capitalize_first_char(s):
+    """
+    Capitalizes the first character (if possible) and leaves the rest of the
+    string invariant.
+
+    Parameters
+    ----------
+    s : str
+        String to be capitalized.
+
+    Returns
+    -------
+    s_cap : str
+        Capitalized string.
+    """
+    s_cap = re.sub("([a-zA-Z])", lambda x: x.groups()[0].upper(), s, 1)
+    return s_cap
+
+
 ###############################################################################
 # List Fetcher
 ###############################################################################
@@ -441,6 +532,17 @@ def ret_id(arg):
     Takes any argument and returns the input.
     """
     return arg
+
+
+def id_dict(arg):
+    """
+    Takes any iterable and returns a dictionary mapping the item values to
+    themselves.
+    """
+    d = {}
+    for item in arg:
+        d[item] = item
+    return d
 
 
 ###############################################################################
