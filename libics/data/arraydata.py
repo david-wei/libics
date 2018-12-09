@@ -219,7 +219,7 @@ class ArrayScale(hdf.HDFBase):
 
     def get_dim(self):
         """
-        Gets the dimension of stored attributes.
+        Gets the dimension of stored attributes (incl. actual data).
 
         Raises
         ------
@@ -229,7 +229,7 @@ class ArrayScale(hdf.HDFBase):
         if not self.chk_attr():
             raise AttributeError
         else:
-            return len(self.offset)
+            return len(self.quantity)
 
     def add_dim(self,
                 offset=0.0, scale=1.0, max=None,

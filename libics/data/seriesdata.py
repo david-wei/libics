@@ -41,6 +41,12 @@ class SeriesData(hdf.HDFBase):
                 name=name, symbol=symbol, unit=unit
             ))
 
+    def get_dim(self):
+        """
+        Gets the data dimension (incl. actual data).
+        """
+        return self.data.shape[0]
+
     @property
     def data(self):
         return self._data
