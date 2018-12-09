@@ -49,7 +49,7 @@ class Quantity(hdf.HDFBase):
         if self.symbol is not None:
             s += " $" + self.symbol + "$"
         if self.unit is not None:
-            s += " [" + self.unit + "]"
+            s += r" [$\mathregular{" + self.unit + r"}$]"
         return s
 
     def __eq__(self, other):

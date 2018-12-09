@@ -899,6 +899,12 @@ class Figure(object):
             format=self.figure_cfg.format
         )
 
+    def show(self):
+        """
+        Calls the matplotlib.pyplot.show function.
+        """
+        plt.show()
+
 
 ###############################################################################
 

@@ -52,7 +52,6 @@ class ArrayScale(hdf.HDFBase):
         self.scale = dim * [1.0]
         self.max = dim * [None]
         self.quantity = dim * [types.Quantity()]
-        self.get_index_func = self.get_index_by_index
         self.set_index_mode(ArrayScale.INDEX)
 
     def set_index_mode(self, index_mode):
@@ -65,10 +64,7 @@ class ArrayScale(hdf.HDFBase):
             INDEX: Interpretation as index.
             QUANTITY: Interpretation as physical quantity.
         """
-        if index_mode == ArrayScale.INDEX:
-            self.get_index_func = self.get_index_by_index
-        elif index_mode == ArrayScale.QUANTITY:
-            self.get_index_func = self.get_index_by_quantity
+        self.index_mode = index_mode
 
     def set_max(self, ar):
         """
@@ -142,7 +138,10 @@ class ArrayScale(hdf.HDFBase):
         ind : int
             Requested index.
         """
-        return self.get_index_func(val)
+        if self.index_mode == ArrayScale.INDEX:
+            return self.get_index_by_index(val)
+        elif self.index_mode == ArrayScale.QUANTITY:
+            return self.get_index_by_quantity(val)
 
     def cv_index_to_quantity(self, ind, dim):
         """
