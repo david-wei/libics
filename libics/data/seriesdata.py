@@ -42,6 +42,17 @@ class SeriesData(hdf.HDFBase):
             ))
 
     @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, val):
+        if val.shape[0] == len(self.quantity):
+            self._data = val
+        else:
+            raise ValueError("invalid data shape")
+
+    @property
     def loc(self, key):
         """
         Get data by numpy index addressing [entry, variable].
