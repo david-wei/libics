@@ -6,7 +6,7 @@ import numpy as np
 from libics import env
 from libics.data import arraydata, seriesdata
 from libics.display import plotcfg
-from libics.util import misc
+from libics.util import misc, path
 
 
 ###############################################################################
@@ -14,9 +14,13 @@ from libics.util import misc
 
 def _plot_meta(mpl_ax, plot_dim, cfg, data):
     if isinstance(data, arraydata.ArrayData):
-        mpl_ax.set_xlabel(data.scale.quantity[0].mathstr())
+        mpl_ax.set_xlabel(
+            misc.capitalize_first_char(data.scale.quantity[0].mathstr())
+        )
         if data.data.ndim == 2:
-            mpl_ax.set_ylabel(data.scale.quantity[1].mathstr())
+            mpl_ax.set_ylabel(
+                misc.capitalize_first_char(data.scale.quantity[1].mathstr())
+            )
         elif data.data.ndim == 1:
             ylabel = None
             if cfg.point is not None:
@@ -28,7 +32,7 @@ def _plot_meta(mpl_ax, plot_dim, cfg, data):
             elif cfg.contour is not None:
                 ylabel = data.scale.quantity[cfg.contour.ypos.dim].mathstr()
             if ylabel is not None:
-                mpl_ax.set_ylabel(ylabel)
+                mpl_ax.set_ylabel(misc.capitalize_first_char(ylabel))
         if plot_dim == 3:
             zlabel = None
             if cfg.point is not None:
@@ -38,7 +42,7 @@ def _plot_meta(mpl_ax, plot_dim, cfg, data):
             elif cfg.contour is not None:
                 zlabel = data.scale.quantity[cfg.contour.zpos.dim].mathstr()
             if zlabel is not None:
-                mpl_ax.set_zlabel(zlabel)
+                mpl_ax.set_zlabel(misc.capitalize_first_char(zlabel))
     elif isinstance(data, seriesdata.SeriesData):
         xlabel, ylabel, zlabel = 3 * [None]
         if cfg.point is not None:
@@ -67,11 +71,11 @@ def _plot_meta(mpl_ax, plot_dim, cfg, data):
             if plot_dim == 3:
                 zlabel = data.quantity[cfg.surface.zpos.dim].mathstr()
         if xlabel is not None:
-            mpl_ax.set_xlabel(xlabel)
+            mpl_ax.set_xlabel(misc.capitalize_first_char(xlabel))
         if ylabel is not None:
-            mpl_ax.set_ylabel(ylabel)
+            mpl_ax.set_ylabel(misc.capitalize_first_char(ylabel))
         if zlabel is not None:
-            mpl_ax.set_ylabel(zlabel)
+            mpl_ax.set_ylabel(misc.capitalize_first_char(zlabel))
 
 
 def _cv_layered_1d_array(data):
@@ -879,11 +883,28 @@ class Figure(object):
             if artists:
                 ax.legend(artists, labels)
 
+    def save(self, file_path):
+        """
+        Saves the current figure according to the figure configuration to the
+        gives file path.
+
+        Parameters
+        ----------
+        file_path : str
+            Path to figure file.
+        """
+        return self.mpl_fig.savefig(
+            file_path,
+            dpi=self.figure_cfg.get_resolution(unit="in"),
+            format=self.figure_cfg.format
+        )
+
 
 ###############################################################################
 
 
 _MplRcParam = None
+path.assume_file_exists(env.FILE_MPLRC)
 plt.style.use(env.FILE_MPLRC)
 
 
