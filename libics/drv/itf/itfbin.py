@@ -10,7 +10,7 @@ from libics.drv.itf import itf, vimba
 
 
 def get_bin_itf(cfg):
-    if cfg.device == itf.ITF_BIN.VIMBA:
+    if cfg.interface == itf.ITF_BIN.VIMBA:
         return VimbaItf(cfg)
 
 
@@ -54,7 +54,15 @@ class VimbaItf(BinItfBase):
 
     def setup(self):
         vimba.startup()
-        self._camera = vimba.getVimba().getCamera(self.cfg.device)
+        if self.cfg.device is None:
+            cams = vimba.get_vimba_cameras()
+            if len(cams) == 0:
+                raise NameError("Vimba device invalid")
+            elif len(cams) > 1:
+                print("Warning: multiple Vimba cameras found")
+            self._camera = cams[0]
+        else:
+            self._camera = vimba.getVimba().getCamera(self.cfg.device)
 
     def shutdown(self):
         vimba.shutdown()

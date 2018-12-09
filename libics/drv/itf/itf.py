@@ -169,6 +169,8 @@ class BinCfgBase(ProtocolCfgBase):
     ----------
     device : str
         String identifier for device (cf. address).
+        None typically searches for interfaces and automatically
+        chooses one (depending on implementation).
     """
 
     def __init__(self, device=None,
