@@ -735,7 +735,7 @@ class OverlapFiberBeam(hdf.HDFBase):
         mode_vec = self.overlap * np.exp(-1j * self.fiber.mode_propconsts)
         self.correlation = np.outer(mode_vec, np.conjugate(mode_vec))
 
-    def field(self, radius=None, points=250, length=None):
+    def field(self, displacement=(0, 0), radius=None, points=250, length=None):
         """
         Gets a sampled fiber output field.
 
@@ -753,13 +753,16 @@ class OverlapFiberBeam(hdf.HDFBase):
         if length is None:
             length = self.length
         r = np.linspace(-radius, radius, num=points)
-        x, y = np.meshgrid(r, r)
+        x, y = np.meshgrid(r + displacement[0], r + displacement[1])
         field = self.fiber.output(
             x, y, self.overlap, length, coord=COORD.CARTESIAN
         )
         return field
 
-    def intensity(self, radius=None, points=250, length=None):
+    def intensity(
+        self, displacement=(0, 0),
+        radius=None, points=250, length=None
+    ):
         """
         Gets a sampled fiber output intensity.
 
@@ -774,10 +777,16 @@ class OverlapFiberBeam(hdf.HDFBase):
         """
         if length is None:
             length = self.length
-        field = self.field(radius=radius, points=points, length=length)
+        field = self.field(
+            displacement=displacement, radius=radius,
+            points=points, length=length
+        )
         return np.abs(field)**2
 
-    def correlation(self, displacement, radius=None, points=250, length=None):
+    def correlation(
+        self, displacement=(0, 0), displacement1=None, displacement2=(0, 0),
+        radius=None, points=250, length=None
+    ):
         """
         Gets a sampled fiber output correlation.
 
@@ -796,19 +805,24 @@ class OverlapFiberBeam(hdf.HDFBase):
             radius = 1.1 * self.fiber.core_radius
         if length is None:
             length = self.length
+        if displacement1 is None:
+            displacement1 = displacement
         r = np.linspace(-radius, radius, num=points)
-        x, y = np.meshgrid(r, r)
+        x1, y1 = np.meshgrid(r + displacement1[0], r + displacement1[1])
+        x2, y2 = np.meshgrid(r + displacement2[0], r + displacement2[1])
         field_orig = self.fiber.output(
-            x, y, self.overlap, length, coord=COORD.CARTESIAN
+            x1, y1, self.overlap, length, coord=COORD.CARTESIAN
         )
         field_disp = self.fiber.output(
-            x + displacement[0], y + displacement[1],
-            self.overlap, length, coord=COORD.CARTESIAN
+            x2, y2, self.overlap, length, coord=COORD.CARTESIAN
         )
         correlation = np.conjugate(field_orig) * field_disp
         return correlation
 
-    def coherence(self, displacement, radius=None, points=250, length=None):
+    def coherence(
+        self, displacement=(0, 0), displacement1=None, displacement2=(0, 0),
+        radius=None, points=250, length=None
+    ):
         """
         Gets a sampled fiber output coherence.
 
@@ -828,13 +842,13 @@ class OverlapFiberBeam(hdf.HDFBase):
         if length is None:
             length = self.length
         r = np.linspace(-radius, radius, num=points)
-        x, y = np.meshgrid(r, r)
+        x1, y1 = np.meshgrid(r + displacement1[0], r + displacement1[1])
+        x2, y2 = np.meshgrid(r + displacement2[0], r + displacement2[1])
         field_orig = self.fiber.output(
-            x, y, self.overlap, length, coord=COORD.CARTESIAN
+            x1, y1, self.overlap, length, coord=COORD.CARTESIAN
         )
         field_disp = self.fiber.output(
-            x + displacement[0], y + displacement[1],
-            self.overlap, length, coord=COORD.CARTESIAN
+            x2, y2, self.overlap, length, coord=COORD.CARTESIAN
         )
         correlation = np.conjugate(field_orig) * field_disp
         mean_intensity = np.abs(field_orig) * np.abs(field_disp)
@@ -938,11 +952,19 @@ class SpectralOverlap(object):
             for i, _ in enumerate(self.opt_freqs)
         ]
         for i, overlap in enumerate(self.overlaps):
-            print("{:.1f} nm".format(constants.c / self.opt_freqs[i] * 1e9),
-                  end=": ")
+            print(
+                "{:.1f} nm ({:d}/{:d})".format(
+                    constants.c / self.opt_freqs[i] * 1e9,
+                    i + 1, len(self.overlaps)
+                ),
+                end=": "
+            )
             overlap.calc_overlap(algorithm=algorithm)
 
-    def field(self, displacement=(0, 0), radius=None, points=250, length=None):
+    def field(
+        self, displacement=(0, 0),
+        radius=None, points=250, length=None, **kwargs
+    ):
         if radius is None:
             radius = 1.1 * self.core_radius
         if length is None:
@@ -967,32 +989,137 @@ class SpectralOverlap(object):
         field = np.sum(np.moveaxis(fields, 0, -1) * self.opt_weights, axis=-1)
         return field
 
-    def intensity(self, *args, **kwargs):
-        intensity = np.abs(self.field(*args, **kwargs))**2
+    def intensity(
+        self, displacement=(0, 0),
+        radius=None, points=250, length=None, **kwargs
+    ):
+        if radius is None:
+            radius = 1.1 * self.core_radius
+        if length is None:
+            length = self.fiber_length
+        r = np.linspace(-radius, radius, num=points)
+        x, y = np.meshgrid(r + displacement[0], r + displacement[1])
+        fields = []
+        print("Calculating output field ({:d} x {:d})".format(points, points))
+        t0 = time.time()
+        for i, _ in enumerate(self.opt_freqs):
+            print("\r{: >4d}/{:d} ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields.append(self.fibers[i].output(
+                x, y, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+        print("\r{: >4d}/{:d} ({:d}s)              ".format(
+              len(self.opt_freqs), len(self.opt_freqs), int(time.time() - t0)))
+        intensities = np.abs(np.array(fields))**2
+        intensity = np.sum(
+            np.moveaxis(intensities, 0, -1) * self.opt_weights, axis=-1
+        )
         return intensity
 
-    def correlation(self, *args, displacement=(0, 0), **kwargs):
-        print("Reference: ", end="")
-        field1 = self.field(*args, **kwargs)
-        print("Displaced: ", end="")
-        field2 = self.field(*args, displacement=displacement, **kwargs)
-        correlation = np.conjugate(field1) * field2
+    def correlation(
+        self, displacement=(0, 0), displacement1=None, displacement2=(0, 0),
+        radius=None, points=250, length=None, **kwargs
+    ):
+        """
+        Parameter displacement is alias for and overwritten by displacement1.
+        """
+        if radius is None:
+            radius = 1.1 * self.core_radius
+        if length is None:
+            length = self.fiber_length
+        if displacement1 is None:
+            displacement1 = displacement
+        r = np.linspace(-radius, radius, num=points)
+        x1, y1 = np.meshgrid(r + displacement1[0], r + displacement1[1])
+        x2, y2 = np.meshgrid(r + displacement2[0], r + displacement2[1])
+        fields1, fields2 = [], []
+        print("Calculating output field ({:d} x {:d})".format(points, points))
+        t0 = time.time()
+        for i, _ in enumerate(self.opt_freqs):
+            print("\r{: >4d}/{:d} [1/2] ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields1.append(self.fibers[i].output(
+                x1, y1, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+            print("\r{: >4d}/{:d} [2/2] ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields2.append(self.fibers[i].output(
+                x2, y2, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+        print("\r{: >4d}/{:d} [2/2] ({:d}s)              ".format(
+              len(self.opt_freqs), len(self.opt_freqs), int(time.time() - t0)))
+        fields1 = np.array(fields1)
+        fields2 = np.array(fields2)
+        correlations = np.conjugate(fields1) * np.conjugate(fields2)
+        correlation = np.sum(
+            np.moveaxis(correlations, 0, -1) * self.opt_weights, axis=-1
+        )
         return correlation
 
-    def coherence(self, *args, displacement=(0, 0), **kwargs):
-        print("Reference: ", end="")
-        field1 = self.field(*args, **kwargs)
-        print("Displaced: ", end="")
-        field2 = self.field(*args, displacement=displacement, **kwargs)
-        coherence = (np.conjugate(field1) * field2
-                     / np.abs(field1) / np.abs(field2))
+    def coherence(
+        self, displacement=(0, 0), displacement1=None, displacement2=(0, 0),
+        radius=None, points=250, length=None, **kwargs
+    ):
+        """
+        Parameter displacement is alias for and overwritten by displacement1.
+        """
+        if radius is None:
+            radius = 1.1 * self.core_radius
+        if length is None:
+            length = self.fiber_length
+        if displacement1 is None:
+            displacement1 = displacement
+        r = np.linspace(-radius, radius, num=points)
+        x1, y1 = np.meshgrid(r + displacement1[0], r + displacement1[1])
+        x2, y2 = np.meshgrid(r + displacement2[0], r + displacement2[1])
+        fields1, fields2 = [], []
+        print("Calculating output field ({:d} x {:d})".format(points, points))
+        t0 = time.time()
+        for i, _ in enumerate(self.opt_freqs):
+            print("\r{: >4d}/{:d} [1/2] ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields1.append(self.fibers[i].output(
+                x1, y1, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+            print("\r{: >4d}/{:d} [2/2] ({:d}s) at {:.1f} nm"
+                  .format(i, len(self.opt_freqs), int(time.time() - t0),
+                          constants.c / self.opt_freqs[i] * 1e9),
+                  end="         ")
+            fields2.append(self.fibers[i].output(
+                x2, y2, self.overlaps[i].overlap,
+                length, coord=COORD.CARTESIAN
+            ))
+        print("\r{: >4d}/{:d} [2/2] ({:d}s)              ".format(
+              len(self.opt_freqs), len(self.opt_freqs), int(time.time() - t0)))
+        fields1 = np.array(fields1)
+        fields2 = np.array(fields2)
+        correlations = np.conjugate(fields1) * np.conjugate(fields2)
+        normalizations = np.abs(fields1) * np.abs(fields2)
+        coherences = correlations / normalizations
+        coherence = np.sum(
+            np.moveaxis(coherences, 0, -1) * self.opt_weights,
+            axis=-1
+        )
         return coherence
 
 
 ###############################################################################
 
 
-def plot_overlap(overlap, length=1, data="field", points=250, **kwargs):
+def plot_overlap(overlap, length=1, data="field",
+                 points=250, displacement=(0, 0), **kwargs):
     """
     data : "field", "intensity", "correlation", "coherence"
     length : float
@@ -1002,15 +1129,21 @@ def plot_overlap(overlap, length=1, data="field", points=250, **kwargs):
     dtype = data
     import matplotlib.pyplot as plt
     if dtype == "field":
-        data = np.real(overlap.field(length=length, points=points))
+        data = np.real(overlap.field(
+            displacement=displacement, length=length, points=points
+        ))
     elif dtype == "intensity":
-        data = overlap.intensity(length=length, points=points)
+        data = overlap.intensity(
+            displacement=displacement, length=length, points=points
+        )
     elif dtype == "correlation":
-        data = np.abs(overlap.correlation(kwargs["displacement"],
-                                          length=length, points=points))
+        data = np.abs(overlap.correlation(
+            displacement=displacement, length=length, points=points, **kwargs
+        ))
     elif dtype == "coherence":
-        data = np.abs(overlap.coherence(kwargs["displacement"],
-                                        length=length, points=points))
+        data = np.abs(overlap.coherence(
+            displacement=displacement, length=length, points=points, **kwargs
+        ))
     vmax, vmin, cmap = 1, 0, "viridis"
     if dtype != "coherence":
         vmax = max(data.max(), -data.min())
@@ -1054,7 +1187,7 @@ def plot_overlap(overlap, length=1, data="field", points=250, **kwargs):
         title += " \mathrm{nm}"
     if dtype == "coherence" or dtype == "correlation":
         title += r", \Delta x = " + "({:.0f}, {:.0f}) ".format(
-            kwargs["displacement"][0] * 1e6, kwargs["displacement"][1] * 1e6
+            kwargs["displacement2"][0] * 1e6, kwargs["displacement2"][1] * 1e6
         ) + r"\mathrm{\mu m}$"
     else:
         title += "$"
@@ -1295,7 +1428,7 @@ def polycoh_main():
     # Light source
     center_freq = constants.speed_of_light / 780e-9
     fwhm_freq = 8e-9 * center_freq**2 / constants.speed_of_light
-    spec_num = 500
+    spec_num = 100
     opt_freqs = np.linspace(
         center_freq - fwhm_freq, center_freq + fwhm_freq,
         num=spec_num
@@ -1307,9 +1440,10 @@ def polycoh_main():
     beam_offset = [0, 0, 0]
     beam_waist = 10e-6
     # Coherence
-    coh_dx = [10e-6, 0.0]
+    displacement1 = [0, 0]
+    displacement2 = [1e-6, 0.0]
     # Plotting
-    plot_data = "intensity"
+    plot_data = "correlation"
     points = max(50, round(2 * core_radius / constants.c * center_freq))
 
     # Calculation
@@ -1327,7 +1461,8 @@ def polycoh_main():
 
     # Result
     plot_overlap(spec_overlap, length=None, data=plot_data,
-                 displacement=coh_dx, points=points)
+                 displacement=displacement1, displacement2=displacement2,
+                 points=points)
 
     return spec_overlap
 
@@ -1338,7 +1473,7 @@ def polycoh_main():
 if __name__ == "__main__":
     # gb_main()
     # rsif_main()
-    prop_main()
+    # prop_main()
     # overlap_load()
     # monocoh_main()
     polycoh_main()
