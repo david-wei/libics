@@ -372,7 +372,7 @@ class InterferometerGui(Interferometer, QWidget):
         )
         self.qt_button_save.clicked.connect(self._on_button_save_clicked)
 
-    @pyqtSlot()
+    @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
         self.qt_image_preview.setImage(im)
 
@@ -380,13 +380,13 @@ class InterferometerGui(Interferometer, QWidget):
     def _on_button_connect_clicked(self):
         self.connect()
         self.qt_button_connect.setVisible(False)
-        self.qt_button_close.setVisible(True)
+        self.qt_button_stop.setVisible(True)
 
     @pyqtSlot()
     def _on_button_stop_clicked(self):
         self.close()
         self.qt_button_connect.setVisible(True)
-        self.qt_button_close.setVisible(False)
+        self.qt_button_stop.setVisible(False)
 
     @pyqtSlot()
     def _on_button_fixed_clicked(self):

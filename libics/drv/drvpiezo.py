@@ -103,7 +103,7 @@ class ThorlabsMDT69XA(PiezoDrvBase):
         time.sleep(0.05)
 
     def _read_limit_min(self):
-        self._interface.send("{:s}L?")
+        self._interface.send("{:s}L?".format(str(self.cfg.channel)))
         return float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
 
     def _write_limit_max(self, value):

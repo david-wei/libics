@@ -138,9 +138,9 @@ class CamDrvBase(drv.DrvBase):
             drv.DRV_CAM.FORMAT_COLOR.RGBA: 4
         }
         return (
-            self.cfg.pixel_vert_count,
-            self.cfg._pixel_hrzt_count,
-            MAP[self.cfg.format_color]
+            self.cfg.pixel_vert_count.val,
+            self.cfg.pixel_hrzt_count.val,
+            MAP[self.cfg.format_color.val]
         )
 
     def _cv_buffer_to_numpy(self, buffer):

@@ -155,7 +155,7 @@ class VimbaItf(BinItfBase):
         Prepares the Vimba API for incoming frames.
         """
         self._camera.startCapture()
-        for key, val in self._requeue:
+        for key, val in self._requeue.items():
             if val:
                 self.queue_frame_capture(index=key)
 
@@ -194,7 +194,7 @@ class VimbaItf(BinItfBase):
         if index is None:
             err = self._do_for_all_frames(self.announce_frame)
         else:
-            err = self._frames[index].announce_frame()
+            err = self._frames[index].announceFrame()
         return err
 
     def revoke_frame(self, index=None):
