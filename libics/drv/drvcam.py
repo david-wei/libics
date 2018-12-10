@@ -177,7 +177,7 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
         self._interface.revoke_all_frames()
 
     def grab(self):
-        _index = self._interface.cam.next_index
+        _index = self._interface.next_index
         if not self._interface.cam.frame_requeue:
             self._interface.cam.queue_frame_capture(index=_index)
         if self._interface.cam.wait_frame_capture(index=_index) == 0:

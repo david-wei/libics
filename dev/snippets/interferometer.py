@@ -93,6 +93,7 @@ class CoherenceItem(hdf.HDFBase):
     def __init__(
         self, im_max, im_max_coords, im_min, im_min_coords,
         im_fixed, im_scanned, trace, trace_coords,
+        cam_cfg, piezo_cfg,
         pkg_name="libics-dev", cls_name="CoherenceItem"
     ):
         super().__init__(pkg_name=pkg_name, cls_name=cls_name)
@@ -102,6 +103,8 @@ class CoherenceItem(hdf.HDFBase):
         self.im_scanned = im_scanned
         self.trace_coords = trace_coords
         self.trace = trace
+        self.cam_cfg = cam_cfg
+        self.piezo_cfg = piezo_cfg
 
 
 class ConditionalTrace(object):
@@ -266,7 +269,8 @@ class Interferometer(object):
             self.im_max.result, self.im_max.index,
             self.im_min.result, self.im_min.index,
             self.im_fixed, self.im_scanned,
-            self.trace.index, self.trace.trace
+            self.trace.index, self.trace.trace,
+            self.cam.cfg, self.piezo.cfg
         )
         hdf.write_hdf(data, file_path)
 
@@ -306,23 +310,19 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_connect = QPushButton("Start camera")
         self.qt_button_stop = QPushButton("Stop camera")
         self.qt_image_preview = pg.ImageView()
-        map(self.qt_layout_preview.addWidget, [
-            self.qt_button_connect, self.qt_button_stop, self.qt_image_preview
-        ])
+        self.qt_layout_preview.addWidget(self.qt_button_connect)
+        self.qt_layout_preview.addWidget(self.qt_button_stop)
+        self.qt_layout_preview.addWidget(self.qt_image_preview)
 
-        self.qt_layout_fixed = QVBoxLayout()
+        self.qt_layout_ref = QVBoxLayout()
         self.qt_button_fixed = QPushButton("Fixed image")
         self.qt_image_fixed = pg.ImageView()
-        map(self.qt_layout_fixed.addWidget, [
-            self.qt_button_fixed, self.qt_image_fixed
-        ])
-
-        self.qt_layout_scanned = QVBoxLayout()
         self.qt_button_scanned = QPushButton("Scanned image")
         self.qt_image_scanned = pg.ImageView()
-        map(self.qt_layout_scanned.addWidget, [
-            self.qt_button_scanned, self.qt_image_scanned
-        ])
+        self.qt_layout_ref.addWidget(self.qt_button_fixed)
+        self.qt_layout_ref.addWidget(self.qt_image_fixed)
+        self.qt_layout_ref.addWidget(self.qt_button_scanned)
+        self.qt_layout_ref.addWidget(self.qt_image_scanned)
 
         self.qt_layout_coherence = QVBoxLayout()
         self.qt_button_measure = QPushButton("Measure coherence")
@@ -330,22 +330,21 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_coherence = QPushButton("Calculate coherence")
         self.qt_button_save = QPushButton("Save data")
         self.qt_image_coherence = pg.ImageView()
-        map(self.qt_layout_coherence.addWidget, [
-            self.qt_button_measure, self.qt_button_coherence,
-            self.qt_button_save, self.qt_image_coherence
-        ])
+        self.qt_layout_coherence.addWidget(self.qt_button_measure)
+        self.qt_layout_coherence.addWidget(self.qt_button_coherence)
+        self.qt_layout_coherence.addWidget(self.qt_button_save)
+        self.qt_layout_coherence.addWidget(self.qt_image_coherence)
 
         self.qt_layout_main = QHBoxLayout()
-        map(self.qt_layout_main.addLayout, [
-            self.qt_layout_preview, self.qt_layout_fixed,
-            self.qt_layout_scanned, self.qt_layout_coherence
-        ])
+        self.qt_layout_main.addLayout(self.qt_layout_preview)
+        self.qt_layout_main.addLayout(self.qt_layout_ref)
+        self.qt_layout_main.addLayout(self.qt_layout_coherence)
         self.setWindowTitle("Interferometer - Coherence Measurement")
         self.setLayout(self.qt_layout_main)
 
     def _init_visibility(self):
         super().show()
-        self.qt_button_connect
+        self.qt_button_connect.show()
         self.qt_button_stop.hide()
         self.qt_image_preview.show()
         self.qt_button_fixed.show()
