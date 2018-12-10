@@ -1,6 +1,5 @@
 # System Imports
 import numpy as np
-import os
 import sys
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
@@ -8,10 +7,10 @@ from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout,
     QWidget, QFileDialog,
 )
-import pyqtgraph as pg
+# import pyqtgraph as pg
 
 from libics.drv import drv, itf
-from libics.util import misc, InheritMap
+from libics.util import misc, InheritMap, thread
 from libics.file import hdf
 from libics.display import qtimage
 
@@ -32,7 +31,7 @@ def get_cam(**kwargs):
         "interface": itf_cfg,
         "identifier": "alliedvision_manta_g145b_nir",
         "model": drv.DRV_MODEL.ALLIEDVISION_MANTA_G145B_NIR,
-        "pixel_hrzt_count": 1338,
+        "pixel_hrzt_count": 1388,
         "pixel_vert_count": 1038,
         "pixel_hrzt_size": 6.45e-6,
         "pixel_vert_size": 6.45e-6,
@@ -92,14 +91,18 @@ def get_piezo(**kwargs):
 class CoherenceItem(hdf.HDFBase):
 
     def __init__(
-        self, im_max, im_max_coords, im_min, im_min_coords,
+        self, voltages,
+        im_max, im_max_index, im_min, im_min_index,
         im_fixed, im_scanned, trace, trace_coords,
         cam_cfg, piezo_cfg,
         pkg_name="libics-dev", cls_name="CoherenceItem"
     ):
         super().__init__(pkg_name=pkg_name, cls_name=cls_name)
+        self.voltages = voltages
         self.im_max = im_max
+        self.im_max_index = im_max_index
         self.im_min = im_min
+        self.im_minindex = im_min_index
         self.im_fixed = im_fixed
         self.im_scanned = im_scanned
         self.trace_coords = trace_coords
@@ -135,7 +138,7 @@ class ConditionalTrace(object):
 
     def add_element(self, index, element):
         mask = self.chk_condition(element)
-        self.result[mask] = element
+        self.result[mask] = element[mask]
         self.index[mask] = index
 
 
@@ -144,7 +147,7 @@ class RecordedTrace(object):
     """
     Parameters
     ----------
-    index : list
+    coords : list
         List describing trace, filters passed elements.
     length : int
         Length of trace.
@@ -152,14 +155,14 @@ class RecordedTrace(object):
         Data type of trace.
     """
 
-    def __init__(self, index, length, dtype=float):
-        self.index = index
-        self.trace = np.full((len(index), length), np.nan, dtype=dtype)
+    def __init__(self, coords, length, dtype=float):
+        self.coords = coords
+        self.trace = np.full((len(coords), length), np.nan, dtype=dtype)
         self.__current_index = -1
 
     def add_element(self, element):
         self.__current_index += 1
-        element = np.array([element[index] for index in self.index])
+        element = np.array([element[tuple(coords)] for coords in self.coords])
         self.trace[:, self.__current_index] = element
 
 
@@ -234,16 +237,31 @@ class Interferometer(object):
         self.piezo.close()
 
     def record_fixed(self):
-        self.im_fixed = self.cam.grab()
+        im = self.cam.grab()
+        self.im_fixed = np.squeeze(im, axis=-1).T
+        return im
 
     def record_scanned(self):
-        self.im_scanned = self.cam.grab()
+        im = self.cam.grab()
+        self.im_scanned = np.squeeze(im, axis=-1).T
+        return im
 
-    def record_trace(self):
+    def record_trace(self, break_condition=None):
+        """
+        Parameters
+        ----------
+        break_condition : None or callable
+            Function returning bool that is called to determine
+            whether to break loop. Call signature: break_condition().
+            If None, no break condition is set.
+        """
         for volt in self.voltages:
             self.piezo.write_voltage(volt)
-            im = self.cam.grab()
+            im = np.squeeze(self.cam.grab(), axis=-1).T
             self.process_image(volt, im)
+            if callable(break_condition):
+                if break_condition():
+                    break
 
     def process_image(self, voltage, image):
         self.im_max.add_element(voltage, image)
@@ -251,26 +269,27 @@ class Interferometer(object):
         self.trace.add_element(image)
 
     def calc_coherence(self):
+        mask = np.logical_and(self.im_fixed > 5, self.im_scanned > 5)
         mean = self.im_fixed + self.im_scanned
         norm = 2 * np.sqrt(self.im_fixed * self.im_scanned)
-        self.spatial_coherence = 0.5 * (
-            np.abs((self.im_max - mean) / norm)
-            + np.abs((self.im_min - mean) / norm)
+        self.spatial_coherence = np.full_like(mean, np.nan)
+        self.spatial_coherence[mask] = 0.5 * (
+            np.abs((self.im_max.result[mask] - mean[mask]) / norm[mask])
+            + np.abs((self.im_min.result[mask] - mean[mask]) / norm[mask])
         )
-        mean = np.array([mean[index] for index in self.trace.index])
-        norm = np.array([norm[index] for index in self.trace.index])
-        self.temporal_coherence = 0.5 * (
-            np.abs((self.im_max - mean) / norm)
-            + np.abs((self.im_min - mean) / norm)
-        )
+        mean = np.array([mean[tuple(coord)] for coord in self.trace.coords])
+        norm = np.array([norm[tuple(coord)] for coord in self.trace.coords])
+        trace_t = self.trace.trace.T
+        self.temporal_coherence = ((trace_t - mean) / norm).T
 
     def save(self, file_path):
         file_path = misc.assume_endswith(file_path, ".hdf5")
         data = CoherenceItem(
+            self.voltages,
             self.im_max.result, self.im_max.index,
             self.im_min.result, self.im_min.index,
             self.im_fixed, self.im_scanned,
-            self.trace.index, self.trace.trace,
+            self.trace.trace, self.trace.coords,
             self.cam.cfg, self.piezo.cfg
         )
         hdf.write_hdf(data, file_path)
@@ -336,12 +355,15 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort = QPushButton("Abort measurement")
         self.qt_button_coherence = QPushButton("Calculate coherence")
         self.qt_button_save = QPushButton("Save data")
+        self.qt_button_reset_piezo = QPushButton("Reset piezo")
         # self.qt_image_coherence = pg.ImageView()
         self.qt_image_coherence = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_coherence.set_image_format(channel="mono", bpc=8)
         self.qt_layout_coherence.addWidget(self.qt_button_measure)
+        self.qt_layout_coherence.addWidget(self.qt_button_abort)
         self.qt_layout_coherence.addWidget(self.qt_button_coherence)
         self.qt_layout_coherence.addWidget(self.qt_button_save)
+        self.qt_layout_coherence.addWidget(self.qt_button_reset_piezo)
         self.qt_layout_coherence.addWidget(self.qt_image_coherence)
 
         self.qt_layout_main = QHBoxLayout()
@@ -364,6 +386,7 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort.hide()
         self.qt_button_coherence.hide()
         self.qt_button_save.hide()
+        self.qt_button_reset_piezo.hide()
         self.qt_image_coherence.show()
 
     def _init_connection(self):
@@ -380,6 +403,9 @@ class InterferometerGui(Interferometer, QWidget):
             self._on_button_coherence_clicked
         )
         self.qt_button_save.clicked.connect(self._on_button_save_clicked)
+        self.qt_button_reset_piezo.clicked.connect(
+            self._on_button_reset_piezo_clicked
+        )
 
     @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
@@ -400,17 +426,17 @@ class InterferometerGui(Interferometer, QWidget):
 
     @pyqtSlot()
     def _on_button_fixed_clicked(self):
-        self.record_fixed()
+        im = self.record_fixed()
         # self.qt_image_fixed.setImage(self.im_fixed)
-        self.qt_image_fixed.update_image(self.im_fixed.astype("uint8"))
-        if self.refs_set():
+        self.qt_image_fixed.update_image(im.astype("uint8"))
+        if self._refs_set():
             self.qt_button_measure.show()
 
     @pyqtSlot()
     def _on_button_scanned_clicked(self):
-        self.record_scanned()
+        im = self.record_scanned()
         # self.qt_image_scanned.setImage(self.im_scanned)
-        self.qt_image_scanned.update_image(self.im_fixed.astype("uint8"))
+        self.qt_image_scanned.update_image(im.astype("uint8"))
         if self._refs_set():
             self.qt_button_measure.show()
 
@@ -421,15 +447,23 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort.show()
         self.qt_button_coherence.hide()
         self.qt_button_save.hide()
+        self.qt_button_reset_piezo.hide()
 
-    @pyqtSlot()
-    def _on_record_trace_emitted(self):
-        self.record_trace()
+    def __record_trace_thread_function(self):
+        self.record_trace(break_condition=(
+            lambda: self.__record_trace_thread.stop_event.wait(timeout=0.0)
+        ))
         self.sTraceRecorded.emit()
 
     @pyqtSlot()
+    def _on_record_trace_emitted(self):
+        self.__record_trace_thread = thread.StoppableThread()
+        self.__record_trace_thread.run = self.__record_trace_thread_function
+        self.__record_trace_thread.start()
+
+    @pyqtSlot()
     def _on_button_abort_clicked(self):
-        print("Button abort not implemented.")
+        self.__record_trace_thread.stop()
 
     @pyqtSlot()
     def _on_trace_recorded_emitted(self):
@@ -437,26 +471,28 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort.hide()
         self.qt_button_coherence.show()
         self.qt_button_save.show()
+        self.qt_button_reset_piezo.show()
 
     @pyqtSlot()
     def _on_button_coherence_clicked(self):
         self.calc_coherence()
         # self.qt_image_coherence.setImage(self.spatial_coherence)
         coh_uint8 = (128 * self.spatial_coherence + 127).astype("uint8")
+        coh_uint8 = np.expand_dims(coh_uint8, axis=0).T
         self.qt_image_coherence.update_image(coh_uint8)
 
     @pyqtSlot()
     def _on_button_save_clicked(self):
-        dialog = QFileDialog()
-        save_dir = dialog.getExistingDirectory(
-            caption="Choose directory in which data is saved"
+        file_path, _ = QFileDialog.getSaveFileName(
+            caption="Save file as", filter="Coherence Items (*.hdf5)"
         )
-        if save_dir == "":
+        if file_path == "":
             return
-        _head, tail_name = os.path.split(save_dir)
-        if tail_name == "":
-            _, tail_name = os.path.split(_head)
-        self.save(save_dir, tail_name)
+        self.save(file_path)
+
+    @pyqtSlot()
+    def _on_button_reset_piezo_clicked(self):
+        self.piezo.write_voltage(0)
 
     def _refs_set(self):
         return not (
