@@ -60,7 +60,7 @@ class VimbaItf(BinItfBase):
                 raise NameError("Vimba device invalid")
             elif len(cams) > 1:
                 print("Warning: multiple Vimba cameras found")
-            self._camera = cams[0]
+            self._camera = cams[0]._camera
         else:
             self._camera = vimba.getVimba().getCamera(self.cfg.device)
 
