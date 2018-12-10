@@ -91,10 +91,10 @@ def get_piezo(**kwargs):
 class CoherenceItem(hdf.HDFBase):
 
     def __init__(
-        self, voltages,
-        im_max, im_max_index, im_min, im_min_index,
-        im_fixed, im_scanned, trace, trace_coords,
-        cam_cfg, piezo_cfg,
+        self, voltages=None,
+        im_max=None, im_max_index=None, im_min=None, im_min_index=None,
+        im_fixed=None, im_scanned=None, trace=None, trace_coords=None,
+        cam_cfg=None, piezo_cfg=None,
         pkg_name="libics-dev", cls_name="CoherenceItem"
     ):
         super().__init__(pkg_name=pkg_name, cls_name=cls_name)
@@ -102,7 +102,7 @@ class CoherenceItem(hdf.HDFBase):
         self.im_max = im_max
         self.im_max_index = im_max_index
         self.im_min = im_min
-        self.im_minindex = im_min_index
+        self.im_min_index = im_min_index
         self.im_fixed = im_fixed
         self.im_scanned = im_scanned
         self.trace_coords = trace_coords
