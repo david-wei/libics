@@ -249,7 +249,9 @@ class VimbaItf(BinItfBase):
                 self.wait_frame_capture, timeout=timeout
             )
         else:
-            err = self._frames[index].waitFrameCapture(timeout=1000 * timeout)
+            err = self._frames[index].waitFrameCapture(
+                timeout=int(1000 * timeout)
+            )
         return err
 
     def get_buffer_byte_data(self, index=None):

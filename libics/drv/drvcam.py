@@ -34,12 +34,24 @@ class CamDrvBase(drv.DrvBase):
     def grab(self):
         """
         Grab image from camera (wait for next image).
+
+        Returns
+        -------
+        image : numpy.ndarray(3)
+            Image aas numpy array.
+            Shape: height x width x channel
         """
 
     @abc.abstractmethod
     def get(self):
         """
         Get image from internal buffer (previously taken image).
+
+        Returns
+        -------
+        image : numpy.ndarray(3)
+            Image aas numpy array.
+            Shape: height x width x channel
         """
 
     # ++++ Write/read methods +++++++++++
@@ -178,11 +190,11 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
 
     def grab(self):
         _index = self._interface.next_index
-        if not self._interface.cam.frame_requeue:
-            self._interface.cam.queue_frame_capture(index=_index)
-        if self._interface.cam.wait_frame_capture(index=_index) == 0:
+        if not self._interface.cfg.frame_requeue:
+            self._interface.queue_frame_capture(index=_index)
+        if self._interface.wait_frame_capture(index=_index) == 0:
             return self._cv_buffer_to_numpy(
-                self._interface.get_buffer_byte_data(index=_index)
+                self._interface.grab_data(index=_index)
             )
 
     def get(self):
