@@ -13,6 +13,7 @@ import pyqtgraph as pg
 from libics.drv import drv, itf
 from libics.util import misc, InheritMap
 from libics.file import hdf
+from libics.display import qtimage
 
 
 ###############################################################################
@@ -309,16 +310,22 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_layout_preview = QVBoxLayout()
         self.qt_button_connect = QPushButton("Start camera")
         self.qt_button_stop = QPushButton("Stop camera")
-        self.qt_image_preview = pg.ImageView()
+        # self.qt_image_preview = pg.ImageView()
+        self.qt_image_preview = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_preview.set_image_format(channel="mono", bpc=8)
         self.qt_layout_preview.addWidget(self.qt_button_connect)
         self.qt_layout_preview.addWidget(self.qt_button_stop)
         self.qt_layout_preview.addWidget(self.qt_image_preview)
 
         self.qt_layout_ref = QVBoxLayout()
         self.qt_button_fixed = QPushButton("Fixed image")
-        self.qt_image_fixed = pg.ImageView()
+        # self.qt_image_fixed = pg.ImageView()
+        self.qt_image_fixed = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_fixed.set_image_format(channel="mono", bpc=8)
         self.qt_button_scanned = QPushButton("Scanned image")
-        self.qt_image_scanned = pg.ImageView()
+        # self.qt_image_scanned = pg.ImageView()
+        self.qt_image_scanned = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_scanned.set_image_format(channel="mono", bpc=8)
         self.qt_layout_ref.addWidget(self.qt_button_fixed)
         self.qt_layout_ref.addWidget(self.qt_image_fixed)
         self.qt_layout_ref.addWidget(self.qt_button_scanned)
@@ -329,7 +336,9 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort = QPushButton("Abort measurement")
         self.qt_button_coherence = QPushButton("Calculate coherence")
         self.qt_button_save = QPushButton("Save data")
-        self.qt_image_coherence = pg.ImageView()
+        # self.qt_image_coherence = pg.ImageView()
+        self.qt_image_coherence = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_coherence.set_image_format(channel="mono", bpc=8)
         self.qt_layout_coherence.addWidget(self.qt_button_measure)
         self.qt_layout_coherence.addWidget(self.qt_button_coherence)
         self.qt_layout_coherence.addWidget(self.qt_button_save)
@@ -374,7 +383,8 @@ class InterferometerGui(Interferometer, QWidget):
 
     @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
-        self.qt_image_preview.setImage(im)
+        # self.qt_image_preview.setImage(im)
+        self.qt_image_preview.update_image(im.astype("uint8"))
 
     @pyqtSlot()
     def _on_button_connect_clicked(self):
@@ -391,14 +401,16 @@ class InterferometerGui(Interferometer, QWidget):
     @pyqtSlot()
     def _on_button_fixed_clicked(self):
         self.record_fixed()
-        self.qt_image_fixed.setImage(self.im_fixed)
+        # self.qt_image_fixed.setImage(self.im_fixed)
+        self.qt_image_fixed.update_image(self.im_fixed.astype("uint8"))
         if self.refs_set():
             self.qt_button_measure.show()
 
     @pyqtSlot()
     def _on_button_scanned_clicked(self):
         self.record_scanned()
-        self.qt_image_scanned.setImage(self.im_scanned)
+        # self.qt_image_scanned.setImage(self.im_scanned)
+        self.qt_image_scanned.update_image(self.im_fixed.astype("uint8"))
         if self._refs_set():
             self.qt_button_measure.show()
 
@@ -429,7 +441,9 @@ class InterferometerGui(Interferometer, QWidget):
     @pyqtSlot()
     def _on_button_coherence_clicked(self):
         self.calc_coherence()
-        self.qt_image_coherence.setImage(self.spatial_coherence)
+        # self.qt_image_coherence.setImage(self.spatial_coherence)
+        coh_uint8 = (128 * self.spatial_coherence + 127).astype("uint8")
+        self.qt_image_coherence.update_image(coh_uint8)
 
     @pyqtSlot()
     def _on_button_save_clicked(self):
