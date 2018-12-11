@@ -1,4 +1,5 @@
 import cycler
+import matplotlib as mpl
 import numpy as np
 
 from libics import cfg
@@ -17,6 +18,11 @@ class FigureCfg(object):
     ----------
     hrzt_size, vert_size : int
         Horizontal and vertical figure size in points (pt).
+    hrzt_size_scale, vert_size_scale : float
+        Horizontal and vertical figure size scale factor.
+        Figure size will be the product of parameters size
+        and scale. Can be used to set the size of one panel
+        and set the number of panels.
     resolution : float
         Resolution in dots per point (1/pt).
     format_ : str
@@ -24,10 +30,15 @@ class FigureCfg(object):
     """
 
     def __init__(self,
-                 hrzt_size=None, vert_size=None, resolution=2.0,
-                 format_="pdf"):
-        self.hrzt_size = hrzt_size
-        self.vert_size = vert_size
+                 hrzt_size=None, vert_size=None,
+                 hrzt_size_scale=1, vert_size_scale=1,
+                 resolution=4.0, format_="pdf"):
+        if hrzt_size is None:
+            hrzt_size = mpl.rcParams["figure.figsize"][0] * 72
+        if vert_size is None:
+            vert_size = mpl.rcParams["figure.figsize"][1] * 72
+        self.hrzt_size = hrzt_size * hrzt_size_scale
+        self.vert_size = vert_size * vert_size_scale
         self.resolution = resolution
         self.format = format_
 
@@ -46,24 +57,27 @@ class FigureCfg(object):
         else:
             cv_factor = 1
             if unit == "in":
-                cv_factor = 72
-            elif unit == "mm":
-                cv_factor = 72 / 25.4
-            elif unit == "cm":
-                cv_factor = 72 / 2.54
-            return (self.hrzt_size * cv_factor, self.vert_size * cv_factor)
-
-    def get_resolution(self, unit="pt"):
-        if self.resolution is None:
-            return None
-        else:
-            cv_factor = 1
-            if unit == "in":
                 cv_factor = 1 / 72
             elif unit == "mm":
                 cv_factor = 25.4 / 72
             elif unit == "cm":
                 cv_factor = 2.54 / 72
+            return (self.hrzt_size * cv_factor, self.vert_size * cv_factor)
+
+    def get_resolution(self, unit="pt"):
+        """
+        Gets the resolution in dots per unit.
+        """
+        if self.resolution is None:
+            return None
+        else:
+            cv_factor = 1
+            if unit == "in":
+                cv_factor = 72
+            elif unit == "mm":
+                cv_factor = 72 / 25.4
+            elif unit == "cm":
+                cv_factor = 72 / 2.54
             return self.resolution * cv_factor
 
 
@@ -89,6 +103,10 @@ class PlotCfg(object):
         Surface plots.
     contour : AttrContour
         Contour plots.
+    aspect : float or str
+        "auto": Matplotlib automatically fills available space.
+        "equal": 1
+        float: Aspect ratio (height scale divided by width scale).
     label : str or None
         Label of plot item.
 
@@ -102,7 +120,8 @@ class PlotCfg(object):
     def __init__(self,
                  xgridspec=1, ygridspec=1,
                  point=None, curve=None, matrix=None,
-                 surface=None, contour=None, label=None):
+                 surface=None, contour=None,
+                 aspect=None, label=None):
         self.xgridspec = xgridspec
         self.ygridspec = ygridspec
         self.point = misc.assume_construct_obj(point, AttrPoint)
@@ -110,6 +129,7 @@ class PlotCfg(object):
         self.matrix = misc.assume_construct_obj(matrix, AttrMatrix)
         self.surface = misc.assume_construct_obj(surface, AttrSurface)
         self.contour = misc.assume_construct_obj(contour, AttrContour)
+        self.aspect = aspect
         self.label = label
 
     def get_gridspec_param(self):

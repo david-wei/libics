@@ -76,6 +76,8 @@ def _plot_meta(mpl_ax, plot_dim, cfg, data):
             mpl_ax.set_ylabel(misc.capitalize_first_char(ylabel))
         if zlabel is not None:
             mpl_ax.set_ylabel(misc.capitalize_first_char(zlabel))
+    if cfg.aspect is not None:
+        mpl_ax.set_aspect(cfg.aspect)
 
 
 def _cv_layered_1d_array(data):
@@ -375,6 +377,8 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
             if (cfg.matrix.meshcolor is not None
                     and cfg.matrix.meshcolor.scale == "const"):
                 edgecolors = cfg.matrix.meshcolor.cmap   # only static colors
+            else:
+                edgecolors = "none"   # transparent edges
             mpl_artist = mpl_ax.pcolormesh(
                 x, y, c.T, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=edgecolors
@@ -802,12 +806,10 @@ class Figure(object):
         Sets up the matplotlib figure environment to enable plotting.
         """
         # Create matplotlib figure
-        self.mpl_fig = plt.figure()
-        # FIXME: why doesn't this work???
-        # self.mpl_fig = plt.figure(
-        #     figsize=self.figure_cfg.get_size(unit="in"),
-        #     dpi=self.figure_cfg.get_resolution(unit="in")
-        # )
+        self.mpl_fig = plt.figure(
+            figsize=self.figure_cfg.get_size(unit="in"),
+            dpi=self.figure_cfg.get_resolution(unit="in")
+        )
         # Create matplotlib gridspec
         xmax, ymax = 0, 0
         for item in self.plot_cfgs:

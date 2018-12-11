@@ -5,13 +5,11 @@ from libics.display import plotcfg
 
 
 def get_figurecfg(
-    hrzt_subplot_count=1, vert_subplot_count=1
+    hrzt_subplot_count=1, vert_subplot_count=1, format_="pdf"
 ):
-    subplot_size = 512
     return plotcfg.FigureCfg(
-        hrzt_size=(hrzt_subplot_count * subplot_size * 1.5),
-        vert_size=(vert_subplot_count * subplot_size),
-        resolution=1, format_="pdf"
+        hrzt_size_scale=hrzt_subplot_count, vert_size_scale=vert_subplot_count,
+        resolution=4.0, format_=format_
     )
 
 
@@ -31,14 +29,14 @@ def get_plotcfg_arraydata_1d(
 
 
 def get_plotcfg_arraydata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, aspect=None
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         color={"dim": -1, "scale": "lin", "map": "viridis", "alpha": 1}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        matrix=matrix_cfg, label=label
+        matrix=matrix_cfg, aspect=aspect, label=label
     )
 
 
@@ -55,7 +53,7 @@ def get_plotcfg_seriesdata_1d(
 
 
 def get_plotcfg_seriesdata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0, aspect=None, label=None
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
@@ -63,7 +61,7 @@ def get_plotcfg_seriesdata_2d(
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
-        matrix=matrix_cfg, label=label
+        matrix=matrix_cfg, aspect=aspect, label=label
     )
 
 
