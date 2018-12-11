@@ -238,12 +238,12 @@ class Interferometer(object):
 
     def record_fixed(self):
         im = self.cam.grab()
-        self.im_fixed = np.squeeze(im, axis=-1).T
+        self.im_fixed = np.copy(np.squeeze(im, axis=-1).T)
         return im
 
     def record_scanned(self):
         im = self.cam.grab()
-        self.im_scanned = np.squeeze(im, axis=-1).T
+        self.im_scanned = np.copy(np.squeeze(im, axis=-1).T)
         return im
 
     def record_trace(self, break_condition=None):
