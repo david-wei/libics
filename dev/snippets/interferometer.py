@@ -350,10 +350,10 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_image_scanned.set_image_format(channel="mono", bpc=8)
         self.qt_layout_ref.addWidget(self.qt_button_toggle)
         self.qt_layout_ref.addWidget(self.qt_button_fixed)
-        self.qt_layout_ref.addWidget(self.qt_label_fixed)
-        self.qt_layout_ref.addWidget(self.qt_image_fixed)
         self.qt_layout_ref.addWidget(self.qt_button_scanned)
+        self.qt_layout_ref.addWidget(self.qt_label_fixed)
         self.qt_layout_ref.addWidget(self.qt_label_scanned)
+        self.qt_layout_ref.addWidget(self.qt_image_fixed)
         self.qt_layout_ref.addWidget(self.qt_image_scanned)
 
         self.qt_layout_coherence = QVBoxLayout()
@@ -384,17 +384,18 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_connect.show()
         self.qt_button_stop.hide()
         self.qt_image_preview.show()
+        self.qt_button_toggle.hide()
         self.qt_button_fixed.show()
         self.qt_label_fixed.hide()
-        self.qt_image_fixed.show()
+        self.qt_image_fixed.hide()
         self.qt_button_scanned.show()
-        self.qt_label_scanned.hide()
+        self.qt_label_scanned.show()
         self.qt_image_scanned.show()
         self.qt_button_measure.hide()
         self.qt_button_abort.hide()
         self.qt_button_coherence.hide()
         self.qt_button_save.hide()
-        self.qt_button_reset_piezo.hide()
+        self.qt_button_reset_piezo.show()
         self.qt_image_coherence.show()
 
     def _init_connection(self):
@@ -479,7 +480,6 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort.show()
         self.qt_button_coherence.hide()
         self.qt_button_save.hide()
-        self.qt_button_reset_piezo.hide()
 
     def __record_trace_thread_function(self):
         self.record_trace(break_condition=(
@@ -503,7 +503,6 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_abort.hide()
         self.qt_button_coherence.show()
         self.qt_button_save.show()
-        self.qt_button_reset_piezo.show()
 
     @pyqtSlot()
     def _on_button_coherence_clicked(self):
@@ -524,7 +523,7 @@ class InterferometerGui(Interferometer, QWidget):
 
     @pyqtSlot()
     def _on_button_reset_piezo_clicked(self):
-        self.piezo.write_voltage(0)
+        self.piezo.write_voltage(self.voltages[0])
 
     def _refs_set(self):
         return not (
