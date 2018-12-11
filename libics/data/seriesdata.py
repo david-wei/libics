@@ -53,7 +53,7 @@ class SeriesData(hdf.HDFBase):
 
     @data.setter
     def data(self, val):
-        if val.shape[0] == len(self.quantity):
+        if len(val) == len(self.quantity):
             self._data = val
         else:
             raise ValueError("invalid data shape")

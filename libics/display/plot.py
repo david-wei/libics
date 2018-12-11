@@ -376,7 +376,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                     and cfg.matrix.meshcolor.scale == "const"):
                 edgecolors = cfg.matrix.meshcolor.cmap   # only static colors
             mpl_artist = mpl_ax.pcolormesh(
-                x, y, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
+                x, y, c.T, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=edgecolors
             )
         # 2D contour plot
@@ -391,7 +391,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 alpha = 0
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.contourf(
-                x, y, z, levels=levels, alpha=alpha, cmap=cmap,
+                x, y, z.T, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
     # 3D plots
@@ -552,14 +552,14 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
                 c = np.full_like(xx, 0)
                 alpha = 0
             mpl_artist = mpl_ax.tripcolor(
-                xx, yy, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha
+                yy, xx, c, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha
             )
             if (cfg.matrix.meshcolor is not None
                     and cfg.matrix.meshcolor.scale == "const"):
                 linestyle = cfg.matrix.mesh.shape
                 linewidth = cfg.matrix.mesh.thickness
                 mpl_artist = mpl_ax.triplot(
-                    xx, yy, color=c, alpha=alpha,
+                    yy, xx, color=c, alpha=alpha,
                     linestyle=linestyle, linewidth=linewidth
                 )
         # 2D contour plot
@@ -573,7 +573,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
             alpha = cfg.contour.color.alpha
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.tricontour(
-                xx, yy, zz, levels=levels, alpha=alpha, cmap=cmap,
+                yy, xx, zz, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
     elif plot_dim == 3:

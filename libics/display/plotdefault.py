@@ -80,36 +80,36 @@ if __name__ == "__main__":
     # Test data
     x = np.arange(200) - 50
     y = np.arange(200)**2
-    xx, yy = np.linspace(-2, 2, 201), np.linspace(-2, 2, 201)
+    xx, yy = np.linspace(-2, 2, 201), np.linspace(-2, 2, 200)
     xgrid, ygrid = np.meshgrid(xx, yy)
     zgrid = np.exp(-(xgrid / 2)**2 - ygrid**2)
 
     # 1D SeriesData
     sd = data.seriesdata.SeriesData()
-    sd.data = [x, y]
     sd.add_dim(name="xpos", symbol="x", unit="mm")
     sd.add_dim(name="ypos", symbol="y", unit="mm")
+    sd.data = [x, y]
     # 1D ArrayData
     ad = data.arraydata.ArrayData()
-    ad.data = y
     ad.scale.add_dim(offset=x[0], scale=((x[-1] - x[0]) / len(x)),
                      name="xpos", symbol="x", unit="mm")
     ad.scale.add_dim(name="ypos", symbol="y", unit="mm")
+    ad.data = y
     ad.set_max()
     # 2D SeriesData
     sd2 = data.seriesdata.SeriesData()
-    sd2.data = [xgrid.flatten(), ygrid.flatten(), zgrid.flatten()]
     sd2.add_dim(name="pos", symbol="x", unit="mm")
     sd2.add_dim(name="pressure", symbol="p = \\frac{F}{A}", unit="bar")
     sd2.add_dim(name="temperature", symbol="T", unit="K")
+    sd2.data = [xgrid.flatten(), ygrid.flatten(), zgrid.flatten()]
     # 2D ArrayData
     ad2 = data.arraydata.ArrayData()
-    ad2.data = zgrid
     ad2.scale.add_dim(offset=xx[0], scale=((xx[-1] - xx[0]) / len(xx)),
                       name="pos", symbol="x", unit="mm")
     ad2.scale.add_dim(offset=yy[0], scale=((yy[-1] - yy[0]) / len(yy)),
                       name="pressure", symbol="p", unit="bar")
     ad2.scale.add_dim(name="temperature", symbol="T", unit="K")
+    ad2.data = zgrid
     ad2.set_max()
 
     # Create figure/plot configuration

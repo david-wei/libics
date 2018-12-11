@@ -107,7 +107,7 @@ def load_bmp_to_arraydata(file_path, arraydata=None):
         arraydata = imageutil.create_default_arraydata()
     # Load bitmap
     image = np.array(PIL.Image.open(file_path).convert("L"))
-    arraydata.data = image
+    arraydata.data = image.T
     return arraydata
 
 
