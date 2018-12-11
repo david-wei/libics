@@ -5,7 +5,7 @@ import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout,
-    QWidget, QFileDialog,
+    QWidget, QFileDialog, QLabel
 )
 # import pyqtgraph as pg
 
@@ -337,17 +337,23 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_layout_preview.addWidget(self.qt_image_preview)
 
         self.qt_layout_ref = QVBoxLayout()
+        self.qt_button_toggle = QPushButton("Toggle reference image")
         self.qt_button_fixed = QPushButton("Fixed image")
+        self.qt_label_fixed = QLabel("Fixed image")
         # self.qt_image_fixed = pg.ImageView()
         self.qt_image_fixed = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_fixed.set_image_format(channel="mono", bpc=8)
         self.qt_button_scanned = QPushButton("Scanned image")
+        self.qt_label_scanned = QLabel("Scanned image")
         # self.qt_image_scanned = pg.ImageView()
         self.qt_image_scanned = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_scanned.set_image_format(channel="mono", bpc=8)
+        self.qt_layout_ref.addWidget(self.qt_button_toggle)
         self.qt_layout_ref.addWidget(self.qt_button_fixed)
+        self.qt_layout_ref.addWidget(self.qt_label_fixed)
         self.qt_layout_ref.addWidget(self.qt_image_fixed)
         self.qt_layout_ref.addWidget(self.qt_button_scanned)
+        self.qt_layout_ref.addWidget(self.qt_label_scanned)
         self.qt_layout_ref.addWidget(self.qt_image_scanned)
 
         self.qt_layout_coherence = QVBoxLayout()
@@ -379,8 +385,10 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_stop.hide()
         self.qt_image_preview.show()
         self.qt_button_fixed.show()
+        self.qt_label_fixed.hide()
         self.qt_image_fixed.show()
         self.qt_button_scanned.show()
+        self.qt_label_scanned.hide()
         self.qt_image_scanned.show()
         self.qt_button_measure.hide()
         self.qt_button_abort.hide()
@@ -395,6 +403,7 @@ class InterferometerGui(Interferometer, QWidget):
         self.sTraceRecorded.connect(self._on_trace_recorded_emitted)
         self.qt_button_connect.clicked.connect(self._on_button_connect_clicked)
         self.qt_button_stop.clicked.connect(self._on_button_stop_clicked)
+        self.qt_button_toggle.clicked.connect(self._on_button_toggle_clicked)
         self.qt_button_fixed.clicked.connect(self._on_button_fixed_clicked)
         self.qt_button_scanned.clicked.connect(self._on_button_scanned_clicked)
         self.qt_button_measure.clicked.connect(self._on_button_measure_clicked)
@@ -425,20 +434,43 @@ class InterferometerGui(Interferometer, QWidget):
         self.qt_button_stop.setVisible(False)
 
     @pyqtSlot()
+    def _on_button_toggle_clicked(self):
+        if self.qt_label_fixed.isVisible():
+            self.qt_label_fixed.hide()
+            self.qt_image_fixed.hide()
+            self.qt_label_scanned.show()
+            self.qt_image_scanned.show()
+        elif self.qt_label_scanned.isVisible():
+            self.qt_label_scanned.hide()
+            self.qt_image_scanned.hide()
+            self.qt_label_fixed.show()
+            self.qt_image_fixed.show()
+
+    @pyqtSlot()
     def _on_button_fixed_clicked(self):
         im = self.record_fixed()
         # self.qt_image_fixed.setImage(self.im_fixed)
         self.qt_image_fixed.update_image(im.astype("uint8"))
+        self.qt_label_fixed.show()
+        self.qt_image_fixed.show()
+        self.qt_label_scanned.hide()
+        self.qt_image_scanned.hide()
         if self._refs_set():
             self.qt_button_measure.show()
+            self.qt_button_toggle.show()
 
     @pyqtSlot()
     def _on_button_scanned_clicked(self):
         im = self.record_scanned()
         # self.qt_image_scanned.setImage(self.im_scanned)
         self.qt_image_scanned.update_image(im.astype("uint8"))
+        self.qt_label_scanned.show()
+        self.qt_image_scanned.show()
+        self.qt_label_fixed.hide()
+        self.qt_image_fixed.hide()
         if self._refs_set():
             self.qt_button_measure.show()
+            self.qt_button_toggle.show()
 
     @pyqtSlot()
     def _on_button_measure_clicked(self):
