@@ -3,7 +3,9 @@ import copy
 import numpy as np
 from scipy import interpolate
 
-from libics.data import arraydata, seriesdata
+from libics.data import arraydata, seriesdata, types
+from libics.file import hdf
+from libics.util import InheritMap, misc
 
 
 ###############################################################################
@@ -99,6 +101,110 @@ def cv_seriesdata_to_arraydata(sd, sampling_shape=None,
     )
     ad.data = data.reshape(sampling_shape)
     return ad
+
+
+###############################################################################
+
+
+@InheritMap(map_key=("libics", "Calibration"))
+class Calibration(hdf.HDFBase):
+
+    """
+    Container class for storing calibration data mapping one quantity to
+    another. Naming convention: key --map--> val.
+
+    Parameters
+    ----------
+    key_data, val_data : np.ndarray(1)
+        Data array for (key, val) data values.
+    key_quantity, val_quantity : data.types.Quantity
+        Quantity of (key, val).
+    mode : Calibration.MODE
+        NEAREST: Nearest neighbour.
+        LINEAR: first order spline.
+        QUADRATIC: second order spline.
+        CUBIC: third order spline.
+        PREVIOUS: previous value.
+        NEXT: next value.
+    extrapolation : bool or float or (float, float)
+        True: Performs proper extrapolation.
+        False: Uses boundary values.
+        float: Uses given number as constant extrapolation.
+        (float, float): Used as (left, right) extrapolation.
+    """
+
+    class MODE:
+
+        NEAREST = "const"
+        LINEAR = "linear"
+        QUADRATIC = "quadratic"
+        CUBIC = "cubic"
+        PREVIOUS = "previous"
+        NEXT = "next"
+
+    def __init__(
+        self, key_data, val_data, key_quantity, val_quantity,
+        mode=MODE.LINEAR, extrapolation=False,
+        pkg_name="libics", cls_name="Calibration"
+    ):
+        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
+        order = np.argsort(key_data)
+        self.key_data = np.array(key_data)[order]
+        self.val_data = np.array(val_data)[order]
+        self.key_quantity = misc.assume_construct_obj(key_quantity,
+                                                      types.Quantity)
+        self.val_quantity = misc.assume_construct_obj(val_quantity,
+                                                      types.Quantity)
+        self.set_interpolation_mode(mode=mode, extrapolation=extrapolation)
+
+    def set_interpolation_mode(self, mode=MODE.LINEAR, extrapolation=False):
+        self.mode = mode
+        self.extrapolation = extrapolation
+        fill_value = extrapolation
+        if self.extrapolation is True:
+            fill_value = "extrapolate"
+        elif self.extrapolation is False:
+            fill_value = (self.val_data[0], self.val_data[-1])
+        self.__interpolation = interpolate.interp1d(
+            self.key_data, self.val_data, kind=self.mode, copy=False,
+            assume_sorted=True, fill_value=fill_value
+        )
+
+    def __call__(self, *args):
+        self.__interpolation(*args)
+
+    def _hdf_init_write(self):
+        # TODO: proper hdf implementation
+        self.__interpolation = None
+
+
+def apply_calibration(sd, calibration, dim=0):
+    """
+    Applies a calibration to a data.seriesdata.SeriesData object.
+
+    Parameters
+    ----------
+    sd : data.seriesdata.SeriesData
+        Series data the calibration is applied to.
+    calibration : Calibration
+        Calibration data.
+    dim : int
+        Series data dimension to which calibration is applied.
+
+    Returns
+    -------
+    sd : data.seriesdata.SeriesData
+        Series data with applied calibration.
+
+    Notes
+    -----
+    * Performs in-place calibration, i.e. sd is mutable.
+    * Does not check for quantity agreement. After applying calibration,
+      sd quantity is changed to the quantity stored in calibration.
+    """
+    sd.data[dim] = calibration(sd.data[dim])
+    sd.quantity[dim] = calibration.val_quantity
+    return sd
 
 
 ###############################################################################
