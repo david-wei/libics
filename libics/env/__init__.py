@@ -5,6 +5,18 @@ import os
 
 
 ###############################################################################
+# Utility functions
+###############################################################################
+
+
+def ASSUME_DIR(*args):
+    dir_path = os.path.join(*args)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    return dir_path
+
+
+###############################################################################
 # Package metadata
 ###############################################################################
 
@@ -31,9 +43,8 @@ DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 DIR_PKGROOT = os.path.dirname(DIR_SRCROOT)
 DIR_USER = os.environ["USERPROFILE"]
 DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
-DIR_DOC_LIBICS = os.path.join(DIR_DOCUMENTS, "libics")
-if not os.path.exists(DIR_DOC_LIBICS):
-    os.makedirs(DIR_DOC_LIBICS)
+DIR_DOC_LIBICS = ASSUME_DIR(DIR_DOCUMENTS, "libics")
+DIR_DOC_DATA = ASSUME_DIR(DIR_DOC_LIBICS, "data")
 DIRS = {}
 if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
     DIRS = json.load(
@@ -41,10 +52,12 @@ if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
     )
 
 ###############################################################################
-# Files
+# Data directories and files
 ###############################################################################
 
 
+DIR_CALIBRATION = ASSUME_DIR(DIR_DOC_DATA, "calibration")
+FILES_CALIBRATION = os.listdir(DIR_CALIBRATION)
 FILE_MPLRC = os.path.join(DIR_DOC_LIBICS, "mplrc.env.libics")
 
 

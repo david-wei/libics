@@ -4,7 +4,6 @@ import numpy as np
 from scipy import interpolate
 
 from libics.data import arraydata, seriesdata, types
-from libics.file import hdf
 from libics.util import InheritMap, misc
 
 
@@ -107,7 +106,7 @@ def cv_seriesdata_to_arraydata(sd, sampling_shape=None,
 
 
 @InheritMap(map_key=("libics", "Calibration"))
-class Calibration(hdf.HDFBase):
+class Calibration(seriesdata.SeriesData):
 
     """
     Container class for storing calibration data mapping one quantity to
@@ -115,6 +114,13 @@ class Calibration(hdf.HDFBase):
 
     Parameters
     ----------
+    sd : data.seriesdata.SeriesData or None
+        Uses series data to construct the calibration object.
+        If specified, overwrites any key_data, val_data,
+        key_quantity, val_quantity parameters.
+    sd_key_dim, sd_val_dim : int
+        (key, val) dimensions of series data that should
+        be used as calibration.
     key_data, val_data : np.ndarray(1)
         Data array for (key, val) data values.
     key_quantity, val_quantity : data.types.Quantity
@@ -143,39 +149,78 @@ class Calibration(hdf.HDFBase):
         NEXT = "next"
 
     def __init__(
-        self, key_data, val_data, key_quantity, val_quantity,
+        self,
+        sd=None, sd_key_dim=0, sd_val_dim=-1,
+        key_data=None, val_data=None,
+        key_quantity=None, val_quantity=None,
         mode=MODE.LINEAR, extrapolation=False,
         pkg_name="libics", cls_name="Calibration"
     ):
         super().__init__(pkg_name=pkg_name, cls_name=cls_name)
-        order = np.argsort(key_data)
-        self.key_data = np.array(key_data)[order]
-        self.val_data = np.array(val_data)[order]
-        self.key_quantity = misc.assume_construct_obj(key_quantity,
-                                                      types.Quantity)
-        self.val_quantity = misc.assume_construct_obj(val_quantity,
-                                                      types.Quantity)
-        self.set_interpolation_mode(mode=mode, extrapolation=extrapolation)
-
-    def set_interpolation_mode(self, mode=MODE.LINEAR, extrapolation=False):
+        self.add_dim()
+        self.add_dim()
+        self.data = [np.empty(0), np.empty(0)]
+        if sd is not None:
+            key_data = np.copy(sd.data[sd_key_dim])
+            val_data = np.copy(sd.data[sd_val_dim])
+            key_quantity = copy.deepcopy(sd.quantity[sd_key_dim])
+            val_quantity = copy.deepcopy(sd.quantity[sd_val_dim])
+        self.key_data = key_data
+        self.val_data = val_data
+        self.key_quantity = key_quantity
+        self.val_quantity = val_quantity
         self.mode = mode
         self.extrapolation = extrapolation
-        fill_value = extrapolation
+
+    @property
+    def key_data(self):
+        return self.data[0]
+
+    @key_data.setter
+    def key_data(self, val):
+        self.data[0] = val
+
+    @property
+    def val_data(self):
+        return self.data[1]
+
+    @val_data.setter
+    def val_data(self, val):
+        self.data[1] = val
+
+    @property
+    def key_quantity(self):
+        return self.quantity[0]
+
+    @key_quantity.setter
+    def key_quantity(self, val):
+        self.quantity[0] = misc.assume_construct_obj(val, types.Quantity)
+
+    @property
+    def val_quantity(self):
+        return self.quantity[1]
+
+    @val_quantity.setter
+    def val_quantity(self, val):
+        self.quantity[1] = misc.assume_construct_obj(val, types.Quantity)
+
+    def _set_interpolation_mode(self):
+        fill_value = self.extrapolation
         if self.extrapolation is True:
             fill_value = "extrapolate"
         elif self.extrapolation is False:
             fill_value = (self.val_data[0], self.val_data[-1])
         self.__interpolation = interpolate.interp1d(
             self.key_data, self.val_data, kind=self.mode, copy=False,
-            assume_sorted=True, fill_value=fill_value
+            assume_sorted=False, fill_value=fill_value
         )
 
     def __call__(self, *args):
-        self.__interpolation(*args)
+        self._set_interpolation_mode()
+        return self.__interpolation(*args)
 
     def _hdf_init_write(self):
-        # TODO: proper hdf implementation
-        self.__interpolation = None
+        del self.__interpolation
 
 
 def apply_calibration(sd, calibration, dim=0):

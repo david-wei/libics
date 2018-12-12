@@ -11,8 +11,8 @@ from libics.util import InheritMap
 @InheritMap(map_key=("libics", "SeriesData"))
 class SeriesData(hdf.HDFBase):
 
-    def __init__(self, dim=0):
-        super().__init__(pkg_name="libics", cls_name="SeriesData")
+    def __init__(self, dim=0, pkg_name="libics", cls_name="SeriesData"):
+        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
         self.init(dim)
 
     def init(self, dim):
