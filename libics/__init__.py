@@ -7,3 +7,5 @@ from . import env       # noqa
 from . import fit		# noqa
 from . import trafo		# noqa
 from . import util		# noqa
+
+from . import dev       # noqa

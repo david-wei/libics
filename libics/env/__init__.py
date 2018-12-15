@@ -1,7 +1,8 @@
-# System Imports
 import inspect
 import json
 import os
+
+from . import colors    # noqa
 
 
 ###############################################################################

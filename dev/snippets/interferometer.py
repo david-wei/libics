@@ -9,8 +9,9 @@ from PyQt5.QtWidgets import (
 )
 # import pyqtgraph as pg
 
+from libics import dev
 from libics.drv import drv, itf
-from libics.util import misc, InheritMap, thread
+from libics.util import misc, thread
 from libics.file import hdf
 from libics.display import qtimage
 
@@ -85,30 +86,6 @@ def get_piezo(**kwargs):
 
 
 ###############################################################################
-
-
-@InheritMap(map_key=("libics-dev", "CoherenceItem"))
-class CoherenceItem(hdf.HDFBase):
-
-    def __init__(
-        self, voltages=None,
-        im_max=None, im_max_index=None, im_min=None, im_min_index=None,
-        im_fixed=None, im_scanned=None, trace=None, trace_coords=None,
-        cam_cfg=None, piezo_cfg=None,
-        pkg_name="libics-dev", cls_name="CoherenceItem"
-    ):
-        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
-        self.voltages = voltages
-        self.im_max = im_max
-        self.im_max_index = im_max_index
-        self.im_min = im_min
-        self.im_min_index = im_min_index
-        self.im_fixed = im_fixed
-        self.im_scanned = im_scanned
-        self.trace_coords = trace_coords
-        self.trace = trace
-        self.cam_cfg = cam_cfg
-        self.piezo_cfg = piezo_cfg
 
 
 class ConditionalTrace(object):
@@ -284,7 +261,7 @@ class Interferometer(object):
 
     def save(self, file_path):
         file_path = misc.assume_endswith(file_path, ".hdf5")
-        data = CoherenceItem(
+        data = dev.InterferometerItem(
             self.voltages,
             self.im_max.result, self.im_max.index,
             self.im_min.result, self.im_min.index,

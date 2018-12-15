@@ -17,10 +17,11 @@ def get_figurecfg(
 
 
 def get_plotcfg_arraydata_1d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1
 ):
     curve_cfg = plotcfg.AttrCurve(
-        ypos={"dim": -1, "scale": "lin"}
+        ypos={"dim": -1, "scale": "lin"},
+        color={"map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
@@ -29,10 +30,11 @@ def get_plotcfg_arraydata_1d(
 
 
 def get_plotcfg_arraydata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, aspect=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0,
+    label=None, aspect=None, color="viridis", alpha=1
 ):
     matrix_cfg = plotcfg.AttrMatrix(
-        color={"dim": -1, "scale": "lin", "map": "viridis", "alpha": 1}
+        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
@@ -41,10 +43,11 @@ def get_plotcfg_arraydata_2d(
 
 
 def get_plotcfg_seriesdata_1d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1
 ):
     curve_cfg = plotcfg.AttrCurve(
-        xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"}
+        xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"},
+        color={"map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
@@ -53,11 +56,12 @@ def get_plotcfg_seriesdata_1d(
 
 
 def get_plotcfg_seriesdata_2d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, aspect=None, label=None
+    hrzt_subplot_pos=0, vert_subplot_pos=0,
+    aspect=None, label=None, color="viridis", alpha=1
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
-        color={"dim": -1, "scale": "lin", "map": "viridis", "alpha": 1}
+        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
