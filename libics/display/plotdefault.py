@@ -31,10 +31,11 @@ def get_plotcfg_arraydata_1d(
 
 def get_plotcfg_arraydata_2d(
     hrzt_subplot_pos=0, vert_subplot_pos=0,
-    label=None, aspect=None, color="viridis", alpha=1
+    label=None, aspect=None, color="viridis", alpha=1, min=None, max=None
 ):
     matrix_cfg = plotcfg.AttrMatrix(
-        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha}
+        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha,
+               "min": min, "max": max}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
@@ -61,7 +62,8 @@ def get_plotcfg_seriesdata_2d(
 ):
     matrix_cfg = plotcfg.AttrMatrix(
         xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
-        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha}
+        color={"dim": -1, "scale": "lin", "map": color, "alpha": alpha,
+               "min": min, "max": max}
     )
     return plotcfg.PlotCfg(
         xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,

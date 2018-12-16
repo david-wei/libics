@@ -443,7 +443,7 @@ class ArrayData(hdf.HDFBase):
         var : np.ndarray(float)
             Requested variables for which the functional value is
             obtained. The variable format must be a list of each
-            variable dimension (typically a meshgrid).
+            variable dimension (typically a ij-indexed meshgrid).
             Shape:
                 (data dimension, *) where * can be any scalar
                 or array.
