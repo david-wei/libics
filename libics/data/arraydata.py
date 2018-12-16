@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+from scipy import interpolate
 
 from libics.cfg import err as ERR
 from libics.data import types
@@ -432,6 +433,66 @@ class ArrayData(hdf.HDFBase):
         weights = np.array(weights) / np.sum(weights)
         items = np.array([self.data[i] for i in inds])
         return items * weights
+
+    # ++++ Interpolation ++++++++++++++++++
+
+    def __call__(self, var, mode="nearest", extrapolation=False):
+        """
+        Parameters
+        ----------
+        var : np.ndarray(float)
+            Requested variables for which the functional value is
+            obtained. The variable format must be a list of each
+            variable dimension (typically a meshgrid).
+            Shape:
+                (data dimension, *) where * can be any scalar
+                or array.
+        mode : Calibration.MODE
+            "nearest": Value of nearest neighbour.
+            "linear": Linear interpolation.
+        extrapolation : bool or float
+            True: Performs nearest/linear extrapolation.
+            False: Raises ValueError if extrapolated value is
+                   requested.
+            float: Used as extrapolation fill value.
+
+        Returns
+        -------
+        func_val : np.ndarray(float)
+            Functional values of given variables.
+            Shape: var.shape[1:].
+
+        Raises
+        ------
+        ValueError
+            See parameter extrapolation.
+
+        See Also
+        --------
+        scipy.interpolate.interpn
+        """
+        points = [
+            np.linspace(self.scale.offset[i], self.scale.max[i],
+                        num=s, endpoint=False)
+            for i, s in enumerate(self.data.shape)
+        ]
+        values = self.data
+        xi = var
+        method = mode
+        bounds_error = None
+        fill_value = None
+        if extrapolation is True:
+            bounds_error = False
+            fill_value = None
+        elif extrapolation is False:
+            bounds_error = True
+        else:
+            bounds_error = False
+            fill_value = extrapolation
+        return interpolate.interpn(
+            points, values, xi, method=method, bounds_error=bounds_error,
+            fill_value=fill_value
+        )
 
     # ++++ Conversion +++++++++++++++++++++
 
