@@ -32,6 +32,7 @@ if __name__ == "__main__":
     beam_waist = 10e-6
 
     # Calculation
+    displacement = [1e-6, 0.0]
     overlap_algorithm = "simpson"
     results = ["correlation"]    # "output", "correlation"
 
@@ -102,24 +103,34 @@ if __name__ == "__main__":
         correlation = arraydata.ArrayData()
         correlation.add_dim(
             offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
-            name="position", symbol="x_1", unit="m"
+            name="position", symbol="x", unit="m"
         )
         correlation.add_dim(
             offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
-            name="position", symbol="y_1", unit="m"
+            name="position", symbol="y", unit="m"
         )
         correlation.add_dim(
-            offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
-            name="position", symbol="x_2", unit="m"
-        )
-        correlation.add_dim(
-            offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
-            name="position", symbol="y_2", unit="m"
+            name="spatial correlation", symbol="\Gamma", unit="arb."
         )
         correlation.data = abs(fiber.spatial_correlation(
-            xx, yy, coord=COORD.CARTESIAN, overlap=overlap,
-            fiber_length=fiber_length,
+            xx, yy, dvar1=displacement[0], dvar2=displacement[1],
+            coord=COORD.CARTESIAN, overlap=overlap,
+            fiber_length=fiber_length, mode="exact",
             tempcoh_func=lambda x: temporal_coherence(
                 x, mode="nearest", extrapolation=0
             )
         ))
+        # Plot
+        vmax = correlation.data.max()
+        label = "$\Delta x = {:.2f}".format(displacement[0] * 1e6)
+        label += r" \mathrm{\mu m},"
+        label += " \Delta y = {:.2f}".format(displacement[1] * 1e6)
+        label += r" \mathrm{\mu m}$"
+        pcfg = plotdefault.get_plotcfg_arraydata_2d(
+            aspect=1, color="Blues", min=0, max=vmax, label=label
+        )
+        fcfg = plotdefault.get_figurecfg()
+        fig = plot.Figure(fcfg, pcfg, data=correlation)
+        fig.plot()
+        fig.legend()
+        fig.show()

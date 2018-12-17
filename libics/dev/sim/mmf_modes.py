@@ -2,7 +2,7 @@ import abc
 import time
 
 import numpy as np
-from scipy import constants, integrate, optimize, special
+from scipy import constants, integrate, interpolate, optimize, special
 
 from libics.file import hdf
 from libics.util import InheritMap
@@ -315,7 +315,8 @@ class Fiber(abc.ABC, hdf.HDFBase):
         """
         return np.multiply.outer(np.conjugate(overlap), overlap)
 
-    def corr_field(self, var1, var2, coord=None):
+    def corr_field(self, var1, var2, dvar1=0, dvar2=0, coord=None,
+                   mode="linear"):
         """
         Mode output field correlation matrix evaluated at given positions
         Γ_mn (x1, x2).
@@ -325,32 +326,46 @@ class Fiber(abc.ABC, hdf.HDFBase):
         var1, var2:
             Positional variables in dimensions (1, 2), which are
             typically (x, y) or (r, φ).
+        dvar1, dvar2 : float
+            Positional displacement w.r.t. (var1, var2) for which
+            the correlation is calculated.
         coord : COORD
             Coordinate system the positional variables are given in.
+        mode : str
+            Displaced field calculation mode.
+            "linear": First order spline interpolation.
+            "cubic": Third order spline interpolation.
+            "quintic": Fifth order spline interpolation.
+            "exact": Re-calculation of displaced field.
 
         Returns
         -------
         corr_field : np.ndarray(float)
             Correlation matrix of complex mode output.
-            Shape chosen such that numpy broadcasting with
-            other mode correlation matrices is possible:
-                (shape of var_coord, shape of var_coord,
-                 mode number, mode number).
+            Shape: (number of modes, shape of var_coord).
         """
         if coord is None:
             coord = self.internal_coord
         # Get mode outputs
         output1 = self.vec_field(var1, var2, coord=coord)
-        # Construct correlation matrix
-        corr_field = np.multiply.outer(np.conjugate(output1), output1)
-        corr_field = np.moveaxis(corr_field, corr_field.ndim / 2, -1)
-        corr_field = np.moveaxis(corr_field, 0, -2)
+        output2 = output1
+        if dvar1 != 0 or dvar2 != 0:
+            if mode == "exact":
+                output2 = self.vec_field(
+                    var1 + dvar1, var2 + dvar2, coord=coord
+                )
+            else:
+                interp = interpolate.interp2d(
+                    var1, var2, output1, kind=mode  # TODO: add extrapolation
+                )
+                output2 = interp(var1 + dvar1, var2 + dvar2)
+        corr_field = np.conjugate(output1)[:, np.newaxis] * output2
         return corr_field
 
     def spatial_correlation(
         self,
-        var1=None, var2=None, coord=None,
-        overlap=None, fiber_length=None, tempcoh_func=None
+        var1=None, var2=None, dvar1=0, dvar2=0, coord=None,
+        overlap=None, fiber_length=None, tempcoh_func=None, mode="linear"
     ):
         """
         Spatial correlation function as correlation matrix between (2D)
@@ -358,9 +373,12 @@ class Fiber(abc.ABC, hdf.HDFBase):
 
         Parameters
         ----------
-        var1, var2:
+        var1, var2 : float or np.ndarray(float)
             Positional variables in dimensions (1, 2), which are
             typically (x, y) or (r, φ).
+        dvar1, dvar2 : float
+            Positional displacement w.r.t. (var1, var2) for which
+            the correlation is calculated.
         coord : COORD
             Coordinate system the positional variables are given in.
         overlap : np.ndarray(1, float)
@@ -370,6 +388,11 @@ class Fiber(abc.ABC, hdf.HDFBase):
             Length of fiber in meter (m).
         tempcoh_func : callable
             Temporal coherence function in meter (m).
+        mode : str
+            Displaced field calculation mode.
+            "nearest": Nearest neighbour interpolation.
+            "linear": Linear interpolation.
+            "exact": Re-calculation of displaced field.
 
         Returns
         -------
@@ -398,10 +421,13 @@ class Fiber(abc.ABC, hdf.HDFBase):
             raise ValueError("invalid params for spatial correlation matrix")
         corr_tempcoh = self.corr_tempcoh(fiber_length, tempcoh_func)
         corr_overlap = self.corr_overlap(overlap)
-        corr_field = self.corr_field(var1, var2, coord=coord)
+        corr_field = self.corr_field(
+            var1, var2, dvar1=dvar1, dvar2=dvar2, coord=coord, mode=mode
+        )
+        corr_field = np.moveaxis(corr_field, [0, 1], [-2, -1])
         spatial_correlation = np.sum(
             corr_tempcoh * corr_overlap * corr_field,
-            axis=(-1, -2)
+            axis=(-2, -1)
         )
         return spatial_correlation
 

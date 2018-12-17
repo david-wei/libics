@@ -355,6 +355,11 @@ class ArrayData(hdf.HDFBase):
         """
         Determines the quantity maxima from the stored scale and data.
 
+        Raises
+        ------
+        AttributeError
+            If data shape does not correspond to scale.
+
         Notes
         -----
         Only sets the maximum quantity values if the dimensions correspond.
@@ -365,6 +370,8 @@ class ArrayData(hdf.HDFBase):
             and np.all(0 != np.array(self._data.shape))
         ):
             self.scale.set_max(self.data)
+        else:
+            raise AttributeError("invalid data shape")
 
     # ++++ Float index +++++++++++++++++++
 
@@ -599,7 +606,6 @@ class ArrayData(hdf.HDFBase):
             offset=offset, scale=scale, max=max,
             quantity=quantity, name=name, symbol=symbol, unit=unit
         )
-        self.set_max()
 
     def chk_attr(self):
         """
