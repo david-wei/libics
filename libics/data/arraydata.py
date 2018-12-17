@@ -80,9 +80,10 @@ class ArrayScale(hdf.HDFBase):
         if type(ar) == np.ndarray:
             ar = ar.shape
         # Add 0.1 * scale to avoid floating point imprecision
-        # (i.e. ensure integer cutoff keeps same index as integer rounding)
+        # (i.e. ensure integer cutoff keeps same index as integer rounding).
+        # +[1] as functional dimension dummy max to keep length consistent.
         self.max = [self.cv_index_to_quantity(ind, dim) + self.scale[dim] * 0.1
-                    for dim, ind in enumerate(ar)]
+                    for dim, ind in enumerate(ar)] + [1]
 
     def get_index_by_index(self, val, **kwargs):
         """
@@ -440,10 +441,12 @@ class ArrayData(hdf.HDFBase):
         """
         Parameters
         ----------
-        var : np.ndarray(float)
+        var : list(float) or list(np.ndarray(float))
             Requested variables for which the functional value is
             obtained. The variable format must be a list of each
-            variable dimension (typically a ij-indexed meshgrid).
+            variable dimension (typically a flattened ij-indexed
+            meshgrid). Supports higher dimensional meshgrids, but
+            is discouraged because of index ambiguity.
             Shape:
                 (data dimension, *) where * can be any scalar
                 or array.
@@ -471,6 +474,18 @@ class ArrayData(hdf.HDFBase):
         --------
         scipy.interpolate.interpn
         """
+        # Convert to seriesdata-structure-like
+        shape = None
+        dim = self.scale.get_dim() - 1
+        if dim == 1:
+            if np.isscalar(var) or len(var) != 1:
+                var = [var]
+            var = np.array(var)
+        if not np.isscalar(var[0]):
+            shape = var[0].shape
+            var = var.reshape((dim, var.size // dim))
+            var = np.moveaxis(var, 0, -1)
+        # Set up interpolation variables
         points = [
             np.linspace(self.scale.offset[i], self.scale.max[i],
                         num=s, endpoint=False)
@@ -489,10 +504,14 @@ class ArrayData(hdf.HDFBase):
         else:
             bounds_error = False
             fill_value = extrapolation
-        return interpolate.interpn(
+        # Interpolation
+        func_val = interpolate.interpn(
             points, values, xi, method=method, bounds_error=bounds_error,
             fill_value=fill_value
         )
+        if shape is not None:
+            func_val = func_val.reshape(shape)
+        return func_val
 
     # ++++ Conversion +++++++++++++++++++++
 

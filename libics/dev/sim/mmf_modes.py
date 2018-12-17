@@ -301,7 +301,7 @@ class Fiber(abc.ABC, hdf.HDFBase):
         tempcoh_func : callable
             Temporal coherence function in meter (m).
         """
-        return tempcoh_func(self.corr_delay(fiber_length))
+        return tempcoh_func([self.corr_delay(fiber_length)])
 
     def corr_overlap(self, overlap):
         """

@@ -3,6 +3,7 @@ from scipy import constants
 
 from libics.data import arraydata
 from libics.display import plot, plotdefault
+from libics.trafo import fourier
 from libics.dev.sim.mmf_modes import COORD, RoundStepIndexFiber
 from libics.dev.sim.mmf_source import GaussianBeam
 
@@ -32,7 +33,7 @@ if __name__ == "__main__":
 
     # Calculation
     overlap_algorithm = "simpson"
-    result = "output"   # "output", "correlation"
+    results = ["correlation"]    # "output", "correlation"
 
     # Plotting
     plot_num = max(50, round(2 * core_radius / constants.c * center_freq))
@@ -67,28 +68,58 @@ if __name__ == "__main__":
 
     # ++++ Plotting ++++++++
 
-    # Output
+    # Sampling
     rmax = 1.1 * core_radius
     rscale = 2 * rmax / (plot_num - 1)
-    output = arraydata.ArrayData()
-    output.add_dim(offset=-rmax, scale=rscale,
-                   name="position", symbol="x", unit="m")
-    output.add_dim(offset=-rmax/5, scale=rscale,
-                   name="position", symbol="y", unit="m")
-    output.add_dim(name="field", symbol="A", unit="arb.")
     x = np.linspace(-rmax, rmax, num=plot_num)
-    y = np.linspace(-rmax / 5, rmax / 5, num=plot_num / 5)
+    y = np.linspace(-rmax, rmax, num=plot_num)
     xx, yy = np.meshgrid(x, y, indexing="ij")
-    output.data = abs(fiber.output(
-        xx, yy, overlap, fiber_length, coord=COORD.CARTESIAN
-    ))
 
-    # Plot
-    vmax = max(output.data.max(), -output.data.min())
-    pcfg = plotdefault.get_plotcfg_arraydata_2d(
-        aspect=1, color="RdBu", min=-vmax, max=vmax
-    )
-    fcfg = plotdefault.get_figurecfg()
-    fig = plot.Figure(fcfg, pcfg, data=output)
-    fig.plot()
-    fig.show()
+    # Output
+    if "output" in results:
+        output = arraydata.ArrayData()
+        output.add_dim(offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
+                       name="position", symbol="x", unit="m")
+        output.add_dim(offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
+                       name="position", symbol="y", unit="m")
+        output.add_dim(name="field", symbol="A", unit="arb.")
+        output.data = abs(fiber.output(
+            xx, yy, overlap, fiber_length, coord=COORD.CARTESIAN
+        ))
+        # Plot
+        vmax = max(output.data.max(), -output.data.min())
+        pcfg = plotdefault.get_plotcfg_arraydata_2d(
+            aspect=1, color="RdBu", min=-vmax, max=vmax
+        )
+        fcfg = plotdefault.get_figurecfg()
+        fig = plot.Figure(fcfg, pcfg, data=output)
+        fig.plot()
+        fig.show()
+
+    # Correlation
+    if "correlation" in results:
+        temporal_coherence = fourier.fft_arraydata(gaussian_beam.spectrum)
+        correlation = arraydata.ArrayData()
+        correlation.add_dim(
+            offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
+            name="position", symbol="x_1", unit="m"
+        )
+        correlation.add_dim(
+            offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
+            name="position", symbol="y_1", unit="m"
+        )
+        correlation.add_dim(
+            offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
+            name="position", symbol="x_2", unit="m"
+        )
+        correlation.add_dim(
+            offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
+            name="position", symbol="y_2", unit="m"
+        )
+        correlation.data = abs(fiber.spatial_correlation(
+            xx, yy, coord=COORD.CARTESIAN, overlap=overlap,
+            fiber_length=fiber_length,
+            tempcoh_func=lambda x: temporal_coherence(
+                x, mode="nearest", extrapolation=0
+            )
+        ))
