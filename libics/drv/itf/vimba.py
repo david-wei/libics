@@ -62,7 +62,7 @@ def shutdown():
     global _Vimba, _VimbaSystem, _VimbaReferenceCount
     success = False
     _VimbaReferenceCount -= 1
-    if _VimbaReferenceCount >= 0:
+    if _VimbaReferenceCount <= 0:
         if _Vimba is not None:
             _Vimba.shutdown()
             _Vimba = None

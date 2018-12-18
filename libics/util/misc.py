@@ -3,6 +3,8 @@ import operator
 import os
 import re
 
+import numpy as np
+
 
 ###############################################################################
 # Assumption Functions
@@ -513,6 +515,57 @@ def get_combinations(ls):
     [[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]
     """
     return _gcrec([], ls)
+
+
+###############################################################################
+# Array Functions
+###############################################################################
+
+
+def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
+    """
+    Pads or shrinks a numpy array to a requested shape.
+
+    Parameters
+    ----------
+    ar : numpy.ndarray
+        Numpy array to be resized.
+    shape : tuple(int)
+        Target shape of array. Must have same dimension as ar.
+    fill_value : ar.dtype
+        Pad value if array is increased.
+    mode_keep : "front", "back", "center"
+        Keeps the elements of ar at the <mode_keep> of the
+        resized array.
+
+    Returns
+    -------
+    ar : numpy.ndarray
+        Resized numpy array.
+    """
+    for dim in range(len(ar.shape)):
+        start, stop = 0, shape[dim]
+        if mode_keep == "front":
+            start, stop = 0, shape[dim]
+        elif mode_keep == "back":
+            start, stop = ar.shape[dim] - shape[dim], ar.shape[dim]
+        elif mode_keep == "center":
+            diff = (ar.shape[dim] - shape[dim]) // 2
+            start, stop = diff, shape[dim] + diff
+        # reduce
+        if shape[dim] < ar.shape[dim]:
+            idx = [slice(None)] * dim + [slice(start, stop)]
+            ar = ar[idx]
+        # expand
+        elif shape[dim] > ar.shape[dim]:
+            padl_shape = list(ar.shape)
+            padl_shape[dim] = start
+            padl = np.full(padl_shape, fill_value, dtype=ar.dtype)
+            padr_shape = list(ar.shape)
+            padr_shape[dim] = shape[dim] - stop
+            padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
+            ar = np.concatenate(padl, ar, padr, axis=dim)
+    return ar
 
 
 ###############################################################################
