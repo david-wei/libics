@@ -169,7 +169,7 @@ class TexasInstrumentsDLP7000(DspDrvBase):
         return 1024
 
     def _read_pixel_hrzt_size(self):
-        return 13.86e-6
+        return 13.68e-6
 
     def _read_pixel_hrzt_offset(self):
         return 0
@@ -178,7 +178,7 @@ class TexasInstrumentsDLP7000(DspDrvBase):
         return 768
 
     def _read_pixel_vert_size(self):
-        return 13.86e-6
+        return 13.68e-6
 
     def _read_pixel_vert_offset(self):
         return 0

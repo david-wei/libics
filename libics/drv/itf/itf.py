@@ -188,6 +188,7 @@ class BinCfgBase(ProtocolCfgBase):
     def get_hl_cfg(self):
         MAP = {
             ITF_BIN.VIMBA: BinVimbaCfg,
+            ITF_BIN.VIALUX: BinVialuxCfg
         }
         obj = MAP[self.interface](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()

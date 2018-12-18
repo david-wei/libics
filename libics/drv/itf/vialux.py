@@ -28,6 +28,6 @@ def startup_alp42():
     global _ALP42
     if _ALP42 is None:
         _ALP42 = alp42.PY_ALP_API(
-            dllPath=os.path.join(env.DIR_PKG_ITFAPI, "alpV42.dll")
+            dllPath=os.path.join(env.DIR_ITFAPI, "alpV42.dll")
         )
     return _ALP42

@@ -419,7 +419,7 @@ class VialuxItf(BinItfBase):
         Stops any playing sequence.
         """
         self._alp.AlpProjHalt(self._dmd)
-        self._alp.AlpSeqFree()
+        self._alp.AlpSeqFree(self._dmd, self._seq)
         self._seq = None
         self._seq_repetitions = None
 

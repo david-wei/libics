@@ -38,11 +38,11 @@ LIBICS_VERSION = (
 
 
 DIR_CWD = os.getcwd()
-DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
+DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
-))))
+)))
 DIR_PKGROOT = os.path.dirname(DIR_SRCROOT)
-DIR_PKG_ITFAPI = os.path.join(DIR_PKGROOT, "drv", "itf", "api")
+DIR_ITFAPI = os.path.join(DIR_SRCROOT, "drv", "itf", "api")
 DIR_USER = os.environ["USERPROFILE"]
 DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
 DIR_DOC_LIBICS = ASSUME_DIR(DIR_DOCUMENTS, "libics")

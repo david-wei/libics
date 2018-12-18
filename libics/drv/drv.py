@@ -538,8 +538,8 @@ class DspCfg(DrvCfgBase):
 
     def __init__(
         self,
-        pixel_hrzt_count=1024, pixel_hrzt_size=13.86e-6,
-        pixel_vert_count=768, pixel_vert_size=13.86e-6,
+        pixel_hrzt_count=1024, pixel_hrzt_size=13.68e-6,
+        pixel_vert_count=768, pixel_vert_size=13.68e-6,
         pixel_hrzt_offset=0, pixel_vert_offset=0,
         format_color=DRV_DSP.FORMAT_COLOR.GS, channel_bitdepth=8,
         picture_time=9.0, dark_time=0.0, sequence_repetitions=0,
