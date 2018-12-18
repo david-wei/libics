@@ -57,7 +57,7 @@ ALP_ERRORS = {
 
 def flipDict(dictionary):
     flippedDict = {}
-    for k, v in dictionary.iteritems():
+    for k, v in dictionary.items():
         flippedDict[str(v)] = k
     return flippedDict
 
