@@ -154,9 +154,12 @@ class ITF_BIN:
     ----------
     VIMBA:
         AlliedVision Vimba.
+    VIALUX:
+        Vialux ALP4.x.
     """
 
     VIMBA = 101
+    VIALUX = 111
 
 
 @InheritMap(map_key=("libics", "BinCfgBase"))
@@ -292,6 +295,28 @@ class BinVimbaCfg(BinCfgBase):
             self.__dict__.update(ll_obj.__dict__)
         self.frame_count = frame_count
         self.frame_requeue = frame_requeue
+
+    def get_hl_cfg(self):
+        return self
+
+
+@InheritMap(map_key=("libics", "BinVialuxCfg"))
+class BinVialuxCfg(BinCfgBase):
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVialuxCfg.
+
+    Parameters
+    ----------
+    """
+
+    def __init__(self,
+                 cls_name="BinVialuxCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VIMBA
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
 
     def get_hl_cfg(self):
         return self

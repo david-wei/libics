@@ -1,9 +1,11 @@
+from . import api       # noqa
 from . import camcfg    # noqa
 from . import gpib      # noqa
 from . import mdt693    # noqa
 from . import itf       # noqa
 from . import itfbin    # noqa
 from . import itftxt    # noqa
+from . import vialux    # noqa
 from . import vimba     # noqa
 
 

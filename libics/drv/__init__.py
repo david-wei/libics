@@ -3,6 +3,7 @@ from . import cam           # noqa
 from . import camutil       # noqa
 from . import drv           # noqa
 from . import drvcam        # noqa
+from . import drvdsp        # noqa
 from . import drvosc        # noqa
 from . import drvpiezo      # noqa
 from . import drvspan       # noqa
@@ -39,5 +40,7 @@ def get_drv(cfg):
         return drvspan.get_span_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.OSC:
         return drvosc.get_osc_drv(cfg)
+    elif cfg.driver == drv.DRV_DRIVER.DSP:
+        return drvdsp.get_dsp_drv(cfg)
     else:
         raise KeyError("Invalid cfg.driver: {}".format(cfg.driver))

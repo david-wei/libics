@@ -1,9 +1,10 @@
 import abc
 import collections
+import ctypes
 
 import numpy as np
 
-from libics.drv.itf import itf, vimba
+from libics.drv.itf import itf, vimba, vialux
 
 
 ###############################################################################
@@ -12,6 +13,8 @@ from libics.drv.itf import itf, vimba
 def get_bin_itf(cfg):
     if cfg.interface == itf.ITF_BIN.VIMBA:
         return VimbaItf(cfg)
+    elif cfg.interface == itf.ITF_BIN.VIALUX:
+        return VialuxItf(cfg)
 
 
 class BinItfBase(abc.ABC):
@@ -323,3 +326,151 @@ class VimbaItf(BinItfBase):
         data = self.get_buffer_byte_data(index=index)
         if callable(callback):
             callback(data)
+
+
+###############################################################################
+
+
+class VialuxItf(BinItfBase):
+
+    def __init__(self, cfg):
+        super().__init__(cfg)
+        self._dmd = None
+        self._alp = None
+        self._seq = None
+        self._seq_repetitions = None
+        self.API = None
+
+    def setup(self):
+        self._alp = vialux.startup_alp42()
+        self.API = vialux.alp42
+        if self.cfg.device is None:
+            self.cfg.device = 0
+        elif isinstance(self.cfg.device, str):
+            self.cfg.device = int(float(self.cfg.device))
+        _, self._dmd = self._alp.AlpDevAlloc(self.cfg.device)
+
+    def shutdown(self):
+        self._alp.AlpDevHalt(self._dmd)
+        self._alp.AlpDevFree(self._dmd)
+        self._dmd = None
+        self._alp = None
+        self.API = None
+
+    def connect(self):
+        pass
+
+    def close(self):
+        pass
+
+    def init(self, bitdepth, sequence_length):
+        """
+        Initializes a sequence by allocating memory for image display.
+
+        Parameters
+        ----------
+        bitdepth : int
+            Channel bitdepth of image.
+        sequence_length : int or list
+            Number of images in sequence or sequence itself.
+        """
+        bitdepth = 1    # only 1 possible for current implementation
+        if hasattr(sequence_length, "__len__"):
+            sequence_length = len(sequence_length)
+        _, self._seq = self._alp.AlpSeqAlloc(
+            self._dmd, bitplanes=bitdepth, picnum=sequence_length
+        )
+
+    def run(self, sequence, bitdepth, repetitions):
+        """
+        Loads the sequence memory and starts displaying the images.
+
+        Parameters
+        ----------
+        sequence : list(np.ndarray(2))
+            List of images.
+        bitdepth : int
+            Channel bitdepth of image.
+        repetitions : int
+            Number of repetitions of the sequence.
+            0 (zero) is interpreted as continuos display.
+
+        Notes
+        -----
+        As convenience function, one can directly run a sequence
+        without init, but no sequence control modifications can
+        be made.
+        """
+        if self._seq is None:
+            self.init(bitdepth, len(sequence))
+        self._seq_repetitions = repetitions
+        for i, image in enumerate(sequence):
+            image = ctypes.create_string_buffer(image.flatten().tostring())
+            self._alp.AlpSeqPut(
+                self._dmd, self._seq, image, picoffset=i, picload=1
+            )
+        if self._seq_repetitions == 0:
+            self._alp.AlpProjStartCont(self._dmd, self._seq)
+        else:
+            self._alp.AlpProjStart(self._dmd, self._seq)
+
+    def stop(self):
+        """
+        Stops any playing sequence.
+        """
+        self._alp.AlpProjHalt(self._dmd)
+        self._alp.AlpSeqFree()
+        self._seq = None
+        self._seq_repetitions = None
+
+    # ++++ Wrapper methods ++++++++++++++
+
+    def dev_inq(self, key):
+        """Device inquiry."""
+        return self._alp.AlpDevInquire(self._dmd, key)
+
+    def dev_ctrl(self, key, val):
+        """Device control."""
+        return self._alp.AlpDevControl(self._dmd, key, val)
+
+    def seq_inq(self, key):
+        """Sequence inquiry."""
+        if self._seq is None:
+            return None
+        else:
+            return self._alp.AlpSeqInquire(self._dmd, self._seq, key)
+
+    def seq_ctrl(self, key, val):
+        """Sequence control."""
+        if self._seq is not None:
+            return self._alp.AlpSeqControl(self._dmd, self._seq, key, val)
+
+    def seq_time(self, **kwargs):
+        """
+        Parameters
+        ----------
+        illuminatetime : int
+            Illuminate time in microseconds (µs).
+        picturetime : int
+            Picture time in microseconds (µs).
+        """
+        self._alp.AlpSeqTiming(self._dmd, self._seq, **kwargs)
+
+    def seq_wait(self):
+        """
+        Waits for a sequence to finish and returns.
+
+        Returns
+        -------
+        wait_success : bool or None
+            True: Sequence has finished.
+            False: Sequence in continuos mode, cannot finish.
+            None: No sequence is running.
+        """
+        if self._seq_repetitions is None:
+            return None
+        elif self._seq_repetitions == 0:
+            return False
+        else:
+            self._alp.AlpProjHalt(self._dmd)
+            return True
