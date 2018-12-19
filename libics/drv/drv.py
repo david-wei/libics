@@ -108,6 +108,14 @@ class DrvBase(abc.ABC):
                 self.read(msg)
             msg = self.cfg._pop_msg()
 
+    def write_all(self):
+        """
+        Writes all configuration items from interface.
+        Automatically processes the message queue.
+        """
+        self.cfg.write_all()
+        self.process()
+
     def read_all(self):
         """
         Reads all configuration items from interface.
@@ -205,6 +213,14 @@ class DrvCfgBase(cfg.CfgBase):
         }
         obj = MAP[self.driver.val](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
+
+    def write_all(self):
+        """
+        Set all configuration items by writing all values to interface.
+        """
+        for key, val in self.__dict__.items():
+            if isinstance(val, cfg.CfgItem):
+                val.write()
 
     def read_all(self):
         """
