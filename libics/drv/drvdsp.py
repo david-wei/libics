@@ -188,7 +188,7 @@ class TexasInstrumentsDLP7000(DspDrvBase):
 
     def _write_picture_time(self, value):
         picture_time = value
-        illuminate_time = self.cfg.picture_time - self.cfg.dark_time
+        illuminate_time = self.cfg.picture_time.val - self.cfg.dark_time.val
         self._interface.seq_time(
             picturetime=int(round(picture_time * 1e6)),
             illuminatetime=int(round(illuminate_time * 1e6))
@@ -212,7 +212,7 @@ class TexasInstrumentsDLP7000(DspDrvBase):
                 self._interface.API
                 .ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_NORMAL"]
             )
-        picture_time = self.cfg.picture_time
+        picture_time = self.cfg.picture_time.val
         illuminate_time = picture_time - value
         self._interface.seq_time(
             picturetime=int(round(picture_time * 1e6)),
@@ -269,7 +269,9 @@ class TexasInstrumentsDLP7000(DspDrvBase):
             image = np.mean(image, axis=-1)
             image = np.squeeze(image, axis=-1)
         # Check correct size
-        target_shape = self.cfg.pixel_hrzt_count, self.cfg.pixel_vert_count
+        target_shape = (
+            self.cfg.pixel_hrzt_count.val, self.cfg.pixel_vert_count.val
+        )
         image = misc.resize_numpy_array(
             image, target_shape, fill_value=0, mode_keep="front"
         )
@@ -279,8 +281,11 @@ class TexasInstrumentsDLP7000(DspDrvBase):
         bitdepth = self.cfg.channel_bitdepth.val
         bitdepth = 1    # only 1bit currently supported
         image *= (2**bitdepth - 1)
-        dtype = "uint8"
-        if bitdepth > 8 and bitdepth <= 16:
+        image *= 255    # only 1bit encoded in 8bit supported
+        dtype = None
+        if bitdepth <= 8:
+            dtype = "uint8"
+        elif bitdepth > 8 and bitdepth <= 16:
             dtype = "uint16"
         else:
             dtype = "uint32"
