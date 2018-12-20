@@ -1,6 +1,7 @@
 import sys
 import time
 
+import PIL
 import numpy as np
 from scipy import interpolate, optimize
 
@@ -313,6 +314,31 @@ class AffineTrafo(hdf.HDFBase):
 ###############################################################################
 
 
+@InheritMap(map_key=("libics-dev", "DmdImageData"))
+class DmdImageData(hdf.HDFBase):
+
+    def __init__(self, target=None, trafo=None):
+        super().__init__(pkg_name="libics-dev", cls_name="DmdImageData")
+        self.target = target
+        self.trafo = trafo
+        self.patterns = []
+        self.images = []
+        self.rms = []
+
+    def reset(self):
+        self.patterns = []
+        self.images = []
+        self.rms = []
+
+    def add_iteration(self, pattern, image, rms):
+        self.patterns.append(pattern)
+        self.images.append(image)
+        self.rms.append(rms)
+
+
+###############################################################################
+
+
 def calc_pattern(target_image, raw_image):
     """
     Calculates the initial DMD reflectance pattern.
@@ -476,20 +502,25 @@ class DmdControl(object):
             cam.cfg.pixel_hrzt_count.val, cam.cfg.pixel_vert_count.val
         ))
         self.trafo = AffineTrafo()
-        self.pattern = None
-        self.set_pattern(pattern="black")
+        self.pattern = np.zeros(im_resolution, dtype=float)
         self.raw = np.full(im_resolution, np.nan, dtype=float)
         self.image = np.full(im_resolution, np.nan, dtype=float)
         self.rms = None
-        self.save_data = None   # TODO: create save_data
+        self.data = DmdImageData()
 
     def setup(self):
         self.cam.setup()
         self.dsp.setup()
 
     def shutdown(self):
-        self.cam.shutdown()
-        self.dsp.shutdown()
+        try:
+            self.cam.shutdown()
+        except AttributeError:
+            pass
+        try:
+            self.dsp.shutdown()
+        except AttributeError:
+            pass
 
     def connect(self):
         self.cam.connect()
@@ -550,6 +581,7 @@ class DmdControl(object):
             images.append(np.copy(np.squeeze(im, axis=-1).T))
             self.dsp.stop()
         self.trafo.calc_trafo(coords, images)
+        self.data.trafo = self.trafo
 
     def load_trafo(self, file_path):
         """
@@ -561,6 +593,7 @@ class DmdControl(object):
             File path to transformation file.
         """
         self.trafo = hdf.read_hdf(AffineTrafo, file_path=file_path)
+        self.data.trafo = self.trafo
 
     # ++++++++++++++++++++++++++++++++
 
@@ -625,15 +658,18 @@ class DmdControl(object):
         time.sleep(0.1)
         self.raw = np.copy(np.squeeze(self.cam.grab(), axis=-1).T)
         self.image = np.copy(self.raw)
+        self.data.raw = self.raw
 
     def load_image(self, file_path, record_raw=True):
         """
         Loads a target image from file and records a full on reference image.
         """
-        # TODO: reset save_data
+        self.data.reset()
         if record_raw:
             self.record_raw()
-        # load image
+        im = np.array(PIL.Image.open(file_path).convert("L"))
+        self.target = im.T
+        self.data.target = self.target
 
     def iterate_pattern(self, num=1):
         """
@@ -663,20 +699,21 @@ class DmdControl(object):
         im = self.cam.grab()
         self.image = np.copy(np.squeeze(im, axis=-1).T)
         self.rms = calc_deviation_rms(self.target, self.image, mask=0.01)
-        # TODO: add to save_data
+        self.data.add_iteration(self.pattern, self.image, self.rms)
 
-    def reset_save(self):
+    def save_trafo(self, file_path):
         """
-        Resets the save_data.
+        Saves the transformation parameters.
         """
-        self.save_data = None   # TODO:
+        file_path = misc.assume_endswith(file_path, ".hdf5")
+        hdf.write_hdf(self.trafo, file_path=file_path)
 
-    def save(self, file_path):
+    def save_data(self, file_path):
         """
         Saves recorded image, target image, reflectance pattern.
         """
         file_path = misc.assume_endswith(file_path, ".hdf5")
-        hdf.write_hdf(self.save_data, file_path)
+        hdf.write_hdf(self.data, file_path=file_path)
 
 
 ###############################################################################
@@ -709,18 +746,20 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_layout_preview = QVBoxLayout()
         self.qt_button_connect = QPushButton("Start")
         self.qt_button_stop = QPushButton("Stop")
-        self.qt_button_trafo_load = QPushButton("Load transformation")
         self.qt_button_trafo_find = QPushButton("Find transformation")
+        self.qt_button_trafo_load = QPushButton("Load transformation")
+        self.qt_button_trafo_save = QPushButton("Save transformation")
         self.qt_image_preview = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_preview.set_image_format(channel="mono", bpc=8)
-        self.qt_image_trafoview = qtimage.QtImage(aspect_ratio=1)
-        self.qt_image_trafoview.set_image_format(channel="mono", bpc=8)
+        self.qt_image_pattern = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_pattern.set_image_format(channel="mono", bpc=8)
         self.qt_layout_preview.addWidget(self.qt_button_connect)
         self.qt_layout_preview.addWidget(self.qt_button_stop)
-        self.qt_layout_preview.addWidget(self.qt_button_trafo_load)
         self.qt_layout_preview.addWidget(self.qt_button_trafo_find)
+        self.qt_layout_preview.addWidget(self.qt_button_trafo_load)
+        self.qt_layout_preview.addWidget(self.qt_button_trafo_save)
         self.qt_layout_preview.addWidget(self.qt_image_preview)
-        self.qt_layout_preview.addWidget(self.qt_image_trafoview)
+        self.qt_layout_preview.addWidget(self.qt_image_pattern)
 
         self.qt_layout_meas = QVBoxLayout()
         self.qt_button_white = QPushButton("Set white pattern")
@@ -728,7 +767,7 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_button_image_load = QPushButton("Load image")
         self.qt_button_image_iterate = QPushButton("Iterate image")
         self.qt_button_image_record = QPushButton("Record image")
-        self.qt_button_save = QPushButton("Save data")
+        self.qt_button_data_save = QPushButton("Save data")
         self.qt_image_target = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_target.set_image_format(channel="mono", bpc=8)
         self.qt_image_recorded = qtimage.QtImage(aspect_ratio=1)
@@ -738,7 +777,7 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_layout_meas.addWidget(self.qt_button_image_load)
         self.qt_layout_meas.addWidget(self.qt_button_image_iterate)
         self.qt_layout_meas.addWidget(self.qt_button_image_record)
-        self.qt_layout_meas.addWidget(self.qt_button_save)
+        self.qt_layout_meas.addWidget(self.qt_button_data_save)
         self.qt_layout_meas.addWidget(self.qt_image_target)
         self.qt_layout_meas.addWidget(self.qt_image_recorded)
 
@@ -750,23 +789,55 @@ class DmdControlGui(DmdControl, QWidget):
 
     def _init_visibility(self):
         super().show()
+        self.qt_button_connect.show()
+        self.qt_button_stop.hide()
+        self.qt_button_trafo_find.show()
+        self.qt_button_trafo_load.show()
+        self.qt_button_trafo_save.hide()
+        self.qt_image_preview.show()
+        self.qt_image_pattern.show()
+        self.qt_button_white.show()
+        self.qt_button_black.show()
+        self.qt_button_image_load.show()
+        self.qt_button_image_iterate.hide()
+        self.qt_button_image_record.hide()
+        self.qt_button_data_save.hide()
+        self.qt_image_target.show()
+        self.qt_image_recorded.show()
 
     def _init_connection(self):
         self.sUpdateImage.connect(self._on_update_image_emitted)
+
         self.qt_button_connect.clicked.connect(self._on_button_connect_clicked)
         self.qt_button_stop.clicked.connect(self._on_button_stop_clicked)
-        self.qt_button_toggle.clicked.connect(self._on_button_toggle_clicked)
-        self.qt_button_fixed.clicked.connect(self._on_button_fixed_clicked)
-        self.qt_button_scanned.clicked.connect(self._on_button_scanned_clicked)
-        self.qt_button_measure.clicked.connect(self._on_button_measure_clicked)
-        self.qt_button_abort.clicked.connect(self._on_button_abort_clicked)
-        self.qt_button_coherence.clicked.connect(
-            self._on_button_coherence_clicked
+        self.qt_button_trafo_find.clicked.connect(
+            self._on_button_trafo_find_clicked
         )
-        self.qt_button_save.clicked.connect(self._on_button_save_clicked)
-        self.qt_button_reset_piezo.clicked.connect(
-            self._on_button_reset_piezo_clicked
+        self.qt_button_trafo_load.clicked.connect(
+            self._on_button_trafo_load_clicked
         )
+        self.qt_button_trafo_save.clicked.connect(
+            self._on_button_trafo_save_clicked
+        )
+
+        self.qt_button_white.clicked.connect(self._on_button_white_clicked)
+        self.qt_button_black.clicked.connect(self._on_button_black_clicked)
+        self.qt_button_image_load.clicked.connect(
+            self._on_button_image_load_clicked
+        )
+        self.qt_button_image_iterate.clicked.connect(
+            self._on_button_image_iterate_clicked
+        )
+        self.qt_button_image_record.clicked.connect(
+            self._on_button_image_record_clicked
+        )
+        self.qt_button_data_save.clicked.connect(
+            self._on_button_data_save_clicked
+        )
+
+    def set_pattern(self, pattern="image"):
+        super().set_pattern(pattern=pattern)
+        self.qt_image_pattern.update_image(self.pattern.astype("uint8"))
 
     @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
@@ -775,23 +846,76 @@ class DmdControlGui(DmdControl, QWidget):
     @pyqtSlot()
     def _on_button_connect_clicked(self):
         self.connect()
-        self.qt_button_connect.setVisible(False)
-        self.qt_button_stop.setVisible(True)
+        self.qt_button_connect.hide()
+        self.qt_button_stop.show()
 
     @pyqtSlot()
     def _on_button_stop_clicked(self):
         self.close()
-        self.qt_button_connect.setVisible(True)
-        self.qt_button_stop.setVisible(False)
+        self.qt_button_connect.show()
+        self.qt_button_stop.hide()
 
     @pyqtSlot()
-    def _on_button_save_clicked(self):
-        file_path, _ = QFileDialog.getSaveFileName(
-            caption="Save file as", filter="DMD save data (*.hdf5)"
+    def _on_button_trafo_find_clicked(self):
+        self.find_trafo()
+        self.qt_button_trafo_save.show()
+
+    @pyqtSlot()
+    def _on_button_trafo_load_clicked(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            caption="Load transformation",
+            filter="Affine transformation (*.hdf5)"
         )
         if file_path == "":
             return
-        self.save(file_path)
+        self.load_trafo(file_path)
+        self.qt_button_trafo_save.show()
+
+    @pyqtSlot()
+    def _on_button_trafo_save_clicked(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            caption="Save file as", filter="Affine transformation (*.hdf5)"
+        )
+        if file_path == "":
+            return
+        self.save_trafo(file_path)
+
+    @pyqtSlot()
+    def _on_button_white_clicked(self):
+        self.set_pattern(pattern="white")
+
+    @pyqtSlot()
+    def _on_button_black_clicked(self):
+        self.set_pattern(pattern="black")
+
+    @pyqtSlot()
+    def _on_button_image_load_clicked(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            caption="Load image",
+            filter="Bitmap (*.bmp), Portable Network Graphic (*.png)"
+        )
+        if file_path == "":
+            return
+        self.load_image(file_path)
+        self.qt_image_target.update_image(self.target.astype("uint8"))
+
+    @pyqtSlot()
+    def _on_button_image_iterate_clicked(self):
+        self.iterate_pattern()
+
+    @pyqtSlot()
+    def _on_button_image_record_clicked(self):
+        self.record_image()
+        self.qt_image_recorded.update_image(self.image.astype("uint8"))
+
+    @pyqtSlot()
+    def _on_button_data_save_clicked(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            caption="Save file as", filter="DMD image data (*.hdf5)"
+        )
+        if file_path == "":
+            return
+        self.save_data(file_path)
 
 
 ###############################################################################
