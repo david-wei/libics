@@ -1,18 +1,18 @@
 import sys
+import time
 
 import numpy as np
-from scipy import interpolate
+from scipy import interpolate, optimize
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout,
-    QWidget, QFileDialog, QLabel
+    QWidget, QFileDialog
 )
 # import pyqtgraph as pg
 
-from libics import dev
 from libics.drv import drv, itf
-from libics.util import misc, thread
+from libics.util import misc, InheritMap
 from libics.file import hdf
 from libics.display import qtimage
 
@@ -54,8 +54,8 @@ def get_cam(**kwargs):
 
 def get_dsp(**kwargs):
     itf_cfg = {
-        "protocol": itf.ITF_PROTOCOL.BINARY,
-        "interface": itf.ITF_BIN.VIALUX,
+        "protocol": itf.itf.ITF_PROTOCOL.BINARY,
+        "interface": itf.itf.ITF_BIN.VIALUX,
         "device": None
     }
     itf_cfg.update(kwargs)
@@ -87,21 +87,45 @@ def get_dsp(**kwargs):
 ###############################################################################
 
 
-class AffineTrafo(object):
+@InheritMap(map_key=("libics-dev", "AffineTrafo"))
+class AffineTrafo(hdf.HDFBase):
 
     """
     Maps camera sensor pixel positions to DMD pixels.
+
+    Convention: dmd_coord = matrix * cam_coord + offset.
+
+    Usage
+    -----
+    * Take images for different single-pixel illuminations.
+    * Calculate transformation parameters (calc_trafo method).
+    * Perform transforms with call method
+      (or cv_cam_to_dsp, cv_dsp_to_cam)
     """
 
     def __init__(
         self,
-        offset=np.array([0.0, 0.0]), scale=np.array([1.0, 1.0]), rotation=0
+        matrix=np.diag([1, 1]).astype(float),
+        offset=np.array([0, 0], dtype=float)
     ):
-        self.offset = offset        # DMD side
-        self.scale = scale          # Multiplication yields DMD side
-        self.rotation = rotation
+        super().__init__(pkg_name="libics-dev", cls_name="AffineTrafo")
+        self.matrix = matrix
+        self.offset = offset
 
-    def calc_peak_coordinates(self, image):
+    def __fit_pc_func(self, var, amp, cx, cy, sx, sy, off):
+        """
+        Parameters
+        ----------
+        var : (x, y) pixel indices
+        amp : Gaussian amplitude
+        cx, cy : (x, y) Gaussian center
+        sx, sy : (x, y) Gaussian width
+        off : Gaussian offset
+        """
+        exp = (var[0] - cx)**2 / sx**2 + (var[1] - cy)**2 / sy**2
+        return amp * np.exp(-exp / 2) + off
+
+    def fit_peak_coordinates(self, image, snr=3):
         """
         Uses a Gaussian fit to obtain the peak coordinates of an image.
 
@@ -109,6 +133,8 @@ class AffineTrafo(object):
         ----------
         image : np.ndarray(2, float)
             Image to be analyzed.
+        snr : float
+            Maximum-to-mean ratio required for fit.
 
         Returns
         -------
@@ -116,6 +142,51 @@ class AffineTrafo(object):
             (Fractional) image index coordinates of fit position.
             None: If fit failed.
         """
+        if image.max() / image.mean() < snr:
+            return None
+        xgrid, ygrid = np.meshgrid(
+            np.arange(image.shape[0], np.arange(image.shape[1]))
+        )
+        xx, yy, zz = xgrid.flatten(), ygrid.flatten(), image.flatten()
+        var = [(xx[i], yy[i]) for i in range(len(xx))]
+        (_, x, y, _, _, _), _ = optimize.curve_fit(
+            self.__fit_pc_func, var, zz
+        )
+        return x, y
+
+    def __fit_at_func(self, vars, m11, m12, m21, m22, b1, b2):
+        """
+        Parameters
+        ----------
+        vars : cam_x, cam_y, dmd_x, dmd_y
+        m_ij : matrix entries
+        b_i : offset entries
+        """
+        return (
+            (m11 * vars[0] + m12 * vars[1] + b1 - vars[2])**2
+            + (m21 * vars[0] + m22 * vars[1] + b2 - vars[3])**2
+        )
+
+    def fit_affine_transform(self, cam_coords, dmd_coords):
+        """
+        Fits the affine transform matrix and offset vector.
+
+        Parameters
+        ----------
+        cam_coords, dmd_coords : list(np.ndarray(1, float))
+            List of (camera, DMD) coordinates in corresponding order.
+        """
+        vars = [np.concatenate(cam_coords[i], dmd_coords[i])
+                for i in range(len(cam_coords))]
+        res = np.full(len(cam_coords), 0, dtype=float)
+        matrix = np.full((2, 2), np.nan, dtype=float)
+        offset = np.full(2, np.nan, dtype=float)
+        (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
+         offset[0], offset[1]), _ = optimize.curve_fit(
+             self.__fit_at_func, vars, res
+        )
+        self.matrix = matrix
+        self.offset = offset
 
     def calc_trafo(self, coordinates, images):
         """
@@ -136,25 +207,12 @@ class AffineTrafo(object):
         """
         im_coords = []
         for i, (x, y) in enumerate(coordinates):
-            im_coord = self.calc_peak_coordinates(images[i])
+            im_coord = self.fit_peak_coordinates(images[i])
             if im_coord is not None:
                 im_coords.append(im_coords)
+        self.fit_affine_transform(im_coords, coordinates)
 
     # ++++ Perform transformation ++++
-
-    @property
-    def rotation_matrix(self):
-        return np.array([
-            [np.cos(self.rotation), -np.sin(self.rotation)],
-            [np.sin(self.rotation), np.cos(self.rotation)]
-        ])
-
-    @property
-    def inverse_rotation_matrix(self):
-        return np.array([
-            [np.cos(self.rotation), np.sin(self.rotation)],
-            [-np.sin(self.rotation), np.cos(self.rotation)]
-        ])
 
     def trafo(self, x, y):
         """
@@ -165,11 +223,11 @@ class AffineTrafo(object):
         # Numpy broadcasting support
         if len(var.shape) > 1:
             var = np.moveaxis(var, 0, -2)
-            res = np.dot(self.rotation_matrix, var)
-            res = np.moveaxis(res, 0, -1) * self.scale + self.offset
+            res = np.dot(self.matrix, var)
+            res = np.moveaxis(res, 0, -1) + self.offset
             res = np.moveaxis(res, -1, 0)
         else:
-            res = np.dot(self.rotation_matrix, var) * self.scale + self.offset
+            res = np.dot(self.matrix, var) + self.offset
         return res
 
     def inverse_trafo(self, x, y):
@@ -181,11 +239,11 @@ class AffineTrafo(object):
         # Numpy broadcasting support
         if len(var.shape) > 1:
             var = np.moveaxis(var, 0, -2)
-            res = var / self.scale - self.offset
-            res = np.dot(self.inverse_rotation_matrix, var)
+            res = var - self.offset
+            res = np.dot(np.linalg.inv(self.matrix), res)
             res = np.moveaxis(res, -1, 0)
         else:
-            res = np.dot(self.rotation_matrix, var / self.scale - self.offset)
+            res = np.dot(np.linalg.inv(self.matrix), var - self.offset)
         return res
 
     def __call__(self, image, shape, mode="quintic"):
@@ -321,17 +379,17 @@ def cv_error_diffusion(target_pattern):
 
     Returns
     -------
-    bool_pattern : np.ndarray(2, bool)
-        Boolean image from error diffusion.
+    bool_pattern : np.ndarray(2, float)
+        Boolean image (0., 1.) from error diffusion.
     """
-    bool_pattern = np.zeros_like(target_pattern, dtype=bool)
+    bool_pattern = np.zeros_like(target_pattern, dtype=float)
     target_pattern = np.copy(target_pattern)
     for c1 in range(target_pattern.shape[0] - 1):
         for c2 in range(target_pattern.shape[1] - 1):
             if target_pattern[c1, c2] > 0.5:
-                bool_pattern[c1, c2] = True
+                bool_pattern[c1, c2] = 1
             else:
-                bool_pattern[c1, c2] = False
+                bool_pattern[c1, c2] = 0
             err = target_pattern[c1, c2] - bool_pattern[c1, c2]
             target_pattern[c1, c2 + 1] += 7 / 16. * err
             target_pattern[c1 + 1, c2 + 1] += 1 / 16. * err
@@ -386,19 +444,44 @@ class DmdControl(object):
         Callback function on image recording.
         Call signature: im_callback(image)
         where image is a numpy.ndarray(2).
+
+    Usage
+    -----
+    * Construction using camera and DMD drivers and optionally an
+      on-image-ready callback function.
+    * Initialize hardware using setup and connect methods.
+    * To set a simple pattern, use set_pattern and
+      display_pattern methods.
+    * To perform greyscale image display:
+        * Set the camera-to-DMD transformation parameters using
+          find_trafo (measured) or load_trafo (from file)
+          methods.
+        * Load a target image using load_image method.
+        * Use set_pattern to set the corresponding reflectance
+          pattern and display_pattern to apply the pattern to
+          hardware.
+        * Use iterate_pattern to get correction feedback.
+    * To analyze a resulting beam profile image, use the
+      record_image method.
+    * Use close and shutdown methods to end operation.
     """
 
     def __init__(
         self, cam, dsp, im_callback=misc.do_nothing
     ):
-        # Driver
         self.cam = cam
         self.dsp = dsp
         self.im_callback = im_callback
         im_resolution = np.array((
             cam.cfg.pixel_hrzt_count.val, cam.cfg.pixel_vert_count.val
         ))
-        self.im_fixed = np.full(im_resolution, np.nan, dtype=float)
+        self.trafo = AffineTrafo()
+        self.pattern = None
+        self.set_pattern(pattern="black")
+        self.raw = np.full(im_resolution, np.nan, dtype=float)
+        self.image = np.full(im_resolution, np.nan, dtype=float)
+        self.rms = None
+        self.save_data = None   # TODO: create save_data
 
     def setup(self):
         self.cam.setup()
@@ -421,58 +504,179 @@ class DmdControl(object):
         self.dsp.stop()
         self.dsp.close()
 
-    def record_fixed(self):
-        im = self.cam.grab()
-        self.im_fixed = np.copy(np.squeeze(im, axis=-1).T)
-        return im
+    # ++++++++++++++++++++++++++++++++
 
-    def record_trace(self, break_condition=None):
+    def find_trafo(self, coords=None, num=(11, 8)):
         """
+        Uses a series of single pixel illuminations to estimate affine
+        transformation between DMD and camera sensor.
+
         Parameters
         ----------
-        break_condition : None or callable
-            Function returning bool that is called to determine
-            whether to break loop. Call signature: break_condition().
-            If None, no break condition is set.
+        coords : list((tuple(int)))
+            List of DMD pixel coordinates to be used to
+            transformation parameters.
+            Overwrites the num parameter.
+        num : int or tuple(int)
+            Creates an equidistant grid of coords with
+            num points. Tuples set the number of points
+            in (horizontal, vertical) direction. Scalar
+            num is interpreted as (num, num).
         """
-        for volt in self.voltages:
-            self.piezo.write_voltage(volt)
-            im = np.squeeze(self.cam.grab(), axis=-1).T
-            self.process_image(volt, im)
-            if callable(break_condition):
-                if break_condition():
-                    break
+        if coords is None:
+            if isinstance(num, int):
+                num = (num, num)
+            x = np.linspace(0, self.dsp.cfg.pixel_hrzt_count.val,
+                            num=num[0], dtype=int)
+            y = np.linspace(0, self.dsp.cfg.pixel_vert_count.val,
+                            num=num[1], dtype=int)
+            xgrid, ygrid = np.meshgrid(x, y)
+            xx, yy = xgrid.flatten()[np.newaxis], ygrid.flatten()[np.newaxis]
+            coords = np.concatenate(xx, yy).T
+        coords = np.array(coords, dtype=int)
+        images = []
+        for c in coords:
+            dmd_image = np.full(
+                (self.dsp.cfg.pixel_hrzt_count.val,
+                 self.dsp.cfg.pixel_vert_count.val),
+                0
+            )
+            dmd_image[tuple(c)] = 1
+            self.dsp.init(dmd_image)
+            self.dsp.write_all()
+            self.dsp.run()
+            time.sleep(0.1)
+            im = self.cam.grab()
+            images.append(np.copy(np.squeeze(im, axis=-1).T))
+            self.dsp.stop()
+        self.trafo.calc_trafo(coords, images)
 
-    def process_image(self, voltage, image):
-        self.im_max.add_element(voltage, image)
-        self.im_min.add_element(voltage, image)
-        self.trace.add_element(image)
+    def load_trafo(self, file_path):
+        """
+        Loads an affine transformation file.
 
-    def calc_coherence(self):
-        mask = np.logical_and(self.im_fixed > 5, self.im_scanned > 5)
-        mean = self.im_fixed + self.im_scanned
-        norm = 2 * np.sqrt(self.im_fixed * self.im_scanned)
-        self.spatial_coherence = np.full_like(mean, np.nan)
-        self.spatial_coherence[mask] = 0.5 * (
-            np.abs((self.im_max.result[mask] - mean[mask]) / norm[mask])
-            + np.abs((self.im_min.result[mask] - mean[mask]) / norm[mask])
+        Parameters
+        ----------
+        file_path : str
+            File path to transformation file.
+        """
+        self.trafo = hdf.read_hdf(AffineTrafo, file_path=file_path)
+
+    # ++++++++++++++++++++++++++++++++
+
+    def set_pattern(self, pattern="image"):
+        """
+        Sets a pattern to the DMD.
+
+        Parameters
+        ----------
+        pattern : np.ndarray(2, float) or str or int
+            Reflectance pattern.
+            "image"
+                Reflectance pattern according to loaded image
+                using the error diffusion binarization.
+            "white"
+                Full on.
+            "black"
+                Full off.
+            int
+                Checkerboard with given number as linear
+                square pixel count.
+        """
+        shape = (
+            self.dsp.cfg.pixel_hrzt_count.val,
+            self.dsp.cfg.pixel_vert_count.val
         )
-        mean = np.array([mean[tuple(coord)] for coord in self.trace.coords])
-        norm = np.array([norm[tuple(coord)] for coord in self.trace.coords])
-        trace_t = self.trace.trace.T
-        self.temporal_coherence = ((trace_t - mean) / norm).T
+        if isinstance(pattern, str):
+            if pattern == "image":
+                pattern = cv_error_diffusion(
+                    calc_pattern(self.target, self.raw)
+                )
+            elif pattern == "white":
+                pattern = np.ones(shape, dtype=float)
+            elif pattern == "black":
+                pattern = np.zeros(shape, dtype=float)
+        elif isinstance(pattern, int):
+            pattern = (pattern, pattern)
+        if isinstance(pattern, tuple):
+            pattern = np.kron(
+                [[1, 0] * (shape[0] // pattern[0]),
+                 [0, 1] * (shape[1] // pattern[1])],
+                np.ones(pattern)
+            )
+            pattern = misc.resize_numpy_array(pattern, shape, fill_value=0)
+        self.pattern = pattern
+
+    def display_pattern(self):
+        """
+        Displays the loaded pattern.
+        """
+        self.dsp.stop()
+        self.dsp.init(self.pattern)
+        self.dsp.write_all()
+        self.dsp.run()
+
+    def record_raw(self):
+        """
+        Records an full on image.
+        """
+        self.set_pattern(pattern="white")
+        self.display_pattern()
+        time.sleep(0.1)
+        self.raw = np.copy(np.squeeze(self.cam.grab(), axis=-1).T)
+        self.image = np.copy(self.raw)
+
+    def load_image(self, file_path, record_raw=True):
+        """
+        Loads a target image from file and records a full on reference image.
+        """
+        # TODO: reset save_data
+        if record_raw:
+            self.record_raw()
+        # load image
+
+    def iterate_pattern(self, num=1):
+        """
+        Sets the DMD reflectance pattern based on the loaded image and
+        previously recorded white image.
+
+        Parameters
+        ----------
+        num : int
+            Number of iterations.
+
+        Notes
+        -----
+        Assumes initial pattern was set and recorded.
+        """
+        for i in range(num):
+            pattern = iterate_pattern(
+                self.target, self.image, param_p=0.7, param_s=0.1, cutoff=0.01
+            )
+            self.set_pattern(pattern=pattern)
+            self.record_image()
+
+    def record_image(self):
+        """
+        Records and analyzes an image.
+        """
+        im = self.cam.grab()
+        self.image = np.copy(np.squeeze(im, axis=-1).T)
+        self.rms = calc_deviation_rms(self.target, self.image, mask=0.01)
+        # TODO: add to save_data
+
+    def reset_save(self):
+        """
+        Resets the save_data.
+        """
+        self.save_data = None   # TODO:
 
     def save(self, file_path):
+        """
+        Saves recorded image, target image, reflectance pattern.
+        """
         file_path = misc.assume_endswith(file_path, ".hdf5")
-        data = dev.InterferometerItem(
-            self.voltages,
-            self.im_max.result, self.im_max.index,
-            self.im_min.result, self.im_min.index,
-            self.im_fixed, self.im_scanned,
-            self.trace.trace, self.trace.coords,
-            self.cam.cfg, self.piezo.cfg
-        )
-        hdf.write_hdf(data, file_path)
+        hdf.write_hdf(self.save_data, file_path)
 
 
 ###############################################################################
@@ -481,22 +685,18 @@ class DmdControl(object):
 class DmdControlGui(DmdControl, QWidget):
 
     sUpdateImage = pyqtSignal(np.ndarray)
-    sRecordTrace = pyqtSignal()
-    sTraceRecorded = pyqtSignal()
 
     def __init__(
-        self, cam=None, piezo=None, voltages=np.linspace(0, 75, num=501),
-        trace_coords=3
+        self, cam=None, dsp=None
     ):
         QWidget.__init__(self)
         if cam is None:
             cam = get_cam()
-        if piezo is None:
-            piezo = get_piezo()
-        Interferometer.__init__(
+        if dsp is None:
+            dsp = get_dsp()
+        DmdControl.__init__(
             self,
-            cam, piezo, voltages=voltages, trace_coords=trace_coords,
-            im_callback=self.sUpdateImage.emit
+            cam, dsp, im_callback=self.sUpdateImage.emit
         )
         self._init_gui()
         self._init_connection()
@@ -507,81 +707,52 @@ class DmdControlGui(DmdControl, QWidget):
 
     def _init_gui(self):
         self.qt_layout_preview = QVBoxLayout()
-        self.qt_button_connect = QPushButton("Start camera")
-        self.qt_button_stop = QPushButton("Stop camera")
-        # self.qt_image_preview = pg.ImageView()
+        self.qt_button_connect = QPushButton("Start")
+        self.qt_button_stop = QPushButton("Stop")
+        self.qt_button_trafo_load = QPushButton("Load transformation")
+        self.qt_button_trafo_find = QPushButton("Find transformation")
         self.qt_image_preview = qtimage.QtImage(aspect_ratio=1)
         self.qt_image_preview.set_image_format(channel="mono", bpc=8)
+        self.qt_image_trafoview = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_trafoview.set_image_format(channel="mono", bpc=8)
         self.qt_layout_preview.addWidget(self.qt_button_connect)
         self.qt_layout_preview.addWidget(self.qt_button_stop)
+        self.qt_layout_preview.addWidget(self.qt_button_trafo_load)
+        self.qt_layout_preview.addWidget(self.qt_button_trafo_find)
         self.qt_layout_preview.addWidget(self.qt_image_preview)
+        self.qt_layout_preview.addWidget(self.qt_image_trafoview)
 
-        self.qt_layout_ref = QVBoxLayout()
-        self.qt_button_toggle = QPushButton("Toggle reference image")
-        self.qt_button_fixed = QPushButton("Fixed image")
-        self.qt_label_fixed = QLabel("Fixed image")
-        # self.qt_image_fixed = pg.ImageView()
-        self.qt_image_fixed = qtimage.QtImage(aspect_ratio=1)
-        self.qt_image_fixed.set_image_format(channel="mono", bpc=8)
-        self.qt_button_scanned = QPushButton("Scanned image")
-        self.qt_label_scanned = QLabel("Scanned image")
-        # self.qt_image_scanned = pg.ImageView()
-        self.qt_image_scanned = qtimage.QtImage(aspect_ratio=1)
-        self.qt_image_scanned.set_image_format(channel="mono", bpc=8)
-        self.qt_layout_ref.addWidget(self.qt_button_toggle)
-        self.qt_layout_ref.addWidget(self.qt_button_fixed)
-        self.qt_layout_ref.addWidget(self.qt_button_scanned)
-        self.qt_layout_ref.addWidget(self.qt_label_fixed)
-        self.qt_layout_ref.addWidget(self.qt_label_scanned)
-        self.qt_layout_ref.addWidget(self.qt_image_fixed)
-        self.qt_layout_ref.addWidget(self.qt_image_scanned)
-
-        self.qt_layout_coherence = QVBoxLayout()
-        self.qt_button_measure = QPushButton("Measure coherence")
-        self.qt_button_abort = QPushButton("Abort measurement")
-        self.qt_button_coherence = QPushButton("Calculate coherence")
+        self.qt_layout_meas = QVBoxLayout()
+        self.qt_button_white = QPushButton("Set white pattern")
+        self.qt_button_black = QPushButton("Set black pattern")
+        self.qt_button_image_load = QPushButton("Load image")
+        self.qt_button_image_iterate = QPushButton("Iterate image")
+        self.qt_button_image_record = QPushButton("Record image")
         self.qt_button_save = QPushButton("Save data")
-        self.qt_button_reset_piezo = QPushButton("Reset piezo")
-        # self.qt_image_coherence = pg.ImageView()
-        self.qt_image_coherence = qtimage.QtImage(aspect_ratio=1)
-        self.qt_image_coherence.set_image_format(channel="mono", bpc=8)
-        self.qt_layout_coherence.addWidget(self.qt_button_measure)
-        self.qt_layout_coherence.addWidget(self.qt_button_abort)
-        self.qt_layout_coherence.addWidget(self.qt_button_coherence)
-        self.qt_layout_coherence.addWidget(self.qt_button_save)
-        self.qt_layout_coherence.addWidget(self.qt_button_reset_piezo)
-        self.qt_layout_coherence.addWidget(self.qt_image_coherence)
+        self.qt_image_target = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_target.set_image_format(channel="mono", bpc=8)
+        self.qt_image_recorded = qtimage.QtImage(aspect_ratio=1)
+        self.qt_image_recorded.set_image_format(channel="mono", bpc=8)
+        self.qt_layout_meas.addWidget(self.qt_button_white)
+        self.qt_layout_meas.addWidget(self.qt_button_black)
+        self.qt_layout_meas.addWidget(self.qt_button_image_load)
+        self.qt_layout_meas.addWidget(self.qt_button_image_iterate)
+        self.qt_layout_meas.addWidget(self.qt_button_image_record)
+        self.qt_layout_meas.addWidget(self.qt_button_save)
+        self.qt_layout_meas.addWidget(self.qt_image_target)
+        self.qt_layout_meas.addWidget(self.qt_image_recorded)
 
         self.qt_layout_main = QHBoxLayout()
         self.qt_layout_main.addLayout(self.qt_layout_preview)
-        self.qt_layout_main.addLayout(self.qt_layout_ref)
-        self.qt_layout_main.addLayout(self.qt_layout_coherence)
-        self.setWindowTitle("Interferometer - Coherence Measurement")
+        self.qt_layout_main.addLayout(self.qt_layout_meas)
+        self.setWindowTitle("Digital Micromirror Device - Control")
         self.setLayout(self.qt_layout_main)
 
     def _init_visibility(self):
         super().show()
-        self.qt_button_connect.show()
-        self.qt_button_stop.hide()
-        self.qt_image_preview.show()
-        self.qt_button_toggle.hide()
-        self.qt_button_fixed.show()
-        self.qt_label_fixed.hide()
-        self.qt_image_fixed.hide()
-        self.qt_button_scanned.show()
-        self.qt_label_scanned.show()
-        self.qt_image_scanned.show()
-        self.qt_button_measure.hide()
-        self.qt_button_abort.hide()
-        self.qt_button_coherence.hide()
-        self.qt_button_save.hide()
-        self.qt_button_reset_piezo.show()
-        self.qt_image_coherence.show()
 
     def _init_connection(self):
         self.sUpdateImage.connect(self._on_update_image_emitted)
-        self.sRecordTrace.connect(self._on_record_trace_emitted)
-        self.sTraceRecorded.connect(self._on_trace_recorded_emitted)
         self.qt_button_connect.clicked.connect(self._on_button_connect_clicked)
         self.qt_button_stop.clicked.connect(self._on_button_stop_clicked)
         self.qt_button_toggle.clicked.connect(self._on_button_toggle_clicked)
@@ -599,7 +770,6 @@ class DmdControlGui(DmdControl, QWidget):
 
     @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
-        # self.qt_image_preview.setImage(im)
         self.qt_image_preview.update_image(im.astype("uint8"))
 
     @pyqtSlot()
@@ -615,101 +785,13 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_button_stop.setVisible(False)
 
     @pyqtSlot()
-    def _on_button_toggle_clicked(self):
-        if self.qt_label_fixed.isVisible():
-            self.qt_label_fixed.hide()
-            self.qt_image_fixed.hide()
-            self.qt_label_scanned.show()
-            self.qt_image_scanned.show()
-        elif self.qt_label_scanned.isVisible():
-            self.qt_label_scanned.hide()
-            self.qt_image_scanned.hide()
-            self.qt_label_fixed.show()
-            self.qt_image_fixed.show()
-
-    @pyqtSlot()
-    def _on_button_fixed_clicked(self):
-        im = self.record_fixed()
-        # self.qt_image_fixed.setImage(self.im_fixed)
-        self.qt_image_fixed.update_image(im.astype("uint8"))
-        self.qt_label_fixed.show()
-        self.qt_image_fixed.show()
-        self.qt_label_scanned.hide()
-        self.qt_image_scanned.hide()
-        if self._refs_set():
-            self.qt_button_measure.show()
-            self.qt_button_toggle.show()
-
-    @pyqtSlot()
-    def _on_button_scanned_clicked(self):
-        im = self.record_scanned()
-        # self.qt_image_scanned.setImage(self.im_scanned)
-        self.qt_image_scanned.update_image(im.astype("uint8"))
-        self.qt_label_scanned.show()
-        self.qt_image_scanned.show()
-        self.qt_label_fixed.hide()
-        self.qt_image_fixed.hide()
-        if self._refs_set():
-            self.qt_button_measure.show()
-            self.qt_button_toggle.show()
-
-    @pyqtSlot()
-    def _on_button_measure_clicked(self):
-        self.sRecordTrace.emit()
-        self.qt_button_measure.hide()
-        self.qt_button_abort.show()
-        self.qt_button_coherence.hide()
-        self.qt_button_save.hide()
-
-    def __record_trace_thread_function(self):
-        self.record_trace(break_condition=(
-            lambda: self.__record_trace_thread.stop_event.wait(timeout=0.0)
-        ))
-        self.sTraceRecorded.emit()
-
-    @pyqtSlot()
-    def _on_record_trace_emitted(self):
-        self.__record_trace_thread = thread.StoppableThread()
-        self.__record_trace_thread.run = self.__record_trace_thread_function
-        self.__record_trace_thread.start()
-
-    @pyqtSlot()
-    def _on_button_abort_clicked(self):
-        self.__record_trace_thread.stop()
-
-    @pyqtSlot()
-    def _on_trace_recorded_emitted(self):
-        self.qt_button_measure.show()
-        self.qt_button_abort.hide()
-        self.qt_button_coherence.show()
-        self.qt_button_save.show()
-
-    @pyqtSlot()
-    def _on_button_coherence_clicked(self):
-        self.calc_coherence()
-        # self.qt_image_coherence.setImage(self.spatial_coherence)
-        coh_uint8 = (128 * self.spatial_coherence + 127).astype("uint8")
-        coh_uint8 = np.expand_dims(coh_uint8, axis=0).T
-        self.qt_image_coherence.update_image(coh_uint8)
-
-    @pyqtSlot()
     def _on_button_save_clicked(self):
         file_path, _ = QFileDialog.getSaveFileName(
-            caption="Save file as", filter="Coherence Items (*.hdf5)"
+            caption="Save file as", filter="DMD save data (*.hdf5)"
         )
         if file_path == "":
             return
         self.save(file_path)
-
-    @pyqtSlot()
-    def _on_button_reset_piezo_clicked(self):
-        self.piezo.write_voltage(self.voltages[0])
-
-    def _refs_set(self):
-        return not (
-            np.any(np.isnan(self.im_fixed))
-            or np.any(np.isnan(self.im_scanned))
-        )
 
 
 ###############################################################################

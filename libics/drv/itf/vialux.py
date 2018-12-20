@@ -1,7 +1,7 @@
 import os
 
 from libics import env
-import libics.drv.itf.api.alpV42 as alp42
+from .api import alpV42 as alp42
 
 
 ###############################################################################
