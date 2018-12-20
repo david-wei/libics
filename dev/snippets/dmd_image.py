@@ -560,6 +560,48 @@ class DmdControl(object):
 
     # ++++++++++++++++++++++++++++++++
 
+    def find_cam_exposure(self, max_cutoff=2/3, max_iterations=10):
+        """
+        Varies the camera's exposure time to maximize image brightness
+        while keeping the maximum ADC value below saturation.
+
+        Parameters
+        ----------
+        max_cutoff : float
+            Minimum relative brightness required for the image
+            maximum.
+        max_iterations : int
+            Maximum number of iterations.
+
+        Returns
+        -------
+        prev_exposure_time : float
+            Previous exposure time in seconds (s).
+            Allows the calling function to reset the settings.
+        """
+        prev_exposure_time = self.cam.cfg.exposure_time.val
+        max_adc = 2**self.cam.cfg.channel_bitdepth.val
+        loop = True
+        it = -1
+        while loop:
+            it += 1
+            saturation = self.cam.grab().max() / max_adc
+            if saturation >= 1:
+                self.cam.cfg.exposure_time.write(
+                    val=self.cam.cfg.exposure_time.val * max_cutoff
+                )
+            elif saturation < max_cutoff:
+                self.cam.cfg.exposure_time.write(
+                    val=self.cam.cfg.exposure_time.val / max_cutoff
+                )
+            else:
+                loop = False
+            if it >= max_iterations:
+                loop = False
+        return prev_exposure_time
+
+    # ++++++++++++++++++++++++++++++++
+
     def find_trafo(self, coords=None, num=(11, 8)):
         """
         Uses a series of single pixel illuminations to estimate affine
@@ -589,6 +631,7 @@ class DmdControl(object):
             coords = np.concatenate((xx, yy)).T
         coords = np.array(coords, dtype=int)
         images = []
+        prev_exposure_time = self.cam.cfg.exposure_time.val
         for c in coords:
             dmd_image = np.zeros((self.dsp.cfg.pixel_hrzt_count.val,
                                   self.dsp.cfg.pixel_vert_count.val))
@@ -597,9 +640,11 @@ class DmdControl(object):
             self.dsp.write_all()
             self.dsp.run()
             time.sleep(0.1)
+            self.find_cam_exposure()
             im = self.cam.grab()
             images.append(np.copy(np.squeeze(im, axis=-1).T))
             self.dsp.stop()
+        self.cam.cfg.exposure_time.write(val=prev_exposure_time)
         self.trafo.calc_trafo(images, coords)
         self.data.trafo = self.trafo
 
