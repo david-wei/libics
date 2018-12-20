@@ -3,18 +3,21 @@ import time
 
 import PIL
 import numpy as np
-from scipy import interpolate, optimize
+from scipy import ndimage, optimize
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QHBoxLayout, QVBoxLayout,
     QWidget, QFileDialog
 )
 # import pyqtgraph as pg
 
+from libics import env
 from libics.drv import drv, itf
 from libics.util import misc, InheritMap
 from libics.file import hdf
+from libics.trafo import resize
 from libics.display import qtimage
 
 
@@ -143,62 +146,110 @@ class AffineTrafo(hdf.HDFBase):
             (Fractional) image index coordinates of fit position.
             None: If fit failed.
         """
-        if image.max() / image.mean() < snr:
+        max_, mean = image.max(), image.mean()
+        if max_ == 0 or mean == 0 or max_ / mean < snr:
+            print("fit peak coordinates: insufficient snr")
             return None
-        xgrid, ygrid = np.meshgrid(
-            np.arange(image.shape[0], np.arange(image.shape[1]))
+        (xmin, ymin), (xmax, ymax) = resize.resize_on_mass(
+            image, total_mass=0.5
         )
-        xx, yy, zz = xgrid.flatten(), ygrid.flatten(), image.flatten()
-        var = [(xx[i], yy[i]) for i in range(len(xx))]
-        (_, x, y, _, _, _), _ = optimize.curve_fit(
+        print("min:", (xmin, ymin), " max:", (xmax, ymax))
+        xgrid, ygrid = np.meshgrid(
+            np.arange(xmin, xmax), np.arange(ymin, ymax)
+        )
+        xx, yy = xgrid.flatten(), ygrid.flatten()
+        zz = image[xmin:xmax, ymin:ymax].flatten()
+        import matplotlib.pyplot as plt
+        plt.pcolormesh(image[xmin:xmax, ymin:ymax])
+        plt.show()
+        var = np.concatenate((xx[np.newaxis], yy[np.newaxis]))
+        (_, x, y, _, _, _), cov = optimize.curve_fit(
             self.__fit_pc_func, var, zz
         )
+        _, dx, dy, _, _, _ = np.diag(cov)
+        if abs((dx - x) * x) > x**2 / 2 or abs((dy - y) * y) > y**2 / 2:
+            print("fit peak coordinates: did not converge")
+            return None
         return x, y
 
-    def __fit_at_func(self, vars, m11, m12, m21, m22, b1, b2):
+    def __lsq_at_func(self, param, var, func_val):
         """
         Parameters
         ----------
-        vars : cam_x, cam_y, dmd_x, dmd_y
-        m_ij : matrix entries
-        b_i : offset entries
+        param : np.ndarray(1, float)
+            Array of parameters in the following order:
+            m11, m12, m21, m22, b1, b2.
+        var : np.ndarray(2, float)
+            Independent variables with shape (2, N)
+            as (x, y) camera coordinates.
+            N is the number of data points.
+        func_val : np.ndarray(2, float)
+            Functional variables with shape (2, N)
+            as (x, y) DMD coordinates.
         """
-        return (
-            (m11 * vars[0] + m12 * vars[1] + b1 - vars[2])**2
-            + (m21 * vars[0] + m22 * vars[1] + b2 - vars[3])**2
+        chi2 = np.sum(
+            (param[0] * var[0] + param[1] * var[1] + param[4] - func_val[0])**2
         )
+        chi2 += np.sum(
+            (param[2] * var[0] + param[3] * var[1] + param[5] - func_val[0])**2
+        )
+        return chi2
 
-    def fit_affine_transform(self, cam_coords, dmd_coords):
+    def fit_affine_transform(
+        self, cam_coords, dsp_coords, cam_shape, dsp_shape
+    ):
         """
         Fits the affine transform matrix and offset vector.
 
         Parameters
         ----------
-        cam_coords, dmd_coords : list(np.ndarray(1, float))
+        cam_coords, dsp_coords : list(np.ndarray(1, float))
             List of (camera, DMD) coordinates in corresponding order.
-        """
-        vars = [np.concatenate(cam_coords[i], dmd_coords[i])
-                for i in range(len(cam_coords))]
-        res = np.full(len(cam_coords), 0, dtype=float)
-        matrix = np.full((2, 2), np.nan, dtype=float)
-        offset = np.full(2, np.nan, dtype=float)
-        (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
-         offset[0], offset[1]), _ = optimize.curve_fit(
-             self.__fit_at_func, vars, res
-        )
-        self.matrix = matrix
-        self.offset = offset
+        cam_shape, dsp_shape : tuple(int)
+            (Camera, DMD) resolution.
 
-    def calc_trafo(self, coordinates, images):
+        Returns
+        -------
+        success : bool
+            Whether transformation fit succeeded.
+            Matrix and offset attributes are only written
+            in the case of success.
+        """
+        cam_res = np.array(cam_shape)
+        dsp_res = np.array(dsp_shape)
+        _angle = np.pi / 2
+        _scale = np.mean(dsp_res / cam_res)
+        matrix = _scale * np.array([
+            [np.cos(_angle), np.sin(_angle)],
+            [-np.sin(_angle), np.cos(_angle)]],
+        )
+        offset = dsp_res - cam_res
+        cam_coords = np.array(cam_coords).T
+        dsp_coords = np.array(dsp_coords).T
+        res = optimize.least_squares(
+            lambda x: self.__lsq_at_func(x, cam_coords, dsp_coords),
+            (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
+             offset[0], offset[1]),
+        )
+        if res.success:
+            (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
+             offset[0], offset[1]) = res.x
+            self.matrix = matrix
+            self.offset = offset
+        return res.success
+
+    def calc_trafo(self, cam_images, dsp_coords, dsp_shape=(1024, 768)):
         """
         Estimates the transformation parameters.
 
         Parameters
         ----------
-        coordinates : list((tuple(int)))
-            List of DMD pixel coordinates.
-        images : list(np.ndarray(2, float))
+        cam_images : list(np.ndarray(2, float))
             List of camera images.
+        dsp_coords : list((tuple(int)))
+            List of DMD pixel dsp_coords.
+        dsp_shape : tuple(int)
+            DMD resolution.
 
         Notes
         -----
@@ -206,51 +257,35 @@ class AffineTrafo(hdf.HDFBase):
         * At least two images are required. Additional data is used to obtain
           a more accurate map.
         """
-        im_coords = []
-        for i, (x, y) in enumerate(coordinates):
-            im_coord = self.fit_peak_coordinates(images[i])
-            if im_coord is not None:
-                im_coords.append(im_coords)
-        self.fit_affine_transform(im_coords, coordinates)
+        cam_coords = []
+        ind_remove = []
+        for i, (x, y) in enumerate(dsp_coords):
+            print("\rFit peak dsp_coords {:d}".format(i), end="")
+            im_coord = self.fit_peak_coordinates(cam_images[i])
+            if im_coord is None:
+                ind_remove.append(i)
+            else:
+                cam_coords.append(cam_coords)
+        print("\nDelete coordinate items", ind_remove)
+        dsp_coords = np.delete(dsp_coords, ind_remove, axis=0)
+        if len(cam_coords) >= 2:
+            print("Fit affine transform")
+            self.fit_affine_transform(
+                cam_coords, dsp_coords, cam_images[0].shape, dsp_shape
+            )
+        else:
+            print("No valid images were taken")
+            return None
 
     # ++++ Perform transformation ++++
 
-    def trafo(self, x, y):
-        """
-        Performs the affine transformation as specified by the offset,
-        scale, rotation attributes.
-        """
-        var = np.array([x, y])
-        # Numpy broadcasting support
-        if len(var.shape) > 1:
-            var = np.moveaxis(var, 0, -2)
-            res = np.dot(self.matrix, var)
-            res = np.moveaxis(res, 0, -1) + self.offset
-            res = np.moveaxis(res, -1, 0)
-        else:
-            res = np.dot(self.matrix, var) + self.offset
-        return res
+    def __call__(self, image, shape, order=3, direction="cam_to_dsp"):
+        if direction == "cam_to_dsp":
+            return self.cv_cam_to_dsp(image, shape, order=order)
+        elif direction == "dsp_to_cam":
+            return self.cv_dsp_to_cam(image, shape, order=order)
 
-    def inverse_trafo(self, x, y):
-        """
-        Performs the inverse affine transformation as specified by the offset,
-        scale, rotation attributes.
-        """
-        var = np.array([x, y])
-        # Numpy broadcasting support
-        if len(var.shape) > 1:
-            var = np.moveaxis(var, 0, -2)
-            res = var - self.offset
-            res = np.dot(np.linalg.inv(self.matrix), res)
-            res = np.moveaxis(res, -1, 0)
-        else:
-            res = np.dot(np.linalg.inv(self.matrix), var - self.offset)
-        return res
-
-    def __call__(self, image, shape, mode="quintic"):
-        return self.cv_cam_to_dsp(image, shape, mode=mode)
-
-    def cv_cam_to_dsp(self, image, shape, mode="quintic"):
+    def cv_cam_to_dsp(self, image, shape, order=3):
         """
         Convert camera image to DMD image.
 
@@ -260,7 +295,7 @@ class AffineTrafo(hdf.HDFBase):
             Beam profile image.
         shape : tuple(int)
             Shape of trafo_image.
-        mode : "linear", "cubic", "quintic"
+        order : int
             Spline interpolation order.
 
         Returns
@@ -268,19 +303,12 @@ class AffineTrafo(hdf.HDFBase):
         trafo_image : np.ndarray(2, float)
             Beam profile on DMD.
         """
-        xgrid, ygrid = np.meshgrid(
-            np.arange(image.shape[0]), np.arange(image.shape[1]),
-            indexing="ij"
+        return ndimage.affine_transform(
+            image, self.matrix, offset=self.offset, output_shape=shape,
+            order=order, mode="constant", cval=0.0
         )
-        xgrid, ygrid = self.trafo(xgrid, ygrid)
-        f = interpolate.interp2d(xgrid, ygrid, image, kind=mode,
-                                 bounds_error=False, fill_value=0)
-        xnew, ynew = np.meshgrid(
-            np.arange(shape[0]), np.arange(shape[1]), indexing="ij"
-        )
-        return f(xnew, ynew)
 
-    def cv_dsp_to_cam(self, image, shape, mode="quintic"):
+    def cv_dsp_to_cam(self, image, shape, order=3):
         """
         Convert DMD image to camera image.
 
@@ -290,7 +318,7 @@ class AffineTrafo(hdf.HDFBase):
             Beam profile image.
         shape : tuple(int)
             Shape of trafo_image.
-        mode : "linear", "cubic", "quintic"
+        order : int
             Spline interpolation order.
 
         Returns
@@ -298,17 +326,12 @@ class AffineTrafo(hdf.HDFBase):
         trafo_image : np.ndarray(2, float)
             Beam profile on DMD.
         """
-        xgrid, ygrid = np.meshgrid(
-            np.arange(image.shape[0]), np.arange(image.shape[1]),
-            indexing="ij"
+        inv_matrix = np.linalg.inv(self.matrix)
+        inv_offset = -np.dot(inv_matrix, self.offset)
+        return ndimage.affine_transform(
+            image, inv_matrix, offset=inv_offset, output_shape=shape,
+            order=order, mode="constant", cval=0.0
         )
-        xgrid, ygrid = self.inverse_trafo(xgrid, ygrid)
-        f = interpolate.interp2d(xgrid, ygrid, image, kind=mode,
-                                 bounds_error=False, fill_value=0)
-        xnew, ynew = np.meshgrid(
-            np.arange(shape[0]), np.arange(shape[1]), indexing="ij"
-        )
-        return f(xnew, ynew)
 
 
 ###############################################################################
@@ -558,20 +581,17 @@ class DmdControl(object):
             if isinstance(num, int):
                 num = (num, num)
             x = np.linspace(0, self.dsp.cfg.pixel_hrzt_count.val,
-                            num=num[0], dtype=int)
+                            endpoint=False, num=num[0], dtype=int)
             y = np.linspace(0, self.dsp.cfg.pixel_vert_count.val,
-                            num=num[1], dtype=int)
+                            endpoint=False, num=num[1], dtype=int)
             xgrid, ygrid = np.meshgrid(x, y)
             xx, yy = xgrid.flatten()[np.newaxis], ygrid.flatten()[np.newaxis]
-            coords = np.concatenate(xx, yy).T
+            coords = np.concatenate((xx, yy)).T
         coords = np.array(coords, dtype=int)
         images = []
         for c in coords:
-            dmd_image = np.full(
-                (self.dsp.cfg.pixel_hrzt_count.val,
-                 self.dsp.cfg.pixel_vert_count.val),
-                0
-            )
+            dmd_image = np.zeros((self.dsp.cfg.pixel_hrzt_count.val,
+                                  self.dsp.cfg.pixel_vert_count.val))
             dmd_image[tuple(c)] = 1
             self.dsp.init(dmd_image)
             self.dsp.write_all()
@@ -580,7 +600,7 @@ class DmdControl(object):
             im = self.cam.grab()
             images.append(np.copy(np.squeeze(im, axis=-1).T))
             self.dsp.stop()
-        self.trafo.calc_trafo(coords, images)
+        self.trafo.calc_trafo(images, coords)
         self.data.trafo = self.trafo
 
     def load_trafo(self, file_path):
@@ -622,9 +642,10 @@ class DmdControl(object):
         )
         if isinstance(pattern, str):
             if pattern == "image":
-                pattern = cv_error_diffusion(
-                    calc_pattern(self.target, self.raw)
-                )
+                pattern = cv_error_diffusion(calc_pattern(
+                    self.target,
+                    self.trafo(self.raw, self.target.shape)
+                ))
             elif pattern == "white":
                 pattern = np.ones(shape, dtype=float)
             elif pattern == "black":
@@ -787,6 +808,12 @@ class DmdControlGui(DmdControl, QWidget):
         self.setWindowTitle("Digital Micromirror Device - Control")
         self.setLayout(self.qt_layout_main)
 
+        self.setAutoFillBackground(True)
+        bg_palette = self.palette()
+        bg_color = env.colors.get_rgb_255("Greys", 9, 3)
+        bg_palette.setColor(self.backgroundRole(), QColor(*bg_color))
+        self.setPalette(bg_palette)
+
     def _init_visibility(self):
         super().show()
         self.qt_button_connect.show()
@@ -837,7 +864,9 @@ class DmdControlGui(DmdControl, QWidget):
 
     def set_pattern(self, pattern="image"):
         super().set_pattern(pattern=pattern)
-        self.qt_image_pattern.update_image(self.pattern.astype("uint8"))
+        im_pattern = (self.pattern * 255).astype("uint8").T
+        self.qt_image_pattern.update_image(im_pattern[:, :, np.newaxis])
+        self.display_pattern()
 
     @pyqtSlot(np.ndarray)
     def _on_update_image_emitted(self, im):
@@ -857,7 +886,7 @@ class DmdControlGui(DmdControl, QWidget):
 
     @pyqtSlot()
     def _on_button_trafo_find_clicked(self):
-        self.find_trafo()
+        self.find_trafo(num=3)  # TODO: DEBUG change num
         self.qt_button_trafo_save.show()
 
     @pyqtSlot()
@@ -897,7 +926,11 @@ class DmdControlGui(DmdControl, QWidget):
         if file_path == "":
             return
         self.load_image(file_path)
-        self.qt_image_target.update_image(self.target.astype("uint8"))
+        im_target = (self.target * 255).astype("uint8").T
+        self.qt_image_target.update_image(im_target[:, :, np.newaxis])
+        self.set_pattern(pattern="image")
+        self.qt_button_image_iterate.show()
+        self.qt_button_data_save.show()
 
     @pyqtSlot()
     def _on_button_image_iterate_clicked(self):
@@ -906,7 +939,8 @@ class DmdControlGui(DmdControl, QWidget):
     @pyqtSlot()
     def _on_button_image_record_clicked(self):
         self.record_image()
-        self.qt_image_recorded.update_image(self.image.astype("uint8"))
+        im_recorded = (self.image * 255).astype("uint8").T
+        self.qt_image_recorded.update_image(im_recorded[:, :, np.newaxis])
 
     @pyqtSlot()
     def _on_button_data_save_clicked(self):
@@ -922,12 +956,6 @@ class DmdControlGui(DmdControl, QWidget):
 
 
 if __name__ == "__main__":
-
-    # Settings
-    piezo_voltages = np.linspace(0, 75, num=501)
-    piezo_address = "COM2"
-    piezo_channel = "x"
-    trace_coords = 3
 
     # Drivers
     cam = get_cam()

@@ -429,22 +429,29 @@ class RUNTM_DRV(RUNTM):
     )
 
 
-class RUNTM_DRV_CAM(RUNTM):
+class RUNTM_DRV_CAM(RUNTM_DRV):
     _err_description = ErrorDescription(
         "runtime error: camera interface error",
         411
     )
 
 
-class RUNTM_DRV_PIZ(RUNTM):
+class RUNTM_DRV_PIZ(RUNTM_DRV):
     _err_description = ErrorDescription(
         "runtime error: piezo interface error",
         412
     )
 
 
-class RUNTM_DRV_SPA(RUNTM):
+class RUNTM_DRV_SPA(RUNTM_DRV):
     _err_description = ErrorDescription(
         "runtime error: spectrum analyzer interface error",
         413
+    )
+
+
+class RUNTM_DRV_DSP(RUNTM_DRV):
+    _err_description = ErrorDescription(
+        "runtime error: display interface error",
+        414
     )

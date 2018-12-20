@@ -250,14 +250,14 @@ class TexasInstrumentsDLP7000(DspDrvBase):
         sequence_repetitions = self.cfg.sequence_repetitions.val
         if sequence_repetitions > 0:
             sequence_repetitions = self._interface.seq_inq(
-                self._interface.API.ALP_PARAMS_SEQ_INQUIRE["ALP_SEQ_REPEAT"]
+                self._interface.API.ALP_PARMS_SEQ_INQUIRE["ALP_SEQ_REPEAT"]
             )
         return sequence_repetitions
 
-    def _read_temperature(self, value):
+    def _read_temperature(self):
         return 256.0 * self._interface.dev_inq(
             self._interface.API
-            .ALP_PARAMS_DEV_INQUIRE["ALP_DDC_FPGA_TEMPERATURE"]
+            .ALP_PARMS_DEV_INQUIRE["ALP_DDC_FPGA_TEMPERATURE"]
         )
 
     # ++++ Helper methods +++++++++++++++

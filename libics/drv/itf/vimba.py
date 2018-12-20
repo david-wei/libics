@@ -6,7 +6,7 @@ import numpy as np
 
 try:
     import pymba
-except ImportError as e:
+except ImportError:
     print("""\
     Could not load AlliedVision Vimba API.
         If you are using a Vimba camera, install the Vimba C API and the
@@ -97,7 +97,7 @@ class VimbaCamera(object):
 
     Parameters
     ----------
-    vimba_camera : pymba.vimbaCamera.VimbaCamera
+    vimba_camera : pymba.vimba_camera.VimbaCamera
         The actual Vimba camera object.
 
     Raises
@@ -107,7 +107,7 @@ class VimbaCamera(object):
     """
 
     def __init__(self, vimba_camera):
-        if type(vimba_camera) != pymba.vimbacamera.VimbaCamera:
+        if type(vimba_camera) != pymba.vimba_camera.VimbaCamera:
             raise TypeError("invalid vimba_camera object")
         self._camera = vimba_camera
         self._is_open = False

@@ -244,7 +244,7 @@ class QtImage(QWidget, object):
 
         Parameters
         ----------
-        np_image : numpy.ndarray
+        np_image : numpy.ndarray(3)
             Integer numpy array with a format as specified using the
             `set_image_format` method.
 
@@ -266,8 +266,9 @@ class QtImage(QWidget, object):
         height, width = np_image.shape[0], np_image.shape[1]
         bytes_per_line = width * self._bytes_per_pixel
         # create deep copy of the image to retain the data
+        np_image = np_image.copy()
         image = QImage(np_image, width, height, bytes_per_line,
-                       self._image_format).copy()
+                       self._image_format)
         if self._rgb_swapped:
             image = image.rgbSwapped()
         self.sUpdateImage.emit(image)

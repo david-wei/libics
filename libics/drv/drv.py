@@ -1,8 +1,6 @@
-# System Imports
 import abc
 import threading
 
-# Package Imports
 from libics import cfg
 from libics import drv
 from libics.util import InheritMap
@@ -81,18 +79,28 @@ class DrvBase(abc.ABC):
     def write(self, msg):
         func = getattr(self, "_write_" + msg.name)
         self.interface_access.acquire()
-        if msg.value is None:
-            func()
-        else:
-            func(msg.value)
-        self.interface_access.release()
+        try:
+            if msg.value is None:
+                func()
+            else:
+                func(msg.value)
+        except cfg.err.RUNTM_DRV as e:
+            print(e)
+        finally:
+            self.interface_access.release()
 
     def read(self, msg):
         func = getattr(self, "_read_" + msg.name)
         self.interface_access.acquire()
-        ret = func()
-        self.interface_access.release()
-        msg.callback(ret)
+        ret = None
+        try:
+            ret = func()
+        except cfg.err.RUNTM_DRV as e:
+            print(e)
+        finally:
+            self.interface_access.release()
+        if ret is not None:
+            msg.callback(ret)
 
     def process(self):
         """

@@ -4,6 +4,7 @@ import ctypes
 
 import numpy as np
 
+from libics.cfg import err
 from libics.drv.itf import itf, vimba, vialux
 
 
@@ -419,7 +420,10 @@ class VialuxItf(BinItfBase):
         Stops any playing sequence.
         """
         self._alp.AlpProjHalt(self._dmd)
-        self._alp.AlpSeqFree(self._dmd, self._seq)
+        if self._seq is not None:
+            self._alp.AlpSeqFree(self._dmd, self._seq)
+        self._alp.AlpDevHalt(self._dmd)
+        _, self._dmd = self._alp.AlpDevAlloc(self.cfg.device)
         self._seq = None
         self._seq_repetitions = None
 
@@ -427,7 +431,7 @@ class VialuxItf(BinItfBase):
 
     def dev_inq(self, key):
         """Device inquiry."""
-        return self._alp.AlpDevInquire(self._dmd, key)
+        return self._alp.AlpDevInquire(self._dmd, key)[1]
 
     def dev_ctrl(self, key, val):
         """Device control."""
@@ -436,9 +440,11 @@ class VialuxItf(BinItfBase):
     def seq_inq(self, key):
         """Sequence inquiry."""
         if self._seq is None:
-            return None
+            raise err.RUNTM_DRV_DSP(
+                err.RUNTM_DRV_DSP.str("no sequence allocated")
+            )
         else:
-            return self._alp.AlpSeqInquire(self._dmd, self._seq, key)
+            return self._alp.AlpSeqInquire(self._dmd, self._seq, key)[1]
 
     def seq_ctrl(self, key, val):
         """Sequence control."""
@@ -447,6 +453,8 @@ class VialuxItf(BinItfBase):
 
     def seq_time(self, **kwargs):
         """
+        Set sequence timing.
+
         Parameters
         ----------
         illuminatetime : int
