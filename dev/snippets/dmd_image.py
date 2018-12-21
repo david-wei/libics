@@ -129,7 +129,7 @@ class AffineTrafo(hdf.HDFBase):
         exp = (var[0] - cx)**2 / sx**2 + (var[1] - cy)**2 / sy**2
         return amp * np.exp(-exp / 2) + off
 
-    def fit_peak_coordinates(self, image, snr=3):
+    def fit_peak_coordinates(self, image, snr=1.5):
         """
         Uses a Gaussian fit to obtain the peak coordinates of an image.
 
@@ -153,15 +153,11 @@ class AffineTrafo(hdf.HDFBase):
         (xmin, ymin), (xmax, ymax) = resize.resize_on_mass(
             image, total_mass=0.5
         )
-        print("min:", (xmin, ymin), " max:", (xmax, ymax))
         xgrid, ygrid = np.meshgrid(
             np.arange(xmin, xmax), np.arange(ymin, ymax)
         )
         xx, yy = xgrid.flatten(), ygrid.flatten()
         zz = image[xmin:xmax, ymin:ymax].flatten()
-        import matplotlib.pyplot as plt
-        plt.pcolormesh(image[xmin:xmax, ymin:ymax])
-        plt.show()
         var = np.concatenate((xx[np.newaxis], yy[np.newaxis]))
         (_, x, y, _, _, _), cov = optimize.curve_fit(
             self.__fit_pc_func, var, zz
@@ -560,7 +556,15 @@ class DmdControl(object):
 
     # ++++++++++++++++++++++++++++++++
 
-    def find_cam_exposure(self, max_cutoff=2/3, max_iterations=10):
+    @property
+    def target_norm(self):
+        """
+        Returns target dsp image normalized to transformed raw image.
+        """
+        target_norm = self.target * self.raw.sum() / self.target.sum()
+        return target_norm
+
+    def find_cam_exposure(self, max_cutoff=2/3, max_iterations=50):
         """
         Varies the camera's exposure time to maximize image brightness
         while keeping the maximum ADC value below saturation.
@@ -580,31 +584,41 @@ class DmdControl(object):
             Allows the calling function to reset the settings.
         """
         prev_exposure_time = self.cam.cfg.exposure_time.val
-        max_adc = 2**self.cam.cfg.channel_bitdepth.val
+        max_adc = float(2**self.cam.cfg.channel_bitdepth.val - 1)
         loop = True
         it = -1
+        print("Finding exposure time")
         while loop:
             it += 1
-            saturation = self.cam.grab().max() / max_adc
+            im = self.cam.grab()
+            while im is None:
+                im = self.cam.grab()
+            saturation = im.max() / max_adc
             if saturation >= 1:
                 self.cam.cfg.exposure_time.write(
                     val=self.cam.cfg.exposure_time.val * max_cutoff
                 )
+                self.cam.process()
             elif saturation < max_cutoff:
                 self.cam.cfg.exposure_time.write(
                     val=self.cam.cfg.exposure_time.val / max_cutoff
                 )
+                self.cam.process()
             else:
                 loop = False
             if it >= max_iterations:
                 loop = False
+            print("\r  {:.0f} µs (sat: {:.3f})       "
+                  .format(self.cam.cfg.exposure_time.val * 1e6, saturation),
+                  end="")
+        print()
         return prev_exposure_time
 
     # ++++++++++++++++++++++++++++++++
 
-    def find_trafo(self, coords=None, num=(11, 8)):
+    def find_trafo(self, coords=None, num=(11, 8), px=(5, 5)):
         """
-        Uses a series of single pixel illuminations to estimate affine
+        Uses a series of few-pixel illuminations to estimate affine
         transformation between DMD and camera sensor.
 
         Parameters
@@ -612,20 +626,37 @@ class DmdControl(object):
         coords : list((tuple(int)))
             List of DMD pixel coordinates to be used to
             transformation parameters.
+            Displayed pixels are
+            [coords[i] - px[i] / 2 : coords[i] + px[i] / 2].
+            If px[i] is uneven, the additional pixel is
+            attached on the right interval side.
             Overwrites the num parameter.
         num : int or tuple(int)
             Creates an equidistant grid of coords with
             num points. Tuples set the number of points
             in (horizontal, vertical) direction. Scalar
             num is interpreted as (num, num).
+        px : int or tuple(int)
+            Rectangular (horizontal, vertical) number of
+            pattern pixels used for one illumination.
+            Minimum required px is 1.
+            Scalar px is interpreted as (px, px).
         """
+        res = (
+            self.dsp.cfg.pixel_hrzt_count.val,
+            self.dsp.cfg.pixel_vert_count.val
+        )
+        if isinstance(px, int):
+            px = (px, px)
+        dx = (px[0] - 1) // 2, px[0] - (px[0] - 1) // 2
+        dy = (px[1] - 1) // 2, px[1] - (px[1] - 1) // 2
         if coords is None:
             if isinstance(num, int):
                 num = (num, num)
-            x = np.linspace(0, self.dsp.cfg.pixel_hrzt_count.val,
-                            endpoint=False, num=num[0], dtype=int)
-            y = np.linspace(0, self.dsp.cfg.pixel_vert_count.val,
-                            endpoint=False, num=num[1], dtype=int)
+            x = np.linspace(dx[0], res[0] - dx[1],
+                            endpoint=True, num=num[0], dtype=int)
+            y = np.linspace(dy[0], res[1] - dy[1],
+                            endpoint=True, num=num[1], dtype=int)
             xgrid, ygrid = np.meshgrid(x, y)
             xx, yy = xgrid.flatten()[np.newaxis], ygrid.flatten()[np.newaxis]
             coords = np.concatenate((xx, yy)).T
@@ -633,18 +664,28 @@ class DmdControl(object):
         images = []
         prev_exposure_time = self.cam.cfg.exposure_time.val
         for c in coords:
-            dmd_image = np.zeros((self.dsp.cfg.pixel_hrzt_count.val,
-                                  self.dsp.cfg.pixel_vert_count.val))
-            dmd_image[tuple(c)] = 1
-            self.dsp.init(dmd_image)
-            self.dsp.write_all()
-            self.dsp.run()
-            time.sleep(0.1)
+            dmd_image = np.zeros(res, dtype=float)
+            dmd_image[
+                c[0] - dx[0]:c[0] + dx[1], c[1] - dy[0]:c[1] + dy[1]
+            ] = 1
+            self.set_pattern(pattern=dmd_image)
+            self.display_pattern()
+            time.sleep(2)
             self.find_cam_exposure()
             im = self.cam.grab()
             images.append(np.copy(np.squeeze(im, axis=-1).T))
+            import matplotlib.pyplot as plt
+            plt.subplot(121)
+            plt.pcolormesh(dmd_image.T, vmin=0, vmax=1, cmap="jet")
+            plt.gca().set_aspect(1)
+            plt.subplot(122)
+            plt.pcolormesh(images[-1].T, vmin=0, vmax=255)
+            plt.gca().set_aspect(1)
+            plt.colorbar()
+            plt.show()
             self.dsp.stop()
         self.cam.cfg.exposure_time.write(val=prev_exposure_time)
+        self.cam.process()
         self.trafo.calc_trafo(images, coords)
         self.data.trafo = self.trafo
 
@@ -688,7 +729,7 @@ class DmdControl(object):
         if isinstance(pattern, str):
             if pattern == "image":
                 pattern = cv_error_diffusion(calc_pattern(
-                    self.target,
+                    self.target_norm,
                     self.trafo(self.raw, self.target.shape)
                 ))
             elif pattern == "white":
@@ -753,7 +794,8 @@ class DmdControl(object):
         """
         for i in range(num):
             pattern = iterate_pattern(
-                self.target, self.image, param_p=0.7, param_s=0.1, cutoff=0.01
+                self.target_norm, self.trafo(self.image, self.target.shape),
+                param_p=0.7, param_s=0.1, cutoff=0.01
             )
             self.set_pattern(pattern=pattern)
             self.record_image()
@@ -812,6 +854,7 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_layout_preview = QVBoxLayout()
         self.qt_button_connect = QPushButton("Start")
         self.qt_button_stop = QPushButton("Stop")
+        self.qt_button_exposure_find = QPushButton("Find exposure time")
         self.qt_button_trafo_find = QPushButton("Find transformation")
         self.qt_button_trafo_load = QPushButton("Load transformation")
         self.qt_button_trafo_save = QPushButton("Save transformation")
@@ -821,6 +864,7 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_image_pattern.set_image_format(channel="mono", bpc=8)
         self.qt_layout_preview.addWidget(self.qt_button_connect)
         self.qt_layout_preview.addWidget(self.qt_button_stop)
+        self.qt_layout_preview.addWidget(self.qt_button_exposure_find)
         self.qt_layout_preview.addWidget(self.qt_button_trafo_find)
         self.qt_layout_preview.addWidget(self.qt_button_trafo_load)
         self.qt_layout_preview.addWidget(self.qt_button_trafo_save)
@@ -863,6 +907,7 @@ class DmdControlGui(DmdControl, QWidget):
         super().show()
         self.qt_button_connect.show()
         self.qt_button_stop.hide()
+        self.qt_button_exposure_find.show()
         self.qt_button_trafo_find.show()
         self.qt_button_trafo_load.show()
         self.qt_button_trafo_save.hide()
@@ -882,6 +927,7 @@ class DmdControlGui(DmdControl, QWidget):
 
         self.qt_button_connect.clicked.connect(self._on_button_connect_clicked)
         self.qt_button_stop.clicked.connect(self._on_button_stop_clicked)
+        self.qt_button_exposure_find.clicked.connect(self._on_button_exposure_find_clicked)
         self.qt_button_trafo_find.clicked.connect(
             self._on_button_trafo_find_clicked
         )
@@ -930,8 +976,12 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_button_stop.hide()
 
     @pyqtSlot()
+    def _on_button_exposure_find_clicked(self):
+        self.find_cam_exposure()
+
+    @pyqtSlot()
     def _on_button_trafo_find_clicked(self):
-        self.find_trafo(num=3)  # TODO: DEBUG change num
+        self.find_trafo(num=5)  # TODO: DEBUG change num
         self.qt_button_trafo_save.show()
 
     @pyqtSlot()
@@ -1014,4 +1064,3 @@ if __name__ == "__main__":
 
     # Clean up
     dmd_control.shutdown()
-    sys.exit(app_ret)

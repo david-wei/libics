@@ -16,6 +16,8 @@ Changelog
 * Various changes in formatting for PEP8
 * PY_ALP_API.AlpDevAlloc: Bugfix
   Switched initflag and devicenum
+* PY_ALP_API:
+  Add verbose option to switch function call printing.
 """
 
 import ctypes as ct
@@ -255,10 +257,20 @@ ALP_PARMS_PROJ_FLIP = flipDict(ALP_PARMS_PROJ)
 
 
 class PY_ALP_API:
-    """Functions for the ALP."""
+    """
+    Vialux ALP 4.2 API functions.
 
-    def __init__(self, dllPath="alpV42.dll"):
+    Parameters
+    ----------
+    dllPath : str
+        File path to Library.
+    verbose : bool
+        Whether to print called functions.
+    """
+
+    def __init__(self, dllPath="alpV42.dll", verbose=False):
         self.dll = ct.windll.LoadLibrary(dllPath)
+        self.verbose = verbose
 
     # +++++++++++++++++++++
 
@@ -267,19 +279,22 @@ class PY_ALP_API:
         DeviceNum = ct.c_long(devicenum)
         DeviceHandle = ct.c_long(0)
         err = self.dll.AlpDevAlloc(DeviceNum, InitFlag, byref(DeviceHandle))
-        print("AlpDevAlloc: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpDevAlloc: {:s}".format(ErrorsFlipped[str(err)]))
         return err, DeviceHandle.value
 
     def AlpDevHalt(self, devhandle):
         DeviceHandle = ct.c_long(devhandle)
         err = self.dll.AlpDevFree(DeviceHandle)
-        print("AlpDevHalt: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpDevHalt: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpDevFree(self, devhandle):
         DeviceHandle = ct.c_long(devhandle)
         err = self.dll.AlpDevFree(DeviceHandle)
-        print("AlpDevFree: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpDevFree: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     # +++++++++++++++++++++
@@ -289,11 +304,12 @@ class PY_ALP_API:
         ControlType = ct.c_long(controltype)
         ControlValue = ct.c_long(controlvalue)
         err = self.dll.AlpDevControl(DeviceHandle, ControlType, ControlValue)
-        print("AlpDevControl: {:s}, {:s} is {:s}".format(
-            ErrorsFlipped[str(err)],
-            ALP_PARMS_DEV_CONTROL_TYPE_FLIP[str(controltype)],
-            ALP_PARMS_DEV_CONTROL_VALUE_FLIP[str(controlvalue)]
-        ))
+        if self.verbose:
+            print("AlpDevControl: {:s}, {:s} is {:s}".format(
+                ErrorsFlipped[str(err)],
+                ALP_PARMS_DEV_CONTROL_TYPE_FLIP[str(controltype)],
+                ALP_PARMS_DEV_CONTROL_VALUE_FLIP[str(controlvalue)]
+            ))
         return err
 
     def AlpDevInquire(self, devhandle, inquiretype):
@@ -303,11 +319,12 @@ class PY_ALP_API:
         err = self.dll.AlpDevInquire(
             DeviceHandle, InquireType, byref(InquireValue)
         )
-        print("AlpDevInquire: {:s}, {:s} is {:d}".format(
-            ErrorsFlipped[str(err)],
-            ALP_PARMS_DEV_INQUIRE_FLIP[str(inquiretype)],
-            InquireValue.value
-        ))
+        if self.verbose:
+            print("AlpDevInquire: {:s}, {:s} is {:d}".format(
+                ErrorsFlipped[str(err)],
+                ALP_PARMS_DEV_INQUIRE_FLIP[str(inquiretype)],
+                InquireValue.value
+            ))
         if inquiretype == (2050):
             temp = int(InquireValue.value / 256.)
             print("Temperature in Centigrades = {:2.1f}".format(temp))
@@ -329,14 +346,16 @@ class PY_ALP_API:
         err = self.dll.AlpSeqAlloc(
             DeviceHandle, BitPlanes, PicNum, byref(SeqHandle)
         )
-        print("AlpSeqAlloc: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpSeqAlloc: {:s}".format(ErrorsFlipped[str(err)]))
         return err, SeqHandle.value
 
     def AlpSeqFree(self, devhandle, seqhandle):
         DeviceHandle = ct.c_long(devhandle)
         SeqHandle = ct.c_long(seqhandle)
         err = self.dll.AlpSeqFree(DeviceHandle, SeqHandle)
-        print("AlpSeqFree: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpSeqFree: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpSeqControl(self, devhandle, seqhandle, controltype, controlvalue):
@@ -351,23 +370,26 @@ class PY_ALP_API:
             DeviceHandle, SeqHandle, ControlType, ControlValue
         )
         if controltype == 2110:
-            print("AlpSeqControl: {:s}, {:s} is {:s}".format(
-                ErrorsFlipped[str(err)],
-                ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
-                ALP_PARMS_SEQ_CONTROL_VALUE_FLIP[str(controlvalue)]
-            ))
+            if self.verbose:
+                print("AlpSeqControl: {:s}, {:s} is {:s}".format(
+                    ErrorsFlipped[str(err)],
+                    ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
+                    ALP_PARMS_SEQ_CONTROL_VALUE_FLIP[str(controlvalue)]
+                ))
         elif controltype == 2104:
-            print("AlpSeqControl: {:s}, {:s} is {:s}".format(
-                ErrorsFlipped[str(err)],
-                ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
-                ALP_PARMS_SEQ_CONTROL_VALUE_FLIP[str(controlvalue)]
-            ))
+            if self.verbose:
+                print("AlpSeqControl: {:s}, {:s} is {:s}".format(
+                    ErrorsFlipped[str(err)],
+                    ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
+                    ALP_PARMS_SEQ_CONTROL_VALUE_FLIP[str(controlvalue)]
+                ))
         else:
-            print("AlpSeqControl: {:s}, {:s} is {:d}".format(
-                ErrorsFlipped[str(err)],
-                ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
-                controlvalue
-            ))
+            if self.verbose:
+                print("AlpSeqControl: {:s}, {:s} is {:d}".format(
+                    ErrorsFlipped[str(err)],
+                    ALP_PARMS_SEQ_CONTROL_TYPE_FLIP[str(controltype)],
+                    controlvalue
+                ))
         return err
 
     def AlpSeqTiming(
@@ -387,7 +409,8 @@ class PY_ALP_API:
             DeviceHandle, SeqHandle, IlluminateTime, PictureTime,
             SynchDelay, SynchPulseWidth, TriggerInDelay
         )
-        print("AlpSeqTiming: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpSeqTiming: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpSeqInquire(self, devhandle, seqhandle, inquiretype):
@@ -399,11 +422,12 @@ class PY_ALP_API:
         err = self.dll.AlpSeqInquire(
             DeviceHandle, SeqHandle, InquireType, byref(InquireValue)
         )
-        print("AlpSeqInquire: {:s}, {:s} is {:d}".format(
-            ErrorsFlipped[str(err)],
-            ALP_PARMS_SEQ_INQUIRE_FLIP[str(inquiretype)],
-            InquireValue.value
-        ))
+        if self.verbose:
+            print("AlpSeqInquire: {:s}, {:s} is {:d}".format(
+                ErrorsFlipped[str(err)],
+                ALP_PARMS_SEQ_INQUIRE_FLIP[str(inquiretype)],
+                InquireValue.value
+            ))
         return err, InquireValue.value
 
     def AlpSeqPut(self, devhandle, seqhandle, data, picoffset=0, picload=1):
@@ -438,7 +462,8 @@ class PY_ALP_API:
         err = self.dll.AlpSeqPut(
             DeviceHandle, SeqHandle, PicOffset, PicLoad, ct.pointer(data)
         )
-        print("AlpSeqPut: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpSeqPut: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     # +++++++++++++++++++++
@@ -448,11 +473,12 @@ class PY_ALP_API:
         ControlType = ct.c_long(controltype)
         ControlValue = ct.c_long(controlvalue)
         err = self.dll.AlpProjControl(DeviceHandle, ControlType, ControlValue)
-        print("AlpProjControl: {:s}, {:s} is {:s}".format(
-            ErrorsFlipped[str(err)],
-            ALP_PARMS_PROJ_FLIP[str(controltype)],
-            ALP_PARMS_PROJ_FLIP[str(controlvalue)]
-        ))
+        if self.verbose:
+            print("AlpProjControl: {:s}, {:s} is {:s}".format(
+                ErrorsFlipped[str(err)],
+                ALP_PARMS_PROJ_FLIP[str(controltype)],
+                ALP_PARMS_PROJ_FLIP[str(controlvalue)]
+            ))
         return err
 
     def AlpProjInquire(self, devhandle, inquiretype):
@@ -462,18 +488,20 @@ class PY_ALP_API:
         err = self.dll.AlpProjInquire(
             DeviceHandle, InquireType, byref(InquireValue)
         )
-        print("AlpProjInquire: {:s}, {:s} is {:s}".format(
-            ErrorsFlipped[str(err)],
-            ALP_PARMS_PROJ_FLIP[str(inquiretype)],
-            ALP_PARMS_PROJ_FLIP[str(InquireValue.value)]
-        ))
+        if self.verbose:
+            print("AlpProjInquire: {:s}, {:s} is {:s}".format(
+                ErrorsFlipped[str(err)],
+                ALP_PARMS_PROJ_FLIP[str(inquiretype)],
+                ALP_PARMS_PROJ_FLIP[str(InquireValue.value)]
+            ))
         return err, InquireValue.value
 
     def AlpProjStart(self, devhandle, seqhandle):
         DeviceHandle = ct.c_long(devhandle)
         SeqHandle = ct.c_long(seqhandle)
         err = self.dll.AlpProjStart(DeviceHandle, SeqHandle)
-        print("AlpProjStart: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpProjStart: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpProjStartCont(self, devhandle, seqhandle):
@@ -481,21 +509,24 @@ class PY_ALP_API:
         DeviceHandle = ct.c_long(devhandle)
         SeqHandle = ct.c_long(seqhandle)
         err = self.dll.AlpProjStartCont(DeviceHandle, SeqHandle)
-        print("AlpProjStartCont: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpProjStartCont: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpProjHalt(self, devhandle):
         """Ends current projection."""
         DeviceHandle = ct.c_long(devhandle)
         err = self.dll.AlpProjHalt(DeviceHandle)
-        print("AlpProjHalt: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpProjHalt: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
     def AlpProjWait(self, devhandle):
         """insert help text"""
         DeviceHandle = ct.c_long(devhandle)
         err = self.dll.AlpProjWait(DeviceHandle)
-        print("AlpProjWait: {:s}".format(ErrorsFlipped[str(err)]))
+        if self.verbose:
+            print("AlpProjWait: {:s}".format(ErrorsFlipped[str(err)]))
         return err
 
 
