@@ -164,6 +164,87 @@ def resize_on_mass(np_array, center="auto", total_mass=0.9,
     return crop
 
 
+def _has_min_mass(ar, mask, min_mass):
+    ret = (min_mass is None)
+    if not ret:
+        ret = (min_mass < ar[mask].sum() / ar.sum())
+    return ret
+
+
+def _has_min_val(ar, mask, min_val, peak_val=None):
+    ret = (min_val is None)
+    if not ret:
+        if peak_val is None:
+            peak_val = ar.max()
+        ret = np.all(ar[np.logical_not(mask)] < min_val * peak_val)
+    return ret
+
+
+def resize_on_filter_maximum(
+    np_array, min_mass=None, min_val=None,
+    aspect_ratio=None, zero=True, factor=1
+):
+    """
+    Performs maximum filters to obtain the area around a peak.
+
+    Parameters
+    ----------
+    np_array : np.ndarray
+        Non-negative array to be resized.
+    min_mass : float
+        Required relative mass within resized area.
+    min_val : float
+        Required relative value within resized area.
+    aspect_ratio : float or None
+        Resizing aspect ratio (y_shape / x_shape).
+        None keeps the aspect ratio of the array
+    zero : bool
+        Whether to shift the array minimum to zero.
+    factor : int
+        Initial base size factor used for filtering.
+
+    Returns
+    -------
+    crop : tuple(tuple(int))
+        Crop coordinates with format
+        `((ind_min_x, ind_min_y), (ind_max_x, ind_max_y))`.
+    """
+    if min_mass is None and min_val is None:
+        raise ValueError("no minimum conditions set")
+    if (
+        (min_mass is not None and min_mass <= 0)
+        or (min_val is not None and min_val <= 0)
+    ):
+        raise ValueError("invalid minimum conditions")
+    if aspect_ratio is None:
+        aspect_ratio = np_array.shape[1] / np_array.shape[0]
+    if zero is True:
+        np_array = np_array - np_array.min()
+
+    peak_index = np.unravel_index(np_array.argmax(), np_array.shape)
+    peak_val = np_array[peak_index]
+    base_size = np.array([1.0, aspect_ratio])
+    if aspect_ratio < 1:
+        base_size = np.array([1.0 / aspect_ratio, 1.0])
+
+    mask = np.full_like(np_array, False, dtype=bool)
+    mask[peak_index] = True
+    while(
+        not _has_min_mass(np_array, mask, min_mass)
+        or not _has_min_val(np_array, mask, min_val, peak_val=peak_val)
+    ):
+        size = tuple((factor * base_size).astype(int))
+        filtered_array = scipy.ndimage.maximum_filter(
+            np_array, size=size, mode="constant", cval=0
+        )
+        mask = (filtered_array == peak_val)
+        factor += 1
+
+    x, y = np.where(mask)
+    crop = ((min(x), min(y)), (max(x) + 1, max(y) + 1))
+    return crop
+
+
 ###############################################################################
 
 

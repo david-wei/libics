@@ -406,6 +406,7 @@ class VialuxItf(BinItfBase):
             self.init(bitdepth, len(sequence))
         self._seq_repetitions = repetitions
         for i, image in enumerate(sequence):
+            image = image.T.copy()
             image = ctypes.create_string_buffer(image.flatten().tostring())
             self._alp.AlpSeqPut(
                 self._dmd, self._seq, image, picoffset=i, picload=1
