@@ -176,32 +176,7 @@ class AffineTrafo(hdf.HDFBase):
             return None
         return x, y
 
-    def __lsq_at_func(self, param, var, func_val):
-        """
-        Parameters
-        ----------
-        param : np.ndarray(1, float)
-            Array of parameters in the following order:
-            m11, m12, m21, m22, b1, b2.
-        var : np.ndarray(2, float)
-            Independent variables with shape (2, N)
-            as (x, y) camera coordinates.
-            N is the number of data points.
-        func_val : np.ndarray(2, float)
-            Functional variables with shape (2, N)
-            as (x, y) DMD coordinates.
-        """
-        chi2 = np.sum(
-            (param[0] * var[0] + param[1] * var[1] + param[4] - func_val[0])**2
-        )
-        chi2 += np.sum(
-            (param[2] * var[0] + param[3] * var[1] + param[5] - func_val[0])**2
-        )
-        return chi2
-
-    def fit_affine_transform(
-        self, cam_coords, dsp_coords, cam_shape, dsp_shape
-    ):
+    def fit_affine_transform(self, cam_coords, dsp_coords):
         """
         Fits the affine transform matrix and offset vector.
 
@@ -209,8 +184,6 @@ class AffineTrafo(hdf.HDFBase):
         ----------
         cam_coords, dsp_coords : list(np.ndarray(1, float))
             List of (camera, DMD) coordinates in corresponding order.
-        cam_shape, dsp_shape : tuple(int)
-            (Camera, DMD) resolution.
 
         Returns
         -------
@@ -218,29 +191,39 @@ class AffineTrafo(hdf.HDFBase):
             Whether transformation fit succeeded.
             Matrix and offset attributes are only written
             in the case of success.
+
+        Notes
+        -----
+        Following H. Späth, Math. Com. 9 (1), 27-34.
+        Variable naming convention:
+        * q: cam coordinates.
+        * p: dsp coordinates.
+        * m: transform matrix.
+        * b: transform offset.
         """
-        cam_res = np.array(cam_shape)
-        dsp_res = np.array(dsp_shape)
-        _angle = np.pi / 2
-        _scale = np.mean(dsp_res / cam_res)
-        matrix = _scale * np.array([
-            [np.cos(_angle), np.sin(_angle)],
-            [-np.sin(_angle), np.cos(_angle)]],
-        )
-        offset = dsp_res - cam_res
-        cam_coords = np.array(cam_coords).T
-        dsp_coords = np.array(dsp_coords).T
-        res = optimize.least_squares(
-            lambda x: self.__lsq_at_func(x, cam_coords, dsp_coords),
-            (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
-             offset[0], offset[1]),
-        )
-        if res.success:
-            (matrix[0, 0], matrix[0, 1], matrix[1, 0], matrix[1, 1],
-             offset[0], offset[1]) = res.x
-            self.matrix = matrix
-            self.offset = offset
-        return res.success
+        # Variables
+        q = np.array([
+            np.concatenate((np.array(cam_c), [1.0]))
+            for cam_c in cam_coords
+        ], dtype=float)
+        p = np.array(dsp_coords, dtype=float)
+        # Derived variables
+        dim = q[0].shape[0] - 1
+        Q = np.sum([np.outer(qq, qq) for qq in q], axis=0)
+        a = np.full((dim, dim + 1), np.nan, dtype=float)
+        c = np.array([np.dot(q.T, pp) for pp in p.T])
+        # Optimization
+        for i, cc in enumerate(c):
+            res = optimize.lsq_linear(Q, cc)
+            if not res.success:
+                return False
+            a[i] = res.x
+        # Assignment
+        m = a[:dim, :dim]
+        b = a.T[-1]
+        self.matrix = m
+        self.offset = b
+        return True
 
     def calc_trafo(self, cam_images, dsp_coords, dsp_shape=(1024, 768)):
         """
@@ -273,12 +256,10 @@ class AffineTrafo(hdf.HDFBase):
         dsp_coords = np.array(dsp_coords, dtype=float)
         dsp_coords = np.delete(dsp_coords, ind_remove, axis=0)
         if len(cam_coords) >= 2:
-            self.fit_affine_transform(
-                cam_coords, dsp_coords, cam_images[0].shape, dsp_shape
-            )
+            if not self.fit_affine_transform(cam_coords, dsp_coords):
+                print("Affine transformation parameter fit failed")
         else:
             print("No valid images were taken")
-            return None
 
     # ++++ Perform transformation ++++
 
@@ -288,9 +269,9 @@ class AffineTrafo(hdf.HDFBase):
         elif direction == "dsp_to_cam":
             return self.cv_dsp_to_cam(image, shape, order=order)
 
-    def cv_cam_to_dsp(self, image, shape, order=3):
+    def cv_dsp_to_cam(self, image, shape, order=3):
         """
-        Convert camera image to DMD image.
+        Convert DMD image to camera image.
 
         Parameter
         ---------
@@ -311,9 +292,9 @@ class AffineTrafo(hdf.HDFBase):
             order=order, mode="constant", cval=0.0
         )
 
-    def cv_dsp_to_cam(self, image, shape, order=3):
+    def cv_cam_to_dsp(self, image, shape, order=3):
         """
-        Convert DMD image to camera image.
+        Convert camera image to DMD image.
 
         Parameter
         ---------
