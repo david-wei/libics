@@ -3,7 +3,7 @@ import time
 
 import PIL
 import numpy as np
-from scipy import ndimage, optimize
+from scipy import optimize
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor
@@ -17,7 +17,7 @@ from libics import env
 from libics.drv import drv, itf
 from libics.util import misc, InheritMap, thread
 from libics.file import hdf
-from libics.trafo import resize
+from libics.trafo import linear, resize
 from libics.display import qtimage
 
 
@@ -91,8 +91,8 @@ def get_dsp(**kwargs):
 ###############################################################################
 
 
-@InheritMap(map_key=("libics-dev", "AffineTrafo"))
-class AffineTrafo(hdf.HDFBase):
+@InheritMap(map_key=("libics-dev", "DmdAffineTrafo"))
+class DmdAffineTrafo(linear.AffineTrafo):
 
     """
     Maps camera sensor pixel positions to DMD pixels.
@@ -112,7 +112,7 @@ class AffineTrafo(hdf.HDFBase):
         matrix=np.diag([1, 1]).astype(float),
         offset=np.array([0, 0], dtype=float)
     ):
-        super().__init__(pkg_name="libics-dev", cls_name="AffineTrafo")
+        super().__init__(pkg_name="libics-dev", cls_name="DmdAffineTrafo")
         self.matrix = matrix
         self.offset = offset
 
@@ -176,55 +176,6 @@ class AffineTrafo(hdf.HDFBase):
             return None
         return x, y
 
-    def fit_affine_transform(self, cam_coords, dsp_coords):
-        """
-        Fits the affine transform matrix and offset vector.
-
-        Parameters
-        ----------
-        cam_coords, dsp_coords : list(np.ndarray(1, float))
-            List of (camera, DMD) coordinates in corresponding order.
-
-        Returns
-        -------
-        success : bool
-            Whether transformation fit succeeded.
-            Matrix and offset attributes are only written
-            in the case of success.
-
-        Notes
-        -----
-        Following H. Späth, Math. Com. 9 (1), 27-34.
-        Variable naming convention:
-        * q: cam coordinates.
-        * p: dsp coordinates.
-        * m: transform matrix.
-        * b: transform offset.
-        """
-        # Variables
-        q = np.array([
-            np.concatenate((np.array(cam_c), [1.0]))
-            for cam_c in cam_coords
-        ], dtype=float)
-        p = np.array(dsp_coords, dtype=float)
-        # Derived variables
-        dim = q[0].shape[0] - 1
-        Q = np.sum([np.outer(qq, qq) for qq in q], axis=0)
-        a = np.full((dim, dim + 1), np.nan, dtype=float)
-        c = np.array([np.dot(q.T, pp) for pp in p.T])
-        # Optimization
-        for i, cc in enumerate(c):
-            res = optimize.lsq_linear(Q, cc)
-            if not res.success:
-                return False
-            a[i] = res.x
-        # Assignment
-        m = a[:dim, :dim]
-        b = a.T[-1]
-        self.matrix = m
-        self.offset = b
-        return True
-
     def calc_trafo(self, cam_images, dsp_coords, dsp_shape=(1024, 768)):
         """
         Estimates the transformation parameters.
@@ -260,62 +211,6 @@ class AffineTrafo(hdf.HDFBase):
                 print("Affine transformation parameter fit failed")
         else:
             print("No valid images were taken")
-
-    # ++++ Perform transformation ++++
-
-    def __call__(self, image, shape, order=3, direction="cam_to_dsp"):
-        if direction == "cam_to_dsp":
-            return self.cv_cam_to_dsp(image, shape, order=order)
-        elif direction == "dsp_to_cam":
-            return self.cv_dsp_to_cam(image, shape, order=order)
-
-    def cv_dsp_to_cam(self, image, shape, order=3):
-        """
-        Convert DMD image to camera image.
-
-        Parameter
-        ---------
-        image : np.ndarray(2, float)
-            Beam profile image.
-        shape : tuple(int)
-            Shape of trafo_image.
-        order : int
-            Spline interpolation order.
-
-        Returns
-        -------
-        trafo_image : np.ndarray(2, float)
-            Beam profile on DMD.
-        """
-        return ndimage.affine_transform(
-            image, self.matrix, offset=self.offset, output_shape=shape,
-            order=order, mode="constant", cval=0.0
-        )
-
-    def cv_cam_to_dsp(self, image, shape, order=3):
-        """
-        Convert camera image to DMD image.
-
-        Parameter
-        ---------
-        image : np.ndarray(2, float)
-            Beam profile image.
-        shape : tuple(int)
-            Shape of trafo_image.
-        order : int
-            Spline interpolation order.
-
-        Returns
-        -------
-        trafo_image : np.ndarray(2, float)
-            Beam profile on DMD.
-        """
-        inv_matrix = np.linalg.inv(self.matrix)
-        inv_offset = -np.dot(inv_matrix, self.offset)
-        return ndimage.affine_transform(
-            image, inv_matrix, offset=inv_offset, output_shape=shape,
-            order=order, mode="constant", cval=0.0
-        )
 
 
 ###############################################################################
@@ -511,7 +406,7 @@ class DmdControl(object):
         im_resolution = np.array((
             cam.cfg.pixel_hrzt_count.val, cam.cfg.pixel_vert_count.val
         ))
-        self.trafo = AffineTrafo()
+        self.trafo = DmdAffineTrafo()
         self.pattern = np.zeros(im_resolution, dtype=float)
         self.raw = np.full(im_resolution, np.nan, dtype=float)
         self.image = np.full(im_resolution, np.nan, dtype=float)
@@ -554,67 +449,6 @@ class DmdControl(object):
         """
         target_norm = self.target * self.raw.sum() / self.target.sum()
         return target_norm
-
-    def find_cam_exposure(self, max_cutoff=2/3, max_iterations=50):
-        """
-        Varies the camera's exposure time to maximize image brightness
-        while keeping the maximum ADC value below saturation.
-
-        Parameters
-        ----------
-        max_cutoff : float
-            Minimum relative brightness required for the image
-            maximum.
-        max_iterations : int
-            Maximum number of iterations.
-
-        Returns
-        -------
-        prev_exposure_time : float
-            Previous exposure time in seconds (s).
-            Allows the calling function to reset the settings.
-        """
-        prev_exposure_time = self.cam.cfg.exposure_time.val
-        max_adc = float(2**self.cam.cfg.channel_bitdepth.val - 1)
-        loop, verify = True, False
-        it = -1
-        while loop:
-            it += 1
-            im = self.cam.grab()
-            while im is None:
-                im = self.cam.grab()
-            saturation = im.max() / max_adc
-            if saturation >= 1:
-                self.cam.cfg.exposure_time.write(
-                    val=self.cam.cfg.exposure_time.val / 3
-                )
-                self.cam.process()
-                time.sleep(0.15)
-                verify = False
-            elif saturation < max_cutoff:
-                scale = 1 / max_cutoff
-                if saturation < 0.05:
-                    scale = 3
-                elif saturation < 0.85:
-                    scale = max_cutoff / saturation
-                self.cam.cfg.exposure_time.write(
-                    val=self.cam.cfg.exposure_time.val * scale
-                )
-                self.cam.process()
-                time.sleep(0.15)
-                verify = False
-            else:
-                if verify:
-                    loop = False
-                verify = True
-            if it >= max_iterations:
-                print("\rFinding exposure time: maximum iterations reached")
-                return prev_exposure_time
-            print("\rFinding exposure time: {:.0f} µs (sat: {:.3f})       "
-                  .format(self.cam.cfg.exposure_time.val * 1e6, saturation),
-                  end="")
-        print("\r", end="                                                  \r")
-        return prev_exposure_time
 
     # ++++++++++++++++++++++++++++++++
 
@@ -686,7 +520,7 @@ class DmdControl(object):
             ] = 1
             self.set_pattern(pattern=dmd_image)
             self.display_pattern()
-            self.find_cam_exposure()
+            self.cam.find_cam_exposure()
             im = self.cam.grab()
             images.append(np.copy(np.squeeze(im, axis=-1).T))
             self.dsp.stop()
@@ -707,7 +541,7 @@ class DmdControl(object):
         file_path : str
             File path to transformation file.
         """
-        self.trafo = hdf.read_hdf(AffineTrafo, file_path=file_path)
+        self.trafo = hdf.read_hdf(DmdAffineTrafo, file_path=file_path)
         self.data.trafo = self.trafo
 
     # ++++++++++++++++++++++++++++++++
@@ -715,6 +549,8 @@ class DmdControl(object):
     def set_pattern(self, pattern="image"):
         """
         Sets a pattern to the DMD.
+
+        To actually display the pattern, call the display_pattern method.
 
         Parameters
         ----------
@@ -768,7 +604,7 @@ class DmdControl(object):
 
     def record_raw(self):
         """
-        Records an full on image.
+        Records a full on image.
         """
         self.set_pattern(pattern="white")
         self.display_pattern()
@@ -1000,11 +836,11 @@ class DmdControlGui(DmdControl, QWidget):
 
     @pyqtSlot()
     def _on_button_exposure_find_clicked(self):
-        self.find_cam_exposure()
+        self.cam.find_cam_exposure()
 
     def __find_trafo_thread_function(self):
         self.find_trafo(
-            num=(2, 1), px=9, edges=False,   # TODO: increase num (DEBUG)
+            num=(3, 2), px=5, edges=False,
             break_condition=(
                 lambda: self.__find_trafo_thread.stop_event.wait(timeout=0.0)
             )

@@ -1,4 +1,5 @@
 import abc
+import time
 
 import numpy as np
 
@@ -53,6 +54,67 @@ class CamDrvBase(drv.DrvBase):
             Image aas numpy array.
             Shape: height x width x channel
         """
+
+    def find_exposure_time(self, max_cutoff=2/3, max_iterations=50):
+        """
+        Varies the camera's exposure time to maximize image brightness
+        while keeping the maximum ADC value below saturation.
+
+        Parameters
+        ----------
+        max_cutoff : float
+            Minimum relative brightness required for the image
+            maximum.
+        max_iterations : int
+            Maximum number of iterations.
+
+        Returns
+        -------
+        prev_exposure_time : float
+            Previous exposure time in seconds (s).
+            Allows the calling function to reset the settings.
+        """
+        prev_exposure_time = self.cfg.exposure_time.val
+        max_adc = float(2**self.cfg.channel_bitdepth.val - 1)
+        loop, verify = True, False
+        it = -1
+        while loop:
+            it += 1
+            im = self.grab()
+            while im is None:
+                im = self.grab()
+            saturation = im.max() / max_adc
+            if saturation >= 1:
+                self.cfg.exposure_time.write(
+                    val=self.cfg.exposure_time.val / 3
+                )
+                self.process()
+                time.sleep(0.15)
+                verify = False
+            elif saturation < max_cutoff:
+                scale = 1 / max_cutoff
+                if saturation < 0.05:
+                    scale = 3
+                elif saturation < 0.85:
+                    scale = max_cutoff / saturation
+                self.cfg.exposure_time.write(
+                    val=self.cfg.exposure_time.val * scale
+                )
+                self.process()
+                time.sleep(0.15)
+                verify = False
+            else:
+                if verify:
+                    loop = False
+                verify = True
+            if it >= max_iterations:
+                print("\rFinding exposure time: maximum iterations reached")
+                return prev_exposure_time
+            print("\rFinding exposure time: {:.0f} µs (sat: {:.3f})       "
+                  .format(self.cfg.exposure_time.val * 1e6, saturation),
+                  end="")
+        print("\r", end="                                                  \r")
+        return prev_exposure_time
 
     # ++++ Write/read methods +++++++++++
 

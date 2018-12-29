@@ -27,9 +27,10 @@ class AffineTrafo(hdf.HDFBase):
     def __init__(
         self,
         matrix=np.diag([1, 1]).astype(float),
-        offset=np.array([0, 0], dtype=float)
+        offset=np.array([0, 0], dtype=float),
+        pkg_name="libics", cls_name="AffineTrafo"
     ):
-        super().__init__(pkg_name="libics", cls_name="AffineTrafo")
+        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
         self.matrix = matrix
         self.offset = offset
 
