@@ -153,7 +153,7 @@ class DmdAffineTrafo(linear.AffineTrafo):
             print("fit peak coordinates: insufficient snr")
             return None
         (xmin, ymin), (xmax, ymax) = resize.resize_on_filter_maximum(
-            image, min_mass=0.5, factor=factor
+            image, min_val=1/np.e, factor=factor
         )
         xgrid, ygrid = np.meshgrid(
             np.arange(xmin, xmax), np.arange(ymin, ymax), indexing="ij"
@@ -520,7 +520,7 @@ class DmdControl(object):
             ] = 1
             self.set_pattern(pattern=dmd_image)
             self.display_pattern()
-            self.cam.find_cam_exposure()
+            self.cam.find_exposure_time()
             im = self.cam.grab()
             images.append(np.copy(np.squeeze(im, axis=-1).T))
             self.dsp.stop()
@@ -621,7 +621,6 @@ class DmdControl(object):
         if record_raw:
             self.record_raw()
         im = np.array(PIL.Image.open(file_path).convert("L"))
-        print(im.dtype, im.shape, im.max(), im.min(), im.mean())
         self.target = im.T
         self.data.target = self.target
 
@@ -836,7 +835,7 @@ class DmdControlGui(DmdControl, QWidget):
 
     @pyqtSlot()
     def _on_button_exposure_find_clicked(self):
-        self.cam.find_cam_exposure()
+        self.cam.find_exposure_time()
 
     def __find_trafo_thread_function(self):
         self.find_trafo(
