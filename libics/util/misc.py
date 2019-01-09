@@ -448,8 +448,36 @@ def capitalize_first_char(s):
 
 
 ###############################################################################
-# List Fetcher
+# List Manipulations
 ###############################################################################
+
+
+def flatten_nested_list(ls):
+    """
+    Flattens a nested list recursively.
+
+    Parameters
+    ----------
+    ls : list
+        Nested list.
+
+    Returns
+    -------
+    flat_ls : list
+        Flattened list.
+
+    Notes
+    -----
+    Inefficient implementation.
+    """
+    flat_ls = []
+    ls = assume_list(ls)
+    for item in ls:
+        if isinstance(item, list):
+            flat_ls += flatten_nested_list(item)
+        else:
+            flat_ls += [item]
+    return flat_ls
 
 
 def get_first_elem_iter(ls):

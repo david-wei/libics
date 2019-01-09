@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 )
 # import pyqtgraph as pg
 
+import libics
 from libics import env
 from libics.drv import drv, itf
 from libics.util import misc, InheritMap, thread
@@ -216,31 +217,6 @@ class DmdAffineTrafo(linear.AffineTrafo):
 ###############################################################################
 
 
-@InheritMap(map_key=("libics-dev", "DmdImageData"))
-class DmdImageData(hdf.HDFBase):
-
-    def __init__(self, target=None, trafo=None):
-        super().__init__(pkg_name="libics-dev", cls_name="DmdImageData")
-        self.target = target
-        self.trafo = trafo
-        self.patterns = []
-        self.images = []
-        self.rms = []
-
-    def reset(self):
-        self.patterns = []
-        self.images = []
-        self.rms = []
-
-    def add_iteration(self, pattern, image, rms):
-        self.patterns.append(pattern)
-        self.images.append(image)
-        self.rms.append(rms)
-
-
-###############################################################################
-
-
 def calc_pattern(target_image, raw_image):
     """
     Calculates the initial DMD reflectance pattern.
@@ -411,7 +387,7 @@ class DmdControl(object):
         self.raw = np.full(im_resolution, np.nan, dtype=float)
         self.image = np.full(im_resolution, np.nan, dtype=float)
         self.rms = None
-        self.data = DmdImageData()
+        self.data = libics.dev.DmdImageData()
 
     def setup(self):
         self.cam.setup()
@@ -530,7 +506,9 @@ class DmdControl(object):
         self.cam.cfg.exposure_time.write(val=prev_exposure_time)
         self.cam.process()
         self.trafo.calc_trafo(images, coords)
-        self.data.trafo = self.trafo
+        self.data.trafo = linear.AffineTrafo(
+            self.trafo.matrix, self.trafo.offset
+        )
 
     def load_trafo(self, file_path):
         """
@@ -542,7 +520,9 @@ class DmdControl(object):
             File path to transformation file.
         """
         self.trafo = hdf.read_hdf(DmdAffineTrafo, file_path=file_path)
-        self.data.trafo = self.trafo
+        self.data.trafo = linear.AffineTrafo(
+            self.trafo.matrix, self.trafo.offset
+        )
 
     # ++++++++++++++++++++++++++++++++
 
@@ -904,6 +884,7 @@ class DmdControlGui(DmdControl, QWidget):
         self.qt_image_target.update_image(im_target[:, :, np.newaxis])
         self.set_pattern(pattern="image")
         self.qt_button_image_iterate.show()
+        self.qt_button_image_record.show()
         self.qt_button_data_save.show()
 
     @pyqtSlot()

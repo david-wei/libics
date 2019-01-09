@@ -85,3 +85,29 @@ class InterferometerItem(hdf.HDFBase):
                     self._find_position(index_min, len(tc)) * wavelength / 2
                 )
         self.position_estimate = np.array(position_estimate).mean(axis=0)
+
+
+###############################################################################
+
+
+@InheritMap(map_key=("libics-dev", "DmdImageData"))
+class DmdImageData(hdf.HDFBase):
+
+    def __init__(self, target=None, trafo=None, raw=None):
+        super().__init__(pkg_name="libics-dev", cls_name="DmdImageData")
+        self.target = target
+        self.trafo = trafo
+        self.raw = raw
+        self.patterns = []
+        self.images = []
+        self.rms = []
+
+    def reset(self):
+        self.patterns = []
+        self.images = []
+        self.rms = []
+
+    def add_iteration(self, pattern, image, rms):
+        self.patterns.append(pattern)
+        self.images.append(image)
+        self.rms.append(rms)
