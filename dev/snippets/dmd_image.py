@@ -331,7 +331,7 @@ def calc_deviation_rms(target_image, actual_image, mask=None):
         actual_image = actual_image[mask]
         target_image = target_image[mask]
     deviation = actual_image / target_image - 1
-    rms = np.sqrt(deviation**2)
+    rms = np.sqrt(np.sum(deviation**2) / deviation.size)
     return rms
 
 
