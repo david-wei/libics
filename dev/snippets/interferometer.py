@@ -223,7 +223,7 @@ class Interferometer(object):
         self.im_scanned = np.copy(np.squeeze(im, axis=-1).T)
         return im
 
-    def record_trace(self, break_condition=None):
+    def record_trace(self, break_condition=None, avg=3):
         """
         Parameters
         ----------
@@ -231,10 +231,15 @@ class Interferometer(object):
             Function returning bool that is called to determine
             whether to break loop. Call signature: break_condition().
             If None, no break condition is set.
+        avg : int
+            Number of images to be recorded and averaged.
         """
         for volt in self.voltages:
             self.piezo.write_voltage(volt)
-            im = np.squeeze(self.cam.grab(), axis=-1).T
+            im = np.squeeze(self.cam.grab(), axis=-1).astype(float).T
+            for i in range(avg - 1):
+                im += np.squeeze(self.cam.grab(), axis=-1).astype(float).T
+            im /= avg
             self.process_image(volt, im)
             if callable(break_condition):
                 if break_condition():
