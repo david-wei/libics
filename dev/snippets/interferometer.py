@@ -223,7 +223,7 @@ class Interferometer(object):
         self.im_scanned = np.copy(np.squeeze(im, axis=-1).T)
         return im
 
-    def record_trace(self, break_condition=None, avg=3):
+    def record_trace(self, break_condition=None, avg=1):
         """
         Parameters
         ----------
@@ -234,6 +234,15 @@ class Interferometer(object):
         avg : int
             Number of images to be recorded and averaged.
         """
+        im_resolution = np.array((
+            self.cam.cfg.pixel_hrzt_count.val,
+            self.cam.cfg.pixel_vert_count.val
+        ))
+        self.im_max = ConditionalTrace(np.greater, im_resolution, dtype=float)
+        self.im_min = ConditionalTrace(np.less, im_resolution, dtype=float)
+        self.trace = RecordedTrace(
+            self.trace.coords, len(self.voltages), dtype=float
+        )
         for volt in self.voltages:
             self.piezo.write_voltage(volt)
             im = np.squeeze(self.cam.grab(), axis=-1).astype(float).T
@@ -521,7 +530,7 @@ if __name__ == "__main__":
 
     # Settings
     piezo_voltages = np.linspace(0, 75, num=501)
-    piezo_address = "COM2"
+    piezo_address = "COM10"
     piezo_channel = "x"
     trace_coords = 3
 
