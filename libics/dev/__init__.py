@@ -113,6 +113,31 @@ class InterferometerItem(hdf.HDFBase):
     def calc_speckle_contrast(self):
         pass
 
+    def get_rescoh(self):
+        """
+        Gets a histogram of the residual coherence.
+
+        Returns
+        -------
+        bins : np.ndarray(1)
+            Bin centers of histogram.
+        hist : np.ndarray(1)
+            Histogram values.
+        mean : float
+            Mean value.
+        std : float
+            Standard deviation.
+        """
+        scoh = self.spatial_coherence
+        mask = np.logical_not(np.logical_or(
+            np.isnan(scoh), np.isnan(self.scoh_factor)
+        ))
+        hist, bins = np.histogram(scoh[mask] / self.scoh_factor[mask])
+        bins = (bins[:-1] + bins[1:]) / 2
+        mean = bins * hist / hist.sum()
+        std = (bins - mean)**2 * hist / hist.sum()
+        return bins, hist, mean, std
+
 
 @InheritMap(map_key=("libics-dev", "InterferometerSequence"))
 class InterferometerSequence(hdf.HDFBase):
@@ -161,7 +186,7 @@ class InterferometerSequence(hdf.HDFBase):
         """
         scoh = np.array([item.spatial_coherence for item in self.items])
         disp = np.array([item.val for item in self.displacements])
-        weights = np.mean(scoh, axis=0)
+        weights = np.nanmean(scoh, axis=(1, 2))
         # Logarithm of scaled Gaussian is parabola:
         # C = exp(c0 - x0^2), x0 = -c1 / 2 / c2, s = sqrt(c2 / 2)
         scoh = np.log(scoh)
@@ -170,11 +195,17 @@ class InterferometerSequence(hdf.HDFBase):
         scoh[nans] = np.interp(f(nans), f(~nans), scoh[~nans])
         # Perform fit
         poly_deg = 2
-        param = np.polyfit(disp, scoh, poly_deg, w=weights)
+        shape = scoh.shape
+        param = np.polyfit(
+            disp, scoh.reshape((shape[0], shape[1] * shape[2])),
+            poly_deg, w=weights
+        )
         param[2][param[2] == 0] = np.nan
-        self.scoh_offset = -param[1] / 2 / param[2]
-        self.scoh_width = np.sqrt(param[2] / 2)
-        self.scoh_factor = np.exp(param[0] - self.scoh_offset**2)
+        self.scoh_offset = (-param[1] / 2 / param[2]).reshape(shape[1:])
+        self.scoh_width = np.sqrt(-param[2] / 2).reshape(shape[1:])
+        self.scoh_factor = np.exp(
+            param[0].reshape(shape[1:]) - self.scoh_offset**2
+        )
 
     def get_scoh(self):
         """
@@ -223,13 +254,7 @@ class InterferometerSequence(hdf.HDFBase):
         if (np.abs(disp_vals[disp_max] - offset)
                 > np.abs(disp_vals[disp_max] - offset)):
             index = disp_max
-        scoh = self.items[index].spatial_coherence
-        mask = not np.logical_or(np.isnan(scoh), np.isnan(self.scoh_factor))
-        hist, bins = np.histogram(scoh[mask] / self.scoh_factor[mask])
-        bins = (bins[:-1] + bins[1:]) / 2
-        mean = bins * hist / hist.sum()
-        std = (bins - mean)**2 * hist / hist.sum()
-        return bins, hist, mean, std
+        return self.items[index].get_rescoh()
 
 
 ###############################################################################

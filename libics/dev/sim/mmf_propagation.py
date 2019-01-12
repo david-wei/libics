@@ -110,7 +110,7 @@ if __name__ == "__main__":
             name="position", symbol="y", unit="m"
         )
         correlation.add_dim(
-            name="spatial correlation", symbol="\Gamma", unit="arb."
+            name="spatial correlation", symbol=r"\Gamma", unit="arb."
         )
         correlation.data = abs(fiber.spatial_correlation(
             xx, yy, dvar1=displacement[0], dvar2=displacement[1],
@@ -122,9 +122,9 @@ if __name__ == "__main__":
         ))
         # Plot
         vmax = correlation.data.max()
-        label = "$\Delta x = {:.2f}".format(displacement[0] * 1e6)
+        label = r"$\Delta x =" + " {:.2f}".format(displacement[0] * 1e6)
         label += r" \mathrm{\mu m},"
-        label += " \Delta y = {:.2f}".format(displacement[1] * 1e6)
+        label += r" \Delta y =" + " {:.2f}".format(displacement[1] * 1e6)
         label += r" \mathrm{\mu m}$"
         pcfg = plotdefault.get_plotcfg_arraydata_2d(
             aspect=1, color="Blues", min=0, max=vmax, label=label
