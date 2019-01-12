@@ -238,6 +238,8 @@ class AttrColor(AttrBase):
         Opacity.
     min, max : float
         Minimum, maximum of color normalization.
+    colorbar : bool
+        Whether to plot colorbar.
     """
 
     def __init__(self, dim=None, scale="const", map=None, alpha=1,

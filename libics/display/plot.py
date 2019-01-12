@@ -1,6 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+from mpl_toolkits import mplot3d, axes_grid1
 import numpy as np
 
 from libics import env
@@ -78,6 +78,48 @@ def _plot_meta(mpl_ax, plot_dim, cfg, data):
             mpl_ax.set_ylabel(misc.capitalize_first_char(zlabel))
     if cfg.aspect is not None:
         mpl_ax.set_aspect(cfg.aspect)
+
+
+def _plot_colorbar(mpl_ax, mpl_artist, label=None, pad=1/72, scale=2/72):
+    """
+    Divides the matplotlib axes and creates a colorbar right of the plot.
+
+    Parameters
+    ----------
+    mpl_ax : matplotlib.axes.Axes
+        Matplotlib axes.
+    mpl_artist : matplotlib.artist.Artist
+        Matplotlib plot object.
+    label : str
+        Colorbar label.
+    pad, scale : float
+        Padding, colorbar width relative to font size (pt).
+
+    Returns
+    -------
+    cb : matplotlib.colorbar.Colorbar
+        Matplotlib colorbar.
+    """
+    """
+    mpl_fig = mpl_ax.figure
+    divider = axes_grid1.make_axes_locatable(mpl_ax)
+    pad *= mpl.rcParams["font.size"]
+    scale *= mpl.rcParams["font.size"]
+    cax = divider.append_axes(
+        "right",
+        size=axes_grid1.axes_size.AxesX(mpl_ax, aspect=0.03),
+        pad=axes_grid1.axes_size.AxesX(mpl_ax, aspect=0.05)
+    )
+    cb = mpl_fig.colorbar(mpl_artist, cax=cax)
+    if label is not None:
+        cb.set_label(misc.capitalize_first_char(label))
+    return cb
+    """
+    mpl_fig = mpl_ax.figure
+    cb = mpl_fig.colorbar(mpl_artist, ax=mpl_ax)
+    if label is not None:
+        cb.set_label(misc.capitalize_first_char(label))
+    return cb
 
 
 def _cv_layered_1d_array(data):
@@ -198,7 +240,7 @@ def _param_color(color, data):
 ###############################################################################
 
 
-def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
+def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
     """
     Plot 1D array.
 
@@ -215,6 +257,8 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
     data : numpy.ndarray(1)
         1D plottable data. Each data element may be higher
         dimensional.
+    quantities : list(data.types.Quantity)
+        List of metadata quantities in dimensional order.
 
     Returns
     -------
@@ -250,6 +294,13 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
                 x, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.point.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.point.color.dim].mathstr()
+                ))
         # 2D curve line plot
         if cfg.curve is not None:
             if cfg.curve.ypos is None:
@@ -296,6 +347,13 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
                 x, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.point.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.point.color.dim].mathstr()
+                ))
         # 3D curve line plot
         if cfg.curve is not None:
             if cfg.curve.ypos is None or cfg.curve.zpos is None:
@@ -316,7 +374,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data):
     return mpl_artist
 
 
-def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
+def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
     """
     Plot 2D array.
 
@@ -335,6 +393,8 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
     data : numpy.ndarray(2)
         2D plottable data. Each data element may be higher
         dimensional.
+    quantities : list(data.types.Quantity)
+        List of metadata quantities in dimensional order.
 
     Returns
     -------
@@ -364,6 +424,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 xx, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.point.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.point.color.dim].mathstr()
+                ))
         # 2D color matrix plot
         if cfg.matrix is not None:
             c, cmap, vmin, vmax, alpha, edgecolors = 6 * [None]
@@ -383,6 +450,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 x, y, c.T, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=edgecolors
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.matrix.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.matrix.color.dim].mathstr()
+                ))
         # 2D contour plot
         if cfg.contour is not None:
             z, levels, alpha, cmap, vmin, vmax = 6 * [None]
@@ -398,6 +472,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 x, y, z.T, levels=levels, alpha=alpha, cmap=cmap,
                 vmin=vmin, vmax=vmax
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.contour.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.contour.color.dim].mathstr()
+                ))
     # 3D plots
     elif plot_dim == 3:
         # 3D point scatter plot
@@ -421,6 +502,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
                 xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
             )
+            if (
+                quantities is not None and cmap is not None
+                and cfg.point.color.colorbar is True
+            ):
+                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                    quantities[cfg.point.color.dim].mathstr()
+                ))
         # 3D surface plot
         if cfg.surface is not None:
             z = None
@@ -476,7 +564,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data):
     return mpl_artist
 
 
-def _plot_data_series(mpl_ax, plot_dim, cfg, data):
+def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
     """
     Plot series data (tabular).
 
@@ -491,6 +579,8 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data):
     data : list or numpy.ndarray(1) or numpy.ndarray(2)
         1D plottable data. Each data element may be higher
         dimensional.
+    quantities : list(data.types.Quantity)
+        List of metadata quantities in dimensional order.
 
     Returns
     -------
@@ -713,6 +803,7 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     """
     data_type = None
     x, y = None, None
+    quantities = None
     # Distinguish data types
     if isinstance(data, arraydata.ArrayData):
         _plot_meta(mpl_ax, plot_dim, cfg, data)
@@ -724,21 +815,29 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
             data_type = "array2d"
             y = np.linspace(data.scale.offset[1], data.scale.max[1],
                             num=data.data.shape[1], endpoint=False)
+        quantities = data.scale.quantity
         data = data.data
     elif isinstance(data, seriesdata.SeriesData):
         data_type = "series"
         _plot_meta(mpl_ax, plot_dim, cfg, data)
+        quantities = data.quantity
     elif isinstance(data, list):
         data_type = "series"
     elif isinstance(data, np.ndarray):
         data_type = _data_type_hint
     # Call plot functions
     if data_type == "array2d":
-        return _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data)
+        return _plot_data_array_2d(
+            mpl_ax, plot_dim, cfg, x, y, data, quantities=quantities
+        )
     elif data_type == "array1d":
-        return _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data)
+        return _plot_data_array_1d(
+            mpl_ax, plot_dim, cfg, x, data, quantities=quantities
+        )
     elif data_type == "series":
-        return _plot_data_series(mpl_ax, plot_dim, cfg, data)
+        return _plot_data_series(
+            mpl_ax, plot_dim, cfg, data, quantities=quantities
+        )
 
 
 ###############################################################################
