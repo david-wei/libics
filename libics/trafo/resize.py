@@ -245,6 +245,82 @@ def resize_on_filter_maximum(
     return crop
 
 
+def resize_on_condition(np_array, cond="cut_all", **kwargs):
+    """
+    Finds the rectangle that contains/avoids all occurences of a given value.
+
+    Parameters
+    ----------
+    np_array : np.ndarray
+        Array to be resized.
+    cond : callable or str
+        Callable:
+            Condition function that returns False if the
+            respective hypersurface should be cut.
+            Call signature:
+                cond(np.array(np_array.ndim - 1)) -> bool.
+        "cut_all", "cut_any":
+            Remove boundary hypersurfaces (only, partially)
+            containing kwargs["val"].
+        "keep_all", "keep_any":
+            Remove boundary hypersurfaces not (only, partially)
+            containing kwargs["val"].
+    val
+        See cond -> "cut", "keep".
+
+    Returns
+    -------
+    crop : np.array(2, int)
+        Crop coordinates with format
+        `((ind_min_x, ind_min_y, ...), (ind_max_x, ind_max_y, ...))`.
+    """
+    if isinstance(cond, str) and "val" in kwargs:
+        val = kwargs["val"]
+        if cond == "cut_any":
+            if np.isnan(val):
+                def cond(x):
+                    return not np.any(np.isnan(x))
+            else:
+                def cond(x):
+                    return not (val in x)
+        elif cond == "cut_all":
+            if np.isnan(val):
+                def cond(x):
+                    return not np.all(np.isnan(x))
+            else:
+                def cond(x):
+                    return not np.all(x == val)
+        elif cond == "keep_any":
+            if np.isnan(val):
+                def cond(x):
+                    return np.any(np.isnan(x))
+            else:
+                def cond(x):
+                    return val in x
+        elif cond == "keep_all":
+            if np.isnan(val):
+                def cond(x):
+                    return np.all(np.isnan(x))
+            else:
+                def cond(x):
+                    return np.all(x == val)
+    ind_max = np.array(np_array.shape)
+    ind_min = np.zeros(len(ind_max), dtype=int)
+    for dim in range(len(ind_max)):
+        for ind in range(ind_max[dim]):
+            if cond(np.take(np_array, ind, axis=dim)):
+                break
+            else:
+                ind_min[dim] += 1
+    for dim in range(len(ind_max)):
+        for ind in reversed(range(ind_min[dim], ind_max[dim])):
+            if cond(np.take(np_array, ind, axis=dim)):
+                break
+            else:
+                ind_max[dim] -= 1
+    return np.array([ind_min, ind_max])
+
+
 ###############################################################################
 
 
