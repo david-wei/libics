@@ -1,6 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d, axes_grid1
+from mpl_toolkits import mplot3d
 import numpy as np
 
 from libics import env
@@ -824,7 +824,12 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     elif isinstance(data, list):
         data_type = "series"
     elif isinstance(data, np.ndarray):
+        _plot_meta(mpl_ax, plot_dim, cfg, data)
         data_type = _data_type_hint
+        shape = data.shape
+        x = np.arange(shape[0])
+        if len(shape) > 1:
+            y = np.arange(shape[1])
     # Call plot functions
     if data_type == "array2d":
         return _plot_data_array_2d(
@@ -929,7 +934,7 @@ class Figure(object):
                 plot_dim=plot_cfg.get_plot_dim()
             )
 
-    def plot(self, data=None):
+    def plot(self, data=None, **kwargs):
         """
         Plots the figure.
 
@@ -938,6 +943,8 @@ class Figure(object):
         data : list(obj) or None
             Data to be plotted. If None, uses the internal
             data variable.
+        **kwargs
+            Keyword arguments passed to the plot function.
 
         Raises
         ------
@@ -954,7 +961,8 @@ class Figure(object):
             mpl_art = plot(
                 self.mpl_ax[self.mpl_ax_loc[i]],
                 self.plot_dim[self.mpl_ax_loc[i]],
-                plot_cfg, self.data[i]
+                plot_cfg, self.data[i],
+                **kwargs
             )
             if mpl_art is not None and plot_cfg.label is not None:
                 self.mpl_art[self.mpl_ax_loc[i]].append(
@@ -978,7 +986,6 @@ class Figure(object):
                 ):
                     artists.append(val[0])
                     labels.append(val[1])
-                # TODO: Implement colorbar creation and annotation
                 elif len(self.mpl_art[loc]) == 1:
                     ax.set_title(val[1])
             if artists:

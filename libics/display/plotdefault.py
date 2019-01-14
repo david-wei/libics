@@ -1,4 +1,9 @@
+import numpy as np
+
+from libics import display
 from libics.display import plotcfg
+from libics.data import arraydata, seriesdata
+from libics.util import misc
 
 
 ###############################################################################
@@ -24,7 +29,7 @@ def get_plotcfg_arraydata_1d(
         color={"map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
-        xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
+        xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
         curve=curve_cfg, label=label
     )
 
@@ -39,7 +44,7 @@ def get_plotcfg_arraydata_2d(
                "min": min, "max": max, "colorbar": colorbar}
     )
     return plotcfg.PlotCfg(
-        xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
+        xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
         matrix=matrix_cfg, aspect=aspect, label=label
     )
 
@@ -52,7 +57,7 @@ def get_plotcfg_seriesdata_1d(
         color={"map": color, "alpha": alpha}
     )
     return plotcfg.PlotCfg(
-        xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
+        xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
         curve=curve_cfg, label=label
     )
 
@@ -67,9 +72,65 @@ def get_plotcfg_seriesdata_2d(
                "min": min, "max": max, "colorbar": True}
     )
     return plotcfg.PlotCfg(
-        xgridspec=hrzt_subplot_pos, ygridspec=vert_subplot_pos,
+        xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
         matrix=matrix_cfg, aspect=aspect, label=label
     )
+
+
+###############################################################################
+
+
+def _get_pcfg(data, hrzt_subplot_pos=0, vert_subplot_pos=0,
+              label=None, **kwargs):
+    func = None
+    if isinstance(data, arraydata.ArrayData):
+        if data.scale.get_dim() <= 2:
+            func = get_plotcfg_arraydata_1d
+        else:
+            func = get_plotcfg_arraydata_2d
+    elif isinstance(data, seriesdata.SeriesData):
+        if data.get_dim() <= 2:
+            func = get_plotcfg_seriesdata_1d
+        else:
+            func = get_plotcfg_seriesdata_2d
+    return func(
+        hrzt_subplot_pos=hrzt_subplot_pos, vert_subplot_pos=vert_subplot_pos,
+        label=label, **kwargs
+    )
+
+
+def _flatten_data(data, label=None):
+    labels, data_flat = [], []
+    if isinstance(data, list) or isinstance(data, tuple):
+        for item in data:
+            l, df = _flatten_data(item)
+            labels += l
+            data_flat += df
+    elif isinstance(data, dict):
+        for key, val in data.items():
+            l, df = _flatten_data(val, label=key)
+            labels += l
+            data_flat += df
+    else:
+        labels.append(label)
+        data_flat.append(data)
+    return labels, data_flat
+
+
+def plot(*data, **kwargs):
+    labels, data = _flatten_data(data)
+    ratio = 3 / np.sqrt(3**2 + 2**2)
+    hgrid = int(np.ceil(np.sqrt(len(labels) / ratio)))
+    vgrid = int(np.ceil(len(labels) / hgrid))
+    spos = misc.get_combinations((range(hgrid), range(vgrid)))[:len(labels)]
+    pcfgs = [_get_pcfg(d, hrzt_subplot_pos=spos[i][0],
+                       vert_subplot_pos=spos[i][1], label=labels[i], **kwargs)
+             for i, d in enumerate(data)]
+    fcfg = get_figurecfg(hrzt_subplot_count=hgrid, vert_subplot_count=vgrid)
+    fig = display.plot.Figure(fcfg, pcfgs, data=data)
+    fig.plot()
+    fig.legend()
+    return fig
 
 
 ###############################################################################
@@ -78,9 +139,7 @@ def get_plotcfg_seriesdata_2d(
 if __name__ == "__main__":
     # Test imports
     import matplotlib.pyplot as plt
-    import numpy as np
     from libics import data
-    from libics.display import plot
 
     # Test data
     x = np.arange(200) - 50
@@ -124,7 +183,7 @@ if __name__ == "__main__":
     sd2_plot_cfg = get_plotcfg_seriesdata_2d(1, 0, "sd2")
     ad2_plot_cfg = get_plotcfg_arraydata_2d(1, 1, "ad2")
     # Plot
-    fig = plot.Figure(
+    fig = display.plot.Figure(
         fig_cfg,
         [sd_plot_cfg, ad_plot_cfg, sd2_plot_cfg, ad2_plot_cfg],
         data=[sd, ad, sd2, ad2]
