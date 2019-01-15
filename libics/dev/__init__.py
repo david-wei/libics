@@ -6,7 +6,7 @@ from . import sim   # noqa
 import copy
 
 import numpy as np
-from scipy import signal, interpolate
+from scipy import signal, interpolate, integrate
 
 from libics.data import types, arraydata, seriesdata
 from libics.file import hdf
@@ -286,28 +286,58 @@ class InterferometerSequence(hdf.HDFBase):
         """
         Estimates the displacement offset and scaling factor for each pixel.
         """
+        # Prepare data to enforce vanishing coherence
         scoh = np.array([item.spatial_coherence for item in self.items])
         disp = self.displacements
-        weights = np.nanmean(50 * scoh, axis=(1, 2))
-        # Logarithm of scaled Gaussian is parabola:
-        # C = exp(c0 - c2 * x0^2), x0 = -c1 / 2 / c2, s = sqrt(-1 / 2 / c2)
-        scoh = np.log(scoh)
+        """
+        disp_min, disp_max = disp.min(), disp.max()
+        disp_diff = disp_max - disp_min
+        num = len(disp) // 2
+        disp = np.concatenate((
+            np.linspace(disp_min - 5 * disp_diff,
+                        disp_min - 3 * disp_diff, num=num),
+            disp,
+            np.linspace(disp_max + 3 * disp_diff,
+                        disp_max + 5 * disp_diff, num=num)
+        ))
+        scoh = np.pad(scoh, ((num, num), (0, 0), (0, 0)),
+                      "constant", constant_values=1e-4)
+        """
         # Interpolate NaN values
         nans, f = np.isnan(scoh), lambda z: z.nonzero()[0]
         scoh[nans] = np.interp(f(nans), f(~nans), scoh[~nans])
         # Perform fit
-        poly_deg = 2
+        weights = np.nanmean(50 * scoh, axis=(1, 2))
+        # weights = np.nanmean(np.sqrt(50 * scoh**2 + 1), axis=(1, 2))
+        scoh = np.log(scoh)
+        poly_deg = 6 if len(disp) >= 10 else 2
         shape = scoh.shape
         param = np.polyfit(
             disp, scoh.reshape((shape[0], shape[1] * shape[2])),
             poly_deg, w=weights
         )
-        param[-3][param[-3] == 0] = np.nan
-        self.scoh_offset = (-param[-2] / 2 / param[-3]).reshape(shape[1:])
-        self.scoh_width = np.sqrt(-1 / param[-3] / 2).reshape(shape[1:])
-        self.scoh_factor = np.exp(
-            param[-1].reshape(shape[1:])
-            - param[-3].reshape(shape[1:]) * self.scoh_offset**2
+        self.scoh_params = param[::-1].reshape(
+            (poly_deg + 1, shape[1], shape[2])
+        )
+
+        # Mask evaluatable data
+        disp = self.displacements
+        mask = self.get_mask()
+        self.scoh_length = np.full_like(mask, np.nan, dtype=float)
+        scoh_params = []
+        for p in self.scoh_params:
+            scoh_params.append(p[mask])
+        scoh_params = np.array(scoh_params)
+        # Calculate coherence length
+        quad_order = 50
+        bound_factor = 3
+        disp_min, disp_max = disp.min(), disp.max()
+        disp_diff = disp_max - disp_min
+        bound_left = disp_min - bound_factor * disp_diff
+        bound_right = disp_max + bound_factor * disp_diff
+        self.scoh_length[mask], _ = integrate.fixed_quad(
+            lambda x: np.exp(np.polynomial.polynomial.polyval(x, scoh_params)),
+            bound_left, bound_right, n=quad_order
         )
 
     def get_mask(self):
@@ -326,7 +356,7 @@ class InterferometerSequence(hdf.HDFBase):
         Parameters
         ----------
         im_name : str
-            "offset", "coherence_length", "factor".
+            "scoh_length": Spatial coherence length.
         mask : bool
             Whether to mask image with np.nan.
             If True, also resizes the data to cut away all NaNs.
@@ -342,17 +372,10 @@ class InterferometerSequence(hdf.HDFBase):
             If im_name parameter is invalid.
         """
         im = self.items[0]._get_empty_image()
-        if "offset" in im_name:
-            im.add_dim(name="offset", symbol="s_0",
-                       unit=self.disp_quantity.unit)
-            im.data = self.scoh_offset
-        elif "length" in im_name:
+        if "length" in im_name:
             im.add_dim(name="coherence length", symbol="s_c",
                        unit=self.disp_quantity.unit)
-            im.data = self.scoh_width
-        elif "factor" in im_name:
-            im.add_dim(name="factor", symbol="C")
-            im.data = self.scoh_factor
+            im.data = self.scoh_length
         else:
             raise ValueError("invalid im_name ({:s})".format(str(im_name)))
         if mask:
@@ -367,7 +390,7 @@ class InterferometerSequence(hdf.HDFBase):
             im.data = im.data[cut_slice]
         return im
 
-    def get_scoh_function(self, index, coords):
+    def get_scoh_function(self, index, coords, data_name="raw"):
         """
         Gets the spatial coherence function at a given index as callable.
 
@@ -378,34 +401,36 @@ class InterferometerSequence(hdf.HDFBase):
             over the slice
         coords : np.ndarray(1, float)
             Displacement coordinates for evaluation.
+        data_name : str
+            "raw": Actual measured data.
+            "fit": Super-Gaussian fit data.
 
         Returns
         -------
         scoh_data : np.ndarray(1, float)
-            Interpolated spatial coherence function.
-        scoh_fit : np.ndarray(1, float)
-            Fitted spatial coherence function.
+            Requested interpolated spatial coherence function.
         """
         coords = np.array(coords)
-        scoh_data = np.array([
-            item.spatial_coherence[index] for item in self.items
-        ])
-        if scoh_data.ndim > 1:
-            scoh_data = np.mean(
-                scoh_data, axis=tuple(range(1, len(scoh_data.shape)))
-            )
-        scoh_data = interpolate.interp1d(
-            self.displacements, scoh_data, kind="linear", fill_value=0
-        )(coords)
-
-        fit_factor = self.scoh_factor[index][..., np.newaxis]
-        fit_offset = self.scoh_offset[index][..., np.newaxis]
-        fit_width = self.scoh_width[index][..., np.newaxis]
-        scoh_fit = np.mean(
-            fit_factor * np.exp(-(coords - fit_offset)**2 / 2 / fit_width**2),
-            axis=tuple(range(len(fit_factor.shape) - 1))
-        )
-        return scoh_data, scoh_fit
+        scoh_data = None
+        if data_name == "raw":
+            scoh_data = np.array([
+                item.spatial_coherence[index] for item in self.items
+            ])
+            if scoh_data.ndim > 1:
+                scoh_data = np.mean(
+                    scoh_data, axis=tuple(range(1, len(scoh_data.shape)))
+                )
+            scoh_data = interpolate.interp1d(
+                self.displacements, scoh_data, kind="linear",
+                bounds_error=False, fill_value=0
+            )(coords)
+        elif data_name == "fit":
+            fit_params = self.scoh_params[:, index[0], index[1]]
+            scoh_data = np.exp(np.polynomial.polynomial
+                               .polyval(coords, fit_params))
+            if scoh_data.ndim > 1:
+                scoh_data = np.nanmean(scoh_data, axis=(1, 2))
+        return scoh_data
 
     def get_graph(self, *graph_names, sort=True):
         """
