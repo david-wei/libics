@@ -4,6 +4,9 @@ from . import sim   # noqa
 ###############################################################################
 
 import copy
+import json
+import os
+import re
 
 import numpy as np
 from scipy import signal, interpolate, integrate
@@ -211,7 +214,9 @@ class InterferometerItem(hdf.HDFBase):
             if s_interm > s_cutoff:
                 max_scoh = bins[i]
                 break
-        scoh[scoh > max_scoh] = np.nan
+        mask = np.full_like(scoh, False, dtype=bool)
+        mask[~np.isnan(scoh)] = mask[~np.isnan(scoh)] > max_scoh
+        scoh[mask] = np.nan
         mask = ~np.logical_or(
             np.isnan(scoh), np.isnan(scoh_factor)
         )
@@ -234,6 +239,105 @@ class InterferometerItem(hdf.HDFBase):
             (bin_center - rescoh.mean)**2 * pdf * bin_diff
         ))
         return rescoh
+
+
+# ++++++++++++++++++++++++++++
+
+
+def _legacy_read_cohtrace(file_path):
+    """
+    Returns
+    -------
+    header : dict
+        Keys: "piezo_trace", "cohtrace_coords", "crop_coords".
+    cohtrace : np.ndarray(2, float)
+        Array of temporal coherence traces.
+    """
+    lines = []
+    with open(file_path) as f:
+        for line in f:
+            if re.match(r"#*", line):
+                lines.append(line.strip("# \r\n"))
+    header = None
+    for line in lines:
+        try:
+            header = json.loads(line)
+        except ValueError as e:
+            continue
+        if type(header) == dict:
+            break
+    assert(header is not None and
+           "piezo_trace" in header.keys() and
+           "cohtrace_coords" in header.keys() and
+           "crop_coords" in header.keys())
+    cohtrace = np.loadtxt(file_path)
+    header["piezo_trace"] = cohtrace[0]
+    cohtrace = cohtrace[1:]
+    return header, cohtrace
+
+
+def legacy_load_interferometer_item(
+    folder, base_name=None, resolution=(1388, 1038), uncertainty=0.02
+):
+    """
+    Legacy: Load .npy interferometer files.
+
+    Parameters
+    ----------
+    folder : str
+        Folder of stored files.
+    base_name : str
+        Base name of files. If None, uses the folder name.
+
+    Returns
+    -------
+    intf : InterferometerItem
+        Reconstructed interferometer item.
+    """
+    if base_name is None:
+        base_name = os.path.basename(folder)
+    prefix = os.path.join(folder, base_name)
+    # Construct object
+    intf = InterferometerItem(
+        im_max=np.full(resolution, np.nan, dtype=float),
+        im_max_index=np.zeros(resolution, dtype=int),
+        im_min=np.full(resolution, np.nan, dtype=float),
+        im_min_index=np.zeros(resolution, dtype=int),
+        im_fixed=np.zeros(resolution, dtype=float),
+        im_scanned=np.zeros(resolution, dtype=float),
+        uncertainty=uncertainty
+    )
+    # Read metadata
+    header, cohtrace = _legacy_read_cohtrace(prefix + "_cohtrace.txt")
+    intf.voltages = header["piezo_trace"]
+    intf.trace_coords = header["cohtrace_coords"]
+    ((xmin, ymin), (xmax, ymax)) = header["crop_coords"]
+    mask = (slice(xmin, xmax), slice(ymin, ymax))
+    # Read images
+    im_fixed = np.load(prefix + "_imref_fixed.npy")
+    im_scanned = np.load(prefix + "_imref_scanned.npy")
+    im_max = np.load(prefix + "_imrec_max.npy")
+    im_min = np.load(prefix + "_imrec_min.npy")
+    intf.im_max_index[mask] = np.load(prefix + "_impos_max.npy")
+    intf.im_min_index[mask] = np.load(prefix + "_impos_min.npy")
+    # Calculate back raw data
+    i1 = 2 * np.sqrt(im_fixed.astype(float) * im_scanned)
+    i2 = im_fixed.astype(float) + im_scanned
+    intf.im_max[mask] = im_max * i1 + i2
+    intf.im_min[mask] = im_min * i1 + i2
+    intf.im_fixed[mask] = im_fixed
+    intf.im_scanned[mask] = im_scanned
+    trace = []
+    for i, trace_item in enumerate(cohtrace):
+        coord = tuple(intf.trace_coords[i])
+        i1 = 2 * np.sqrt(intf.im_fixed[coord] * intf.im_scanned[coord])
+        i2 = intf.im_fixed[coord] + intf.im_scanned[coord]
+        trace.append(trace_item * i1 + i2)
+    intf.trace = np.array(trace)
+    return intf
+
+
+###############################################################################
 
 
 @InheritMap(map_key=("libics-dev", "InterferometerSequence"))
@@ -448,6 +552,10 @@ class InterferometerSequence(hdf.HDFBase):
             Requested graph as a function of parameters.
             Returns list if multiple graph_names are given.
         """
+        name = {
+            "mean": "residual coherence mean",
+            "std": "residual coherence standard deviation"
+        }
         symbol = {
             "mean": "\overline{|\gamma_{A, \mathrm{res}}|}",
             "std": "\sigma_{|\gamma_{A, \mathrm{res}|}"
@@ -466,8 +574,7 @@ class InterferometerSequence(hdf.HDFBase):
         for i, gn in enumerate(graph_names):
             graph.append(seriesdata.SeriesData())
             graph[-1].add_dim(quantity=copy.deepcopy(self.param_quantity))
-            graph[-1].add_dim(name="residual coherence " + gn,
-                              symbol=symbol[gn])
+            graph[-1].add_dim(name=name[gn], symbol=symbol[gn])
             graph[-1].data = np.array([params, res[i]])
         if len(graph) == 1:
             graph = graph[0]

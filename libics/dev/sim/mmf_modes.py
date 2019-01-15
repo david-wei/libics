@@ -277,7 +277,10 @@ class Fiber(abc.ABC, hdf.HDFBase):
         """
         Mode propagation constant correlation matrix B_mn = β_m - β_n.
         """
-        return np.subtract.outer(self.mode_propconsts, self.mode_propconsts)
+        corr_propconst = np.subtract.outer(
+            self.mode_propconsts, self.mode_propconsts
+        )
+        return corr_propconst
 
     def corr_delay(self, fiber_length):
         """
@@ -288,7 +291,8 @@ class Fiber(abc.ABC, hdf.HDFBase):
         fiber_length : float
             Length of fiber in meter (m).
         """
-        return self.corr_propconst * fiber_length / self.opt_freq
+        corr_delay = self.corr_propconst * fiber_length / self.opt_freq
+        return corr_delay
 
     def corr_tempcoh(self, fiber_length, tempcoh_func):
         """
@@ -301,7 +305,8 @@ class Fiber(abc.ABC, hdf.HDFBase):
         tempcoh_func : callable
             Temporal coherence function in meter (m).
         """
-        return tempcoh_func([self.corr_delay(fiber_length)])
+        corr_tempcoh = tempcoh_func([self.corr_delay(fiber_length)])
+        return corr_tempcoh
 
     def corr_overlap(self, overlap):
         """

@@ -19,8 +19,8 @@ if __name__ == "__main__":
     numerical_aperture = 0.22
     clad_refr = 1.45
     core_refr = np.sqrt(clad_refr**2 + numerical_aperture**2)
-    core_radius = 10e-6
-    fiber_length = 200.0
+    core_radius = 105e-6 / 2
+    fiber_length = 20.0
     fiber_type = "round_step"
 
     # Light source
@@ -67,6 +67,12 @@ if __name__ == "__main__":
     fiber.calc_modes()
     overlap = fiber.calc_overlap(gaussian_beam, algorithm=overlap_algorithm)
 
+    import matplotlib.pyplot as plt
+    plt.pcolormesh(fiber.corr_delay(fiber_length), cmap="RdBu")
+    plt.colorbar()
+    plt.gca().set_aspect(1)
+    plt.show()
+
     # ++++ Plotting ++++++++
 
     # Sampling
@@ -79,9 +85,9 @@ if __name__ == "__main__":
     # Output
     if "output" in results:
         output = arraydata.ArrayData()
-        output.add_dim(offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
+        output.add_dim(offset=x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
                        name="position", symbol="x", unit="m")
-        output.add_dim(offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
+        output.add_dim(offset=y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
                        name="position", symbol="y", unit="m")
         output.add_dim(name="field", symbol="A", unit="arb.")
         output.data = abs(fiber.output(
@@ -102,11 +108,11 @@ if __name__ == "__main__":
         temporal_coherence = fourier.fft_arraydata(gaussian_beam.spectrum)
         correlation = arraydata.ArrayData()
         correlation.add_dim(
-            offset=-x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
+            offset=x[0], scale=((x[-1] - x[0]) / (len(x) - 1)),
             name="position", symbol="x", unit="m"
         )
         correlation.add_dim(
-            offset=-y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
+            offset=y[0], scale=((y[-1] - y[0]) / (len(y) - 1)),
             name="position", symbol="y", unit="m"
         )
         correlation.add_dim(
