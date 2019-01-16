@@ -44,11 +44,13 @@ class Quantity(hdf.HDFBase):
     def __repr__(self):
         return str(type(self)) + ": " + str(self)
 
-    def mathstr(self):
-        s = self.name
-        if self.symbol is not None:
+    def mathstr(self, name=True, symbol=True, unit=True):
+        s = ""
+        if name:
+            s += self.name
+        if symbol and self.symbol is not None:
             s += " $" + self.symbol + "$"
-        if self.unit is not None:
+        if unit and self.unit is not None:
             s += r" [$\mathregular{" + self.unit + r"}$]"
         return s
 
@@ -109,16 +111,22 @@ class ValQuantity(Quantity):
                 s += " [" + self.unit + "]"
         return s
 
-    def mathstr(self):
-        s = self.name
-        if self.symbol is not None:
+    def mathstr(self, name=True, symbol=True, unit=True,
+                val=True, val_format=None):
+        s = ""
+        if name:
+            s += self.name
+        if symbol and self.symbol is not None:
             s += " $" + self.symbol + "$"
-            if self.val is not None:
+            if val and self.val is not None:
                 s += " ="
-        if self.val is not None:
-            s += " $" + str(self.val) + "$"
-        if self.unit is not None:
-            if self.val is not None:
+        if val and self.val is not None:
+            if val_format is None:
+                s += " $" + str(self.val) + "$"
+            else:
+                s += " $" + val_format.format(self.val) + "$"
+        if unit and self.unit is not None:
+            if val and self.val is not None:
                 s += " " + self.unit
             else:
                 s += " [" + self.unit + "]"
