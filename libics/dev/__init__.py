@@ -463,11 +463,10 @@ class InterferometerSequence(hdf.HDFBase):
         self.scoh_offset = np.full_like(mask, np.nan, dtype=float)
         params = self.scoh_params[:, mask].T
         bounds = (self.displacements.min(), self.displacements.max())
-        print(params.shape, params.dtype, bounds, len(mask[mask]), len(self.scoh_offset[mask]), self.scoh_offset.dtype)
         self.scoh_offset[mask] = np.array([
             optimize.minimize_scalar(
                 lambda x: -np.polynomial.polynomial.polyval(
-                    params[i], x
+                    x, params[i]
                 ), bounds=bounds, method="bounded"
             ).x for i in range(len(mask[mask]))
         ], dtype=float)
@@ -582,6 +581,22 @@ class InterferometerSequence(hdf.HDFBase):
                 bounds_error=False, fill_value=0
             )(coords)
         elif data_name == "raw_offset":
+            """
+            # ALGORITHM: flatten!
+            scoh_data = np.array([
+                item[index].flatten() for item in scoh_data
+            ]).T
+            if scoh_data.ndim > 1:
+                new_data = np.full((scoh_offset[index].size, len(coords)), np.nan, dtype=float)
+                for i, sco in enumerate(scoh_offset[index].flatten()):
+                    print(disp.shape, sco.shape, scoh_data[i].shape)
+                    new_data[i] = interpolate.interp1d(
+                        displacements - sco, scoh_data[i], kind="linear", bounds_error=False, fill_value=0
+                    )(coords)
+                scoh_data = np.nanmean(
+                    new_data, axis=tuple(range(1, len(scoh_data.shape)))
+                )
+            """
             scoh_data = np.array([
                 item.spatial_coherence[index] for item in self.items
             ])
