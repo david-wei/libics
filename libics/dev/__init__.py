@@ -9,7 +9,7 @@ import os
 import re
 
 import numpy as np
-from scipy import signal, interpolate, integrate, optimize
+from scipy import signal, interpolate, integrate
 
 from libics.data import types, arraydata, seriesdata
 from libics.file import hdf
@@ -396,7 +396,7 @@ class InterferometerSequence(hdf.HDFBase):
         nans, f = np.isnan(scoh), lambda z: z.nonzero()[0]
         scoh[nans] = np.interp(f(nans), f(~nans), scoh[~nans])
         # Perform fit
-        weights = np.nanmean(50 * scoh, axis=(1, 2))
+        weights = np.nanmean(20 * scoh, axis=(1, 2))
         scoh = np.log(scoh)
         poly_deg = 6 if len(disp) >= 10 else 2
         shape = scoh.shape
@@ -408,106 +408,34 @@ class InterferometerSequence(hdf.HDFBase):
             (poly_deg + 1, shape[1], shape[2])
         )
 
-        # Perform a constrained re-fit for non-convergent fits
-        """
-        if poly_deg > 2:
-            # Reload spatial coherence to avoid NaN interpolation
-            scoh = np.array([item.spatial_coherence for item in self.items])
-            coords = np.argwhere(np.logical_or(
-                self.scoh_params[6] > 0, self.scoh_params[2] > 0
-            ))
-            sigma = 1 / weights
-            bounds = np.full((poly_deg + 1, 2), np.inf)
-            bounds[0] *= -1
-            bounds[2, 1], bounds[6, 1] = 0, 0
-            p0 = np.array([1, 1, -1, 1, 1, 1, -1], dtype=float)
-            max_func_evals = 400 * len(disp + 1)
+        # Calculate offset and scale by maximum
+        mask = self.get_mask()
+        scoh_data = np.array([item.spatial_coherence for item in self.items],
+                             dtype=float)[:, mask]
+        scoh_index_max = np.nanargmax(scoh_data, axis=0)
+        scoh_val_max = np.choose(scoh_index_max, scoh_data)
+        self.scoh_offset = np.full_like(mask, fill_value=np.nan, dtype=float)
+        self.scoh_scale = np.ones(mask.shape, dtype=float)
+        self.scoh_offset[mask] = self.displacements[scoh_index_max]
+        self.scoh_scale[mask] = scoh_val_max
 
-            def fit_func_poly(x, *args):
-                return np.polynomial.polynomial.polyval(x, args)
-
-            for c in coords:
-                if np.any(np.isnan(scoh[:, c[0], c[1]])):
-                    continue
-                param, cov = optimize.curve_fit(
-                    fit_func_poly, disp, scoh[:, c[0], c[1]],
-                    p0=p0, sigma=sigma, maxfev=max_func_evals
-                )
-                if np.inf in cov:
-                    print(c, param)
-                self.scoh_params[:, c[0], c[1]] = param
-        """
-
-        # Mask evaluatable data
-        disp = self.displacements
+        # Calculate coherence length
         mask = self.get_mask()
         self.scoh_length = np.full_like(mask, np.nan, dtype=float)
-        scoh_params = []
-        for p in self.scoh_params:
-            scoh_params.append(p[mask])
-        scoh_params = np.array(scoh_params)
-        # Calculate coherence length
-        quad_order = 50
-        bound_factor = 0
-        disp_min, disp_max = disp.min(), disp.max()
-        disp_diff = disp_max - disp_min
-        bound_left = disp_min - bound_factor * disp_diff
-        bound_right = disp_max + bound_factor * disp_diff
-        self.scoh_length[mask], _ = integrate.fixed_quad(
-            lambda x: np.exp(np.polynomial.polynomial.polyval(x, scoh_params)),
-            bound_left, bound_right, n=quad_order
-        )
-
-        # Calculate offset
-        mask = self.get_mask()
-        probe_disp = np.linspace(
-            self.displacements.min(), self.displacements.max(), num=50
-        )[np.newaxis, ...]
-        powers = np.arange(poly_deg + 1)[..., np.newaxis]
-        disp_powers = np.zeros((poly_deg + 1, probe_disp.shape[1]),
-                               dtype=float)
-        temp_res = np.zeros(len(probe_disp), dtype=float)
-        params = self.scoh_params[:, mask].T[..., np.newaxis]
-        self.scoh_offset = np.full_like(mask, np.nan, dtype=float)
-        for i in range(len(mask[mask])):
-            print("[{:d}/{:d}]".format(i, len(mask[mask])), end="\r")
-            np.power(probe_disp, powers, out=disp_powers)
-            np.multiply(params[i], disp_powers, out=disp_powers)
-            np.sum(disp_powers, axis=0, out=temp_res)
-            self.scoh_offset[mask][i] = probe_disp[0, temp_res.argmax()]
-        print("           ", end="\r")
-        """
-        # Calculate offset
-        mask = self.get_mask()
-        self.scoh_offset = np.full_like(mask, np.nan, dtype=float)
-        params = self.scoh_params[:, mask].T
-        bounds = (self.displacements.min(), self.displacements.max())
-        for i in range(len(mask[mask])):
-            print("[{:d}/{:d}]".format(i, len(mask[mask])), end="\r")
-            res = optimize.minimize_scalar(
-                lambda x: -np.polynomial.polynomial.polyval(x, params[i]),
-                bounds=bounds, method="bounded"
-            )
-            self.scoh_offset[mask][i] = res.x
-        print("           ", end="\r")
-        """
-        """
-        self.scoh_offset[mask] = np.array([
-            optimize.minimize_scalar(
-                lambda x: -np.polynomial.polynomial.polyval(
-                    x, params[i]
-                ), bounds=bounds, method="bounded"
-            ).x for i in range(len(mask[mask]))
-        ], dtype=float)
-        """
-        """
-        x0 = np.full_like(mask, np.mean(self.displacements), dtype=float)[mask]
-        sol = optimize.root(
-            lambda x: np.polynomial.polynomial.polyval(x, params) - 1,
-            x0=x0, tol=0.01
-        )
-        self.scoh_offset[mask] = sol.x
-        """
+        scoh_scale = self.scoh_scale[mask][np.newaxis, ...]
+        scoh_data = np.array([item.spatial_coherence for item in self.items],
+                             dtype=float)[:, mask] / scoh_scale
+        scoh_length = integrate.simps(scoh_data, self.displacements, axis=0)
+        scoh_offset = self.scoh_offset[mask]
+        ind_min = self.displacements.argmin()
+        ind_max = self.displacements.argmax()
+        disp_left = scoh_offset - self.displacements[ind_min]
+        disp_right = scoh_offset + self.displacements[ind_max]
+        scoh_length -= (disp_left * scoh_data[ind_min]**2
+                        / 2 / np.log(scoh_data[ind_min]))
+        scoh_length -= (disp_right * scoh_data[ind_max]**2
+                        / 2 / np.log(scoh_data[ind_max]))
+        self.scoh_length[mask] = scoh_length
 
     def get_mask(self):
         """
@@ -528,7 +456,7 @@ class InterferometerSequence(hdf.HDFBase):
             Masking rectangle: ((x_min, y_min), (x_max, y_max)).
         """
         mask = self.get_mask()
-        return resize.resize_on_condition(mask, cond="cut_all", val=np.nan)
+        return resize.resize_on_condition(mask, cond="cut_all", val=False)
 
     def get_image(self, im_name, mask=True):
         """
@@ -584,9 +512,9 @@ class InterferometerSequence(hdf.HDFBase):
             Displacement coordinates for evaluation.
         data_name : str
             "raw": Actual measured data.
-            "raw_offset": Measured data shifted by fitted offset.
+            "raw_corrected": Measured data shifted and scaled.
             "fit": Super-Gaussian fit data.
-            "fit_offset": Fitted data shifted by offset.
+            "fit_corrected": Fitted data shifted and scaled.
 
         Returns
         -------
@@ -609,8 +537,10 @@ class InterferometerSequence(hdf.HDFBase):
                     self.displacements, scoh_data[i],
                     kind="linear", bounds_error=False, fill_value=0
                 )(coords)
-        elif data_name == "raw_offset":
+        elif data_name == "raw_corrected":
             scoh_offset = self.scoh_offset[index].ravel()
+            scoh_scale = self.scoh_scale[index].ravel()
+            scoh_data /= scoh_scale[..., np.newaxis]
             for i, sco in enumerate(scoh_offset):
                 new_data[i] = interpolate.interp1d(
                     self.displacements - sco, scoh_data[i],
@@ -622,13 +552,18 @@ class InterferometerSequence(hdf.HDFBase):
             for i, param in enumerate(scoh_params):
                 new_data[i] = np.exp(np.polynomial.polynomial
                                      .polyval(coords, param))
-        elif data_name == "fit_offset":
+        elif data_name == "fit_corrected":
             scoh_params = self.scoh_params[:, index[0], index[1]]
             scoh_params = scoh_params.reshape((len(scoh_params), ind_len)).T
             scoh_offset = self.scoh_offset[index].ravel()
+            scoh_scale = self.scoh_scale[index].ravel()
             for i, param in enumerate(scoh_params):
-                new_data[i] = np.exp(np.polynomial.polynomial
-                                     .polyval(coords + scoh_offset[i], param))
+                new_data[i] = np.exp(
+                    np.polynomial.polynomial
+                    .polyval(coords + scoh_offset[i], param)
+                ) / scoh_scale[i]
+        else:
+            raise ValueError("invalid data_name ({:s})".format(str(data_name)))
         scoh_data = np.nanmean(new_data, axis=0)
         # Result container
         sd = seriesdata.SeriesData()
