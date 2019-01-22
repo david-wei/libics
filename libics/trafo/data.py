@@ -159,7 +159,7 @@ class Calibration(seriesdata.SeriesData):
         super().__init__(pkg_name=pkg_name, cls_name=cls_name)
         self.add_dim()
         self.add_dim()
-        self.data = [np.empty(0), np.empty(0)]
+        self.data = [None, None]
         if sd is not None:
             key_data = np.copy(sd.data[sd_key_dim])
             val_data = np.copy(sd.data[sd_val_dim])
@@ -178,7 +178,9 @@ class Calibration(seriesdata.SeriesData):
 
     @key_data.setter
     def key_data(self, val):
-        self.data[0] = val
+        self.data[0] = np.array(val)
+        if self.data[1] is not None:
+            self.data = np.array(self.data)
 
     @property
     def val_data(self):
@@ -186,7 +188,9 @@ class Calibration(seriesdata.SeriesData):
 
     @val_data.setter
     def val_data(self, val):
-        self.data[1] = val
+        self.data[1] = np.array(val)
+        if self.data[0] is not None:
+            self.data = np.array(self.data)
 
     @property
     def key_quantity(self):

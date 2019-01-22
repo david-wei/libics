@@ -71,6 +71,11 @@ class Fiber(abc.ABC, hdf.HDFBase):
     def vacuum_wavenumber(self):
         return 2 * np.pi * self.opt_freq / constants.speed_of_light
 
+    @property
+    def group_velocities(self):
+        k = self.vacuum_wavenumber * self.core_refr
+        return constants.c * self.mode_propconsts / k
+
     def trafo_coords(self, var1, var2, coord):
         """
         Transforms the given coordinates into the internally used coordinate
@@ -266,6 +271,40 @@ class Fiber(abc.ABC, hdf.HDFBase):
             overlap
             * np.exp(-1j * self.mode_propconsts * fiber_length)
             * np.moveaxis(mode_profiles, 0, -1),
+            axis=-1
+        )
+        return output
+
+    def intensity_output(self, var1, var2, overlap, coord=COORD.POLAR):
+        """
+        Evaluates the intensity output for an incoherently summed overlap
+        vector.
+
+        Parameters
+        ----------
+        var1, var2:
+            Positional variables in dimensions (1, 2), which are
+            typically (x, y) or (r, φ).
+        overlap : numpy.ndarray(1)
+            Overlap vector corresponding to the fiber modes.
+            Note: linear overlap, will be squared in function.
+        coord : COORD
+            Specifies given coordinate system.
+            If COORD.CARTESIAN, the parameters (radius, azimuth)
+            are interpreted as (x, y).
+
+        Returns
+        -------
+        output : np.ndarray(float)
+            Intensity distribution.
+            Shape: shape of var_coords
+        """
+        var1, var2 = self.trafo_coords(
+            var1, var2, coord
+        )
+        mode_profiles = np.abs(self.vec_field(var1, var2, coord=coord))**2
+        output = np.sum(
+            np.abs(overlap)**2 * np.moveaxis(mode_profiles, 0, -1),
             axis=-1
         )
         return output
@@ -871,6 +910,272 @@ class RoundStepIndexFiber(Fiber):
                     self.core_radius, 1.5 * self.core_radius
                 )[0]
                 overlap[i] *= 2 * np.pi
+        print(
+            "\r{: >6d}/{:d} ({:d}s)"
+            .format(len(overlap), len(overlap), int(time.time() - t0))
+        )
+        return overlap
+
+
+# ++++++++++++++++++++++++++++++
+
+
+@InheritMap(map_key=("libics-dev", "SquareStepIndexFiber"))
+class SquareStepIndexFiber(Fiber):
+
+    """
+    Analytical propagation eigensystem for a square-core step-index fiber.
+
+    Parameters
+    ----------
+    opt_freq : float
+        Optical frequency in Hertz (Hz).
+    core_radius : float
+        Fiber core half-side length in meter (m).
+    clad_radius : float
+        Fiber cladding radius in meter (m).
+        [Not used].
+    core_refr : float
+        Fiber core material refraction index.
+    clad_refr : float
+        Fiber cladding material refraction index.
+    """
+
+    def __init__(
+        self,
+        opt_freq=None,
+        core_radius=None, clad_radius=None,
+        core_refr=None, clad_refr=None,
+        pkg_name="libics-dev", cls_name="RoundStepIndexFiber", **kwargs
+    ):
+        super().__init__(
+            coord=COORD.POLAR, opt_freq=opt_freq,
+            core_radius=core_radius, clad_radius=clad_radius,
+            pkg_name=pkg_name, cls_name=cls_name, **kwargs
+        )
+        self.core_refr = core_refr
+        self.clad_refr = clad_refr
+        self.core_factors = []
+        self.clad_factors = []
+
+    @property
+    def internal_coord(self):
+        return COORD.CARTESIAN
+
+    def __call__(self, var1, var2, mode_number, coord=COORD.POLAR):
+        """
+        Evaluates the mode profile. Does not apply any propagation phases.
+
+        Parameters
+        ----------
+        var1, var2 : float or np.ndarray(float)
+            Positional coordinate.
+        mode_number : (int, int), int
+            (m, n): (x, y) mode number.
+            (i): internal index.
+        coord : COORD
+            Specifies the coordinate system var_coord is given in.
+            CARTESIAN: (x, y).
+            POLAR: (r, φ).
+        """
+        x, y, k, m, n, index = 6 * [None]   # noqa
+        # Coordinate system
+        if coord == COORD.POLAR:
+            x, y = var1 * np.cos(var2), var1 * np.sin(var2)
+        elif coord == COORD.CARTESIAN:
+            x, y = var1, var2
+        # Constants
+        a = self.core_radius
+        # Mode eigenvalues
+        if isinstance(mode_number, tuple):
+            index = self.mode[mode_number]
+        else:
+            index = mode_number
+            mode_number = self.mode_numbers[index]
+        m, n = mode_number
+        # Mode parameters
+        Cco = 4 / a**2
+        # Evaluation
+        res_x, res_y = None, None
+        if m % 2 == 0:
+            res_x = np.piecewise(
+                x, [x <= a, x > a],
+                [lambda x: np.sin(m * x * np.pi / 2 / a),
+                 lambda x: np.zeros_like(x)]
+            )
+        else:
+            res_x = np.piecewise(
+                x, [x <= a, x > a],
+                [lambda x: np.cos(m * x * np.pi / 2 / a),
+                 lambda x: np.zeros_like(x)]
+            )
+        if n % 2 == 0:
+            res_y = np.piecewise(
+                y, [y <= a, y > a],
+                [lambda y: np.sin(n * y * np.pi / 2 / a),
+                 lambda y: np.zeros_like(y)]
+            )
+        else:
+            res_y = np.piecewise(
+                y, [y <= a, y > a],
+                [lambda y: np.cos(n * y * np.pi / 2 / a),
+                 lambda y: np.zeros_like(y)]
+            )
+        return Cco * res_x * res_y
+
+    def calc_modes(self):
+        """
+        Calculates the propagation eigensystem.
+        """
+        na = self.numerical_aperture
+        k0 = self.vacuum_wavenumber
+        a = self.core_radius
+        nco = self.core_refr
+        k = nco * k0
+        guiding_condition = (2 * k0 * a * na / np.pi)**2
+        b2_ls, mn_ls = [], []
+        m, n = 1, 1
+        while m**2 + n**2 <= guiding_condition:
+            while m**2 + n**2 <= guiding_condition:
+                mn_ls.append((m, n))
+                b2_ls.append(k**2 - (m**2 + n**2) * (np.pi / 2 / a)**2)
+                n += 1
+            n = 1
+            m += 1
+        # Assign results
+        self.mode_propconsts = np.sqrt(b2_ls)
+        self.mode_numbers = np.array(mn_ls)
+        self._set_mode_number_map()
+
+    def calc_overlap(
+        self,
+        input_field, *args,
+        algorithm="dblquad", **kwargs
+    ):
+        """
+        Parameters
+        ----------
+        input_field : callable
+            Function representing the input light field.
+            Call signature : f (var_1, var_2, coord)
+                var_1, var_2 : float
+                    2D spatial variables.
+                coord : COORD
+                    Coordinate system type (must accept polar).
+        *args
+            Parameters passed to input_field.
+        algorithm : "dblquad", "hybrid", "simpson"
+            Overlap integration algorithm.
+        **kwargs
+            Keyword arguments passed to input_field.
+
+        Returns
+        -------
+        overlap : numpy.ndarray(1)
+            Overlap vector corresponding to the fiber modes.
+        """
+        # Perform overlap integral
+        print("Calculating overlap integral")
+        overlap = np.full_like(self.mode_propconsts, np.nan, dtype=complex)
+        t0 = time.time()
+
+        # Simpsons integration
+        if algorithm == "simpson":
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >6d}/{:d} ({:d}s)      "
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                num = 20 * self.core_radius * self.opt_freq / constants.c
+                var = np.linspace(-self.core_radius, self.core_radius, num=num)
+                x, y = np.meshgrid(var, var)
+                overlap[i] = 2 * np.pi * integrate.simps(integrate.simps(
+                        np.conjugate(self(x, y, i))
+                        * input_field(x, y, coord=COORD.CARTESIAN), var
+                ), var)
+
+        # Hybrid integration
+        if algorithm == "hybrid":
+            raise NotImplementedError
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >4d}/{:d} ({:d}s)"
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                var_azimuthal = np.linspace(
+                    0, 2 * np.pi, num=max(16, 8 * abs(l)), endpoint=False
+                )
+                # Integrate core
+                overlap[i] = integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.real(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ), 0, self.core_radius, n=max(6, 6 * m)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] += 1j * integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.imag(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ), 0, self.core_radius, n=max(6, 6 * m)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                # Integrate cladding
+                overlap[i] += integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.real(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ),
+                        self.core_radius, 1.2 * self.core_radius,
+                        n=max(6, 6 * m)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] += 1j * integrate.simps(
+                    [integrate.fixed_quad(
+                        lambda r: np.imag(
+                            np.conjugate(self(r, phi, i))
+                            * input_field(r, phi, coord=COORD.POLAR)
+                        ),
+                        self.core_radius, 1.2 * self.core_radius,
+                        n=max(6, 6 * m)
+                    )[0] for phi in var_azimuthal],
+                    x=var_azimuthal
+                )
+                overlap[i] *= 2 * np.pi
+
+        # Library quad integration
+        if algorithm == "dblquad":
+            for i, (l, m) in enumerate(self.mode_numbers):
+                print(
+                    "\r{: >4d}/{:d} ({:d}s)"
+                    .format(i, len(overlap), int(time.time() - t0)),
+                    end=""
+                )
+                # Integrate core
+                overlap[i] = integrate.dblquad(
+                    lambda x, y: np.real(
+                        np.conjugate(self(x, y, i))
+                        * input_field(x, y, coord=COORD.CARTESIAN)
+                    ),
+                    0, 2 * np.pi,
+                    0, self.core_radius,
+                )[0]
+                overlap[i] += 1j * integrate.dblquad(
+                    lambda x, y: np.imag(
+                        np.conjugate(self(x, y, i))
+                        * input_field(x, y, coord=COORD.CARTESIAN)
+                    ),
+                    0, 2 * np.pi,
+                    0, self.core_radius,
+                )[0]
         print(
             "\r{: >6d}/{:d} ({:d}s)"
             .format(len(overlap), len(overlap), int(time.time() - t0))
