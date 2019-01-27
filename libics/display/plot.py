@@ -240,7 +240,8 @@ def _param_color(color, data):
 ###############################################################################
 
 
-def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
+def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data,
+                        quantities=None, zorder=0.0):
     """
     Plot 1D array.
 
@@ -292,7 +293,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
                 marker = cfg.point.shape
             mpl_artist = mpl_ax.scatter(
                 x, yy, s=s, c=c, marker=marker, cmap=cmap,
-                vmin=vmin, vmax=vmax, alpha=alpha,
+                vmin=vmin, vmax=vmax, alpha=alpha, zorder=zorder+0.1
             )
             if (
                 quantities is not None and cmap is not None
@@ -316,7 +317,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
                 linewidth = cfg.curve.line.thickness
             mpl_artist = mpl_ax.plot(
                 x, yy, color=c, alpha=alpha,
-                linestyle=linestyle, linewidth=linewidth
+                linestyle=linestyle, linewidth=linewidth, zorder=zorder
             )[0]
     # 3D plots
     elif plot_dim == 3:
@@ -345,7 +346,7 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
                 marker = cfg.point.shape
             mpl_artist = mpl_ax.scatter(
                 x, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
-                vmin=vmin, vmax=vmax, alpha=alpha,
+                vmin=vmin, vmax=vmax, alpha=alpha, zorder=zorder
             )
             if (
                 quantities is not None and cmap is not None
@@ -369,12 +370,13 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data, quantities=None):
                 linewidth = cfg.curve.line.thickness
             mpl_artist = mpl_ax.plot(
                 x, yy, zz, color=c, alpha=alpha,
-                linestyle=linestyle, linewidth=linewidth
+                linestyle=linestyle, linewidth=linewidth, zorder=zorder
             )[0]
     return mpl_artist
 
 
-def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
+def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
+                        quantities=None, zorder=0.0):
     """
     Plot 2D array.
 
@@ -422,7 +424,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
                 marker = cfg.point.shape
             mpl_artist = mpl_ax.scatter(
                 xx, yy, s=s, c=c, marker=marker, cmap=cmap,
-                vmin=vmin, vmax=vmax, alpha=alpha,
+                vmin=vmin, vmax=vmax, alpha=alpha, zorder=zorder+0.1
             )
             if (
                 quantities is not None and cmap is not None
@@ -448,7 +450,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
                 edgecolors = "none"   # transparent edges
             mpl_artist = mpl_ax.pcolormesh(
                 x, y, c.T, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
-                edgecolors=edgecolors
+                edgecolors=edgecolors, zorder=zorder
             )
             if (
                 quantities is not None and cmap is not None
@@ -470,7 +472,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.contourf(
                 x, y, z.T, levels=levels, alpha=alpha, cmap=cmap,
-                vmin=vmin, vmax=vmax
+                vmin=vmin, vmax=vmax, zorder=zorder
             )
             if (
                 quantities is not None and cmap is not None
@@ -500,7 +502,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
                 marker = cfg.point.shape
             mpl_artist = mpl_ax.scatter(
                 xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
-                vmin=vmin, vmax=vmax, alpha=alpha,
+                vmin=vmin, vmax=vmax, alpha=alpha, zorder=zorder
             )
             if (
                 quantities is not None and cmap is not None
@@ -537,7 +539,7 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
             if alpha != 0:
                 mpl_artist = mpl_ax.plot_surface(
                     xgrid, ygrid, z, color=color, cmap=cmap,
-                    vmin=vmin, vmax=vmax, edgecolor=mcolor
+                    vmin=vmin, vmax=vmax, edgecolor=mcolor, zorder=zorder
                 )
             # Wireframe plot
             else:
@@ -559,12 +561,13 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data, quantities=None):
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.contour(
                 xgrid, ygrid, z, levels=levels, alpha=alpha, cmap=cmap,
-                vmin=vmin, vmax=vmax
+                vmin=vmin, vmax=vmax, zorder=zorder
             )
     return mpl_artist
 
 
-def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
+def _plot_data_series(mpl_ax, plot_dim, cfg, data,
+                      quantities=None, zorder=0.0):
     """
     Plot series data (tabular).
 
@@ -594,13 +597,14 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
             if cfg.point.xpos is None or cfg.point.ypos is None:
                 return
             xx, yy = data[cfg.point.xpos.dim], data[cfg.point.ypos.dim]
-            s, c, marker, cmap, vmin, vmax, alpha = 7 * [None]
+            s, c, marker, cmap, vmin, vmax, alpha, es = 8 * [None]
+            ec = "face"
             if cfg.point.size is not None:
                 for size in _param_size(cfg.point.size, data):
                     if size is not None:
                         s = size
                         break
-            if cfg.point.color is not None and cfg.point.color.dim is not None:
+            if cfg.point.color is not None:
                 if cfg.point.color.scale == "const":
                     c = cfg.point.color.map
                 elif cfg.point.color.scale == "lin":
@@ -610,9 +614,15 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
                 alpha = cfg.point.color.alpha
             if cfg.point.shape is not None:
                 marker = cfg.point.shape
+            if (cfg.point.edgecolor is not None
+                    and cfg.point.edgecolor.scale == "const"):
+                ec = cfg.point.edgecolor.map
+            if cfg.point.edgesize is not None:
+                es = cfg.point.edgesize
             mpl_artist = mpl_ax.scatter(
                 xx, yy, s=s, c=c, marker=marker, cmap=cmap,
                 vmin=vmin, vmax=vmax, alpha=alpha,
+                edgecolors=ec, linewidths=es, zorder=zorder+0.1
             )
         # 2D curve line plot
         if cfg.curve is not None:
@@ -629,7 +639,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
                 linewidth = cfg.curve.line.thickness
             mpl_artist = mpl_ax.plot(
                 xx, yy, color=c, alpha=alpha,
-                linestyle=linestyle, linewidth=linewidth
+                linestyle=linestyle, linewidth=linewidth, zorder=zorder
             )[0]
         # 2D color matrix plot
         if cfg.matrix is not None:
@@ -654,7 +664,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
                 linewidth = cfg.matrix.mesh.thickness
                 mpl_artist = mpl_ax.triplot(
                     yy, xx, color=c, alpha=alpha,
-                    linestyle=linestyle, linewidth=linewidth
+                    linestyle=linestyle, linewidth=linewidth, zorder=zorder
                 )
         # 2D contour plot
         if cfg.contour is not None:
@@ -668,7 +678,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.tricontour(
                 yy, xx, zz, levels=levels, alpha=alpha, cmap=cmap,
-                vmin=vmin, vmax=vmax
+                vmin=vmin, vmax=vmax, zorder=zorder
             )
     elif plot_dim == 3:
         # 3D point scatter plot
@@ -696,7 +706,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
                 marker = cfg.point.shape
             mpl_artist = mpl_ax.scatter(
                 xx, yy, zz, s=s, c=c, marker=marker, cmap=cmap,
-                vmin=vmin, vmax=vmax, alpha=alpha,
+                vmin=vmin, vmax=vmax, alpha=alpha, zorder=zorder
             )
         # 3D curve line plot
         if cfg.curve is not None:
@@ -715,7 +725,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
                 linewidth = cfg.curve.line.thickness
             mpl_artist = mpl_ax.plot(
                 xx, yy, zz, color=c, alpha=alpha,
-                linestyle=linestyle, linewidth=linewidth
+                linestyle=linestyle, linewidth=linewidth, zorder=zorder
             )[0]
         # 3D surface plot
         if cfg.surface is not None:
@@ -748,7 +758,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
             if alpha != 0:
                 mpl_artist = mpl_ax.plot_trisurf(
                     xx, yy, zz, color=color, cmap=cmap,
-                    vmin=vmin, vmax=vmax, edgecolor=mcolor
+                    vmin=vmin, vmax=vmax, edgecolor=mcolor, zorder=zorder
                 )
             # Wireframe plot
             else:
@@ -769,7 +779,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
             levels = cfg.contour.levels
             mpl_artist = mpl_ax.tricontour(
                 xx, yy, z, levels=levels, alpha=alpha, cmap=cmap,
-                vmin=vmin, vmax=vmax
+                vmin=vmin, vmax=vmax, zorder=zorder
             )
     return mpl_artist
 
@@ -777,7 +787,7 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data, quantities=None):
 ###############################################################################
 
 
-def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
+def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series", _zorder=0.0):
     """
     Diverts function call depending on data type.
 
@@ -795,6 +805,8 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     _data_type_hint : "array2d", "array1d" or "series"
         Hint for ambiguous data types whether to interpret
         data as array or series, e.g. for 2D numpy arrays.
+    _zorder : float
+        Plot order.
 
     Returns
     -------
@@ -833,15 +845,18 @@ def plot(mpl_ax, plot_dim, cfg, data, _data_type_hint="series"):
     # Call plot functions
     if data_type == "array2d":
         return _plot_data_array_2d(
-            mpl_ax, plot_dim, cfg, x, y, data, quantities=quantities
+            mpl_ax, plot_dim, cfg, x, y, data,
+            quantities=quantities, zorder=_zorder
         )
     elif data_type == "array1d":
         return _plot_data_array_1d(
-            mpl_ax, plot_dim, cfg, x, data, quantities=quantities
+            mpl_ax, plot_dim, cfg, x, data,
+            quantities=quantities, zorder=_zorder
         )
     elif data_type == "series":
         return _plot_data_series(
-            mpl_ax, plot_dim, cfg, data, quantities=quantities
+            mpl_ax, plot_dim, cfg, data,
+            quantities=quantities, zorder=_zorder
         )
 
 
@@ -855,19 +870,38 @@ class Figure(object):
     ----------
     figure_cfg : FigureCfg
         Figure configuration.
-    plot_cfgs : list(PlotCfg)
+    plot_cfgs : list(PlotCfg) or dict(PlotCfg)
         List of plot configurations.
     plot_style_cfg : PlotStyleCfg or None
         Matplotlib rc plot style configuration.
-    data : list(obj)
+    data : list(obj) or dict(obj)
         List of data to be plotted.
+        If both plot_cfgs and data are dicts, they are filtered
+        to contain only same keys.
+    dict_order : list
+        List of dict keys defining plotting order.
+        Only valid if plot_cfgs is a dict.
     """
 
     def __init__(self,
-                 figure_cfg, plot_cfgs, plot_style_cfg=None, data=None):
+                 figure_cfg, plot_cfgs, plot_style_cfg=None,
+                 data=None, dict_order=None):
         self.figure_cfg = misc.assume_construct_obj(
             figure_cfg, plotcfg.FigureCfg
         )
+        if isinstance(plot_cfgs, dict):
+            if isinstance(data, dict):
+                # Filter mutual keys
+                plot_cfgs = misc.map_dicts(lambda x, y: x, plot_cfgs, data)
+                data = misc.map_dicts(lambda x, y: y, plot_cfgs, data)
+            if dict_order is not None:
+                plot_cfgs = [plot_cfgs[key] for key in dict_order]
+                if isinstance(data, dict):
+                    data = [data[key] for key in dict_order]
+            else:
+                plot_cfgs = list(plot_cfgs.values())
+        if isinstance(data, dict):
+            data = list(data.values())
         self.plot_cfgs = misc.assume_list(plot_cfgs)
         self.plot_dim = {}
         self.plot_style_cfg = None
@@ -934,6 +968,20 @@ class Figure(object):
                 plot_dim=plot_cfg.get_plot_dim()
             )
 
+    def _round_ticks(self):
+        """
+        Converts line ends into round caps.
+        """
+        for mpl_ax in self.mpl_ax.values():
+            for i in mpl_ax.xaxis.get_majorticklines():
+                i._marker._capstyle = 'round'
+            for i in mpl_ax.xaxis.get_minorticklines():
+                i._marker._capstyle = 'round'
+            for i in mpl_ax.yaxis.get_majorticklines():
+                i._marker._capstyle = 'round'
+            for i in mpl_ax.yaxis.get_minorticklines():
+                i._marker._capstyle = 'round'
+
     def plot(self, data=None, **kwargs):
         """
         Plots the figure.
@@ -961,13 +1009,14 @@ class Figure(object):
             mpl_art = plot(
                 self.mpl_ax[self.mpl_ax_loc[i]],
                 self.plot_dim[self.mpl_ax_loc[i]],
-                plot_cfg, self.data[i],
+                plot_cfg, self.data[i], _zorder=i,
                 **kwargs
             )
             if mpl_art is not None and plot_cfg.label is not None:
                 self.mpl_art[self.mpl_ax_loc[i]].append(
                     (mpl_art, plot_cfg.label)
                 )
+        self._round_ticks()
 
     def legend(self):
         """

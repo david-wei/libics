@@ -316,25 +316,32 @@ class AttrPoint(object):
     ----------
     xpos, ypos, zpos : AttrPosition
         Plot value position.
-    color : AttrColor
-        Color of point.
     shape : matplotlib.markers
         Point type.
+    color : AttrColor
+        Color of point.
+    edgecolor : AttrColor
+        Color of edge of point.
     size : AttrSize
         Point size.
+    edgesize : float
+        Edge size.
     fill : AttrFill
         Fill to point.
     """
 
     def __init__(self,
-                 xpos=None, ypos=None, zpos=None,
-                 color=None, shape=None, size=None, fill=None):
+                 xpos=None, ypos=None, zpos=None, shape=None,
+                 color=None, edgecolor=None,
+                 size=None, edgesize=None, fill=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
-        self.color = misc.assume_construct_obj(color, AttrColor)
         self.shape = shape
+        self.color = misc.assume_construct_obj(color, AttrColor)
+        self.edgecolor = misc.assume_construct_obj(edgecolor, AttrColor)
         self.size = misc.assume_construct_obj(size, AttrSize)
+        self.edgesize = edgesize
         self.fill = misc.assume_construct_obj(fill, AttrFill)
 
 

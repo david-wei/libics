@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import numpy as np
 
 from libics import display
@@ -50,15 +51,34 @@ def get_plotcfg_arraydata_2d(
 
 
 def get_plotcfg_seriesdata_1d(
-    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1
+    hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1,
+    plot_type="line", point_size=None, edgecolor=None
 ):
-    curve_cfg = plotcfg.AttrCurve(
-        xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"},
-        color={"map": color, "alpha": alpha}
-    )
+    """
+    plot_type : str
+        "line", "point", "error"
+    """
+    curve_cfg, point_cfg = None, None
+    if plot_type == "line": 
+        curve_cfg = plotcfg.AttrCurve(
+            xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"},
+            color={"map": color, "alpha": alpha}
+        )
+    else:
+        if point_size is None:
+            point_size = float(mpl.rcParams["font.size"]) / 2
+        edgesize = 0.18 * point_size
+        if edgecolor is None:
+            edgecolor = color
+        point_cfg = plotcfg.AttrPoint(
+            xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
+            color={"map": color, "alpha": alpha}, shape="o",
+            edgecolor={"map": edgecolor, "alpha": alpha, "scale": "const"},
+            size={"xmap": point_size}, edgesize=edgesize
+        )
     return plotcfg.PlotCfg(
         xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
-        curve=curve_cfg, label=label
+        curve=curve_cfg, point=point_cfg, label=label
     )
 
 

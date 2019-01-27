@@ -452,6 +452,25 @@ def capitalize_first_char(s):
 ###############################################################################
 
 
+def order_list(ls, order):
+    """
+    Sorts a list according to a given index order.
+
+    Parameters
+    ----------
+    ls : list
+        List to be sorted.
+    order : list(int)
+        Sorting index order.
+
+    Returns
+    -------
+    ls : list
+        Sorted list.
+    """
+    return [ls[idx] for idx in order]
+
+
 def flatten_nested_list(ls):
     """
     Flattens a nested list recursively.
