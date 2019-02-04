@@ -624,6 +624,19 @@ def _plot_data_series(mpl_ax, plot_dim, cfg, data,
                 vmin=vmin, vmax=vmax, alpha=alpha,
                 edgecolors=ec, linewidths=es, zorder=zorder+0.1
             )
+            err_color = ec if ec is not None else c
+            if cfg.point.xerr is not None:
+                xerr = data[cfg.point.xerr.dim]
+                for i, xe in enumerate(xerr):
+                    mpl_ax.plot([xx[i] - xe, xx[i] + xe], [yy[i], yy[i]],
+                                solid_capstyle="round", color=err_color, lw=es,
+                                zorder=zorder-100.1)
+            if cfg.point.yerr is not None:
+                yerr = data[cfg.point.yerr.dim]
+                for i, ye in enumerate(yerr):
+                    mpl_ax.plot([xx[i], xx[i]], [yy[i] - ye, yy[i] + ye],
+                                solid_capstyle="round", color=err_color, lw=es,
+                                zorder=zorder-100.1)
         # 2D curve line plot
         if cfg.curve is not None:
             if cfg.curve.xpos is None or cfg.curve.ypos is None:

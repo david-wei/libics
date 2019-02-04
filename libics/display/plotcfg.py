@@ -316,6 +316,8 @@ class AttrPoint(object):
     ----------
     xpos, ypos, zpos : AttrPosition
         Plot value position.
+    xerr, yerr, zerr : AttrPosition
+        Absolute error position.
     shape : matplotlib.markers
         Point type.
     color : AttrColor
@@ -331,12 +333,16 @@ class AttrPoint(object):
     """
 
     def __init__(self,
-                 xpos=None, ypos=None, zpos=None, shape=None,
-                 color=None, edgecolor=None,
+                 xpos=None, ypos=None, zpos=None,
+                 xerr=None, yerr=None, zerr=None,
+                 shape=None, color=None, edgecolor=None,
                  size=None, edgesize=None, fill=None):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.zpos = misc.assume_construct_obj(zpos, AttrPosition)
+        self.xerr = misc.assume_construct_obj(xerr, AttrPosition)
+        self.yerr = misc.assume_construct_obj(yerr, AttrPosition)
+        self.zerr = misc.assume_construct_obj(zerr, AttrPosition)
         self.shape = shape
         self.color = misc.assume_construct_obj(color, AttrColor)
         self.edgecolor = misc.assume_construct_obj(edgecolor, AttrColor)

@@ -52,14 +52,14 @@ def get_plotcfg_arraydata_2d(
 
 def get_plotcfg_seriesdata_1d(
     hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1,
-    plot_type="line", point_size=None, edgecolor=None
+    plot_type="line", point_size=None, edgecolor=None, marker="o"
 ):
     """
     plot_type : str
-        "line", "point", "error"
+        "line", "point", "yerr",
     """
     curve_cfg, point_cfg = None, None
-    if plot_type == "line": 
+    if plot_type == "line":
         curve_cfg = plotcfg.AttrCurve(
             xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"},
             color={"map": color, "alpha": alpha}
@@ -70,11 +70,14 @@ def get_plotcfg_seriesdata_1d(
         edgesize = 0.18 * point_size
         if edgecolor is None:
             edgecolor = color
+        yerr = None
+        if plot_type == "yerr":
+            yerr = {"dim": 2}
         point_cfg = plotcfg.AttrPoint(
             xpos={"dim": 0, "scale": "lin"}, ypos={"dim": 1, "scale": "lin"},
-            color={"map": color, "alpha": alpha}, shape="o",
+            color={"map": color, "alpha": alpha}, shape=marker,
             edgecolor={"map": edgecolor, "alpha": alpha, "scale": "const"},
-            size={"xmap": point_size}, edgesize=edgesize
+            size={"xmap": point_size}, edgesize=edgesize, yerr=yerr
         )
     return plotcfg.PlotCfg(
         xgridspec=vert_subplot_pos, ygridspec=hrzt_subplot_pos,
