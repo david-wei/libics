@@ -52,7 +52,7 @@ def get_plotcfg_arraydata_2d(
 
 def get_plotcfg_seriesdata_1d(
     hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1,
-    plot_type="line", point_size=None, edgecolor=None, marker="o"
+    plot_type="line", linestyle=None, point_size=None, edgecolor=None, marker="o"
 ):
     """
     plot_type : str
@@ -62,7 +62,7 @@ def get_plotcfg_seriesdata_1d(
     if plot_type == "line":
         curve_cfg = plotcfg.AttrCurve(
             xpos={"dim": 0, "scale": "lin"}, ypos={"dim": -1, "scale": "lin"},
-            color={"map": color, "alpha": alpha}
+            color={"map": color, "alpha": alpha}, line={"shape": linestyle}
         )
     else:
         if point_size is None:
