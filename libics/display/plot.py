@@ -237,6 +237,29 @@ def _param_color(color, data):
     return data, static_color, color_map, val_min, val_max, alpha
 
 
+def _round_ticks(mpl_ax):
+    """
+    Parameters
+    ----------
+    mpl_ax : matplotlib.Axes
+        Matplotlib axes whose ticks should be rounded.
+
+    Returns
+    -------
+    mpl_ax : matplotlib.Axes
+        Matplotlib axes whose ticks have been rounded.
+    """
+    for i in mpl_ax.xaxis.get_majorticklines():
+        i._marker._capstyle = 'round'
+    for i in mpl_ax.xaxis.get_minorticklines():
+        i._marker._capstyle = 'round'
+    for i in mpl_ax.yaxis.get_majorticklines():
+        i._marker._capstyle = 'round'
+    for i in mpl_ax.yaxis.get_minorticklines():
+        i._marker._capstyle = 'round'
+    return mpl_ax
+
+
 ###############################################################################
 
 
@@ -299,9 +322,10 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data,
                 quantities is not None and cmap is not None
                 and cfg.point.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.point.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
         # 2D curve line plot
         if cfg.curve is not None:
             if cfg.curve.ypos is None:
@@ -352,9 +376,10 @@ def _plot_data_array_1d(mpl_ax, plot_dim, cfg, x, data,
                 quantities is not None and cmap is not None
                 and cfg.point.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.point.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
         # 3D curve line plot
         if cfg.curve is not None:
             if cfg.curve.ypos is None or cfg.curve.zpos is None:
@@ -430,9 +455,10 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
                 quantities is not None and cmap is not None
                 and cfg.point.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.point.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
         # 2D color matrix plot
         if cfg.matrix is not None:
             c, cmap, vmin, vmax, alpha, edgecolors = 6 * [None]
@@ -457,9 +483,10 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
                 quantities is not None and cmap is not None
                 and cfg.matrix.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.matrix.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
         # 2D contour plot
         if cfg.contour is not None:
             z, levels, alpha, cmap, vmin, vmax = 6 * [None]
@@ -479,9 +506,10 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
                 quantities is not None and cmap is not None
                 and cfg.contour.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.contour.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
     # 3D plots
     elif plot_dim == 3:
         # 3D point scatter plot
@@ -509,9 +537,10 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
                 quantities is not None and cmap is not None
                 and cfg.point.color.colorbar is True
             ):
-                _plot_colorbar(mpl_ax, mpl_artist, label=(
+                cb = _plot_colorbar(mpl_ax, mpl_artist, label=(
                     quantities[cfg.point.color.dim].mathstr()
                 ))
+                _round_ticks(cb.ax)
         # 3D surface plot
         if cfg.surface is not None:
             z = None
@@ -987,14 +1016,7 @@ class Figure(object):
         Converts line ends into round caps.
         """
         for mpl_ax in self.mpl_ax.values():
-            for i in mpl_ax.xaxis.get_majorticklines():
-                i._marker._capstyle = 'round'
-            for i in mpl_ax.xaxis.get_minorticklines():
-                i._marker._capstyle = 'round'
-            for i in mpl_ax.yaxis.get_majorticklines():
-                i._marker._capstyle = 'round'
-            for i in mpl_ax.yaxis.get_minorticklines():
-                i._marker._capstyle = 'round'
+            _round_ticks(mpl_ax)
 
     def plot(self, data=None, **kwargs):
         """
@@ -1026,7 +1048,7 @@ class Figure(object):
                 plot_cfg, self.data[i], _zorder=i,
                 **kwargs
             )
-            if mpl_art is not None and plot_cfg.label is not None:
+            if mpl_art is not None:
                 self.mpl_art[self.mpl_ax_loc[i]].append(
                     (mpl_art, plot_cfg.label)
                 )
@@ -1041,7 +1063,9 @@ class Figure(object):
                 continue
             artists, labels = [], []
             for val in self.mpl_art[loc]:
-                if (
+                if val[0] is None or val[1] is None:
+                    continue
+                elif (
                     isinstance(val[0], mpl.lines.Line2D)
                     or isinstance(val[0], mpl.collections.PathCollection)
                     or isinstance(val[0], mplot3d.art3d.Line3D)
