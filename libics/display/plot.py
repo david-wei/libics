@@ -450,7 +450,8 @@ def _plot_data_array_2d(mpl_ax, plot_dim, cfg, x, y, data,
                 edgecolors = "none"   # transparent edges
             mpl_artist = mpl_ax.pcolormesh(
                 x, y, c.T, cmap=cmap, vmin=vmin, vmax=vmax, alpha=alpha,
-                edgecolors=edgecolors, zorder=zorder
+                edgecolors=edgecolors, zorder=zorder,
+                rasterized=cfg.matrix.rasterized
             )
             if (
                 quantities is not None and cmap is not None

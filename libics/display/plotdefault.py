@@ -52,7 +52,8 @@ def get_plotcfg_arraydata_2d(
 
 def get_plotcfg_seriesdata_1d(
     hrzt_subplot_pos=0, vert_subplot_pos=0, label=None, color=None, alpha=1,
-    plot_type="line", linestyle=None, point_size=None, edgecolor=None, marker="o"
+    plot_type="line", linestyle=None, point_size=None, edgecolor=None,
+    marker="o"
 ):
     """
     plot_type : str

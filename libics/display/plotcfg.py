@@ -394,15 +394,18 @@ class AttrMatrix(object):
         Color of matrix fill.
     meshcolor : AttrColor
         Color of mesh.
+    rasterized : bool
+        Whether to rasterize plot.
     """
 
     def __init__(self,
                  xpos=None, ypos=None, color=None,
-                 mesh=None, meshcolor=None):
+                 mesh=None, meshcolor=None, rasterized=True):
         self.xpos = misc.assume_construct_obj(xpos, AttrPosition)
         self.ypos = misc.assume_construct_obj(ypos, AttrPosition)
         self.color = misc.assume_construct_obj(color, AttrColor)
         self.meshcolor = misc.assume_construct_obj(meshcolor, AttrColor)
+        self.rasterized = rasterized
 
 
 class AttrSurface(object):
