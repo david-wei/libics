@@ -330,6 +330,34 @@ def map_dicts(
     return d
 
 
+def make_dict(key_list, val_list):
+    """
+    Creates a dictionary from a key list and a value list.
+
+    Parameters
+    ----------
+    key_list, val_list : list
+        Same-length lists with keys and values.
+        Mapping is performed on an index basis.
+
+    Returns
+    -------
+    d : dict
+        Created dictionary with key_list as keys and
+        val_list as values.
+
+    Raises
+    ------
+    AssertionError
+        If the lengths of the lists do not match.
+    """
+    assert(len(key_list) == len(val_list))
+    d = {}
+    for i, k in enumerate(key_list):
+        d[k] = val_list[i]
+    return d
+
+
 ###############################################################################
 # String Functions
 ###############################################################################
