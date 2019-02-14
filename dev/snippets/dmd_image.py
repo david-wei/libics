@@ -149,8 +149,9 @@ class DmdAffineTrafo(linear.AffineTrafo):
             (Fractional) image index coordinates of fit position.
             None: If fit failed.
         """
-        max_, mean = image.max(), image.mean()
-        if max_ == 0 or mean == 0 or max_ / mean < snr:
+        max_, mean, sum_ = image.max(), image.mean(), image.sum()
+        if (max_ == 0 or mean == 0 or max_ / mean < snr
+                or max_ / sum_ < 1 / 100**2):
             print("fit peak coordinates: insufficient snr")
             return None
         (xmin, ymin), (xmax, ymax) = resize.resize_on_filter_maximum(
@@ -233,15 +234,18 @@ def calc_pattern(target_image, raw_image):
     pattern : np.ndarray(2, float)
         Target DMD reflectance pattern.
     """
+    print("target.max:", target_image.max())
+    print("raw.max:", raw_image.max())
     pattern = np.zeros_like(target_image)
     pattern = np.divide(
         target_image, raw_image, out=pattern, where=(raw_image != 0)
     )
+    print("pattern.max:", pattern.max(), "pattern.dtype:", pattern.dtype)
     return pattern
 
 
 def iterate_pattern(
-    target_image, actual_image,
+    target_image, actual_image, pattern,
     param_p=0.7, param_s=1.0, cutoff=0.1
 ):
     """
@@ -253,6 +257,7 @@ def iterate_pattern(
         Target beam profile on DMD.
     actual_image : np.ndarray(2, float)
         Actual beam profile on DMD.
+    pattern : np.ndarray
     param_p, param_s : float
         Feedback parameters for:
         pattern = target + p * tanh((target - actual) / s)
@@ -265,11 +270,17 @@ def iterate_pattern(
     pattern : np.ndarray(2, float)
         Target reflectance pattern.
     """
+    pattern = np.array(pattern, dtype=float)
     target_image = np.array(target_image, dtype=float)
     actual_image = np.array(actual_image, dtype=float)
-    im_error = (target_image - actual_image) / np.max(target_image)
-    pattern = target_image + param_p * np.tanh(im_error / param_s)
-    pattern = pattern / np.max(pattern)
+    im_error = (target_image - actual_image) / 255
+    correction = param_p * np.tanh(im_error / param_s)
+    import matplotlib.pyplot as plt
+    plt.pcolormesh(correction.T)
+    plt.colorbar()
+    plt.gca().set_aspect(1)
+    plt.show()
+    pattern += correction
     pattern[pattern < cutoff] = 0
     return pattern
 
@@ -430,7 +441,7 @@ class DmdControl(object):
             Target image normalized from [0, 255] to [0, 1] interval.
         """
         # target_norm = self.target * self.raw.sum() / self.target.sum()
-        target_norm = self.target.astype(float) / 255
+        target_norm = self.target.astype(float)
         return target_norm
 
     # ++++++++++++++++++++++++++++++++
@@ -583,13 +594,15 @@ class DmdControl(object):
         """
         Displays the loaded pattern.
         """
+        pattern = np.zeros_like(self.pattern, dtype=float)
+        pattern[self.pattern >= 0.5] = 1
         self.dsp.stop()
-        self.dsp.init(self.pattern)
+        self.dsp.init(pattern)
         self.dsp.write_all()
         self.dsp.run()
         time.sleep(1.5)
 
-    def record_raw(self, filter_sigma=10.0, filter_truncate=4.0):
+    def record_raw(self, filter_sigma=20.0, filter_truncate=4.0):
         """
         Records a full on image.
 
@@ -605,7 +618,7 @@ class DmdControl(object):
         self.set_pattern(pattern="white")
         self.display_pattern()
         time.sleep(0.1)
-        self.raw_unfiltered = np.ndarray(
+        self.raw_unfiltered = np.array(
             np.squeeze(self.cam.grab(), axis=-1).T, dtype=float
         )
         if filter_sigma is None:
@@ -628,9 +641,13 @@ class DmdControl(object):
             self.record_raw()
         im = np.array(PIL.Image.open(file_path).convert("L"), dtype=float)
         self.target = im.T / 255
+        print("target.max:", self.target.max())
         self.data.target = self.target
-        self.factor = 0.9 * np.max(self.trafo(self.raw, self.target.shape)
-                                   / self.target)
+        raw_trafo = self.trafo(self.raw, self.target.shape)
+        self.factor = 0.9 / np.max(np.divide(
+            self.target, raw_trafo, where=(raw_trafo != 0)
+        ))
+        print("factor:", self.factor)
 
     def iterate_pattern(self, num=1):
         """
@@ -650,7 +667,8 @@ class DmdControl(object):
             pattern = iterate_pattern(
                 self.target_norm * self.factor,
                 self.trafo(self.image, self.target.shape),
-                param_p=0.7, param_s=0.1, cutoff=0.01
+                self.pattern,
+                param_p=0.7, param_s=1.0, cutoff=0.01
             )
             self.set_pattern(pattern=pattern)
             self.record_image()
@@ -662,9 +680,9 @@ class DmdControl(object):
         im = self.cam.grab()
         self.image = np.copy(np.squeeze(im, axis=-1).T)
         self.rms = calc_deviation_rms(
-            self.target,
+            self.target * self.factor,
             self.trafo(self.image, self.target.shape),
-            mask=0.01
+            mask=0.01*255
         )
         self.data.add_iteration(self.pattern, self.image, self.rms)
 
@@ -923,7 +941,7 @@ class DmdControlGui(DmdControl, QWidget):
     @pyqtSlot()
     def _on_button_image_record_clicked(self):
         self.record_image()
-        im_recorded = (self.image * 255).astype("uint8").T
+        im_recorded = (self.image).astype("uint8").T
         self.qt_image_recorded.update_image(im_recorded[:, :, np.newaxis])
 
     @pyqtSlot()
