@@ -692,11 +692,12 @@ class InterferometerSequence(hdf.HDFBase):
 @InheritMap(map_key=("libics-dev", "DmdImageData"))
 class DmdImageData(hdf.HDFBase):
 
-    def __init__(self, target=None, trafo=None, raw=None):
+    def __init__(self, target=None, trafo=None, raw=None, raw_unfiltered=None):
         super().__init__(pkg_name="libics-dev", cls_name="DmdImageData")
         self.target = target
         self.trafo = trafo
         self.raw = raw
+        self.raw_unfiltered = raw_unfiltered
         self.patterns = []
         self.images = []
         self.rms = []

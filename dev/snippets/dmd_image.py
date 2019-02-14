@@ -3,7 +3,7 @@ import time
 
 import PIL
 import numpy as np
-from scipy import optimize
+from scipy import optimize, ndimage
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor
@@ -237,7 +237,6 @@ def calc_pattern(target_image, raw_image):
     pattern = np.divide(
         target_image, raw_image, out=pattern, where=(raw_image != 0)
     )
-    pattern = pattern / np.max(pattern)
     return pattern
 
 
@@ -268,7 +267,7 @@ def iterate_pattern(
     """
     target_image = np.array(target_image, dtype=float)
     actual_image = np.array(actual_image, dtype=float)
-    im_error = target_image - actual_image
+    im_error = (target_image - actual_image) / np.max(target_image)
     pattern = target_image + param_p * np.tanh(im_error / param_s)
     pattern = pattern / np.max(pattern)
     pattern[pattern < cutoff] = 0
@@ -384,8 +383,10 @@ class DmdControl(object):
         ))
         self.trafo = DmdAffineTrafo()
         self.pattern = np.zeros(im_resolution, dtype=float)
+        self.raw_unfiltered = np.full(im_resolution, np.nan, dtype=float)
         self.raw = np.full(im_resolution, np.nan, dtype=float)
         self.image = np.full(im_resolution, np.nan, dtype=float)
+        self.factor = np.nan
         self.rms = None
         self.data = libics.dev.DmdImageData()
 
@@ -422,8 +423,14 @@ class DmdControl(object):
     def target_norm(self):
         """
         Returns target dsp image normalized to transformed raw image.
+
+        Returns
+        -------
+        target_norm : np.ndarray(2, float)
+            Target image normalized from [0, 255] to [0, 1] interval.
         """
-        target_norm = self.target * self.raw.sum() / self.target.sum()
+        # target_norm = self.target * self.raw.sum() / self.target.sum()
+        target_norm = self.target.astype(float) / 255
         return target_norm
 
     # ++++++++++++++++++++++++++++++++
@@ -554,7 +561,7 @@ class DmdControl(object):
         if isinstance(pattern, str):
             if pattern == "image":
                 pattern = cv_error_diffusion(calc_pattern(
-                    self.target_norm,
+                    self.target_norm * self.factor,
                     self.trafo(self.raw, self.target.shape)
                 ))
             elif pattern == "white":
@@ -582,15 +589,34 @@ class DmdControl(object):
         self.dsp.run()
         time.sleep(1.5)
 
-    def record_raw(self):
+    def record_raw(self, filter_sigma=10.0, filter_truncate=4.0):
         """
         Records a full on image.
+
+        Parameters
+        ----------
+        filter_sigma : float or None
+            Gaussian filter width in pixels (px).
+            If None, does not apply filter.
+        filter_truncate : float
+            Gaussian filter truncation width in multiples
+            of filter_sigma.
         """
         self.set_pattern(pattern="white")
         self.display_pattern()
         time.sleep(0.1)
-        self.raw = np.copy(np.squeeze(self.cam.grab(), axis=-1).T)
+        self.raw_unfiltered = np.ndarray(
+            np.squeeze(self.cam.grab(), axis=-1).T, dtype=float
+        )
+        if filter_sigma is None:
+            self.raw = np.copy(self.raw_unfiltered)
+        else:
+            self.raw = ndimage.filters.gaussian_filter(
+                self.raw_unfiltered, sigma=filter_sigma, order=0,
+                mode="constant", cval=0.0, truncate=filter_truncate
+            )
         self.image = np.copy(self.raw)
+        self.data.raw_unfiltered = self.raw_unfiltered
         self.data.raw = self.raw
 
     def load_image(self, file_path, record_raw=True):
@@ -600,9 +626,11 @@ class DmdControl(object):
         self.data.reset()
         if record_raw:
             self.record_raw()
-        im = np.array(PIL.Image.open(file_path).convert("L"))
-        self.target = im.T
+        im = np.array(PIL.Image.open(file_path).convert("L"), dtype=float)
+        self.target = im.T / 255
         self.data.target = self.target
+        self.factor = 0.9 * np.max(self.trafo(self.raw, self.target.shape)
+                                   / self.target)
 
     def iterate_pattern(self, num=1):
         """
@@ -620,7 +648,8 @@ class DmdControl(object):
         """
         for i in range(num):
             pattern = iterate_pattern(
-                self.target_norm, self.trafo(self.image, self.target.shape),
+                self.target_norm * self.factor,
+                self.trafo(self.image, self.target.shape),
                 param_p=0.7, param_s=0.1, cutoff=0.01
             )
             self.set_pattern(pattern=pattern)
