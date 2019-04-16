@@ -245,7 +245,7 @@ def calc_pattern(target_image, raw_image):
 
 
 def iterate_pattern(
-    target_image, actual_image, pattern,
+    target_image, actual_image,
     param_p=0.7, param_s=1.0, cutoff=0.1
 ):
     """
@@ -257,7 +257,6 @@ def iterate_pattern(
         Target beam profile on DMD.
     actual_image : np.ndarray(2, float)
         Actual beam profile on DMD.
-    pattern : np.ndarray
     param_p, param_s : float
         Feedback parameters for:
         pattern = target + p * tanh((target - actual) / s)
@@ -270,18 +269,17 @@ def iterate_pattern(
     pattern : np.ndarray(2, float)
         Target reflectance pattern.
     """
-    pattern = np.array(pattern, dtype=float)
-    target_image = np.array(target_image, dtype=float)
-    actual_image = np.array(actual_image, dtype=float)
-    im_error = (target_image - actual_image) / 255
+    target_image = np.array(target_image, dtype=float) / 255
+    actual_image = np.array(actual_image, dtype=float) / 255
+    im_error = (target_image - actual_image)
     correction = param_p * np.tanh(im_error / param_s)
     import matplotlib.pyplot as plt
     plt.pcolormesh(correction.T)
     plt.colorbar()
     plt.gca().set_aspect(1)
     plt.show()
-    pattern += correction
-    pattern[pattern < cutoff] = 0
+    new_image = target_image + im_error
+    pattern = cv_error_diffusion(new_image)
     return pattern
 
 
@@ -667,7 +665,6 @@ class DmdControl(object):
             pattern = iterate_pattern(
                 self.target_norm * self.factor,
                 self.trafo(self.image, self.target.shape),
-                self.pattern,
                 param_p=0.7, param_s=1.0, cutoff=0.01
             )
             self.set_pattern(pattern=pattern)
