@@ -4,7 +4,7 @@ from . import data		# noqa
 from . import display   # noqa
 from . import drv		# noqa
 from . import env       # noqa
-from . import fit		# noqa
+from . import func		# noqa
 from . import trafo		# noqa
 from . import util		# noqa
 
