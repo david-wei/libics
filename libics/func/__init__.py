@@ -1,2 +1,3 @@
-from . import fit       # noqa
-from . import peaked    # noqa
+from . import distribution  # noqa
+from . import fit           # noqa
+from . import peaked        # noqa

@@ -1,5 +1,6 @@
 import numpy as np
-import scipy.special
+
+from libics.func import fit
 
 
 ###############################################################################
@@ -160,41 +161,63 @@ def gaussian_nd_centered(x,
     return amplitude * np.exp(exponent) + offset
 
 
-def gaussian_2d_tilt():
-    # TODO: Tilted Gaussian implementation
-    pass
-
-
-###############################################################################
-# Miscellaneous Distribution Functions
-###############################################################################
-
-
-def gamma_distribution_1d(x,
-                          amplitude, mean, number, offset=0.0):
+def gaussian_2d_tilt(
+    var, amplitude, center_x, center_y, width_u, width_v, tilt, offset=0.0
+):
     r"""
-    Gamma distribution in one dimension.
+    Tilted (rotated) Gaussian in two dimensions.
 
     .. math::
-        A \frac{(N / \mu)^N}{\Gamma (N)} x^{N - 1}
-        e^{-\frac{N}{\mu} x} + C
-
+        A e^{-\frac{((x - x_0) \cos \theta + (y - y_0) \sin \theta))^2}
+                   {2 \sigma_u^2}
+             -\frac{((y - y_0) \cos \theta - (x - x_0) \sin \theta))^2}
+                   {2 \sigma_v^2}} + C
     Parameters
     ----------
-    x : `float`
-        Variable :math:`x`.
+    var : `numpy.array(2, float)`
+        Variables :math:`x, y`.
     amplitude : `float`
         Amplitude :math:`A`.
-    mean : `float`
-        Mean :math:`\mu`.
-    number : `float`
-        Number :math:`N`.
+    center_x, center_y : `float`
+        Centers :math:`x_0, y_0`.
+    width_u, width_v : `float`
+        Widths :math:`\sigma_u, \sigma_v`.
+    tilt : `float(0, numpy.pi)`
+        Tilt angle :math:`\theta`.
     offset : `float`, optional (default: 0)
         Offset :math:`C`.
     """
+    tilt_cos, tilt_sin = np.cos(tilt), np.sin(tilt)
+    dx, dy = var[0] - center_x, var[1] - center_y
     exponent = (
-        number * (np.log(number) - np.log(mean) - x / mean)
-        + (number - 1) * np.log(x)
-        - scipy.special.gammaln(number)
+        ((dx * tilt_cos + dy * tilt_sin) / width_u)**2
+        + ((dy * tilt_cos - dx * tilt_sin) / width_v)**2
     )
-    return amplitude * np.exp(exponent) + offset
+    return amplitude * np.exp(-exponent / 2.0) + offset
+
+
+class FitGaussian2dTilt(fit.FitParamBase):
+
+    def __init__(self, fit_offset=True, **kwargs):
+        super().__init__(
+            gaussian_2d_tilt, 7 if fit_offset else 6, **kwargs
+        )
+
+    def find_init_param(self, var_data, func_data):
+        """
+        Algorithm: linear min/max approximation.
+        """
+        fit_offset = False if len(self.param) == 6 else True
+        offset = func_data.min()
+        xmin, xmax = var_data[0].min(), var_data[0].max()
+        ymin, ymax = var_data[1].min(), var_data[1].max()
+        self.param[0] = func_data.max() - offset
+        self.param[1], self.param[2] = (xmin + xmax) / 2, (ymin + ymax) / 2
+        self.param[3], self.param[4] = (xmin - xmax) / 2, (ymin - ymax) / 2
+        self.param[5] = 0.0
+        if fit_offset:
+            self.param[6] = offset
+
+
+FitGaussian2dTilt.__doc__ += (gaussian_2d_tilt.__doc__
+                              + "\n\n\n" + fit.FitParamBase.__doc__)
