@@ -630,7 +630,7 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
         # reduce
         if shape[dim] < ar.shape[dim]:
             idx = [slice(None)] * dim + [slice(start, stop)]
-            ar = ar[idx]
+            ar = ar[tuple(idx)]
         # expand
         elif shape[dim] > ar.shape[dim]:
             padl_shape = list(ar.shape)
@@ -639,7 +639,7 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
             padr_shape = list(ar.shape)
             padr_shape[dim] = shape[dim] - stop
             padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
-            ar = np.concatenate(padl, ar, padr, axis=dim)
+            ar = np.concatenate((padl, ar, padr), axis=dim)
     return ar
 
 

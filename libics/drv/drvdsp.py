@@ -124,7 +124,6 @@ class TexasInstrumentsDLP7000(DspDrvBase):
             (List of) images to be displayed. Greyscales are
             normalized to [0, 1] where values outside the bounds
             are changed to the respective bound value.
-
         """
         if not isinstance(images, list):
             images = [images]
