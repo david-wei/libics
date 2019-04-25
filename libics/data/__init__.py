@@ -1,9 +1,6 @@
 from . import arraydata     # noqa
-from . import conversion    # noqa
 from . import datasequence  # noqa
 from . import dataset       # noqa
-from . import matrixdata	# noqa
-from . import nddata		# noqa
 from . import seriesdata    # noqa
 from . import stp           # noqa
 from . import types         # noqa
