@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import special
 
 from libics.func import fit
 
@@ -221,3 +222,53 @@ class FitGaussian2dTilt(fit.FitParamBase):
 
 FitGaussian2dTilt.__doc__ = (gaussian_2d_tilt.__doc__
                              + "\n\n\n" + fit.FitParamBase.__doc__)
+
+
+###############################################################################
+# Oscillating Functions
+###############################################################################
+
+
+def airy_disk_2d(
+    var, amplitude, center_x, center_y, width, offset=0.0
+):
+    r"""
+    .. math::
+        A \left( \frac{2 J_1 \left( \sqrt{(x-x_0)^2 + (y-y_0)^2} / w \right)}
+                      {\sqrt{(x-x_0)^2 + (y-y_0)^2} / w} \right)^2 + C
+
+    Parameters
+    ----------
+    `var` :math:`(x, y)`, `amplitude` :math:`A`,
+    `center_(x, y)` :math:`(x_0, y_0), `width` :math:`w`,
+    `offset` :math:`C`.
+    """
+    arg = np.sqrt((var[0] - center_x)**2 + (var[1] - center_y)**2) / width
+    return amplitude * (special.j1(arg) / arg)**2 + offset
+
+
+class FitAiryDisk2d(fit.FitParamBase):
+
+    def __init__(self, fit_offset=True, **kwargs):
+        super().__init__(
+            airy_disk_2d, 5 if fit_offset else 4, **kwargs
+        )
+
+    def find_init_param(self, var_data, func_data):
+        """
+        Algorithm: linear min/max approximation.
+        """
+        fit_offset = False if len(self.param) == 4 else True
+        offset = func_data.min()
+        xmin, xmax = var_data[0].min(), var_data[0].max()
+        ymin, ymax = var_data[1].min(), var_data[1].max()
+        self.param[0] = func_data.max() - offset
+        self.param[1], self.param[2] = (xmin + xmax) / 2, (ymin + ymax) / 2
+        self.param[3] = (xmax - xmin + ymax - ymin) / 10
+        self.param[4] = 0.0
+        if fit_offset:
+            self.param[4] = offset
+
+
+FitAiryDisk2d.__doc__ = (airy_disk_2d.__doc__
+                         + "\n\n\n" + fit.FitParamBase.__doc__)
