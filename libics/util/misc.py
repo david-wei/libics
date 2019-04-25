@@ -456,6 +456,59 @@ def split_unit(s):
     return val, unit
 
 
+def extract(s, regex, group=1, cv_func=None, flags=0):
+    """
+    Extracts part of a string.
+    Serves as convenience function to re.search.
+
+    Parameters
+    ----------
+    s : str
+        String from which to extract.
+    regex : str
+        Regular expression defining search function.
+        Search findings should be enclosed in parentheses `()`.
+    group : int or list(int) or tuple(int) or np.ndarray(1, int)
+        Group index of search results.
+        If list, returns corresponding list of search results.
+    cv_func : callable or None
+        Conversion function applied to search results (e.g. float).
+    flags : int
+        Flags parameter passed to re.search.
+
+    Returns
+    -------
+    result
+        Converted (if applicable) search result or results
+        as defined by the `group` parameter.
+
+    Raises
+    ------
+    KeyError
+        If extraction failed.
+    """
+    match = re.search(regex, s, flags=flags)
+    if match is None:
+        raise KeyError("no match found")
+    result = []
+    _groups = None
+    if np.isscalar(group):
+        _groups = [group]
+    _groups = list(_groups)
+    for group_index in _groups:
+        _extracted = match.group(group_index)
+        if callable(cv_func):
+            _extracted = cv_func(_extracted)
+        result.append(_extracted)
+    if np.isscalar(group):
+        result = result[0]
+    elif isinstance(group, tuple):
+        result = tuple(result)
+    elif isinstance(group, np.ndarray):
+        result = np.array(result)
+    return result
+
+
 def capitalize_first_char(s):
     """
     Capitalizes the first character (if possible) and leaves the rest of the
