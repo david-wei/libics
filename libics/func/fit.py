@@ -42,10 +42,11 @@ def split_fit_data(data, func_dim=-1):
             func_data = data
         elif isinstance(data, arraydata.ArrayData):
             func_data = data.data
-        var_data = np.indices(func_data)
+        var_data = np.indices(func_data.shape)
         if isinstance(data, arraydata.ArrayData):
             for i in range(len(var_data)):
-                scale = data.scale.scale[i], offset = data.scale.offset[i]
+                scale = data.scale.scale[i]
+                offset = data.scale.offset[i]
                 var_data[i] = var_data[i] * scale + offset
     return var_data, func_data
 

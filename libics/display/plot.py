@@ -1094,6 +1094,12 @@ class Figure(object):
             format=self.figure_cfg.format
         )
 
+    def tight_layout(self):
+        """
+        Calls the matplotlib.pyplot.tight_layout function.
+        """
+        plt.tight_layout()
+
     def show(self):
         """
         Calls the matplotlib.pyplot.show function.
