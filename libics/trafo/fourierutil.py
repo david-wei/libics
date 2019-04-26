@@ -4,30 +4,6 @@ import copy
 ###############################################################################
 
 
-def ft_pquants(pq_val, *pq_var):
-    """
-    Inverts and normalizes the Fourier transformed units.
-
-    Parameters
-    ----------
-    pq_val : data.types.pquant
-        Physical quantity function value.
-    *pq_var : data.types.pquant
-        Physical quantity independent variable.
-
-    Returns
-    -------
-    pq_val : data.types.pquant
-        Physical quantity function value.
-    pq_var : tuple(data.types.pquant)
-        Physical quantity independent variable.
-    """
-    pq_val.divide(*pq_var)
-    for pq in pq_var:
-        pq.invert()
-    return pq_val, pq_var
-
-
 def ft_arrayscale(scale, shape):
     """
     Calculates the Fourier transformed coordinates of a

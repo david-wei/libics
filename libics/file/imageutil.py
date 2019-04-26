@@ -5,30 +5,12 @@ import pandas as pd
 # Package Imports
 from libics.cfg import default as DEF
 from libics.cfg import err as ERR
-from libics.data import types, arraydata
+from libics.data import arraydata
 
 
 ###############################################################################
 # Utility Functions
 ###############################################################################
-
-
-def create_default_val_pquant():
-    """
-    Creates an physical quantity object (`data.types.pquant`) for the image
-    intensity as defined in `cfg.default`.
-
-    Returns
-    -------
-    val_pquant : `data.types.pquant`
-        Image intensity physical quantity object.
-    """
-    pquant = types.pquant(
-        name=DEF.DATA.IMAGE.VALUE_PQUANT,
-        unit=DEF.DATA.IMAGE.VALUE_UNIT,
-        dtype=DEF.DATA.IMAGE.VALUE_DATATYPE
-    )
-    return pquant
 
 
 def create_default_arraydata():

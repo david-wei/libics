@@ -225,20 +225,6 @@ class DTYPE_CUSTOM(DTYPE):
     )
 
 
-class DTYPE_PQUANT(DTYPE_CUSTOM):
-    _err_description = ErrorDescription(
-        "data type: expected data.types.pquant",
-        151
-    )
-
-
-class DTYPE_MATRIXDATA(DTYPE_CUSTOM):
-    _err_description = ErrorDescription(
-        "data type: expected data.matrixdata.MatrixData",
-        152
-    )
-
-
 # ++++++++++++++++++++++++++++++++++++++++++++++++++
 # 200: Index/Key Validity
 # ++++++++++++++++++++++++++++++++++++++++++++++++++
