@@ -242,9 +242,17 @@ def airy_disk_2d(
     `var` :math:`(x, y)`, `amplitude` :math:`A`,
     `center_(x, y)` :math:`(x_0, y_0), `width` :math:`w`,
     `offset` :math:`C`.
+
+    Notes
+    -----
+    Handles limiting value at :math:`(x, y) -> (0, 0)`.
     """
     arg = np.sqrt((var[0] - center_x)**2 + (var[1] - center_y)**2) / width
-    return amplitude * (special.j1(arg) / arg)**2 + offset
+    res = np.piecewise(
+        arg, [arg < 1e-8, arg >= 1e-8],
+        [lambda x: 1, lambda x: 2 * special.j1(x) / x]
+    )
+    return amplitude * res**2 + offset
 
 
 class FitAiryDisk2d(fit.FitParamBase):

@@ -491,7 +491,7 @@ def extract(s, regex, group=1, cv_func=None, flags=0):
     if match is None:
         raise KeyError("no match found")
     result = []
-    _groups = None
+    _groups = group
     if np.isscalar(group):
         _groups = [group]
     _groups = list(_groups)
