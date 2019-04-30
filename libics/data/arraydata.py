@@ -373,6 +373,27 @@ class ArrayData(hdf.HDFBase):
         else:
             raise AttributeError("invalid data shape")
 
+    def center(self, axis=None, val=0.0):
+        """
+        Moves the offset such that the array is centered at a given value.
+
+        Parameters
+        ----------
+        axis : list(int) or int or None
+            Dimensions to be centered. None corresponds to centering
+            all axes.
+        val : float
+            Center value.
+        """
+        if axis is None:
+            axis = np.arange(self.scale.get_dim() - 1)
+        if not np.isscalar(axis):
+            for a in axis:
+                self.center(axis=a, val=val)
+        else:
+            size_excl = self.data.shape[axis] - 1
+            self.scale.offset[axis] = -self.scale.scale[axis] * size_excl / 2
+
     # ++++ Float index +++++++++++++++++++
 
     def set_float_index_mode(self, float_index_mode):
