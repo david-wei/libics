@@ -267,7 +267,7 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                 )
             # Binary numpy data
             elif type(val) == np.ndarray:
-                _parent_group.create_dataset(key, data=val)
+                _parent_group.create_dataset(key, data=val, compression=9)
             # Python dictionary
             elif type(val) == dict:
                 dict_obj = HDFDict()
@@ -295,13 +295,16 @@ def write_hdf(obj, file_path=None, _parent_group=None):
                     # Unicode string
                     if "U" in str(ar.dtype):
                         vlds = _parent_group.create_dataset(
-                            key, ar.shape, dtype=h5py.special_dtype(vlen=str)
+                            key, ar.shape, dtype=h5py.special_dtype(vlen=str),
+                            compression=9
                         )
                         for count, item in enumerate(ar):
                             vlds[count] = item
                     # Other types
                     else:
-                        _parent_group.create_dataset(key, data=ar)
+                        _parent_group.create_dataset(
+                            key, data=ar, compression=9
+                        )
                 # Unstructured list
                 else:
                     list_obj = HDFList()
