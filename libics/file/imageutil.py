@@ -25,18 +25,18 @@ def create_default_arraydata():
     """
     array_data = arraydata.ArrayData()
     array_data.add_dim(
-        offset=DEF.DATA.IMAGE.PIXEL_OFFSET[0],
-        scale=DEF.DATA.IMAGE.PIXEL_SIZE[0],
-        name=DEF.DATA.IMAGE.PIXEL_PQUANT[0],
+        offset=0,
+        scale=1,
+        name="position",
         symbol="x",
-        unit=DEF.DATA.IMAGE.PIXEL_UNIT[0]
+        unit="px"
     )
     array_data.add_dim(
-        offset=DEF.DATA.IMAGE.PIXEL_OFFSET[1],
-        scale=DEF.DATA.IMAGE.PIXEL_SIZE[1],
-        name=DEF.DATA.IMAGE.PIXEL_PQUANT[1],
+        offset=0,
+        scale=1,
+        name="position",
         symbol="y",
-        unit=DEF.DATA.IMAGE.PIXEL_UNIT[1]
+        unit="px"
     )
     array_data.add_dim(
         name=DEF.DATA.IMAGE.VALUE_PQUANT,
