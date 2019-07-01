@@ -1,0 +1,2641 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.drv.itf &#8212; libics 0.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.drv.itf">
+<span id="libics-drv-itf"></span><h1>libics.drv.itf<a class="headerlink" href="#module-libics.drv.itf" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="libics.drv.itf.get_itf">
+<code class="sig-prename descclassname">libics.drv.itf.</code><code class="sig-name descname">get_itf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.get_itf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="module-libics.drv.itf.camcfg">
+<span id="modules"></span><h2>Modules<a class="headerlink" href="#module-libics.drv.itf.camcfg" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.drv.itf.camcfg.CameraCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.camcfg.</code><code class="sig-name descname">CameraCfg</code><span class="sig-paren">(</span><em class="sig-param">camera_type='vimba'</em>, <em class="sig-param">camera_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Camera capture configuration container.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">display.qtimage.QtImage.set_image_format</span></code></dt><dd></dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>All attributes are of <cite>util.types.FlaggedType</cite> in which the flag is
+interpreted as a to-be-updated flag.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.camcfg.CameraCfg.invert_all_flags" title="libics.drv.itf.camcfg.CameraCfg.invert_all_flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_all_flags</span></code></a>(self)</p></td>
+<td><p>Inverts the flags of all attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.camcfg.CameraCfg.set_all_flags" title="libics.drv.itf.camcfg.CameraCfg.set_all_flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_all_flags</span></code></a>(self, flag)</p></td>
+<td><p>Sets the flags of all attributes to the given boolean value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.camcfg.CameraCfg.set_config" title="libics.drv.itf.camcfg.CameraCfg.set_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_config</span></code></a>(self, camera_cfg[, flags])</p></td>
+<td><p>Sets the configuration parameters.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 60%" />
+<col style="width: 40%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Acquisition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>Camera</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Exposure</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>ImageFormat</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Acquisition">
+<em class="property">class </em><code class="sig-name descname">Acquisition</code><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Acquisition.COLOR_SENSITIVITY">
+<code class="sig-name descname">COLOR_SENSITIVITY</code><em class="property"> = ['normal', 'nir_fast', 'nir_hq']</em><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Acquisition.COLOR_SENSITIVITY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Camera">
+<em class="property">class </em><code class="sig-name descname">Camera</code><span class="sig-paren">(</span><em class="sig-param">camera_type='vimba'</em>, <em class="sig-param">camera_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Camera" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Camera.CAMERA_TYPE">
+<code class="sig-name descname">CAMERA_TYPE</code><em class="property"> = ['vimba']</em><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Camera.CAMERA_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Exposure">
+<em class="property">class </em><code class="sig-name descname">Exposure</code><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Exposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.camcfg.CameraCfg.Exposure.CAM_AUTO">
+<code class="sig-name descname">CAM_AUTO</code><em class="property"> = ['on', 'single', 'off']</em><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.Exposure.CAM_AUTO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.camcfg.CameraCfg.ImageFormat">
+<em class="property">class </em><code class="sig-name descname">ImageFormat</code><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.ImageFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.camcfg.CameraCfg.ImageFormat.BPC">
+<code class="sig-name descname">BPC</code><em class="property"> = [8, 10, 12]</em><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.ImageFormat.BPC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.camcfg.CameraCfg.ImageFormat.CHANNEL">
+<code class="sig-name descname">CHANNEL</code><em class="property"> = ['rgb', 'rgba', 'bgr', 'bgra', 'mono', None]</em><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.ImageFormat.CHANNEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.camcfg.CameraCfg.invert_all_flags">
+<code class="sig-name descname">invert_all_flags</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.invert_all_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverts the flags of all attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.camcfg.CameraCfg.set_all_flags">
+<code class="sig-name descname">set_all_flags</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">flag</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.set_all_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the flags of all attributes to the given boolean value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.camcfg.CameraCfg.set_config">
+<code class="sig-name descname">set_config</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">camera_cfg</em>, <em class="sig-param">flags=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.camcfg.CameraCfg.set_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the configuration parameters.</p>
+<p>If an attribute of the passed <cite>camera_cfg</cite> is <cite>None</cite>, this value is
+not set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>camera_cfg</strong><span class="classifier">CameraCfg</span></dt><dd><p>The camera configuration to be set.</p>
+</dd>
+<dt><strong>flags</strong><span class="classifier">None or bool</span></dt><dd><p><cite>None</cite>: Sets differential update flags.
+<cite>True</cite>: Sets all update flags.
+<cite>False</cite>: Sets no update flags.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-libics.drv.itf.gpib"></span><dl class="class">
+<dt id="libics.drv.itf.gpib.ConnectionGpibEthernet">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.gpib.</code><code class="sig-name descname">ConnectionGpibEthernet</code><span class="sig-paren">(</span><em class="sig-param">ipv4</em>, <em class="sig-param">port</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibEthernet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 48%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>receive</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.gpib.ConnectionGpibEthernet.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibEthernet.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.ConnectionGpibEthernet.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibEthernet.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.ConnectionGpibEthernet.receive">
+<code class="sig-name descname">receive</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">data_timeout=0.1</em>, <em class="sig-param">receiver_timeout=5.0</em>, <em class="sig-param">buffer_size=4096</em>, <em class="sig-param">termchar='n'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibEthernet.receive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.ConnectionGpibEthernet.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">data</em>, <em class="sig-param">termchar='rn'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibEthernet.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.gpib.ConnectionGpibUsb">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.gpib.</code><code class="sig-name descname">ConnectionGpibUsb</code><a class="headerlink" href="#libics.drv.itf.gpib.ConnectionGpibUsb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.gpib.GPIB">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.gpib.</code><code class="sig-name descname">GPIB</code><span class="sig-paren">(</span><em class="sig-param">connection=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 64%" />
+<col style="width: 36%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>receive</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_connection</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_receiver</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_sender</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.receive">
+<code class="sig-name descname">receive</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.receive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.set_connection">
+<code class="sig-name descname">set_connection</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">connection=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.set_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.set_receiver">
+<code class="sig-name descname">set_receiver</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">data_timeout=None</em>, <em class="sig-param">receiver_timeout=None</em>, <em class="sig-param">termchar=None</em>, <em class="sig-param">buffer_size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.set_receiver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.gpib.GPIB.set_sender">
+<code class="sig-name descname">set_sender</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">termchar=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.gpib.GPIB.set_sender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-libics.drv.itf.itf"></span><dl class="class">
+<dt id="libics.drv.itf.itf.BinCfgBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">BinCfgBase</code><span class="sig-paren">(</span><em class="sig-param">device=None</em>, <em class="sig-param">cls_name='BinCfgBase'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinCfgBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.ProtocolCfgBase" title="libics.drv.itf.itf.ProtocolCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.ProtocolCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; BinCfgBase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>device</strong><span class="classifier">str</span></dt><dd><p>String identifier for device (cf. address).
+None typically searches for interfaces and automatically
+chooses one (depending on implementation).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.BinCfgBase.get_hl_cfg" title="libics.drv.itf.itf.BinCfgBase.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.BinCfgBase.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinCfgBase.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.BinVialuxCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">BinVialuxCfg</code><span class="sig-paren">(</span><em class="sig-param">cls_name='BinVialuxCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVialuxCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.BinCfgBase" title="libics.drv.itf.itf.BinCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.BinCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; BinCfgBase -&gt; BinVialuxCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.BinVialuxCfg.get_hl_cfg" title="libics.drv.itf.itf.BinVialuxCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.BinVialuxCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVialuxCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.BinVimbaCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">BinVimbaCfg</code><span class="sig-paren">(</span><em class="sig-param">frame_count=1</em>, <em class="sig-param">frame_requeue=True</em>, <em class="sig-param">cls_name='BinVimbaCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVimbaCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.BinCfgBase" title="libics.drv.itf.itf.BinCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.BinCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; BinCfgBase -&gt; BinVimbaCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>frame_count</strong><span class="classifier">int</span></dt><dd><p>Number of frames provided to the Vimba API.</p>
+</dd>
+<dt><strong>frame_requeue</strong><span class="classifier">bool</span></dt><dd><p>Whether to automatically requeue frames to the Vimba API.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.BinVimbaCfg.get_hl_cfg" title="libics.drv.itf.itf.BinVimbaCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.BinVimbaCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVimbaCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.ITF_BIN">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">ITF_BIN</code><a class="headerlink" href="#libics.drv.itf.itf.ITF_BIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Binary interface protocols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>VIMBA:</strong></dt><dd><p>AlliedVision Vimba.</p>
+</dd>
+<dt><strong>VIALUX:</strong></dt><dd><p>Vialux ALP4.x.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_BIN.VIALUX">
+<code class="sig-name descname">VIALUX</code><em class="property"> = 111</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_BIN.VIALUX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_BIN.VIMBA">
+<code class="sig-name descname">VIMBA</code><em class="property"> = 101</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_BIN.VIMBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.ITF_PROTOCOL">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">ITF_PROTOCOL</code><a class="headerlink" href="#libics.drv.itf.itf.ITF_PROTOCOL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interface protocol types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>TEXT:</strong></dt><dd><p>Text-based protocol, e.g. used for RS-232.</p>
+</dd>
+<dt><strong>BINARY:</strong></dt><dd><p>Binary protocol, e.g. used in IPC for Vimba.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_PROTOCOL.BINARY">
+<code class="sig-name descname">BINARY</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_PROTOCOL.BINARY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_PROTOCOL.TEXT">
+<code class="sig-name descname">TEXT</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_PROTOCOL.TEXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.ITF_TXT">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">ITF_TXT</code><a class="headerlink" href="#libics.drv.itf.itf.ITF_TXT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Text-based interface protocols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>SERIAL:</strong></dt><dd><p>Serial interface.</p>
+</dd>
+<dt><strong>ETHERNET:</strong></dt><dd><p>Ethernet interface.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_TXT.ETHERNET">
+<code class="sig-name descname">ETHERNET</code><em class="property"> = 12</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_TXT.ETHERNET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_TXT.SERIAL">
+<code class="sig-name descname">SERIAL</code><em class="property"> = 11</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_TXT.SERIAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.ProtocolCfgBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">ProtocolCfgBase</code><span class="sig-paren">(</span><em class="sig-param">protocol=0</em>, <em class="sig-param">interface=None</em>, <em class="sig-param">cls_name='ProtocolCfgBase'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.ProtocolCfgBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.cfg.CfgBase</span></code></p>
+<p>Interface configuration base class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>protocol</strong><span class="classifier">ITF_PROTOCOL (int)</span></dt><dd><p>Interface protocol type.</p>
+</dd>
+<dt><strong>interface</strong><span class="classifier">ITF_TXT or ITF_BIN</span></dt><dd><p>Interface class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If None parameters are passed, the respective attributes are interpreted
+as unspecified.</p></li>
+<li><p>Derived classes should implement the get_hl_cfg method returning the
+next higher level configuration class.</p></li>
+<li><p>Derived classes should pass initialization arguments to base class
+constructors and check for base class objects.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.ProtocolCfgBase.get_hl_cfg" title="libics.drv.itf.itf.ProtocolCfgBase.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.ProtocolCfgBase.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.ProtocolCfgBase.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TXT_ETHERNET_GPIB</code><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>MODE</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>MODEL</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE">
+<em class="property">class </em><code class="sig-name descname">MODE</code><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER">
+<code class="sig-name descname">CONTROLLER</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE.DEVICE">
+<code class="sig-name descname">DEVICE</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE.DEVICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL">
+<em class="property">class </em><code class="sig-name descname">MODEL</code><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL.GENERIC">
+<code class="sig-name descname">GENERIC</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL.GENERIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL.PROLOGIX_GPIB_ETHERNET">
+<code class="sig-name descname">PROLOGIX_GPIB_ETHERNET</code><em class="property"> = 11</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODEL.PROLOGIX_GPIB_ETHERNET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_TYPE">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TXT_ETHERNET_TYPE</code><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_TYPE.GENERIC">
+<code class="sig-name descname">GENERIC</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_TYPE.GENERIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.TXT_ETHERNET_TYPE.GPIB">
+<code class="sig-name descname">GPIB</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.itf.itf.TXT_ETHERNET_TYPE.GPIB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TxtCfgBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TxtCfgBase</code><span class="sig-paren">(</span><em class="sig-param">address=None</em>, <em class="sig-param">buffer_size=None</em>, <em class="sig-param">send_timeout=None</em>, <em class="sig-param">send_termchar=None</em>, <em class="sig-param">recv_timeout=None</em>, <em class="sig-param">recv_termchar=None</em>, <em class="sig-param">cls_name='TxtCfgBase'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtCfgBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.ProtocolCfgBase" title="libics.drv.itf.itf.ProtocolCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.ProtocolCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; TxtCfgBase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>address</strong><span class="classifier">str</span></dt><dd><p>Address of interface, e.g. IP.</p>
+</dd>
+<dt><strong>buffer_size</strong><span class="classifier">int</span></dt><dd><p>Number of buffer bytes.</p>
+</dd>
+<dt><strong>send_timeout</strong><span class="classifier">float</span></dt><dd><p>Send: timeout in seconds.</p>
+</dd>
+<dt><strong>send_termchar</strong><span class="classifier">str</span></dt><dd><p>Send: command termination characters.</p>
+</dd>
+<dt><strong>recv_timeout</strong><span class="classifier">float</span></dt><dd><p>Receive: timeout in seconds.</p>
+</dd>
+<dt><strong>recv_termchar</strong><span class="classifier">str</span></dt><dd><p>Receive: command termination characters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.TxtCfgBase.get_hl_cfg" title="libics.drv.itf.itf.TxtCfgBase.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.TxtCfgBase.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtCfgBase.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TxtEthernetCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TxtEthernetCfg</code><span class="sig-paren">(</span><em class="sig-param">txt_ethernet_type=0</em>, <em class="sig-param">port=None</em>, <em class="sig-param">blocking=False</em>, <em class="sig-param">cls_name='TxtEthernetCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtEthernetCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.TxtCfgBase" title="libics.drv.itf.itf.TxtCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.TxtCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; TxtCfgBase -&gt; TxtEthernetCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>txt_ethernet_type</strong><span class="classifier">TXT_ETHERNET_TYPE</span></dt><dd><p>Type of text-based Ethernet interface.</p>
+</dd>
+<dt><strong>port</strong><span class="classifier">int</span></dt><dd><p>Ethernet port number.</p>
+</dd>
+<dt><strong>blocking</strong><span class="classifier">bool</span></dt><dd><p>Whether to block Ethernet socket.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.TxtEthernetCfg.get_hl_cfg" title="libics.drv.itf.itf.TxtEthernetCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.TxtEthernetCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtEthernetCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TxtEthernetGpibCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TxtEthernetGpibCfg</code><span class="sig-paren">(</span><em class="sig-param">gpib_mode=&lt;class 'libics.drv.itf.itf.TXT_ETHERNET_GPIB.MODE'&gt;</em>, <em class="sig-param">gpib_address=1</em>, <em class="sig-param">ctrl_model=0</em>, <em class="sig-param">cls_name='TxtEthernetGpibCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtEthernetGpibCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.TxtEthernetCfg" title="libics.drv.itf.itf.TxtEthernetCfg"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.TxtEthernetCfg</span></code></a></p>
+<p>ProtocolCfgBase -&gt; TxtCfgBase -&gt; TxtEthernetCfg -&gt; TxtEthernetGpibCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>gpib_mode</strong><span class="classifier">TXT_ETHERNET_GPIB.MODE</span></dt><dd><p>Whether device is in controller or device mode.</p>
+</dd>
+<dt><strong>gpib_address</strong><span class="classifier">int</span></dt><dd><p>GPIB address.</p>
+</dd>
+<dt><strong>ctrl_model</strong><span class="classifier">TXT_ETHERNET_GPIB.MODEL</span></dt><dd><p>Controller device model providing the interface.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.TxtEthernetGpibCfg.get_hl_cfg" title="libics.drv.itf.itf.TxtEthernetGpibCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.TxtEthernetGpibCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtEthernetGpibCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itf.TxtSerialCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TxtSerialCfg</code><span class="sig-paren">(</span><em class="sig-param">baudrate=115200</em>, <em class="sig-param">bytesize=8</em>, <em class="sig-param">parity='none'</em>, <em class="sig-param">stopbits=1</em>, <em class="sig-param">cls_name='TxtSerialCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtSerialCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.TxtCfgBase" title="libics.drv.itf.itf.TxtCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.TxtCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; TxtCfgBase -&gt; TxtSerialCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>baudrate</strong><span class="classifier">int</span></dt><dd><p>Baud rate in bits per second.</p>
+</dd>
+<dt><strong>bytesize</strong><span class="classifier">5, 6, 7, 8</span></dt><dd><p>Number of data bits.</p>
+</dd>
+<dt><strong>parity</strong><span class="classifier">“none”, “even”, “odd”, “mark”, “space”</span></dt><dd><p>Parity checking.</p>
+</dd>
+<dt><strong>stopbits</strong><span class="classifier">1, 1.5, 2</span></dt><dd><p>Number of stop bits.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.TxtSerialCfg.get_hl_cfg" title="libics.drv.itf.itf.TxtSerialCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.TxtSerialCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtSerialCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-libics.drv.itf.itfbin"></span><dl class="class">
+<dt id="libics.drv.itf.itfbin.BinItfBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">BinItfBase</code><span class="sig-paren">(</span><em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.BinItfBase.close">
+<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.BinItfBase.connect">
+<em class="property">abstract </em><code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.BinItfBase.setup">
+<em class="property">abstract </em><code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.BinItfBase.shutdown">
+<em class="property">abstract </em><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itfbin.VialuxItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">VialuxItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itfbin.BinItfBase" title="libics.drv.itf.itfbin.BinItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itfbin.BinItfBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.dev_ctrl" title="libics.drv.itf.itfbin.VialuxItf.dev_ctrl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dev_ctrl</span></code></a>(self, key, val)</p></td>
+<td><p>Device control.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.dev_inq" title="libics.drv.itf.itfbin.VialuxItf.dev_inq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dev_inq</span></code></a>(self, key)</p></td>
+<td><p>Device inquiry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.init" title="libics.drv.itf.itfbin.VialuxItf.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>(self, bitdepth, sequence_length)</p></td>
+<td><p>Initializes a sequence by allocating memory for image display.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.run" title="libics.drv.itf.itfbin.VialuxItf.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self, sequence, bitdepth, repetitions)</p></td>
+<td><p>Loads the sequence memory and starts displaying the images.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.seq_ctrl" title="libics.drv.itf.itfbin.VialuxItf.seq_ctrl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seq_ctrl</span></code></a>(self, key, val)</p></td>
+<td><p>Sequence control.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.seq_inq" title="libics.drv.itf.itfbin.VialuxItf.seq_inq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seq_inq</span></code></a>(self, key)</p></td>
+<td><p>Sequence inquiry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.seq_time" title="libics.drv.itf.itfbin.VialuxItf.seq_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seq_time</span></code></a>(self, \*\*kwargs)</p></td>
+<td><p>Set sequence timing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.seq_wait" title="libics.drv.itf.itfbin.VialuxItf.seq_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seq_wait</span></code></a>(self)</p></td>
+<td><p>Waits for a sequence to finish and returns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VialuxItf.stop" title="libics.drv.itf.itfbin.VialuxItf.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops any playing sequence.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.dev_ctrl">
+<code class="sig-name descname">dev_ctrl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key</em>, <em class="sig-param">val</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.dev_ctrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Device control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.dev_inq">
+<code class="sig-name descname">dev_inq</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.dev_inq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Device inquiry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.init">
+<code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">bitdepth</em>, <em class="sig-param">sequence_length</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a sequence by allocating memory for image display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bitdepth</strong><span class="classifier">int</span></dt><dd><p>Channel bitdepth of image.</p>
+</dd>
+<dt><strong>sequence_length</strong><span class="classifier">int or list</span></dt><dd><p>Number of images in sequence or sequence itself.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sequence</em>, <em class="sig-param">bitdepth</em>, <em class="sig-param">repetitions</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the sequence memory and starts displaying the images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sequence</strong><span class="classifier">list(np.ndarray(2))</span></dt><dd><p>List of images.</p>
+</dd>
+<dt><strong>bitdepth</strong><span class="classifier">int</span></dt><dd><p>Channel bitdepth of image.</p>
+</dd>
+<dt><strong>repetitions</strong><span class="classifier">int</span></dt><dd><p>Number of repetitions of the sequence.
+0 (zero) is interpreted as continuos display.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>As convenience function, one can directly run a sequence
+without init, but no sequence control modifications can
+be made.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.seq_ctrl">
+<code class="sig-name descname">seq_ctrl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key</em>, <em class="sig-param">val</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.seq_ctrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.seq_inq">
+<code class="sig-name descname">seq_inq</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.seq_inq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence inquiry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.seq_time">
+<code class="sig-name descname">seq_time</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.seq_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sequence timing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>illuminatetime</strong><span class="classifier">int</span></dt><dd><p>Illuminate time in microseconds (µs).</p>
+</dd>
+<dt><strong>picturetime</strong><span class="classifier">int</span></dt><dd><p>Picture time in microseconds (µs).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.seq_wait">
+<code class="sig-name descname">seq_wait</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.seq_wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits for a sequence to finish and returns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wait_success</strong><span class="classifier">bool or None</span></dt><dd><p>True: Sequence has finished.
+False: Sequence in continuos mode, cannot finish.
+None: No sequence is running.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VialuxItf.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VialuxItf.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops any playing sequence.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itfbin.VimbaItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">VimbaItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itfbin.BinItfBase" title="libics.drv.itf.itfbin.BinItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itfbin.BinItfBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.cam" title="libics.drv.itf.itfbin.VimbaItf.cam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cam</span></code></a></dt><dd><p>Convenience access to pymba camera object.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.latest_index" title="libics.drv.itf.itfbin.VimbaItf.latest_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latest_index</span></code></a></dt><dd><p>Gets the last updated index.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.next_index" title="libics.drv.itf.itfbin.VimbaItf.next_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next_index</span></code></a></dt><dd><p>Gets the frame index next to be filled.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.add_frame" title="libics.drv.itf.itfbin.VimbaItf.add_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_frame</span></code></a>(self[, requeue, callback])</p></td>
+<td><p>Creates a new Vimba API frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.announce_frame" title="libics.drv.itf.itfbin.VimbaItf.announce_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">announce_frame</span></code></a>(self[, index])</p></td>
+<td><p>Announces a frame to the Vimba API that may be queued for frame capturing later.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.end_acquisition" title="libics.drv.itf.itfbin.VimbaItf.end_acquisition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">end_acquisition</span></code></a>(self)</p></td>
+<td><p>Ends frame acquisition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.end_capture" title="libics.drv.itf.itfbin.VimbaItf.end_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">end_capture</span></code></a>(self)</p></td>
+<td><p>Stops the Vimba API from being able to receive frames.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.flush_capture_queue" title="libics.drv.itf.itfbin.VimbaItf.flush_capture_queue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flush_capture_queue</span></code></a>(self)</p></td>
+<td><p>Flushes the capture queue.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.get_buffer_byte_data" title="libics.drv.itf.itfbin.VimbaItf.get_buffer_byte_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_byte_data</span></code></a>(self[, index])</p></td>
+<td><p>Calls the Vimba API to obtain the data of a frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.grab_data" title="libics.drv.itf.itfbin.VimbaItf.grab_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grab_data</span></code></a>(self[, index])</p></td>
+<td><p>Gets the most recently loaded frame buffer data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.queue_frame_capture" title="libics.drv.itf.itfbin.VimbaItf.queue_frame_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queue_frame_capture</span></code></a>(self[, index])</p></td>
+<td><p>Queues a frame that may be filled during frame capturing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.revoke_all_frames" title="libics.drv.itf.itfbin.VimbaItf.revoke_all_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">revoke_all_frames</span></code></a>(self)</p></td>
+<td><p>Revokes all frames from the Vimba API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.revoke_frame" title="libics.drv.itf.itfbin.VimbaItf.revoke_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">revoke_frame</span></code></a>(self[, index])</p></td>
+<td><p>Revokes a frame from the Vimba API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.setup_frames" title="libics.drv.itf.itfbin.VimbaItf.setup_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_frames</span></code></a>(self[, callback])</p></td>
+<td><p>Adds and announces frames according to the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.start_acquisition" title="libics.drv.itf.itfbin.VimbaItf.start_acquisition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_acquisition</span></code></a>(self)</p></td>
+<td><p>Starts frame acquisition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.start_capture" title="libics.drv.itf.itfbin.VimbaItf.start_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_capture</span></code></a>(self)</p></td>
+<td><p>Prepares the Vimba API for incoming frames.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itfbin.VimbaItf.wait_frame_capture" title="libics.drv.itf.itfbin.VimbaItf.wait_frame_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_frame_capture</span></code></a>(self[, index, timeout])</p></td>
+<td><p>Waits for a queued frame to be filled (or dequeued).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.add_frame">
+<code class="sig-name descname">add_frame</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">requeue=True</em>, <em class="sig-param">callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.add_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new Vimba API frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>requeue</strong><span class="classifier">bool</span></dt><dd><p>Whether to automatically requeue the frame after its data
+has been retrieved.</p>
+</dd>
+<dt><strong>callback</strong><span class="classifier">callable or None</span></dt><dd><p>Function that is called when the frame is ready.
+Must take the raw image data (buffer protocol) as
+parameter.
+If <cite>callable</cite> is not callable, no callback function
+will be called.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.announce_frame">
+<code class="sig-name descname">announce_frame</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.announce_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Announces a frame to the Vimba API that may be queued for frame
+capturing later.</p>
+<p>Vimba C API: Runs VmbFrameAnnounce.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.cam">
+<em class="property">property </em><code class="sig-name descname">cam</code><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.cam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience access to pymba camera object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.end_acquisition">
+<code class="sig-name descname">end_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.end_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends frame acquisition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.end_capture">
+<code class="sig-name descname">end_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.end_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the Vimba API from being able to receive frames.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.flush_capture_queue">
+<code class="sig-name descname">flush_capture_queue</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.flush_capture_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes the capture queue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.get_buffer_byte_data">
+<code class="sig-name descname">get_buffer_byte_data</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.get_buffer_byte_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the Vimba API to obtain the data of a frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">PyObject (Py_buffer)</span></dt><dd><p>Raw image data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.grab_data">
+<code class="sig-name descname">grab_data</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.grab_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the most recently loaded frame buffer data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">PyObject (Py_buffer)</span></dt><dd><p>Raw image data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.latest_index">
+<em class="property">property </em><code class="sig-name descname">latest_index</code><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.latest_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the last updated index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.next_index">
+<em class="property">property </em><code class="sig-name descname">next_index</code><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.next_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the frame index next to be filled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.queue_frame_capture">
+<code class="sig-name descname">queue_frame_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.queue_frame_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queues a frame that may be filled during frame capturing.</p>
+<p>Vimba C API: Runs VmbCaptureFrameQueue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.revoke_all_frames">
+<code class="sig-name descname">revoke_all_frames</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.revoke_all_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revokes all frames from the Vimba API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.revoke_frame">
+<code class="sig-name descname">revoke_frame</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.revoke_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revokes a frame from the Vimba API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.setup_frames">
+<code class="sig-name descname">setup_frames</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.setup_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds and announces frames according to the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>callback</strong><span class="classifier">callable or None</span></dt><dd><p>Function that is called when the frame is ready.
+Must take the raw image data (buffer protocol) as
+parameter.
+If <cite>callable</cite> is not callable, no callback function
+will be called.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.start_acquisition">
+<code class="sig-name descname">start_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.start_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts frame acquisition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.start_capture">
+<code class="sig-name descname">start_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.start_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the Vimba API for incoming frames.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VimbaItf.wait_frame_capture">
+<code class="sig-name descname">wait_frame_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em>, <em class="sig-param">timeout=2.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VimbaItf.wait_frame_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits for a queued frame to be filled (or dequeued).</p>
+<p>Vimba C API: Runs VmbCaptureFrameWait.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>timeout</strong><span class="classifier">float</span></dt><dd><p>Waiting timeout in seconds (s).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.itfbin.get_bin_itf">
+<code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">get_bin_itf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.get_bin_itf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-libics.drv.itf.itftxt"></span><dl class="class">
+<dt id="libics.drv.itf.itftxt.PrologixGpibEthernetItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">PrologixGpibEthernetItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.PrologixGpibEthernetItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itftxt.TxtEthernetItf" title="libics.drv.itf.itftxt.TxtEthernetItf"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itftxt.TxtEthernetItf</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.PrologixGpibEthernetItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.PrologixGpibEthernetItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.PrologixGpibEthernetItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.PrologixGpibEthernetItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.PrologixGpibEthernetItf.recv">
+<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.PrologixGpibEthernetItf.recv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">TxtEthernetItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itftxt.TxtItfBase" title="libics.drv.itf.itftxt.TxtItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itftxt.TxtItfBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.recv">
+<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.recv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itftxt.TxtItfBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">TxtItfBase</code><span class="sig-paren">(</span><em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.close">
+<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.connect">
+<em class="property">abstract </em><code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.query">
+<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.recv">
+<em class="property">abstract </em><code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.recv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.send">
+<em class="property">abstract </em><code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.setup">
+<em class="property">abstract </em><code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtItfBase.shutdown">
+<em class="property">abstract </em><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtItfBase.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">TxtSerialItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itftxt.TxtItfBase" title="libics.drv.itf.itftxt.TxtItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itftxt.TxtItfBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.recv">
+<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.recv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtSerialItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.itftxt.get_txt_ethernet_itf">
+<code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">get_txt_ethernet_itf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.get_txt_ethernet_itf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.itftxt.get_txt_itf">
+<code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">get_txt_itf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.get_txt_itf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-libics.drv.itf.mdt693"></span><dl class="class">
+<dt id="libics.drv.itf.mdt693.MDT693A">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.mdt693.</code><code class="sig-name descname">MDT693A</code><span class="sig-paren">(</span><em class="sig-param">port='COM1'</em>, <em class="sig-param">baudrate=115200</em>, <em class="sig-param">parity='N'</em>, <em class="sig-param">stopbits=1</em>, <em class="sig-param">read_timeout=1.0</em>, <em class="sig-param">write_timeout=1.0</em>, <em class="sig-param">termchar='rn'</em>, <em class="sig-param">hw_proc_delay=0.05</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>RS232 (serial port) driver for Thorlabs Piezo Driver MDT693A.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.mdt693.MDT693A.get_voltage" title="libics.drv.itf.mdt693.MDT693A.get_voltage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_voltage</span></code></a>(self[, channel])</p></td>
+<td><p>Reads and returns the voltage of the given channel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.mdt693.MDT693A.get_voltage_range" title="libics.drv.itf.mdt693.MDT693A.get_voltage_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_voltage_range</span></code></a>(self[, channel])</p></td>
+<td><p>Returns the voltage range (min, max).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 68%" />
+<col style="width: 32%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close_serial</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_voltage_limit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>open_serial</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_voltage</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_voltage_range</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693A.MODE_CODE">
+<code class="sig-name descname">MODE_CODE</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.MODE_CODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693A.MODE_RAW">
+<code class="sig-name descname">MODE_RAW</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.MODE_RAW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693A.MODE_VOLTAGE">
+<code class="sig-name descname">MODE_VOLTAGE</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.MODE_VOLTAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.close_serial">
+<code class="sig-name descname">close_serial</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.close_serial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.get_voltage">
+<code class="sig-name descname">get_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">channel=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.get_voltage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and returns the voltage of the given channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>channel</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.get_voltage_limit">
+<code class="sig-name descname">get_voltage_limit</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.get_voltage_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.get_voltage_range">
+<code class="sig-name descname">get_voltage_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">channel=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.get_voltage_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the voltage range (min, max).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>channel</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.open_serial">
+<code class="sig-name descname">open_serial</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.open_serial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.set_voltage">
+<code class="sig-name descname">set_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">voltage</em>, <em class="sig-param">channel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.set_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693A.set_voltage_range">
+<code class="sig-name descname">set_voltage_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">min_volt=None</em>, <em class="sig-param">max_volt=None</em>, <em class="sig-param">channel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693A.set_voltage_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.mdt693.MDT693B">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.mdt693.</code><code class="sig-name descname">MDT693B</code><span class="sig-paren">(</span><em class="sig-param">port='COM1'</em>, <em class="sig-param">baudrate=115200</em>, <em class="sig-param">parity='N'</em>, <em class="sig-param">stopbits=1</em>, <em class="sig-param">read_timeout=1.0</em>, <em class="sig-param">write_timeout=1.0</em>, <em class="sig-param">termchar='rn'</em>, <em class="sig-param">hw_proc_delay=0.05</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>RS232 (serial port) driver for Thorlabs Piezo Driver MDT693B.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.mdt693.MDT693B.get_voltage" title="libics.drv.itf.mdt693.MDT693B.get_voltage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_voltage</span></code></a>(self[, channel])</p></td>
+<td><p>Reads and returns the voltage of the given channel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.mdt693.MDT693B.get_voltage_range" title="libics.drv.itf.mdt693.MDT693B.get_voltage_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_voltage_range</span></code></a>(self[, channel])</p></td>
+<td><p>Returns the voltage range (min, max).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 68%" />
+<col style="width: 32%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close_serial</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_voltage_limit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>open_serial</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_voltage</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_voltage_range</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693B.MODE_CODE">
+<code class="sig-name descname">MODE_CODE</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.MODE_CODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693B.MODE_RAW">
+<code class="sig-name descname">MODE_RAW</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.MODE_RAW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.mdt693.MDT693B.MODE_VOLTAGE">
+<code class="sig-name descname">MODE_VOLTAGE</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.MODE_VOLTAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.close_serial">
+<code class="sig-name descname">close_serial</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.close_serial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.get_voltage">
+<code class="sig-name descname">get_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">channel=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.get_voltage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and returns the voltage of the given channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>channel</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.get_voltage_limit">
+<code class="sig-name descname">get_voltage_limit</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.get_voltage_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.get_voltage_range">
+<code class="sig-name descname">get_voltage_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">channel=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.get_voltage_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the voltage range (min, max).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>channel</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.open_serial">
+<code class="sig-name descname">open_serial</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.open_serial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.set_voltage">
+<code class="sig-name descname">set_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">voltage</em>, <em class="sig-param">channel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.set_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.mdt693.MDT693B.set_voltage_range">
+<code class="sig-name descname">set_voltage_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">min_volt=None</em>, <em class="sig-param">max_volt=None</em>, <em class="sig-param">channel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.mdt693.MDT693B.set_voltage_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-libics.drv.itf.vialux"></span><dl class="function">
+<dt id="libics.drv.itf.vialux.startup_alp42">
+<code class="sig-prename descclassname">libics.drv.itf.vialux.</code><code class="sig-name descname">startup_alp42</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vialux.startup_alp42" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the Vialux ALP4.2 C API.</p>
+<p>The Vialux ALP4.2 API requires a startup and a shutdown call.
+This function checks whether startup has already been called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_ALP42</strong><span class="classifier">alpV42.PY_ALP_API</span></dt><dd><p>Vialux ALP4.2 API object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-libics.drv.itf.vimba"></span><dl class="class">
+<dt id="libics.drv.itf.vimba.VimbaCamera">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.vimba.</code><code class="sig-name descname">VimbaCamera</code><span class="sig-paren">(</span><em class="sig-param">vimba_camera</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Pure pythonic wrapper class for <cite>pymba.vimbaCamera.VimbaCamera</cite> with
+reduced functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>vimba_camera</strong><span class="classifier">pymba.vimba_camera.VimbaCamera</span></dt><dd><p>The actual Vimba camera object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>TypeError</dt><dd><p>If parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.close_cam" title="libics.drv.itf.vimba.VimbaCamera.close_cam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close_cam</span></code></a>(self)</p></td>
+<td><p>Closes the camera.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_acquisition" title="libics.drv.itf.vimba.VimbaCamera.get_acquisition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_acquisition</span></code></a>(self)</p></td>
+<td><p>Gets the acquisition properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_exposure" title="libics.drv.itf.vimba.VimbaCamera.get_exposure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_exposure</span></code></a>(self)</p></td>
+<td><p>Gets auto-exposure settings and manual exposure time in µs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_format" title="libics.drv.itf.vimba.VimbaCamera.get_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_format</span></code></a>(self)</p></td>
+<td><p>Gets the current image format.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_id" title="libics.drv.itf.vimba.VimbaCamera.get_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_id</span></code></a>(self)</p></td>
+<td><p>Gets the camera ID string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_image" title="libics.drv.itf.vimba.VimbaCamera.get_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_image</span></code></a>(self[, index])</p></td>
+<td><p>Gets an image stored in the frame buffer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_info" title="libics.drv.itf.vimba.VimbaCamera.get_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_info</span></code></a>(self)</p></td>
+<td><p>Gets the camera information.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.get_max_size" title="libics.drv.itf.vimba.VimbaCamera.get_max_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_max_size</span></code></a>(self)</p></td>
+<td><p>Gets the maximum image size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.open_cam" title="libics.drv.itf.vimba.VimbaCamera.open_cam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_cam</span></code></a>(self[, mode])</p></td>
+<td><p>Initializes the camera, <cite>close</cite> the camera after use.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.set_acquisition" title="libics.drv.itf.vimba.VimbaCamera.set_acquisition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_acquisition</span></code></a>(self[, mode, multi_count])</p></td>
+<td><p>Sets the acquisition mode, i.e.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.set_exposure" title="libics.drv.itf.vimba.VimbaCamera.set_exposure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_exposure</span></code></a>(self[, auto, time, nir_mode])</p></td>
+<td><p>Sets auto-exposure, manual exposure time and NIR exposure mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.set_format" title="libics.drv.itf.vimba.VimbaCamera.set_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_format</span></code></a>(self[, width, height, …])</p></td>
+<td><p>Sets the current image pixel size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.set_frame_buffers" title="libics.drv.itf.vimba.VimbaCamera.set_frame_buffers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_frame_buffers</span></code></a>(self[, count])</p></td>
+<td><p>Sets up frame buffers, into which the Vimba API may load received images.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.vimba.VimbaCamera.start_capture" title="libics.drv.itf.vimba.VimbaCamera.start_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_capture</span></code></a>(self[, frame_callback])</p></td>
+<td><p>Starts capture.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 69%" />
+<col style="width: 31%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>end_acquisition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>end_capture</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_image_callback</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>start_acquisition</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.close_cam">
+<code class="sig-name descname">close_cam</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.close_cam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the camera.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.end_acquisition">
+<code class="sig-name descname">end_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.end_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.end_capture">
+<code class="sig-name descname">end_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.end_capture" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_acquisition">
+<code class="sig-name descname">get_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the acquisition properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mode</strong><span class="classifier">str</span></dt><dd><p>Acquisition mode.</p>
+</dd>
+<dt><strong>multi_count</strong><span class="classifier">int</span></dt><dd><p>Multi-frame mode frame count.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_exposure">
+<code class="sig-name descname">get_exposure</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_exposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets auto-exposure settings and manual exposure time in µs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_format">
+<code class="sig-name descname">get_format</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current image format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>width, height, width_offset, height_offset</strong><span class="classifier">int</span></dt><dd><p>Pixel counts.</p>
+</dd>
+<dt><strong>px_format</strong><span class="classifier">str</span></dt><dd><p>“Mono8”, “Mono12”, “Mono12Packed”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_id">
+<code class="sig-name descname">get_id</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the camera ID string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cam_id</strong><span class="classifier">str</span></dt><dd><p>Camera ID string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_image">
+<code class="sig-name descname">get_image</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an image stored in the frame buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>index</strong><span class="classifier">int or None</span></dt><dd><p>Index of frame buffer list. <cite>None</cite> uses the frame which
+is subsequent to the internal frame buffer index.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray or None</span></dt><dd><p>Image with shape (height, width, rgb_size) and data type
+as defined by <cite>PixelFormat</cite>.
+<cite>None</cite> if no frame was captured.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Due to the internal frame buffer counter, subsequent images can be
+obtained by repeatedly calling <cite>get_image()</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_image_callback">
+<code class="sig-name descname">get_image_callback</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">frame</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_image_callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_info">
+<code class="sig-name descname">get_info</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the camera information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>info</strong><span class="classifier">tuple(str, str, str, str, int, str)</span></dt><dd><p>(<cite>cameraIdString</cite>, <cite>cameraName</cite>, <cite>modelName</cite>,
+<cite>serialString</cite>, <cite>permittedAccess</cite>, <cite>interfaceIdString</cite>)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.get_max_size">
+<code class="sig-name descname">get_max_size</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.get_max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the maximum image size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>px_max_x, px_max_y</strong><span class="classifier">int</span></dt><dd><p>Maximal pixel count in x and y direction.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.open_cam">
+<code class="sig-name descname">open_cam</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">mode='full'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.open_cam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the camera, <cite>close</cite> the camera after use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mode</strong><span class="classifier">str</span></dt><dd><p>“none”, “full”, “read”, “config”, “lite”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>TypeError</dt><dd><p>If parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.set_acquisition">
+<code class="sig-name descname">set_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">multi_count=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.set_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the acquisition mode, i.e. how many frames are recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mode</strong><span class="classifier">str, optional</span></dt><dd><p>“Continuous”, “SingleFrame”, “MultiFrame”.</p>
+</dd>
+<dt><strong>multi_count</strong><span class="classifier">positive int</span></dt><dd><p>Number of frames to be acquired in multiframe mode.
+Has no effect in the other modes.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>TypeError</dt><dd><p>If parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.set_exposure">
+<code class="sig-name descname">set_exposure</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">auto=None</em>, <em class="sig-param">time=None</em>, <em class="sig-param">nir_mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.set_exposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets auto-exposure, manual exposure time and NIR exposure mode.</p>
+<p>The <cite>None</cite> parameter does not set the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>auto</strong><span class="classifier">str or None</span></dt><dd><p>“Off”, “Single”, “Continuous”</p>
+</dd>
+<dt><strong>time</strong><span class="classifier">int or None</span></dt><dd><p>Exposure time in µs.</p>
+</dd>
+<dt><strong>nir_mode</strong><span class="classifier">str or None</span></dt><dd><p>“Off”, “On_HighQuality”, “On_Fast”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.set_format">
+<code class="sig-name descname">set_format</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">width=None</em>, <em class="sig-param">height=None</em>, <em class="sig-param">width_offset=None</em>, <em class="sig-param">height_offset=None</em>, <em class="sig-param">px_format=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.set_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current image pixel size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>width, height, width_offset, height_offset</strong><span class="classifier">int or None</span></dt><dd><p>Pixel counts. <cite>None</cite> does not set the variable.
+<cite>width</cite> and <cite>height</cite> may be <cite>“max”</cite> with which the
+camera’s maximum image size is used and offsets are
+set to zero.</p>
+</dd>
+<dt><strong>px_format</strong><span class="classifier">str or None</span></dt><dd><p>“Mono8”, “Mono12”, “Mono12Packed”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.set_frame_buffers">
+<code class="sig-name descname">set_frame_buffers</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">count=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.set_frame_buffers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up frame buffers, into which the Vimba API may load received
+images. Automatically announces and revokes frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>count</strong><span class="classifier">positive int</span></dt><dd><p>Number of buffered frames.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If <cite>count</cite> value is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.start_acquisition">
+<code class="sig-name descname">start_acquisition</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.start_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.vimba.VimbaCamera.start_capture">
+<code class="sig-name descname">start_capture</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">frame_callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.VimbaCamera.start_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts capture. On frame ready the <cite>frame_callback</cite> function
+is called.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.vimba.getVimba">
+<code class="sig-prename descclassname">libics.drv.itf.vimba.</code><code class="sig-name descname">getVimba</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.getVimba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the Vimba API object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_Vimba</strong><span class="classifier">pymba.vimba.Vimba</span></dt><dd><p>Vimba API object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.vimba.get_vimba_cameras">
+<code class="sig-prename descclassname">libics.drv.itf.vimba.</code><code class="sig-name descname">get_vimba_cameras</code><span class="sig-paren">(</span><em class="sig-param">regex_id_filter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.get_vimba_cameras" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all discovered Vimba cameras.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>regex_id_filter</strong><span class="classifier">str (regex) or None, optional</span></dt><dd><p><cite>str</cite>: Gets camera only if its ID matches the given regular expression.
+<cite>None</cite>: Gets all discovered cameras.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>cameras</strong><span class="classifier">list(Camera)</span></dt><dd><p>Discovered (and filtered) cameras. Note that these
+cameras are unopened.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.vimba.shutdown">
+<code class="sig-prename descclassname">libics.drv.itf.vimba.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the Vimba C API.</p>
+<p>If using the Vimba API, this function must be called upon system return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>success</strong><span class="classifier">bool</span></dt><dd><p><cite>True</cite>: Vimba API was successfully closed.
+<cite>False</cite>: Vimba API was closed already.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.vimba.startup">
+<code class="sig-prename descclassname">libics.drv.itf.vimba.</code><code class="sig-name descname">startup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.vimba.startup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the Vimba C API.</p>
+<p>The Vimba API requires a startup and a shutdown call. This function checks
+whether startup has already been called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_Vimba</strong><span class="classifier">pymba.vimba.Vimba</span></dt><dd><p>Vimba API object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.drv.itf.api">
+<span id="apis"></span><h2>APIs<a class="headerlink" href="#module-libics.drv.itf.api" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-libics.drv.itf.api.alpV42"></span><p>Author of original file: Konrad</p>
+<p>[THIS FILE HAS BEEN MODIFIED FOR PYTHON 3.]</p>
+<p>This file is the translation of the c header file alp.h to our Python API.
+(The h file can be found as reference in this directory.)
+All functions connecting with the DMD are stored as methods of the PY_ALP_API
+class. The necessary library is alpV42.dll for 64bit (alpV42S.dll for 32bit).
+You might have to install the driver software properly with the CD (ALP-4.2
+Controller Suite VIALUX/DLP/Texas Instruments Installation CD).</p>
+<div class="section" id="changelog">
+<h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Various changes for Python 3</p></li>
+<li><p>Various changes in formatting for PEP8</p></li>
+<li><p>PY_ALP_API.AlpDevAlloc: Bugfix
+Switched initflag and devicenum</p></li>
+<li><p>PY_ALP_API:
+Add verbose option to switch function call printing.</p></li>
+</ul>
+<dl class="class">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.alpV42.</code><code class="sig-name descname">PY_ALP_API</code><span class="sig-paren">(</span><em class="sig-param">dllPath='alpV42.dll'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Vialux ALP 4.2 API functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dllPath</strong><span class="classifier">str</span></dt><dd><p>File path to Library.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>Whether to print called functions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjHalt" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjHalt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjHalt</span></code></a>(self, devhandle)</p></td>
+<td><p>Ends current projection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStartCont" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStartCont"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjStartCont</span></code></a>(self, devhandle, seqhandle)</p></td>
+<td><p>Starts project in a continuous loop.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjWait" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjWait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjWait</span></code></a>(self, devhandle)</p></td>
+<td><p>insert help text</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqControl" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqControl</span></code></a>(self, devhandle, seqhandle, …)</p></td>
+<td><p>ALP_DEFAULT doesn”t work.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqInquire" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqInquire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqInquire</span></code></a>(self, devhandle, seqhandle, …)</p></td>
+<td><p>Time values are given in microseconds (mus).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqPut" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqPut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqPut</span></code></a>(self, devhandle, seqhandle, data)</p></td>
+<td><p>Loads the sequence to the ALP.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqTiming" title="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqTiming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqTiming</span></code></a>(self, devhandle, seqhandle[, …])</p></td>
+<td><p>Time values are given in microseconds (mus).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 64%" />
+<col style="width: 36%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>AlpDevAlloc</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpDevControl</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpDevFree</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpDevHalt</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpDevInquire</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpProjControl</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpProjInquire</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpProjStart</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpSeqAlloc</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpSeqFree</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevAlloc">
+<code class="sig-name descname">AlpDevAlloc</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devicenum=0</em>, <em class="sig-param">initflag=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevAlloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevControl">
+<code class="sig-name descname">AlpDevControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevFree">
+<code class="sig-name descname">AlpDevFree</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevFree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevHalt">
+<code class="sig-name descname">AlpDevHalt</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevHalt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevInquire">
+<code class="sig-name descname">AlpDevInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpDevInquire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjControl">
+<code class="sig-name descname">AlpProjControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjHalt">
+<code class="sig-name descname">AlpProjHalt</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjHalt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends current projection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjInquire">
+<code class="sig-name descname">AlpProjInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjInquire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStart">
+<code class="sig-name descname">AlpProjStart</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStart" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStartCont">
+<code class="sig-name descname">AlpProjStartCont</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjStartCont" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts project in a continuous loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjWait">
+<code class="sig-name descname">AlpProjWait</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpProjWait" title="Permalink to this definition">¶</a></dt>
+<dd><p>insert help text</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqAlloc">
+<code class="sig-name descname">AlpSeqAlloc</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">bitplanes=1</em>, <em class="sig-param">picnum=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqAlloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqControl">
+<code class="sig-name descname">AlpSeqControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>ALP_DEFAULT doesn”t work. Use specified parameters only.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqFree">
+<code class="sig-name descname">AlpSeqFree</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqFree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqInquire">
+<code class="sig-name descname">AlpSeqInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqInquire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time values are given in microseconds (mus).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqPut">
+<code class="sig-name descname">AlpSeqPut</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">data</em>, <em class="sig-param">picoffset=0</em>, <em class="sig-param">picload=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqPut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the sequence to the ALP.
+Data needs to be an array of Bytes (e.g. char”s) in C,
+values of 0 to 255.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqTiming">
+<code class="sig-name descname">AlpSeqTiming</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">illuminatetime=0</em>, <em class="sig-param">picturetime=0</em>, <em class="sig-param">synchdelay=0</em>, <em class="sig-param">synchpulsewidth=0</em>, <em class="sig-param">triggerindelay=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.PY_ALP_API.AlpSeqTiming" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time values are given in microseconds (mus).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.alpV42.flipDict">
+<code class="sig-prename descclassname">libics.drv.itf.api.alpV42.</code><code class="sig-name descname">flipDict</code><span class="sig-paren">(</span><em class="sig-param">dictionary</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.alpV42.flipDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.drv.itf</a><ul>
+<li><a class="reference internal" href="#module-libics.drv.itf.camcfg">Modules</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.drv.itf.api">APIs</a><ul>
+<li><a class="reference internal" href="#changelog">Changelog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.drv.itf.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

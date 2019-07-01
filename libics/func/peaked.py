@@ -278,10 +278,6 @@ class FitAiryDisk2d(fit.FitParamBase):
             self.param[4] = offset
 
 
-FitAiryDisk2d.__doc__ = (airy_disk_2d.__doc__
-                         + "\n\n\n" + fit.FitParamBase.__doc__)
-
-
 ###############################################################################
 # Miscellaneous distribution functions
 ###############################################################################

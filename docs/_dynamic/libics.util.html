@@ -1,0 +1,1312 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.util &#8212; libics 0.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.util">
+<span id="libics-util"></span><h1>libics.util<a class="headerlink" href="#module-libics.util" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="libics.util.InheritMap">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.</code><code class="sig-name descname">InheritMap</code><span class="sig-paren">(</span><em class="sig-param">map_name='INH_MAP'</em>, <em class="sig-param">map_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.InheritMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Decorator class providing class inheritance mapping functionality.</p>
+<p>For decorated classes, a dictionary is created as class variable
+<cite>map_name</cite>. It maps <cite>map_key</cite> to the decorated class itself.
+Ensure that all classes along the inheritance tree are decorated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>map_name</strong><span class="classifier">str</span></dt><dd><p>Name of the inherit map class variable.
+Default: “INH_MAP”</p>
+</dd>
+<dt><strong>map_key</strong><span class="classifier">any object suitable as dict key</span></dt><dd><p>Inherit map dictionary key.
+None uses default: name of class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Can be used to construct a child object from a base class and an
+inheritance map key, e.g.:
+&gt;&gt;&gt; child_obj = parent_cls.INH_MAP[map_key]()</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, cls)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="module-libics.util.function">
+<span id="function"></span><h2>function<a class="headerlink" href="#module-libics.util.function" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.util.function.Memoize">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.function.</code><code class="sig-name descname">Memoize</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.function.Memoize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Decorator. Caches a function’s return value each time it is called.
+If called later with the same arguments, the cached value is returned
+(not reevaluated).</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, \*args)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.util.misc">
+<span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.util.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.util.misc.assume_construct_obj">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_construct_obj</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">cls_</em>, <em class="sig-param">raise_exception=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_construct_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the given object is of <cite>cls_</cite> class. If not and <cite>obj</cite> is a
+dictionary, an instance of the class is constructed with the dictionary
+as keyword arguments.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>obj</strong><span class="classifier">object or dict</span></dt><dd><p>Object or keyword argument dictionary.</p>
+</dd>
+<dt><strong>cls_</strong><span class="classifier">class</span></dt><dd><p>Class of instance to be constructed.</p>
+</dd>
+<dt><strong>raise_exception</strong><span class="classifier">Exception or None</span></dt><dd><p>Specifies the behaviour if object construction fails.
+None:</p>
+<blockquote>
+<div><p>Returns the input object.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Exception:</dt><dd><p>Raises the given exception.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><a href="#id7"><span class="problematic" id="id8">cls_</span></a></span></dt><dd><p>Instance of given class or object itself.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>raise_exception</dt><dd><p>Specified exception, if applicable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_dir">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_dir</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the given path directory exists. If not, the path will be
+created. <cite>path</cite> is interpreted as file path if it does not end with <cite>“/”</cite>
+and has an extension <cite>*.*</cite>, otherwise it is interpreted as directory.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path of required directory or path to file in required
+directory.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>dir_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>If the directory did not exist, it was created. The
+directory path is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_endswith">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_endswith</code><span class="sig-paren">(</span><em class="sig-param">string</em>, <em class="sig-param">suffix</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_endswith" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the passed <cite>string</cite> ends with with <cite>suffix</cite>. If it does not,
+the suffix is appended. The assumed result is returned.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>string</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String to be checked.</p>
+</dd>
+<dt><strong>suffix</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Assumed end of string.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>string</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String with assumed ending.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_iter">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_iter</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that data is iterable. If the given data is iterable, it is
+returned. If it is not, a list with the data as single element is returned.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd><p>Input data to be checked for iterability.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>data</strong><span class="classifier"><cite>iterable</cite></span></dt><dd><p>Returns an iterable version of <cite>data</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_list">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_list</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that data is a list. If the given data is a tuple, it is cast to a
+list. If not, a list is created with the data as single item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd><p>Input data to be checked for list.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">list</span></dt><dd><p>Returns a list containing <cite>data</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_tuple">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_tuple</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that data is a tuple. If the given data is a list, it is cast to a
+tuple. If not, a tuple is created with the data as single item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd><p>Input data to be checked for list.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">tuple</span></dt><dd><p>Returns a tuple containing <cite>data</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.capitalize_first_char">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">capitalize_first_char</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.capitalize_first_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Capitalizes the first character (if possible) and leaves the rest of the
+string invariant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be capitalized.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>s_cap</strong><span class="classifier">str</span></dt><dd><p>Capitalized string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.do_nothing">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">do_nothing</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.do_nothing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any arguments and keyword arguments and does nothing.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.extract">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">regex</em>, <em class="sig-param">group=1</em>, <em class="sig-param">cv_func=None</em>, <em class="sig-param">flags=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts part of a string.
+Serves as convenience function to re.search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String from which to extract.</p>
+</dd>
+<dt><strong>regex</strong><span class="classifier">str</span></dt><dd><p>Regular expression defining search function.
+Search findings should be enclosed in parentheses <cite>()</cite>.</p>
+</dd>
+<dt><strong>group</strong><span class="classifier">int or list(int) or tuple(int) or np.ndarray(1, int)</span></dt><dd><p>Group index of search results.
+If list, returns corresponding list of search results.</p>
+</dd>
+<dt><strong>cv_func</strong><span class="classifier">callable or None</span></dt><dd><p>Conversion function applied to search results (e.g. float).</p>
+</dd>
+<dt><strong>flags</strong><span class="classifier">int</span></dt><dd><p>Flags parameter passed to re.search.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>result</dt><dd><p>Converted (if applicable) search result or results
+as defined by the <cite>group</cite> parameter.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeyError</dt><dd><p>If extraction failed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.flatten_nested_dict">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">flatten_nested_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em>, <em class="sig-param">delim='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.flatten_nested_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flattens a nested dictionary into a top-level dictionary. Levels are
+separated by the specified delimiter. Note that dictionary keys may
+only be of <cite>str</cite> type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Dictionary to be flattened.</p>
+</dd>
+<dt><strong>delim</strong><span class="classifier">str</span></dt><dd><p>Level delimiter for keys.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Flattened dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.flatten_nested_list">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">flatten_nested_list</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.flatten_nested_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flattens a nested list recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">list</span></dt><dd><p>Nested list.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>flat_ls</strong><span class="classifier">list</span></dt><dd><p>Flattened list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Inefficient implementation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.generate_fill_chars">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">generate_fill_chars</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">fill_char=' '</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.generate_fill_chars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates fill characters with the same length as <cite>s</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>int</cite> or object which implements <cite>len</cite></span></dt><dd><p>Object or length of object defining length of fill
+character string.</p>
+</dd>
+<dt><strong>fill_char</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String defining the fill character. Multi-character
+<cite>fill_char</cite> produces a series of fill characters which is
+cut to a length defined by <cite>s</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>fs</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Fill string with length defined by <cite>s</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.get_combinations">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">get_combinations</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.get_combinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an iterable of iterables and returns a list with all possible
+mutual, ordered combinations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">iterable</span></dt><dd><p>Iterable from which combinations are constructed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>comb</strong><span class="classifier">list</span></dt><dd><p>Combinations list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.get_first_elem_iter">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">get_first_elem_iter</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.get_first_elem_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the first element of a (nested) iterable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">iterable</span></dt><dd><p>Indexed iterable (list, tuple).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>elem</dt><dd><p>First element of the iterable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.id_dict">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">id_dict</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.id_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any iterable and returns a dictionary mapping the item values to
+themselves.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.make_dict">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">make_dict</code><span class="sig-paren">(</span><em class="sig-param">key_list</em>, <em class="sig-param">val_list</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.make_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dictionary from a key list and a value list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>key_list, val_list</strong><span class="classifier">list</span></dt><dd><p>Same-length lists with keys and values.
+Mapping is performed on an index basis.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Created dictionary with key_list as keys and
+val_list as values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the lengths of the lists do not match.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.map_dicts">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">map_dicts</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">*arg_dicts</em>, <em class="sig-param">kwarg_dicts={}</em>, <em class="sig-param">pre_args=()</em>, <em class="sig-param">post_args=()</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.map_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a new dictionary containing all common keys. Calls the given
+function with the key’s corresponding values and assigns the return value
+to the new dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>func</strong><span class="classifier">callable</span></dt><dd><p>Function to be mapped.</p>
+</dd>
+<dt><strong>*arg_dicts</strong><span class="classifier">dict</span></dt><dd><p>Dictionaries whose values are mapped as arguments.</p>
+</dd>
+<dt><strong>kwarg_dicts</strong><span class="classifier">dict(dict)</span></dt><dd><p>Dictionaries whose values are mapped as keyword arguments.
+The keys of kwarg_dicts correspond to the keywords.</p>
+</dd>
+<dt><strong>pre_args, post_args</strong><span class="classifier">tuple</span></dt><dd><p>Arguments passed to func (before, after) dict
+values, i.e. func(<a href="#id1"><span class="problematic" id="id2">*</span></a>pre_args, <a href="#id3"><span class="problematic" id="id4">*</span></a>dict_vals, <a href="#id5"><span class="problematic" id="id6">*</span></a>post_args).</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to func.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Mapped dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.nest_flattened_dict">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">nest_flattened_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em>, <em class="sig-param">delim='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.nest_flattened_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nests (“unflattens”) a flattened dictionary. Levels are assumed to be
+separated by the specified delimiter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Flattened dictionary.</p>
+</dd>
+<dt><strong>delim</strong><span class="classifier">str</span></dt><dd><p>Level delimiter of keys.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">dict</span></dt><dd><p>Nested dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.order_list">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">order_list</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">order</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.order_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts a list according to a given index order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">list</span></dt><dd><p>List to be sorted.</p>
+</dd>
+<dt><strong>order</strong><span class="classifier">list(int)</span></dt><dd><p>Sorting index order.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">list</span></dt><dd><p>Sorted list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.resize_numpy_array">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">resize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">shape</em>, <em class="sig-param">fill_value=0</em>, <em class="sig-param">mode_keep='front'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.resize_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pads or shrinks a numpy array to a requested shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ar</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Numpy array to be resized.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Target shape of array. Must have same dimension as ar.</p>
+</dd>
+<dt><strong>fill_value</strong><span class="classifier">ar.dtype</span></dt><dd><p>Pad value if array is increased.</p>
+</dd>
+<dt><strong>mode_keep</strong><span class="classifier">“front”, “back”, “center”</span></dt><dd><p>Keeps the elements of ar at the &lt;mode_keep&gt; of the
+resized array.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>ar</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Resized numpy array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.ret_id">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">ret_id</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.ret_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any argument and returns the input.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.reverse_dict">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">reverse_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.reverse_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a value-to-key dictionary from the given dictionary. Does not
+check for duplicates, so duplicate mapping will be random.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>d</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Dictionary to be reversed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>rev_d</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Reversed dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.split_strip">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">split_strip</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">strip=' tnr'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.split_strip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a given string and strips each list element from given characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be split.</p>
+</dd>
+<dt><strong>delim</strong><span class="classifier">str or None</span></dt><dd><p>String delimiter. If None, string will not be split.</p>
+</dd>
+<dt><strong>strip</strong><span class="classifier">str</span></dt><dd><p>Strip characters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>ls</strong><span class="classifier">list(str) or str</span></dt><dd><p>Returns stripped (list of) string depending on delim
+parameter.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.split_unit">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">split_unit</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.split_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a given string into a tuple of numerical value and unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be split.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>val</strong><span class="classifier">int or float or str</span></dt><dd><p>Numerical value or unchanged string.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier">str</span></dt><dd><p>Unit.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If no numerical value could be determined, unit is None and the given
+string is returned as value.
+If only a numerical value could be determined, unit is None and the
+given string is cast to numerical format.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.util.path">
+<span id="path"></span><h2>path<a class="headerlink" href="#module-libics.util.path" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.util.path.assume_file_exists">
+<code class="sig-prename descclassname">libics.util.path.</code><code class="sig-name descname">assume_file_exists</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.path.assume_file_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a file exists. Creates an empty file if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>file_path</strong><span class="classifier">str</span></dt><dd><p>Path to the file to be checked.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>existed</strong><span class="classifier">bool</span></dt><dd><p>True if file has existed before.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.path.get_folder_contents">
+<code class="sig-prename descclassname">libics.util.path.</code><code class="sig-name descname">get_folder_contents</code><span class="sig-paren">(</span><em class="sig-param">folder</em>, <em class="sig-param">regex=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.path.get_folder_contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the files/subfolders in a folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>folder</strong><span class="classifier">str</span></dt><dd><p>Folder in which to search for files/subfolders.</p>
+</dd>
+<dt><strong>regex</strong><span class="classifier">str</span></dt><dd><p>Regular expression that is checked.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>folder</strong><span class="classifier">list(str)</span></dt><dd><p>Full list of subfolders.</p>
+</dd>
+<dt><strong>files</strong><span class="classifier">list(str)</span></dt><dd><p>Full list of files within folder.</p>
+</dd>
+<dt><strong>folders_match</strong><span class="classifier">list(str)</span></dt><dd><p>List of subfolders matching regex.</p>
+</dd>
+<dt><strong>files_match</strong><span class="classifier">list(str)</span></dt><dd><p>List of files matching regex.</p>
+</dd>
+<dt><strong>folders_rest</strong><span class="classifier">list(str)</span></dt><dd><p>List of subfolders not matching regex.</p>
+</dd>
+<dt><strong>files_rest</strong><span class="classifier">list(str)</span></dt><dd><p>List of files not matching regex.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.util.pyqt">
+<span id="pyqt"></span><h2>pyqt<a class="headerlink" href="#module-libics.util.pyqt" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.util.pyqt.convert_qimage_to_numpy_ndarray">
+<code class="sig-prename descclassname">libics.util.pyqt.</code><code class="sig-name descname">convert_qimage_to_numpy_ndarray</code><span class="sig-paren">(</span><em class="sig-param">qt_image</em>, <em class="sig-param">im_format=None</em>, <em class="sig-param">channel='mono'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.pyqt.convert_qimage_to_numpy_ndarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a QtGui.QImage into an numpy.ndarray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>qt_image</strong><span class="classifier">QtGui.QImage</span></dt><dd><p>The image in Qt format.</p>
+</dd>
+<dt><strong>im_format</strong><span class="classifier">QImage.Format or None</span></dt><dd><p>Sets <cite>QImage</cite> image format.
+If <cite>None</cite>, uses <cite>channel</cite> parameter, otherwise
+overwrites it.</p>
+</dd>
+<dt><strong>channel</strong><span class="classifier">str or None</span></dt><dd><p>Numpy image format: <cite>“rgba”</cite>, <cite>“rgb”</cite>, <cite>“mono”</cite>, <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>np_image</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>The image in numpy format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="serialization">
+<h2>serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-libics.util.serialization"></span><dl class="class">
+<dt id="libics.util.serialization.DictSerialization">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.serialization.</code><code class="sig-name descname">DictSerialization</code><a class="headerlink" href="#libics.util.serialization.DictSerialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for dictionary based serialization. Uses Python’s built-in class
+dictionary to handle serialization.
+In case attributes have custom objects,
+pass a custom object (de-) serialization dictionary, so the algorithm knows
+for which attributes to call a custom (de-) serialization function. Using
+custom serialization implementations require deep copies of the class
+dictionary.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.serialization.DictSerialization.add_obj_ser_func" title="libics.util.serialization.DictSerialization.add_obj_ser_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_obj_ser_func</span></code></a>(self, obj_ser, obj_deser)</p></td>
+<td><p>Adds object attribute name to (de-) serialization function dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.serialization.DictSerialization.deserialize" title="libics.util.serialization.DictSerialization.deserialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize</span></code></a>(self, ser_dict)</p></td>
+<td><p>Deserializes all class attributes from a dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.serialization.DictSerialization.serialize" title="libics.util.serialization.DictSerialization.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(self)</p></td>
+<td><p>Serializes all class attributes into a dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.util.serialization.DictSerialization.add_obj_ser_func">
+<code class="sig-name descname">add_obj_ser_func</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">obj_ser</em>, <em class="sig-param">obj_deser</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.serialization.DictSerialization.add_obj_ser_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds object attribute name to (de-) serialization function dictionary.</p>
+<p>All object attributes are included in the serialized dictionary by
+default. If an attribute key is added to the (de-) serialization
+function dictionary, this function replaces the copy-and-assign
+(default) approach.</p>
+<p>This means that any structured attribute should implement a (de-)
+serialization function (explicitly as <cite>(de-)serialize</cite> or implicitly
+using a utility function). Built-in types can do not have to be
+added to the (de-) serialization function dictionary.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>obj_ser</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Object serialization function dictionary.</p>
+</dd>
+<dt><strong>obj_deser</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Custom deserialization function dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>(De-) serialization function dictionary entries have the following
+structure:</p>
+<dl>
+<dt>key<span class="classifier"><cite>str</cite></span></dt><dd><p>attribute_name</p>
+</dd>
+<dt>value<span class="classifier"><cite>[func, *arg_func]</cite> or <cite>None</cite></span></dt><dd><dl class="simple">
+<dt><cite>[func, *arg_func]</cite>: (De-) serialization is performed by</dt><dd><p>value assigning where the value is retrieved by
+calling the function <cite>func</cite>.
+For serialization, <cite>func(*arg_func)</cite> is called, with
+<cite>*arg_func</cite> a list of non-parametrized getter
+functions that will be called.
+For deserialization, <cite>func(serialized_value,
+*arg_func)</cite>, with <cite>serialized_value</cite> the string to
+be deserialized and <cite>*arg_func</cite> a list of
+non-parametrized getter functions that will be
+called.</p>
+</dd>
+<dt><cite>None</cite>: Uses a default attribute (de-) serialization</dt><dd><p>method which should be called serialize() and
+deserialize(serialized_value) respectively.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.serialization.DictSerialization.deserialize">
+<code class="sig-name descname">deserialize</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">ser_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.serialization.DictSerialization.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserializes all class attributes from a dictionary.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ser_dict</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Imported dictionary containing class attributes as keys
+and values to be assigned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Checks all passed dictionary items whether they have a corresponding
+key in the class dictionary. If this is the case, the passed value
+is assigned to the attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.serialization.DictSerialization.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.serialization.DictSerialization.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes all class attributes into a dictionary.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ser_dict</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Class dictionary containing all attribute names as keys
+and attribute values as dictionary values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.serialization.json_to_numpy_ndarray">
+<code class="sig-prename descclassname">libics.util.serialization.</code><code class="sig-name descname">json_to_numpy_ndarray</code><span class="sig-paren">(</span><em class="sig-param">ser_string</em>, <em class="sig-param">codec='latin-1'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.serialization.json_to_numpy_ndarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserializes a numpy.ndarray from a json string encoded in a
+specified codec. Returns the numpy.ndarray object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ser_string</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>json string containing serialized numpy.ndarray</p>
+</dd>
+<dt><strong>codec</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Codec string (docs.python.org/3/library/codecs.html)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ndarray: <cite>numpy.ndarray</cite></dt><dd><p>Deserialized numpy.ndarray.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.serialization.numpy_ndarray_to_json">
+<code class="sig-prename descclassname">libics.util.serialization.</code><code class="sig-name descname">numpy_ndarray_to_json</code><span class="sig-paren">(</span><em class="sig-param">ndarray</em>, <em class="sig-param">codec='latin-1'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.serialization.numpy_ndarray_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes an numpy.ndarray into binary form and encodes it in the
+specified codec. Returns the serialized json string including all
+information required to recover the numpy.ndarray object (pickle).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ndarray</strong><span class="classifier"><cite>numpy.ndarray</cite></span></dt><dd><p>numpy.ndarray to be serialized.</p>
+</dd>
+<dt><strong>codec</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Codec string (docs.python.org/3/library/codecs.html)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ser_string: <cite>str</cite></dt><dd><p>json string containing serialized numpy.ndarray</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.util.thread">
+<span id="thread"></span><h2>thread<a class="headerlink" href="#module-libics.util.thread" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.util.thread.PeriodicTimer">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.thread.</code><code class="sig-name descname">PeriodicTimer</code><span class="sig-paren">(</span><em class="sig-param">period</em>, <em class="sig-param">worker_func</em>, <em class="sig-param">*args</em>, <em class="sig-param">repetitions=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Periodic timer that runs a worker function after each period timeout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>period</strong><span class="classifier">float</span></dt><dd><p>Timeout period in seconds.</p>
+</dd>
+<dt><strong>worker_func</strong><span class="classifier">callable</span></dt><dd><p>Function that is periodically called.
+Call signature: <cite>worker_func(*args, **kwargs)</cite> with
+<cite>*args, **kwargs</cite> static arguments.</p>
+</dd>
+<dt><strong>repetitions</strong><span class="classifier">int or None</span></dt><dd><p>Number of timeouts after the thread returns.
+<cite>None</cite> allows for infinite repetitions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This timer can be restarted.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.thread.PeriodicTimer.run" title="libics.util.thread.PeriodicTimer.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self)</p></td>
+<td><p>Timer thread method that periodically calls a function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.thread.PeriodicTimer.set_args" title="libics.util.thread.PeriodicTimer.set_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_args</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Sets the arguments with which the worker function is called.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.thread.PeriodicTimer.set_stop_action" title="libics.util.thread.PeriodicTimer.set_stop_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stop_action</span></code></a>(self, stop_action)</p></td>
+<td><p>Sets the stop action.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.thread.PeriodicTimer.start" title="libics.util.thread.PeriodicTimer.start"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Starts a thread which runs the <cite>run</cite> method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.thread.PeriodicTimer.stop" title="libics.util.thread.PeriodicTimer.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops the timer.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>get_function</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_period</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.get_function">
+<code class="sig-name descname">get_function</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.get_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.get_period">
+<code class="sig-name descname">get_period</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.get_period" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Timer thread method that periodically calls a function.</p>
+<p>For starting a thread running this <cite>run</cite> method, call the <cite>start</cite>
+method.</p>
+<p class="rubric">Notes</p>
+<p>Can be stopped by running the <cite>stop()</cite> method.
+No dynamic arguments are allowed. Static (keyword) arguments can be set
+by calling the <cite>set_args(*args, **kwargs)</cite> method.
+Timer has feedback, i.e. corrects runtime delays if delays are smaller
+than the period.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.set_args">
+<code class="sig-name descname">set_args</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.set_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the arguments with which the worker function is called.</p>
+<p>The worker function will be called as <cite>worker_func(*args, **kwargs)</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.set_stop_action">
+<code class="sig-name descname">set_stop_action</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">stop_action</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.set_stop_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the stop action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>stop_action</strong><span class="classifier">callable</span></dt><dd><p>Function that is called upon <cite>stop</cite> method call.
+Call signature: <cite>stop_action()</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts a thread which runs the <cite>run</cite> method.</p>
+<p>Arguments are passed on to the <cite>Thread.start</cite> method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.thread.PeriodicTimer.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.PeriodicTimer.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the timer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.util.thread.StoppableThread">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.thread.</code><code class="sig-name descname">StoppableThread</code><span class="sig-paren">(</span><em class="sig-param">stop_action=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.StoppableThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<p>Thread that ends on a stop event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>stop_action</strong><span class="classifier">callable or None</span></dt><dd><p>Function that is called upon <cite>stop</cite> method call.
+<cite>None</cite> is interpreted as a <cite>pass</cite> function.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This thread cannot be restarted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">daemon</span></code></dt><dd><p>A boolean value indicating whether this thread is a daemon thread.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ident</span></code></dt><dd><p>Thread identifier of this thread or None if it has not been started.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>A string used for identification purposes only.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isAlive</span></code>(self)</p></td>
+<td><p>Return whether the thread is alive.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code>(self)</p></td>
+<td><p>Return whether the thread is alive.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>(self[, timeout])</p></td>
+<td><p>Wait until the thread terminates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(self)</p></td>
+<td><p>Method representing the thread’s activity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code>(self)</p></td>
+<td><p>Start the thread’s activity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.thread.StoppableThread.stop" title="libics.util.thread.StoppableThread.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops the thread.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 43%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>getName</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isDaemon</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setDaemon</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setName</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.util.thread.StoppableThread.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.StoppableThread.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the thread.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.util.types">
+<span id="types"></span><h2>types<a class="headerlink" href="#module-libics.util.types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.util.types.FlaggedType">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.types.</code><code class="sig-name descname">FlaggedType</code><span class="sig-paren">(</span><em class="sig-param">val</em>, <em class="sig-param">flag=False</em>, <em class="sig-param">cond=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container for values with boolean flag.</p>
+<p>Provides a validity checker (range or subset based).
+Implements operators mathematical operators. On combinatory operation
+(e.g. <cite>+</cite>), flags are combined as <cite>or</cite> and conditions are dropped (<cite>None</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>val</strong></dt><dd><p>Value to be stored.</p>
+</dd>
+<dt><strong>flag</strong><span class="classifier">bool</span></dt><dd><p>Boolean flag.</p>
+</dd>
+<dt><strong>cond</strong><span class="classifier">tuple or list or None</span></dt><dd><p>Value validity condition.
+tuple with length 2: range from min[0] to max[1].
+list: discrete set of allowed values.
+None: no validity check.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>cond</strong></dt><dd></dd>
+<dt><strong>val</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.types.FlaggedType.assign" title="libics.util.types.FlaggedType.assign"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign</span></code></a>(self, other[, diff_flag])</p></td>
+<td><p>Copies the attributes of another <cite>FlaggedType</cite> object into the current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.types.FlaggedType.copy" title="libics.util.types.FlaggedType.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(self)</p></td>
+<td><p>Returns an independent copy of itself.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.types.FlaggedType.set_val" title="libics.util.types.FlaggedType.set_val"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_val</span></code></a>(self, val[, diff_flag])</p></td>
+<td><p>Sets the value without changing the condition.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>invert</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.assign">
+<code class="sig-name descname">assign</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em>, <em class="sig-param">diff_flag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType.assign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the attributes of another <cite>FlaggedType</cite> object into the current
+object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>other</strong><span class="classifier">FlaggedType</span></dt><dd><p>The object to be copied.</p>
+</dd>
+<dt><strong>diff_flag</strong><span class="classifier">bool</span></dt><dd><p>Whether to copy the flag state or the differential flag
+state.
+<cite>False</cite>:</p>
+<blockquote>
+<div><p>Copies the flag state.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><cite>True</cite>:</dt><dd><p>Compares the values and sets the flag to
+<cite>self.val != other.val</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.cond">
+<em class="property">property </em><code class="sig-name descname">cond</code><a class="headerlink" href="#libics.util.types.FlaggedType.cond" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.copy">
+<code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an independent copy of itself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.invert">
+<code class="sig-name descname">invert</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType.invert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.set_val">
+<code class="sig-name descname">set_val</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">val</em>, <em class="sig-param">diff_flag=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType.set_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value without changing the condition.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>val</strong></dt><dd><p>New value of flagged type.</p>
+</dd>
+<dt><strong>diff_flag</strong><span class="classifier">bool</span></dt><dd><p>Whether to set a differential flag.
+<cite>False</cite>:</p>
+<blockquote>
+<div><p>Keeps the current flag state.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><cite>True</cite>:</dt><dd><p>Compares the values and sets the flag to
+<cite>self.val != val</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.FlaggedType.val">
+<em class="property">property </em><code class="sig-name descname">val</code><a class="headerlink" href="#libics.util.types.FlaggedType.val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.util</a><ul>
+<li><a class="reference internal" href="#module-libics.util.function">function</a></li>
+<li><a class="reference internal" href="#module-libics.util.misc">misc</a></li>
+<li><a class="reference internal" href="#module-libics.util.path">path</a></li>
+<li><a class="reference internal" href="#module-libics.util.pyqt">pyqt</a></li>
+<li><a class="reference internal" href="#serialization">serialization</a></li>
+<li><a class="reference internal" href="#module-libics.util.thread">thread</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.util.types">types</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.util.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2858 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.drv &#8212; libics 0.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="libics-drv">
+<h1>libics.drv<a class="headerlink" href="#libics-drv" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-libics.drv"></span><dl class="function">
+<dt id="libics.drv.get_drv">
+<code class="sig-prename descclassname">libics.drv.</code><code class="sig-name descname">get_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.get_drv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the driver object from the given driver configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cfg</strong><span class="classifier">drv.DrvCfgBase</span></dt><dd><p>Driver configuration object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>drv</strong><span class="classifier">drv.DrvBase</span></dt><dd><p>Requested driver object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeyError</dt><dd><p>If cfg.driver is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="module-libics.drv.drv">
+<span id="drv"></span><h2>drv<a class="headerlink" href="#module-libics.drv.drv" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.drv.drv.CamCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">CamCfg</code><span class="sig-paren">(</span><em class="sig-param">pixel_hrzt_count=1338</em>, <em class="sig-param">pixel_hrzt_size=6.45e-06</em>, <em class="sig-param">pixel_vert_count=1038</em>, <em class="sig-param">pixel_vert_size=6.45e-06</em>, <em class="sig-param">pixel_hrzt_offset=0</em>, <em class="sig-param">pixel_vert_offset=0</em>, <em class="sig-param">format_color=1</em>, <em class="sig-param">channel_bitdepth=8</em>, <em class="sig-param">exposure_mode=0</em>, <em class="sig-param">exposure_time=0.001</em>, <em class="sig-param">acquisition_frames=0</em>, <em class="sig-param">sensitivity=0</em>, <em class="sig-param">cls_name='CamCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.CamCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; CamCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pixel_hrzt_count, pixel_vert_count</strong><span class="classifier">int</span></dt><dd><p>Pixel count in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_size, pixel_vert_size</strong><span class="classifier">float</span></dt><dd><p>Pixel size in meters in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_offset, pixel_vert_offset</strong><span class="classifier">int</span></dt><dd><p>Offset of pixels to be captured.</p>
+</dd>
+<dt><strong>format_color</strong><span class="classifier">DRV_CAM.FORMAT_COLOR</span></dt><dd><p>BW: black/white boolean image.
+GS: greyscale image.
+RGB: RGB color image.
+RGBA: RGB image with alpha channel.</p>
+</dd>
+<dt><strong>channel_bitdepth</strong><span class="classifier">int</span></dt><dd><p>Bits per color channel.</p>
+</dd>
+<dt><strong>exposure_mode</strong><span class="classifier">DRV_CAM.EXPOSURE_MODE</span></dt><dd><p>MANUAL: manual, fixed exposure time.
+CONTINUOS: continuosly self-adjusted exposure time.
+SINGLE: fixed exposure time after single adjustment.</p>
+</dd>
+<dt><strong>exposure_time</strong><span class="classifier">float</span></dt><dd><p>Exposure time in seconds (s).</p>
+</dd>
+<dt><strong>acquisition_frames</strong><span class="classifier">int</span></dt><dd><p>Number of frames to be acquired.
+0 (zero) is interpreted as infinite, i.e.
+continuos acquisition.</p>
+</dd>
+<dt><strong>sensitivity</strong><span class="classifier">DRV_CAM.SENSITIVITY</span></dt><dd><p>NORMAL: normal acquisition.
+NIR_FAST: fast near-IR enhancement.
+NIR_HQ: high-quality near-IR enhancement.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Horizontal (hrzt) and vertical (vert) directions.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.CamCfg.get_hl_cfg" title="libics.drv.drv.CamCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.acquisition_frames">
+<code class="sig-name descname">acquisition_frames</code><a class="headerlink" href="#libics.drv.drv.CamCfg.acquisition_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.channel_bitdepth">
+<code class="sig-name descname">channel_bitdepth</code><a class="headerlink" href="#libics.drv.drv.CamCfg.channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.exposure_mode">
+<code class="sig-name descname">exposure_mode</code><a class="headerlink" href="#libics.drv.drv.CamCfg.exposure_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.exposure_time">
+<code class="sig-name descname">exposure_time</code><a class="headerlink" href="#libics.drv.drv.CamCfg.exposure_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.format_color">
+<code class="sig-name descname">format_color</code><a class="headerlink" href="#libics.drv.drv.CamCfg.format_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.CamCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.CamCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_hrzt_count">
+<code class="sig-name descname">pixel_hrzt_count</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_hrzt_offset">
+<code class="sig-name descname">pixel_hrzt_offset</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_hrzt_size">
+<code class="sig-name descname">pixel_hrzt_size</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_vert_count">
+<code class="sig-name descname">pixel_vert_count</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_vert_offset">
+<code class="sig-name descname">pixel_vert_offset</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.pixel_vert_size">
+<code class="sig-name descname">pixel_vert_size</code><a class="headerlink" href="#libics.drv.drv.CamCfg.pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.CamCfg.sensitivity">
+<code class="sig-name descname">sensitivity</code><a class="headerlink" href="#libics.drv.drv.CamCfg.sensitivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_CAM">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_CAM</code><a class="headerlink" href="#libics.drv.drv.DRV_CAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>EXPOSURE_MODE</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>FORMAT_COLOR</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>SENSITIVITY</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.drv.DRV_CAM.EXPOSURE_MODE">
+<em class="property">class </em><code class="sig-name descname">EXPOSURE_MODE</code><a class="headerlink" href="#libics.drv.drv.DRV_CAM.EXPOSURE_MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS">
+<code class="sig-name descname">CONTINUOS</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.EXPOSURE_MODE.MANUAL">
+<code class="sig-name descname">MANUAL</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.EXPOSURE_MODE.MANUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.EXPOSURE_MODE.SINGLE">
+<code class="sig-name descname">SINGLE</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.EXPOSURE_MODE.SINGLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_CAM.FORMAT_COLOR">
+<em class="property">class </em><code class="sig-name descname">FORMAT_COLOR</code><a class="headerlink" href="#libics.drv.drv.DRV_CAM.FORMAT_COLOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.FORMAT_COLOR.BW">
+<code class="sig-name descname">BW</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.FORMAT_COLOR.BW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.FORMAT_COLOR.GS">
+<code class="sig-name descname">GS</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.FORMAT_COLOR.GS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.FORMAT_COLOR.RGB">
+<code class="sig-name descname">RGB</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.FORMAT_COLOR.RGB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.FORMAT_COLOR.RGBA">
+<code class="sig-name descname">RGBA</code><em class="property"> = 3</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.FORMAT_COLOR.RGBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_CAM.SENSITIVITY">
+<em class="property">class </em><code class="sig-name descname">SENSITIVITY</code><a class="headerlink" href="#libics.drv.drv.DRV_CAM.SENSITIVITY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.SENSITIVITY.NIR_FAST">
+<code class="sig-name descname">NIR_FAST</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.SENSITIVITY.NIR_FAST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.SENSITIVITY.NIR_HQ">
+<code class="sig-name descname">NIR_HQ</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.SENSITIVITY.NIR_HQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_CAM.SENSITIVITY.NORMAL">
+<code class="sig-name descname">NORMAL</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_CAM.SENSITIVITY.NORMAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_DRIVER">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_DRIVER</code><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.CAM">
+<code class="sig-name descname">CAM</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.CAM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.DSP">
+<code class="sig-name descname">DSP</code><em class="property"> = 40</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.DSP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.OSC">
+<code class="sig-name descname">OSC</code><em class="property"> = 30</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.OSC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.PIEZO">
+<code class="sig-name descname">PIEZO</code><em class="property"> = 10</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.PIEZO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.SPAN">
+<code class="sig-name descname">SPAN</code><em class="property"> = 20</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.SPAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_DSP">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_DSP</code><a class="headerlink" href="#libics.drv.drv.DRV_DSP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>FORMAT_COLOR</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.drv.DRV_DSP.FORMAT_COLOR">
+<em class="property">class </em><code class="sig-name descname">FORMAT_COLOR</code><a class="headerlink" href="#libics.drv.drv.DRV_DSP.FORMAT_COLOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DSP.FORMAT_COLOR.BW">
+<code class="sig-name descname">BW</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_DSP.FORMAT_COLOR.BW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DSP.FORMAT_COLOR.GS">
+<code class="sig-name descname">GS</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_DSP.FORMAT_COLOR.GS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DSP.FORMAT_COLOR.RGB">
+<code class="sig-name descname">RGB</code><em class="property"> = 2</em><a class="headerlink" href="#libics.drv.drv.DRV_DSP.FORMAT_COLOR.RGB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DSP.FORMAT_COLOR.RGBA">
+<code class="sig-name descname">RGBA</code><em class="property"> = 3</em><a class="headerlink" href="#libics.drv.drv.DRV_DSP.FORMAT_COLOR.RGBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_MODEL">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_MODEL</code><a class="headerlink" href="#libics.drv.drv.DRV_MODEL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.AGILENT_N9320X">
+<code class="sig-name descname">AGILENT_N9320X</code><em class="property"> = 2301</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.AGILENT_N9320X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.ALLIEDVISION_MANTA_G145B_NIR">
+<code class="sig-name descname">ALLIEDVISION_MANTA_G145B_NIR</code><em class="property"> = 101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.ALLIEDVISION_MANTA_G145B_NIR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.STANFORD_SR760">
+<code class="sig-name descname">STANFORD_SR760</code><em class="property"> = 2101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.STANFORD_SR760" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.TEKTRONIX_TDS100X">
+<code class="sig-name descname">TEKTRONIX_TDS100X</code><em class="property"> = 3101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.TEKTRONIX_TDS100X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.TEXASINSTRUMENTS_DLP7000">
+<code class="sig-name descname">TEXASINSTRUMENTS_DLP7000</code><em class="property"> = 4101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.TEXASINSTRUMENTS_DLP7000" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.THORLABS_MDT693A">
+<code class="sig-name descname">THORLABS_MDT693A</code><em class="property"> = 1101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.THORLABS_MDT693A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.THORLABS_MDT694A">
+<code class="sig-name descname">THORLABS_MDT694A</code><em class="property"> = 1101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.THORLABS_MDT694A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.THORLABS_MDT69XA">
+<code class="sig-name descname">THORLABS_MDT69XA</code><em class="property"> = 1101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.THORLABS_MDT69XA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.YOKAGAWA_AQ6315">
+<code class="sig-name descname">YOKAGAWA_AQ6315</code><em class="property"> = 2201</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.YOKAGAWA_AQ6315" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_PIEZO">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_PIEZO</code><a class="headerlink" href="#libics.drv.drv.DRV_PIEZO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>FEEDBACK_MODE</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE">
+<em class="property">class </em><code class="sig-name descname">FEEDBACK_MODE</code><a class="headerlink" href="#libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE.CLOSED_LOOP">
+<code class="sig-name descname">CLOSED_LOOP</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE.CLOSED_LOOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP">
+<code class="sig-name descname">OPEN_LOOP</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_SPAN">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_SPAN</code><a class="headerlink" href="#libics.drv.drv.DRV_SPAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>AVERAGE_MODE</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.drv.DRV_SPAN.AVERAGE_MODE">
+<em class="property">class </em><code class="sig-name descname">AVERAGE_MODE</code><a class="headerlink" href="#libics.drv.drv.DRV_SPAN.AVERAGE_MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_SPAN.AVERAGE_MODE.EXP">
+<code class="sig-name descname">EXP</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_SPAN.AVERAGE_MODE.EXP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_SPAN.AVERAGE_MODE.LIN">
+<code class="sig-name descname">LIN</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_SPAN.AVERAGE_MODE.LIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Driver base class.</p>
+<p>Provides an API to communicate with the external interface. Communication
+is serialized with a message queue that can be processed. Immediate
+thread-safe communication is enabled by acquiring the <cite>interface_access</cite>
+lock and calling the <cite>read</cite>/<cite>write</cite> methods directly.</p>
+<p>The initialization functions (<cite>setup</cite>, <cite>shutdown</cite>, <cite>connect</cite>, <cite>close</cite>) have
+to be implemented as well as the actual functional methods. Methods using
+the message queue system have to implement I/O functions for each attribute
+and should be named <cite>_write_&lt;attr_name&gt;</cite> and <cite>_read_&lt;attr_name&gt;</cite>. The
+write function takes one value parameter and the read function returns a
+corresponding value parameter. When implementing direct access methods,
+guard the method with lock access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cfg</strong><span class="classifier">DrvBaseCfg</span></dt><dd><p>Driver configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drv.DrvBase.process" title="libics.drv.drv.DrvBase.process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code></a>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.DrvBase.read_all" title="libics.drv.drv.DrvBase.read_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code></a>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drv.DrvBase.write_all" title="libics.drv.drv.DrvBase.write_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code></a>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.get_drv">
+<code class="sig-name descname">get_drv</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.get_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.process">
+<code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the message queue in the configuration object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.read_all">
+<code class="sig-name descname">read_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.read_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads all configuration items from interface.
+Automatically processes the message queue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvBase.write_all">
+<code class="sig-name descname">write_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvBase.write_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes all configuration items from interface.
+Automatically processes the message queue.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DrvCfgBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DrvCfgBase</code><span class="sig-paren">(</span><em class="sig-param">driver=0</em>, <em class="sig-param">interface=None</em>, <em class="sig-param">identifier=''</em>, <em class="sig-param">model=''</em>, <em class="sig-param">cls_name='DrvCfgBase'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvCfgBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.cfg.CfgBase</span></code></p>
+<p>DrvCfgBase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>driver</strong><span class="classifier">DRV_DRIVER</span></dt><dd><p>Driver type.</p>
+</dd>
+<dt><strong>interface</strong><span class="classifier">drv.itf.itf.ProtocolCfgBase</span></dt><dd><p>Connection interface configuration.</p>
+</dd>
+<dt><strong>identifier</strong><span class="classifier">str</span></dt><dd><p>Unique identifier of device.</p>
+</dd>
+<dt><strong>model</strong><span class="classifier">DRV_MODEL</span></dt><dd><p>Device model.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.DrvCfgBase.get_hl_cfg" title="libics.drv.drv.DrvCfgBase.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drv.DrvCfgBase.read_all" title="libics.drv.drv.DrvCfgBase.read_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code></a>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drv.DrvCfgBase.write_all" title="libics.drv.drv.DrvCfgBase.write_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code></a>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.DrvCfgBase.driver">
+<code class="sig-name descname">driver</code><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvCfgBase.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DrvCfgBase.identifier">
+<code class="sig-name descname">identifier</code><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DrvCfgBase.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvCfgBase.read_all">
+<code class="sig-name descname">read_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.read_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update all configuration items by reading all values from interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DrvCfgBase.write_all">
+<code class="sig-name descname">write_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DrvCfgBase.write_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set all configuration items by writing all values to interface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DspCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DspCfg</code><span class="sig-paren">(</span><em class="sig-param">pixel_hrzt_count=1024</em>, <em class="sig-param">pixel_hrzt_size=1.368e-05</em>, <em class="sig-param">pixel_vert_count=768</em>, <em class="sig-param">pixel_vert_size=1.368e-05</em>, <em class="sig-param">pixel_hrzt_offset=0</em>, <em class="sig-param">pixel_vert_offset=0</em>, <em class="sig-param">format_color=1</em>, <em class="sig-param">channel_bitdepth=8</em>, <em class="sig-param">picture_time=9.0</em>, <em class="sig-param">dark_time=0.0</em>, <em class="sig-param">sequence_repetitions=0</em>, <em class="sig-param">temperature=25.0</em>, <em class="sig-param">cls_name='DspCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DspCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; DspCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pixel_hrzt_count, pixel_vert_count</strong><span class="classifier">int</span></dt><dd><p>Pixel count in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_size, pixel_vert_size</strong><span class="classifier">float</span></dt><dd><p>Pixel size in meters in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_offset, pixel_vert_offset</strong><span class="classifier">int</span></dt><dd><p>Offset of pixels to be captured.</p>
+</dd>
+<dt><strong>format_color</strong><span class="classifier">DRV_DSP.FORMAT_COLOR</span></dt><dd><p>BW: black/white boolean image.
+GS: greyscale image.
+RGB: RGB color image.
+RGBA: RGB image with alpha channel.</p>
+</dd>
+<dt><strong>channel_bitdepth</strong><span class="classifier">int</span></dt><dd><p>Bits per color channel.</p>
+</dd>
+<dt><strong>picture_time</strong><span class="classifier">float</span></dt><dd><p>Time in seconds (s) each single image is shown.</p>
+</dd>
+<dt><strong>dark_time</strong><span class="classifier">float</span></dt><dd><p>Time in seconds (s) between images in a sequence.</p>
+</dd>
+<dt><strong>sequence_repetitions</strong><span class="classifier">int</span></dt><dd><p>Number of sequences to be shown.
+0 (zero) is interpreted as infinite, i.e.
+continuos repetition.</p>
+</dd>
+<dt><strong>temperature</strong><span class="classifier">float</span></dt><dd><p>Display temperature in Celsius (°C).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.DspCfg.get_hl_cfg" title="libics.drv.drv.DspCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.channel_bitdepth">
+<code class="sig-name descname">channel_bitdepth</code><a class="headerlink" href="#libics.drv.drv.DspCfg.channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.dark_time">
+<code class="sig-name descname">dark_time</code><a class="headerlink" href="#libics.drv.drv.DspCfg.dark_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.format_color">
+<code class="sig-name descname">format_color</code><a class="headerlink" href="#libics.drv.drv.DspCfg.format_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.DspCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.DspCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.picture_time">
+<code class="sig-name descname">picture_time</code><a class="headerlink" href="#libics.drv.drv.DspCfg.picture_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_hrzt_count">
+<code class="sig-name descname">pixel_hrzt_count</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_hrzt_offset">
+<code class="sig-name descname">pixel_hrzt_offset</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_hrzt_size">
+<code class="sig-name descname">pixel_hrzt_size</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_vert_count">
+<code class="sig-name descname">pixel_vert_count</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_vert_offset">
+<code class="sig-name descname">pixel_vert_offset</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.pixel_vert_size">
+<code class="sig-name descname">pixel_vert_size</code><a class="headerlink" href="#libics.drv.drv.DspCfg.pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.sequence_repetitions">
+<code class="sig-name descname">sequence_repetitions</code><a class="headerlink" href="#libics.drv.drv.DspCfg.sequence_repetitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DspCfg.temperature">
+<code class="sig-name descname">temperature</code><a class="headerlink" href="#libics.drv.drv.DspCfg.temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.OscCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">OscCfg</code><span class="sig-paren">(</span><em class="sig-param">cls_name='OscCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.OscCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; OscCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.OscCfg.get_hl_cfg" title="libics.drv.drv.OscCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drv.OscCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.OscCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.PiezoCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">PiezoCfg</code><span class="sig-paren">(</span><em class="sig-param">limit_min=0.0</em>, <em class="sig-param">limit_max=75.0</em>, <em class="sig-param">displacement=2.67e-07</em>, <em class="sig-param">channel=None</em>, <em class="sig-param">feedback_mode=0</em>, <em class="sig-param">cls_name='PiezoCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.PiezoCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; PiezoCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>limit_min, limit_max</strong><span class="classifier">float</span></dt><dd><p>Voltage limit minimum and maximum in volts (V).</p>
+</dd>
+<dt><strong>displacement</strong><span class="classifier">float</span></dt><dd><p>Displacement in meters per volt (m/V).</p>
+</dd>
+<dt><strong>channel</strong><span class="classifier">int or str</span></dt><dd><p>Voltage channel.</p>
+</dd>
+<dt><strong>feedback_mode</strong><span class="classifier">DRV_PIEZO.FEEDBACK_MODE</span></dt><dd><p>Feedback operation mode.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.PiezoCfg.get_hl_cfg" title="libics.drv.drv.PiezoCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.PiezoCfg.channel">
+<code class="sig-name descname">channel</code><a class="headerlink" href="#libics.drv.drv.PiezoCfg.channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PiezoCfg.displacement">
+<code class="sig-name descname">displacement</code><a class="headerlink" href="#libics.drv.drv.PiezoCfg.displacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PiezoCfg.feedback_mode">
+<code class="sig-name descname">feedback_mode</code><a class="headerlink" href="#libics.drv.drv.PiezoCfg.feedback_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.PiezoCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.PiezoCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PiezoCfg.limit_max">
+<code class="sig-name descname">limit_max</code><a class="headerlink" href="#libics.drv.drv.PiezoCfg.limit_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PiezoCfg.limit_min">
+<code class="sig-name descname">limit_min</code><a class="headerlink" href="#libics.drv.drv.PiezoCfg.limit_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.SpAnCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">SpAnCfg</code><span class="sig-paren">(</span><em class="sig-param">bandwidth=1000.0</em>, <em class="sig-param">frequency_start=0.0</em>, <em class="sig-param">frequency_stop=100000.0</em>, <em class="sig-param">average_mode=0</em>, <em class="sig-param">average_count=100</em>, <em class="sig-param">voltage_max=-30.0</em>, <em class="sig-param">cls_name='SpAnCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.SpAnCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; SpAnCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bandwidth</strong><span class="classifier">float</span></dt><dd><p>Spectral bandwidth in Hertz (Hz).</p>
+</dd>
+<dt><strong>frequency_start, frequency_stop</strong><span class="classifier">float</span></dt><dd><p>Frequency range (start, stop) in Hertz (Hz).</p>
+</dd>
+<dt><strong>average_mode</strong><span class="classifier">DRV_SPAN.AVERAGE_MODE</span></dt><dd><p>Averaging mode.</p>
+</dd>
+<dt><strong>average_count</strong><span class="classifier">int</span></dt><dd><p>Number of averages.</p>
+</dd>
+<dt><strong>voltage_max</strong><span class="classifier">float</span></dt><dd><p>Voltage input max range in decibel volts (dBV).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.SpAnCfg.get_hl_cfg" title="libics.drv.drv.SpAnCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.average_count">
+<code class="sig-name descname">average_count</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.average_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.average_mode">
+<code class="sig-name descname">average_mode</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.average_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.bandwidth">
+<code class="sig-name descname">bandwidth</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.bandwidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.frequency_start">
+<code class="sig-name descname">frequency_start</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.frequency_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.frequency_stop">
+<code class="sig-name descname">frequency_stop</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.frequency_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.SpAnCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.SpAnCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.SpAnCfg.voltage_max">
+<code class="sig-name descname">voltage_max</code><a class="headerlink" href="#libics.drv.drv.SpAnCfg.voltage_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.drv.drvcam">
+<span id="drvcam"></span><h2>drvcam<a class="headerlink" href="#module-libics.drv.drvcam" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.drv.drvcam.AlliedVisionMantaG145BNIR">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvcam.</code><code class="sig-name descname">AlliedVisionMantaG145BNIR</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvcam.CamDrvBase" title="libics.drv.drvcam.CamDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvcam.CamDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_exposure_time</span></code>(self[, max_cutoff, …])</p></td>
+<td><p>Varies the camera’s exposure time to maximize image brightness while keeping the maximum ADC value below saturation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.get" title="libics.drv.drvcam.AlliedVisionMantaG145BNIR.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(self)</p></td>
+<td><p>Get image from internal buffer (previously taken image).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.grab" title="libics.drv.drvcam.AlliedVisionMantaG145BNIR.grab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grab</span></code></a>(self)</p></td>
+<td><p>Grab image from camera (wait for next image).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.run" title="libics.drv.drvcam.AlliedVisionMantaG145BNIR.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self[, callback])</p></td>
+<td><p>Start capturing images.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.stop" title="libics.drv.drvcam.AlliedVisionMantaG145BNIR.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stop capturing images.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvcam.AlliedVisionMantaG145BNIR.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get image from internal buffer (previously taken image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.AlliedVisionMantaG145BNIR.grab">
+<code class="sig-name descname">grab</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.grab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grab image from camera (wait for next image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.AlliedVisionMantaG145BNIR.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start capturing images.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.AlliedVisionMantaG145BNIR.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.AlliedVisionMantaG145BNIR.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop capturing images.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvcam.CamDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvcam.</code><code class="sig-name descname">CamDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.CamDrvBase.find_exposure_time" title="libics.drv.drvcam.CamDrvBase.find_exposure_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_exposure_time</span></code></a>(self[, max_cutoff, …])</p></td>
+<td><p>Varies the camera’s exposure time to maximize image brightness while keeping the maximum ADC value below saturation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.CamDrvBase.get" title="libics.drv.drvcam.CamDrvBase.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(self)</p></td>
+<td><p>Get image from internal buffer (previously taken image).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.CamDrvBase.grab" title="libics.drv.drvcam.CamDrvBase.grab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grab</span></code></a>(self)</p></td>
+<td><p>Grab image from camera (wait for next image).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.CamDrvBase.run" title="libics.drv.drvcam.CamDrvBase.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self)</p></td>
+<td><p>Start capturing images.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.CamDrvBase.stop" title="libics.drv.drvcam.CamDrvBase.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stop capturing images.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvcam.CamDrvBase.find_exposure_time">
+<code class="sig-name descname">find_exposure_time</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">max_cutoff=0.6666666666666666</em>, <em class="sig-param">max_iterations=50</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase.find_exposure_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Varies the camera’s exposure time to maximize image brightness
+while keeping the maximum ADC value below saturation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>max_cutoff</strong><span class="classifier">float</span></dt><dd><p>Minimum relative brightness required for the image
+maximum.</p>
+</dd>
+<dt><strong>max_iterations</strong><span class="classifier">int</span></dt><dd><p>Maximum number of iterations.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>prev_exposure_time</strong><span class="classifier">float</span></dt><dd><p>Previous exposure time in seconds (s).
+Allows the calling function to reset the settings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.CamDrvBase.get">
+<em class="property">abstract </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get image from internal buffer (previously taken image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.CamDrvBase.grab">
+<em class="property">abstract </em><code class="sig-name descname">grab</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase.grab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grab image from camera (wait for next image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.CamDrvBase.run">
+<em class="property">abstract </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start capturing images.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.CamDrvBase.stop">
+<em class="property">abstract </em><code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.CamDrvBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop capturing images.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvcam.get_cam_drv">
+<code class="sig-prename descclassname">libics.drv.drvcam.</code><code class="sig-name descname">get_cam_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.get_cam_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-libics.drv.drvdsp">
+<span id="drvdsp"></span><h2>drvdsp<a class="headerlink" href="#module-libics.drv.drvdsp" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.drv.drvdsp.DspDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvdsp.</code><code class="sig-name descname">DspDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.DspDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvdsp.DspDrvBase.run" title="libics.drv.drvdsp.DspDrvBase.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self, images)</p></td>
+<td><p>Show an image sequence on display.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvdsp.DspDrvBase.stop" title="libics.drv.drvdsp.DspDrvBase.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self, images)</p></td>
+<td><p>Stops displaying the image sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvdsp.DspDrvBase.run">
+<em class="property">abstract </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.DspDrvBase.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show an image sequence on display.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvdsp.DspDrvBase.stop">
+<em class="property">abstract </em><code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.DspDrvBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops displaying the image sequence.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvdsp.TexasInstrumentsDLP7000">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvdsp.</code><code class="sig-name descname">TexasInstrumentsDLP7000</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvdsp.DspDrvBase" title="libics.drv.drvdsp.DspDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvdsp.DspDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.init" title="libics.drv.drvdsp.TexasInstrumentsDLP7000.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>(self, images)</p></td>
+<td><p>Allocates memory in the DMD.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.run" title="libics.drv.drvdsp.TexasInstrumentsDLP7000.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self[, images])</p></td>
+<td><p>Displays the given images on the DMD.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.stop" title="libics.drv.drvdsp.TexasInstrumentsDLP7000.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops displaying the image sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvdsp.TexasInstrumentsDLP7000.init">
+<code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allocates memory in the DMD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>images</strong><span class="classifier">list(np.ndarray(2, float)) or np.ndarray(2, float)</span></dt><dd><p>(List of) images to be displayed. Greyscales are
+normalized to [0, 1] where values outside the bounds
+are changed to the respective bound value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvdsp.TexasInstrumentsDLP7000.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the given images on the DMD. Note that the images are expected
+to be normalized to the interval [0, 1] corresponding to static on/off
+states. Intermediate values request time modulation with picture times
+as set by the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>images</strong><span class="classifier">list(np.ndarray(2, float)) or np.ndarray(2, float) or None</span></dt><dd><p>(List of) images to be displayed. Greyscales are
+normalized to [0, 1] where values outside the bounds
+are changed to the respective bound value.
+None: Uses images set by the init method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>TODO: Implement grayscale images. Currently only boolean bitdepth (1)</dt><dd><p>is used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvdsp.TexasInstrumentsDLP7000.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.TexasInstrumentsDLP7000.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops displaying the image sequence.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvdsp.get_dsp_drv">
+<code class="sig-prename descclassname">libics.drv.drvdsp.</code><code class="sig-name descname">get_dsp_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvdsp.get_dsp_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-libics.drv.drvosc">
+<span id="drvosc"></span><h2>drvosc<a class="headerlink" href="#module-libics.drv.drvosc" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.drv.drvosc.get_osc_drv">
+<code class="sig-prename descclassname">libics.drv.drvosc.</code><code class="sig-name descname">get_osc_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvosc.get_osc_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="drvpiezo">
+<h2>drvpiezo<a class="headerlink" href="#drvpiezo" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-libics.drv.drvpiezo"></span><dl class="class">
+<dt id="libics.drv.drvpiezo.PiezoDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">PiezoDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PiezoDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p>Piezo driver API.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_voltage</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_voltage</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvpiezo.PiezoDrvBase.read_voltage">
+<em class="property">abstract </em><code class="sig-name descname">read_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PiezoDrvBase.read_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.PiezoDrvBase.write_voltage">
+<em class="property">abstract </em><code class="sig-name descname">write_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">voltage</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PiezoDrvBase.write_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvpiezo.ThorlabsMDT69XA">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">ThorlabsMDT69XA</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.ThorlabsMDT69XA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvpiezo.PiezoDrvBase" title="libics.drv.drvpiezo.PiezoDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvpiezo.PiezoDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_voltage</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_voltage</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvpiezo.ThorlabsMDT69XA.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.ThorlabsMDT69XA.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.ThorlabsMDT69XA.read_voltage">
+<code class="sig-name descname">read_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.ThorlabsMDT69XA.read_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.ThorlabsMDT69XA.write_voltage">
+<code class="sig-name descname">write_voltage</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">voltage</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.ThorlabsMDT69XA.write_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvpiezo.get_piezo_drv">
+<code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">get_piezo_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.get_piezo_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="drvspan">
+<h2>drvspan<a class="headerlink" href="#drvspan" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-libics.drv.drvspan"></span><dl class="class">
+<dt id="libics.drv.drvspan.SpAnDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvspan.</code><code class="sig-name descname">SpAnDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.SpAnDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvspan.SpAnDrvBase.read_powerspectraldensity" title="libics.drv.drvspan.SpAnDrvBase.read_powerspectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_powerspectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvspan.SpAnDrvBase.read_spectraldensity" title="libics.drv.drvspan.SpAnDrvBase.read_spectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_spectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvspan.SpAnDrvBase.read_powerspectraldensity">
+<em class="property">abstract </em><code class="sig-name descname">read_powerspectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.SpAnDrvBase.read_powerspectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvspan.SpAnDrvBase.read_spectraldensity">
+<em class="property">abstract </em><code class="sig-name descname">read_spectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.SpAnDrvBase.read_spectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvspan.StanfordSR760">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvspan.</code><code class="sig-name descname">StanfordSR760</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvspan.SpAnDrvBase" title="libics.drv.drvspan.SpAnDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvspan.SpAnDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvspan.StanfordSR760.read_powerspectraldensity" title="libics.drv.drvspan.StanfordSR760.read_powerspectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_powerspectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvspan.StanfordSR760.read_spectraldensity" title="libics.drv.drvspan.StanfordSR760.read_spectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_spectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drvspan.StanfordSR760.AVERAGING_MODE">
+<code class="sig-name descname">AVERAGING_MODE</code><em class="property"> = {0: 0, 1: 1}</em><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.AVERAGING_MODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drvspan.StanfordSR760.AVERAGING_TYPE">
+<code class="sig-name descname">AVERAGING_TYPE</code><em class="property"> = {0: 'rms', 1: 'vector', 2: 'peak hold'}</em><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.AVERAGING_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drvspan.StanfordSR760.FREQUENCY_SPAN">
+<code class="sig-name descname">FREQUENCY_SPAN</code><em class="property"> = {0: 0.191, 1: 0.382, 2: 0.763, 3: 1.5, 4: 3.1, 5: 6.1, 6: 12.2, 7: 24.4, 8: 48.75, 9: 97.5, 10: 195.0, 11: 390.0, 12: 780.0, 13: 1560.0, 14: 3125.0, 15: 6250.0, 16: 12500.0, 17: 25000.0, 18: 50000.0, 19: 100000.0}</em><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.FREQUENCY_SPAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drvspan.StanfordSR760.MEASUREMENT">
+<code class="sig-name descname">MEASUREMENT</code><em class="property"> = {0: 'spectrum', 1: 'power spectral density', 2: 'time record', 3: 'octave'}</em><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.MEASUREMENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drvspan.StanfordSR760.UNIT">
+<code class="sig-name descname">UNIT</code><em class="property"> = {0: 'Vpk/√Hz', 1: 'V/√Hz', 2: 'dBVpk/√Hz', 3: 'dBV/√Hz'}</em><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.UNIT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvspan.StanfordSR760.read_powerspectraldensity">
+<code class="sig-name descname">read_powerspectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.read_powerspectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvspan.StanfordSR760.read_spectraldensity">
+<code class="sig-name descname">read_spectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.StanfordSR760.read_spectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvspan.YokagawaAQ6315">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvspan.</code><code class="sig-name descname">YokagawaAQ6315</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.YokagawaAQ6315" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvspan.SpAnDrvBase" title="libics.drv.drvspan.SpAnDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvspan.SpAnDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvspan.YokagawaAQ6315.read_powerspectraldensity" title="libics.drv.drvspan.YokagawaAQ6315.read_powerspectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_powerspectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvspan.YokagawaAQ6315.read_spectraldensity" title="libics.drv.drvspan.YokagawaAQ6315.read_spectraldensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_spectraldensity</span></code></a>(self[, read_meta])</p></td>
+<td><p>read_meta flag determines whether to perform a read call for the metadata accompanying the spectral data (e.g.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvspan.YokagawaAQ6315.read_powerspectraldensity">
+<code class="sig-name descname">read_powerspectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.YokagawaAQ6315.read_powerspectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvspan.YokagawaAQ6315.read_spectraldensity">
+<code class="sig-name descname">read_spectraldensity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">read_meta=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.YokagawaAQ6315.read_spectraldensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>read_meta flag determines whether to perform a read call for the
+metadata accompanying the spectral data (e.g. frequency)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvspan.get_span_drv">
+<code class="sig-prename descclassname">libics.drv.drvspan.</code><code class="sig-name descname">get_span_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvspan.get_span_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.drv</a><ul>
+<li><a class="reference internal" href="#module-libics.drv.drv">drv</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.drv.drvcam">drvcam</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.drv.drvdsp">drvdsp</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.drv.drvosc">drvosc</a></li>
+<li><a class="reference internal" href="#drvpiezo">drvpiezo</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#drvspan">drvspan</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.drv.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

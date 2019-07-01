@@ -1,0 +1,639 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.func &#8212; libics 0.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.func">
+<span id="libics-func"></span><h1>libics.func<a class="headerlink" href="#module-libics.func" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-libics.func.fit">
+<span id="fit"></span><h2>fit<a class="headerlink" href="#module-libics.func.fit" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.func.fit.FitParamBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.fit.</code><code class="sig-name descname">FitParamBase</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">param</em>, <em class="sig-param">cov=0</em>, <em class="sig-param">param_names=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.FitParamBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for fitting. Contains fitting parameters and function calls.
+Includes uncertainties.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>func</strong><span class="classifier">callable</span></dt><dd><dl class="simple">
+<dt>Fit function with call signature func(var, <a href="#id1"><span class="problematic" id="id2">*</span></a>param).</dt><dd><dl class="simple">
+<dt>var<span class="classifier">scalar, np.ndarray</span></dt><dd><p>If array-like, the first dimension must accept
+different independent parameters, i.e. (x, y, z, …).</p>
+</dd>
+<dt>param<span class="classifier">scalar</span></dt><dd><p>Fit parameters in the order as stored in this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt><strong>param</strong><span class="classifier">np.ndarray(1) or int</span></dt><dd><p>If np.ndarray: used as current parameters.
+If int: sets dimension of parameters (i.e. constructs an</p>
+<blockquote>
+<div><p>np.ndarray with <cite>param</cite> ones as elements).</p>
+</div></blockquote>
+</dd>
+<dt><strong>cov</strong><span class="classifier">np.ndarray(2) or np.ndarray(1) or scalar</span></dt><dd><p>If np.ndarray(2): used as current covariance matrix.
+If np.ndarray(1): used as current standard deviation. Off-diagonal</p>
+<blockquote>
+<div><p>elements are set to 0.</p>
+</div></blockquote>
+<p>If scalar: covariance matrix filled with given values.</p>
+</dd>
+<dt><strong>param_names</strong><span class="classifier">list(str) or None</span></dt><dd><p>List of unique parameter names.
+If None, default names are index numbers.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>std</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var, \*args, \*\*kwargs)</p></td>
+<td><p>Calls and evaluates the function for the given variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.fit.FitParamBase.find_fit" title="libics.func.fit.FitParamBase.find_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_fit</span></code></a>(self, var_data, func_data, \*\*kwargs)</p></td>
+<td><p>Calculates the parameter fit using the parameter values as initial parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.fit.FitParamBase.find_init_param" title="libics.func.fit.FitParamBase.find_init_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_init_param</span></code></a>(self, var_data, func_data)</p></td>
+<td><p>Calculates the initial parameters and saves them as parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.fit.FitParamBase.set_init_param" title="libics.func.fit.FitParamBase.set_init_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_init_param</span></code></a>(self, param)</p></td>
+<td><p>Sets initial parameters and checks these for validity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.fit.FitParamBase.set_param_map" title="libics.func.fit.FitParamBase.set_param_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_param_map</span></code></a>(self, param_names)</p></td>
+<td><p>Defines the parameter names and enables get by string.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.func.fit.FitParamBase.find_fit">
+<code class="sig-name descname">find_fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">var_data</em>, <em class="sig-param">func_data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.FitParamBase.find_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the parameter fit using the parameter values
+as initial parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>var_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Independent variable data to be fitted.
+The first dimension must correspond to the function variable
+input.</p>
+</dd>
+<dt><strong>func_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Dependent variable data (functional values) to be fitted.</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>Keyword arguments passed to scipy.optimize.curve_fit, i.a.:
+sigma, absolute_sigma, check_finite, bounds, method, jac.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.fit.FitParamBase.find_init_param">
+<em class="property">abstract </em><code class="sig-name descname">find_init_param</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">var_data</em>, <em class="sig-param">func_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.FitParamBase.find_init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the initial parameters and saves them as parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>var_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Independent variable data to be fitted.
+The first dimension must correspond to the function variable
+input.</p>
+</dd>
+<dt><strong>func_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Dependent variable data (functional values) to be fitted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.fit.FitParamBase.set_init_param">
+<code class="sig-name descname">set_init_param</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">param</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.FitParamBase.set_init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets initial parameters and checks these for validity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>param</strong><span class="classifier">np.ndarray</span></dt><dd><p>Initial parameters used for fit.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If parameter is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.fit.FitParamBase.set_param_map">
+<code class="sig-name descname">set_param_map</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">param_names</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.FitParamBase.set_param_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the parameter names and enables get by string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>param_names</strong><span class="classifier">list(str)</span></dt><dd><p>List of unique parameter ID strings in the order
+of the parameters.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.fit.FitParamBase.std">
+<em class="property">property </em><code class="sig-name descname">std</code><a class="headerlink" href="#libics.func.fit.FitParamBase.std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.fit.split_fit_data">
+<code class="sig-prename descclassname">libics.func.fit.</code><code class="sig-name descname">split_fit_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">func_dim=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.fit.split_fit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the given data into independent and dependent data, as required
+by the fit class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">arraydata.ArrayData or seriesdata.SeriesData or np.ndarray</span></dt><dd><p>Data to be split.</p>
+</dd>
+<dt><strong>func_dim</strong><span class="classifier">int</span></dt><dd><p>Only used for seriesdata.SeriesData.
+Dependent data dimension (index).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>var_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Independent data.</p>
+</dd>
+<dt><strong>func_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Dependent data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.func.flat">
+<span id="flat"></span><h2>flat<a class="headerlink" href="#module-libics.func.flat" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.func.flat.cosine_2d">
+<code class="sig-prename descclassname">libics.func.flat.</code><code class="sig-name descname">cosine_2d</code><span class="sig-paren">(</span><em class="sig-param">var</em>, <em class="sig-param">amplitude_x</em>, <em class="sig-param">amplitude_y</em>, <em class="sig-param">period_x</em>, <em class="sig-param">period_y</em>, <em class="sig-param">phase_x</em>, <em class="sig-param">phase_y</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.flat.cosine_2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-libics.func.peaked">
+<span id="peaked"></span><h2>peaked<a class="headerlink" href="#module-libics.func.peaked" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.func.peaked.FitAiryDisk2d">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">FitAiryDisk2d</code><span class="sig-paren">(</span><em class="sig-param">fit_offset=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.FitAiryDisk2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.func.fit.FitParamBase" title="libics.func.fit.FitParamBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.fit.FitParamBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>std</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var, \*args, \*\*kwargs)</p></td>
+<td><p>Calls and evaluates the function for the given variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_fit</span></code>(self, var_data, func_data, \*\*kwargs)</p></td>
+<td><p>Calculates the parameter fit using the parameter values as initial parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.peaked.FitAiryDisk2d.find_init_param" title="libics.func.peaked.FitAiryDisk2d.find_init_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_init_param</span></code></a>(self, var_data, func_data)</p></td>
+<td><p>Algorithm: linear min/max approximation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_init_param</span></code>(self, param)</p></td>
+<td><p>Sets initial parameters and checks these for validity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_param_map</span></code>(self, param_names)</p></td>
+<td><p>Defines the parameter names and enables get by string.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.func.peaked.FitAiryDisk2d.find_init_param">
+<code class="sig-name descname">find_init_param</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">var_data</em>, <em class="sig-param">func_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.FitAiryDisk2d.find_init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Algorithm: linear min/max approximation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.func.peaked.FitGaussian2dTilt">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">FitGaussian2dTilt</code><span class="sig-paren">(</span><em class="sig-param">fit_offset=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.FitGaussian2dTilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.func.fit.FitParamBase" title="libics.func.fit.FitParamBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.fit.FitParamBase</span></code></a></p>
+<p>Tilted (rotated) Gaussian in two dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\frac{((x - x_0) \cos \theta + (y - y_0) \sin \theta))^2}
+           {2 \sigma_u^2}
+     -\frac{((y - y_0) \cos \theta - (x - x_0) \sin \theta))^2}
+           {2 \sigma_v^2}} + C\]</div>
+<dl>
+<dt>var<span class="classifier"><cite>numpy.array(2, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x, y\)</span>.</p>
+</dd>
+<dt>amplitude<span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt>center_x, center_y<span class="classifier"><cite>float</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(x_0, y_0\)</span>.</p>
+</dd>
+<dt>width_u, width_v<span class="classifier"><cite>float</cite></span></dt><dd><p>Widths <span class="math notranslate nohighlight">\(\sigma_u, \sigma_v\)</span>.</p>
+</dd>
+<dt>tilt<span class="classifier"><cite>float(0, numpy.pi)</cite></span></dt><dd><p>Tilt angle <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+</dd>
+<dt>offset<span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+<p>Base class for fitting. Contains fitting parameters and function calls.
+Includes uncertainties.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>func</strong><span class="classifier">callable</span></dt><dd><dl class="simple">
+<dt>Fit function with call signature func(var, <a href="#id3"><span class="problematic" id="id4">*</span></a>param).</dt><dd><dl class="simple">
+<dt>var<span class="classifier">scalar, np.ndarray</span></dt><dd><p>If array-like, the first dimension must accept
+different independent parameters, i.e. (x, y, z, …).</p>
+</dd>
+<dt>param<span class="classifier">scalar</span></dt><dd><p>Fit parameters in the order as stored in this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt><strong>param</strong><span class="classifier">np.ndarray(1) or int</span></dt><dd><p>If np.ndarray: used as current parameters.
+If int: sets dimension of parameters (i.e. constructs an</p>
+<blockquote>
+<div><p>np.ndarray with <cite>param</cite> ones as elements).</p>
+</div></blockquote>
+</dd>
+<dt><strong>cov</strong><span class="classifier">np.ndarray(2) or np.ndarray(1) or scalar</span></dt><dd><p>If np.ndarray(2): used as current covariance matrix.
+If np.ndarray(1): used as current standard deviation. Off-diagonal</p>
+<blockquote>
+<div><p>elements are set to 0.</p>
+</div></blockquote>
+<p>If scalar: covariance matrix filled with given values.</p>
+</dd>
+<dt><strong>param_names</strong><span class="classifier">list(str) or None</span></dt><dd><p>List of unique parameter names.
+If None, default names are index numbers.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>std</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var, \*args, \*\*kwargs)</p></td>
+<td><p>Calls and evaluates the function for the given variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_fit</span></code>(self, var_data, func_data, \*\*kwargs)</p></td>
+<td><p>Calculates the parameter fit using the parameter values as initial parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.peaked.FitGaussian2dTilt.find_init_param" title="libics.func.peaked.FitGaussian2dTilt.find_init_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_init_param</span></code></a>(self, var_data, func_data)</p></td>
+<td><p>Algorithm: linear min/max approximation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_init_param</span></code>(self, param)</p></td>
+<td><p>Sets initial parameters and checks these for validity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_param_map</span></code>(self, param_names)</p></td>
+<td><p>Defines the parameter names and enables get by string.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.func.peaked.FitGaussian2dTilt.find_init_param">
+<code class="sig-name descname">find_init_param</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">var_data</em>, <em class="sig-param">func_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.FitGaussian2dTilt.find_init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Algorithm: linear min/max approximation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.airy_disk_2d">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">airy_disk_2d</code><span class="sig-paren">(</span><em class="sig-param">var</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center_x</em>, <em class="sig-param">center_y</em>, <em class="sig-param">width</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.airy_disk_2d" title="Permalink to this definition">¶</a></dt>
+<dd><div class="math notranslate nohighlight">
+\[A \left( \frac{2 J_1 \left( \sqrt{(x-x_0)^2 + (y-y_0)^2} / w \right)}
+              {\sqrt{(x-x_0)^2 + (y-y_0)^2} / w} \right)^2 + C\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>`var` :math:`(x, y)`, `amplitude` :math:`A`,</strong></dt><dd></dd>
+<dt><strong>`center_(x, y)` :math:`(x_0, y_0), `width` :math:`w`,</strong></dt><dd></dd>
+<dt><strong>`offset` :math:`C`.</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Handles limiting value at <span class="math notranslate nohighlight">\((x, y) -&gt; (0, 0)\)</span>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.exponential_decay_1d">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">exponential_decay_1d</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center</em>, <em class="sig-param">length</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.exponential_decay_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exponential decay in one dimension.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\frac{|x - c|}{\xi}} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Variable <span class="math notranslate nohighlight">\(x\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Center <span class="math notranslate nohighlight">\(c\)</span>.</p>
+</dd>
+<dt><strong>length</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Characteristic length <span class="math notranslate nohighlight">\(\xi\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.exponential_decay_nd">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">exponential_decay_nd</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center</em>, <em class="sig-param">length</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.exponential_decay_nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exponential decay in <span class="math notranslate nohighlight">\(n\)</span> dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\sum_{i=1}^n \frac{|x_i - c_i|}{\xi_i}} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(c_i\)</span>.</p>
+</dd>
+<dt><strong>length</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Characteristic lengths <span class="math notranslate nohighlight">\(\xi_i\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gamma_distribution_1d">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gamma_distribution_1d</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">mean</em>, <em class="sig-param">number</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gamma_distribution_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gamma distribution in one dimension.</p>
+<div class="math notranslate nohighlight">
+\[A \frac{(N / \mu)^N}{\Gamma (N)} x^{N - 1}
+e^{-\frac{N}{\mu} x} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Variable <span class="math notranslate nohighlight">\(x\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>mean</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Mean <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
+</dd>
+<dt><strong>number</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Number <span class="math notranslate nohighlight">\(N\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gaussian_1d">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gaussian_1d</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center</em>, <em class="sig-param">width</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gaussian_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian in one dimension.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\frac{(x - c)^2}{2 \sigma^2}} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Variable <span class="math notranslate nohighlight">\(x\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Center <span class="math notranslate nohighlight">\(c\)</span>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Width <span class="math notranslate nohighlight">\(\sigma\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gaussian_2d_tilt">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gaussian_2d_tilt</code><span class="sig-paren">(</span><em class="sig-param">var</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center_x</em>, <em class="sig-param">center_y</em>, <em class="sig-param">width_u</em>, <em class="sig-param">width_v</em>, <em class="sig-param">tilt</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gaussian_2d_tilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tilted (rotated) Gaussian in two dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\frac{((x - x_0) \cos \theta + (y - y_0) \sin \theta))^2}
+           {2 \sigma_u^2}
+     -\frac{((y - y_0) \cos \theta - (x - x_0) \sin \theta))^2}
+           {2 \sigma_v^2}} + C\]</div>
+<dl>
+<dt>var<span class="classifier"><cite>numpy.array(2, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x, y\)</span>.</p>
+</dd>
+<dt>amplitude<span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt>center_x, center_y<span class="classifier"><cite>float</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(x_0, y_0\)</span>.</p>
+</dd>
+<dt>width_u, width_v<span class="classifier"><cite>float</cite></span></dt><dd><p>Widths <span class="math notranslate nohighlight">\(\sigma_u, \sigma_v\)</span>.</p>
+</dd>
+<dt>tilt<span class="classifier"><cite>float(0, numpy.pi)</cite></span></dt><dd><p>Tilt angle <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+</dd>
+<dt>offset<span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gaussian_nd">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gaussian_nd</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center</em>, <em class="sig-param">width</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gaussian_nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian in <span class="math notranslate nohighlight">\(n\)</span> dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\sum_{i=1}^n \left( \frac{x_i - c_i}{2 \sigma_i} \right)^2} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(c_i\)</span>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Widths <span class="math notranslate nohighlight">\(\sigma_i\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gaussian_nd_centered">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gaussian_nd_centered</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">width</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gaussian_nd_centered" title="Permalink to this definition">¶</a></dt>
+<dd><p>Centered Gaussian in <span class="math notranslate nohighlight">\(n\)</span> dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\sum_{i=1}^n \left( \frac{x_i}{2 \sigma_i} \right)^2} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Widths <span class="math notranslate nohighlight">\(\sigma_i\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.peaked.gaussian_nd_symmetric">
+<code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">gaussian_nd_symmetric</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">amplitude</em>, <em class="sig-param">center</em>, <em class="sig-param">width</em>, <em class="sig-param">offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.gaussian_nd_symmetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symmetric Gaussian in <span class="math notranslate nohighlight">\(n\)</span> dimensions.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\sum_{i=1}^n \left( \frac{x_i - c_i}{2 \sigma} \right)^2} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(c_i\)</span>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>numpy.array(n, float)</cite></span></dt><dd><p>Width <span class="math notranslate nohighlight">\(\sigma\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.func</a><ul>
+<li><a class="reference internal" href="#module-libics.func.fit">fit</a></li>
+<li><a class="reference internal" href="#module-libics.func.flat">flat</a></li>
+<li><a class="reference internal" href="#module-libics.func.peaked">peaked</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.func.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

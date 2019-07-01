@@ -47,7 +47,7 @@ coverage.xml
 *.pot
 
 # Sphinx documentation
-docs/_build/
+sphinx/_build/
 
 # VS Code project
 \.vscode/
