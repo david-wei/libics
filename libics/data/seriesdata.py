@@ -45,7 +45,7 @@ class SeriesData(hdf.HDFBase):
         """
         Gets the data dimension (incl. actual data).
         """
-        return self.data.shape[0]
+        return len(self.quantity)
 
     @property
     def data(self):
@@ -56,7 +56,8 @@ class SeriesData(hdf.HDFBase):
         if len(val) == len(self.quantity):
             self._data = val
         else:
-            raise ValueError("invalid data shape")
+            raise ValueError("invalid data shape ({:d}/{:d})"
+                             .format(len(val), len(self.quantity)))
 
     @property
     def loc(self, key):

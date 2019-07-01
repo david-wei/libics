@@ -158,4 +158,4 @@ def load_sif_to_arraydata(file_path, arraydata=None):
         ad = copy.deepcopy(arraydata)
         ad.data = im.T
         ads.append(ad)
-    return arraydata
+    return ads
