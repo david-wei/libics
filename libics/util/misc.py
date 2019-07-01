@@ -696,6 +696,28 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
     return ar
 
 
+def transpose_array(ar):
+    """
+    Transposes a rectangular array.
+
+    Parameters
+    ----------
+    ar : `numpy.ndarray` or `list(list)` or `tuple(tuple)`
+        Rectangular array to be transposed.
+
+    Returns
+    -------
+    ar : `numpy.ndarray` or `list(list)` or `tuple(tuple)`
+        Transposed array.
+    """
+    if isinstance(ar, np.ndarray):
+        return ar.T
+    elif isinstance(ar, list):
+        return list(map(list, zip(*ar)))
+    else:
+        return tuple(map(tuple, zip(*ar)))
+
+
 ###############################################################################
 # Identity Functions
 ###############################################################################
@@ -724,6 +746,30 @@ def id_dict(arg):
     for item in arg:
         d[item] = item
     return d
+
+
+def make_getitem_func(arg):
+    """
+    Takes an object which implements `__getitem__` and accesses this method.
+
+    Parameters
+    ----------
+    arg : `indexable`
+        Object with __getitem__ method, e.g. dict or list.
+
+    Returns
+    -------
+    func : `callable`
+        Function signature: func(x)->y.
+        Takes an argument and calls the getitem method. If the argument
+        is invalid, the function returns identity.
+    """
+    if isinstance(arg, dict):
+        return lambda x: arg[x] if x in arg.keys() else x
+    elif isinstance(arg, list):
+        return lambda x: arg[x] if (isinstance(x, int) and x < len(arg)) else x
+    else:
+        return lambda x: arg[x]
 
 
 ###############################################################################
