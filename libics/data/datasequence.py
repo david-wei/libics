@@ -5,7 +5,7 @@ import uuid
 import numpy as np
 import pandas as pd
 
-from libics.data import stp
+from libics.data import stp, types
 from libics.drv import drv
 from libics.file import hdf
 from libics.util import misc
@@ -68,14 +68,26 @@ class DataSequence(pd.DataFrame, hdf.HDFDelegate):
 
     _metadata = ["cfg", "stp"]
 
-    def __init__(self, *args, cfg=None, stp=None, **kwargs):
+    def __init__(self, *args, cfg=None, stp=None, quantity=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.cfg = cfg      # Data recording configuration
         self.stp = stp      # Measurement setup
+        self.quantity = quantity
 
     @property
     def _constructor(self):
         return DataSequence
+
+    @property
+    def quantity(self):
+        for col in self.columns:
+            if col not in self._quantity.keys():
+                self._quantity[col] = types.Quantity(name=col)
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, val):
+        self._quantity = {} if quantity is None else quantity
 
     def __getitem__(self, key):
         """
@@ -179,6 +191,28 @@ class DataSequence(pd.DataFrame, hdf.HDFDelegate):
     def _delegate_cls(self):
         return _DataSequenceHDFDelegate
 
+    def get_names(self):
+        """
+        Gets the names/headers of the data sequence.
+
+        Returns
+        -------
+        names : `dict(str->dict/set)`
+            "cfg" -> cfg attribute dict.
+            "stp" -> stp attribute dict.
+            "data" -> data frame column names as set (without cfg, stp)
+        """
+        cfg_names = {} if self.cfg is None else self.cfg.__dict__
+        stp_names = {} if self.stp is None else self.stp.__dict__
+        for k in ["_hdf_pkg_name", "_hdf_cls_name", "_hdf_is_delegate",
+                  "group", "_msg_queue"]:
+            cfg_names.pop(k, None)
+            stp_names.pop(k, None)
+        data_names = set(self.columns).difference(
+            set(cfg_names), set(stp_names)
+        )
+        return {"cfg": cfg_names, "stp": stp_names, "data": data_names}
+
 
 @hdf.InheritMap(map_key=("libics", "_DataSequenceHDFDelegate"))
 class _DataSequenceHDFDelegate(hdf.HDFBase):
@@ -215,6 +249,10 @@ def cv_list_to_datasequence(ls):
     ds : DataSequence or self
         Converted DataSequence object.
         If conversion is unsuccessful, returns input.
+
+    Notes
+    -----
+    TODO: does not set quantity
     """
     # 1. assert ls iterable
     try:
@@ -315,20 +353,27 @@ def concatenate_datasequences(dss):
     """
     misc.assume_iter(dss)
     # Find parameter names
-    cfg_names = {}
-    stp_names = {}
-    col_names = {}
+    col_names, cfg_names, stp_names = set(), set(), set()
+    cfg_dict, stp_dict = {}, {}
+    cfg_init, stp_init = False, False
     for ds in dss:
-        if isinstance(ds.cfg, drv.DrvCfgBase):
-            cfg_names.update(ds.cfg.__dict__)
-        if isinstance(ds.stp, stp.SetupCfgBase):
-            stp_names.update(ds.stp.__dict__)
-        col_names.update(ds.columns)
-    # Find constant parameters
-    cfg_var = set()
-    stp_var = set()
-    for key in cfg_names - col_names:
-        for i in range()
+        names = ds.get_names()
+        cfg_names.update(names["cfg"].keys())
+        if cfg_init:
+            cfg_dict = dict(cfg_dict.items() & names["cfg"].items())
+        else:
+            cfg_dict.update(names["cfg"])
+        stp_names.update(names["stp"].keys())
+        if stp_init:
+            stp_dict = dict(stp_dict.items() & names["stp"].items())
+        else:
+            stp_dict.update(names["stp"])
+        col_names.update(names["data"])
+    col_names.update(cfg_names - set(cfg_dict.keys()),
+                     stp_names - set(stp_dict.keys()))
+    # TODO: DataSequency.quantity in concatenate_datasequences,
+    # TODO: cv_list_to_datasequence,
+    # TODO: icsproj.expanlys.files.load_sequence_to_datasequence
     # Construct data sequence
     ds = pd.concat(dss)
     return ds
