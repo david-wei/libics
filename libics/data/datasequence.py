@@ -5,6 +5,8 @@ import uuid
 import numpy as np
 import pandas as pd
 
+from libics.data import stp
+from libics.drv import drv
 from libics.file import hdf
 from libics.util import misc
 from libics import env
@@ -294,6 +296,42 @@ def cv_datasequence_to_list(ds):
         Data list.
     """
     return list(ds.data)
+
+
+def concatenate_datasequences(dss):
+    """
+    Concatenates a list of `DataSequence` objects to form a single large
+    `DataSequence` object.
+
+    Parameters
+    ----------
+    dss : `iter(DataSequence)`
+        List of data sequences to be concatenated.
+
+    Returns
+    -------
+    ds : `DataSequence`
+        Concatenated data sequence.
+    """
+    misc.assume_iter(dss)
+    # Find parameter names
+    cfg_names = {}
+    stp_names = {}
+    col_names = {}
+    for ds in dss:
+        if isinstance(ds.cfg, drv.DrvCfgBase):
+            cfg_names.update(ds.cfg.__dict__)
+        if isinstance(ds.stp, stp.SetupCfgBase):
+            stp_names.update(ds.stp.__dict__)
+        col_names.update(ds.columns)
+    # Find constant parameters
+    cfg_var = set()
+    stp_var = set()
+    for key in cfg_names - col_names:
+        for i in range()
+    # Construct data sequence
+    ds = pd.concat(dss)
+    return ds
 
 
 ###############################################################################
