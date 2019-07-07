@@ -5,7 +5,7 @@ import uuid
 import numpy as np
 import pandas as pd
 
-from libics.data import stp, types
+from libics.data.types import Quantity
 from libics.drv import drv
 from libics.file import hdf
 from libics.util import misc
@@ -82,12 +82,12 @@ class DataSequence(pd.DataFrame, hdf.HDFDelegate):
     def quantity(self):
         for col in self.columns:
             if col not in self._quantity.keys():
-                self._quantity[col] = types.Quantity(name=col)
+                self._quantity[col] = Quantity(name=col)
         return self._quantity
 
     @quantity.setter
     def quantity(self, val):
-        self._quantity = {} if quantity is None else quantity
+        self._quantity = {} if val is None else val
 
     def __getitem__(self, key):
         """
