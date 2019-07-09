@@ -78,3 +78,15 @@ FORMAT_JSON_INDENT = 4
 
 THREAD_DELAY_QTSIGNAL = 0.1
 THREAD_DELAY_COM = 0.05
+
+
+###############################################################################
+# Logging
+###############################################################################
+
+
+VERBOSITY_SILENT = -1
+VERBOSITY_NORMAL = 0
+VERBOSITY_VERBOSE = 1
+VERBOSITY_VERY_VERBOSE = 2
+VERBOSITY_DEBUG = 3
