@@ -20,10 +20,19 @@ setup(name='libics',
       author_email='david94.wei@gmail.com',
       license='',
       packages=find_packages(),
+      entry_points={
+            'console_scripts': [
+                  # 'script_name = package.module:function'
+            ],
+            'gui_scripts': []
+      },
       install_requires=[
             'matplotlib', 'numpy', 'scipy', 'pandas',
             'pyserial', 'h5py', 'Pillow', 'PyQt5'
       ],
-      dependency_links=['https://github.com/morefigs/pymba'],
+      dependency_links=[
+            'https://github.com/morefigs/pymba',
+            'https://github.com/fujii-team/sif_reader'
+      ],
       include_package_data=True,
       zip_safe=False)

@@ -21,3 +21,10 @@ gives an overview of these additional external dependencies.
 | --------- | ------- | ---- | ----------------- |
 | [AlliedVision](https://www.alliedvision.com) | [Vimba](https://www.alliedvision.com/en/products/software.html) | C API | i.a. Manta G-145B-NIR |
 | [Github: morefigs](https://github.com/morefigs) | [pymba](https://github.com/morefigs/pymba) | Python wrapper | i.a. Manta G-145B-NIR |
+
+
+## Files
+
+| Developer | Library | Type | Camera dependency |
+| --------- | ------- | ---- | ----------------- |
+| [Github: fujii-team](https://github.com/fujii-team) | [sif_reader](https://github.com/fujii-team/sif_reader) | Python wrapper | image files (.sif) |
