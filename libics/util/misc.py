@@ -528,6 +528,39 @@ def capitalize_first_char(s):
     return s_cap
 
 
+def char_range(start, stop=None, step=1):
+    """
+    Yield an alphabetic range of lowercase letters.
+
+    Parameters
+    ----------
+    start : `chr`
+        Start character.
+        If stop is None: stop character (default start character: 'a').
+    stop : `chr` or `int` or `None`
+        If char: stop character (including stop).
+        If int: number of steps (not including stop).
+        If None: uses start as stop character
+    step : `int`
+        Character steps per repetition.
+
+    Yields
+    ------
+    lr
+        Letter range.
+    """
+    if stop is None:
+        stop = start
+        start = 'a'
+    num_start, num_stop = ord(start.lower()), ord(start.lower())
+    if isinstance(stop, int):
+        num_stop += stop
+    else:
+        num_stop = ord(stop.lower()) + 1
+    for ord_ in range(num_start, num_stop, step):
+        yield chr(ord_)
+
+
 ###############################################################################
 # List Manipulations
 ###############################################################################
@@ -694,6 +727,194 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
             padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
             ar = np.concatenate((padl, ar, padr), axis=dim)
     return ar
+
+
+def vectorize_numpy_array(
+    ar, tensor_axes=(-2, -1), vec_axis=-1, ret_shape=False
+):
+    """
+    Vectorizes a tensor (high-dimensional) `numpy` array.
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Tensor array.
+    tensor_axes : `tuple(int)`
+        Tensor axes to be vectorized. Vectorization is performed
+        in C-like order.
+    vec_axis : `int`
+        Vectorized dimension of resulting vector array.
+    ret_shape : `bool`
+        Flag whether to return the shape of the vectorized dimensions.
+
+    Returns
+    -------
+    vec : `np.ndarray`
+        Vector array.
+    vec_shape : `tuple(int)`
+        If ret_shape is set: shape of vectorized dimensions.
+
+    Notes
+    -----
+    Performance is maximal for back-aligned, ordered vectorization since
+    in-place data ordering is possible.
+
+    Examples
+    --------
+    Given a tensor A[i, j, k, l], required is a vectorized version
+    A[i, j*k, l]. The corresponding call would be:
+    >>> i, j, k, l = 2, 3, 4, 5
+    >>> A = np.arange(i * j * k * l).reshape((i, j, k, l))
+    >>> A.shape
+    (2, 3, 4, 5)
+    >>> B = vectorize_numpy_array(A, tensor_axes=(1, 2), vec_axis=1)
+    >>> B.shape
+    (2, 12, 5)
+    """
+    tensor_axes = tuple(tensor_axes)
+    vec_dims = len(tensor_axes)
+    vec = np.moveaxis(
+        ar, tensor_axes, np.arange(-vec_dims, 0)
+    )
+    vec = vec.reshape(vec.shape[:-vec_dims] + (-1, ))
+    vec = np.moveaxis(vec, -1, vec_axis)
+    if ret_shape:
+        vec_shape = tuple(np.array(ar.shape)[np.array(tensor_axes)])
+        return vec, vec_shape
+    else:
+        return vec
+
+
+def tensorize_numpy_array(
+    vec, tensor_shape, tensor_axes=(-2, -1), vec_axis=-1
+):
+    """
+    Tensorizes a vectorized `numpy` array. Opposite of `vectorize_numpy_array`.
+
+    Parameters
+    ----------
+    vec : `np.ndarray`
+        Vector array.
+    tensor_shape : `tuple(int)`
+        Shape of tensorized dimensions.
+    tensor_axes : `tuple(int)`
+        Tensor axes of resulting array. Tensorization is performed
+        in C-like order.
+    vec_axis : `int`
+        Dimension of vector array to be tensorized.
+
+    Returns
+    -------
+    ar : `np.ndarray`
+        Tensor array.
+    """
+    tensor_shape, tensor_axes = tuple(tensor_shape), tuple(tensor_axes)
+    vec_dims = len(tensor_axes)
+    if vec_dims != len(tensor_shape):
+        raise ValueError("incommensurate tensor dimensions ({:s}, {:s}"
+                         .format(str(tensor_shape), str(tensor_axes)))
+    ar = np.moveaxis(vec, vec_axis, -1)
+    ar = ar.reshape(ar.shape[:-1] + tensor_shape)
+    ar = np.moveaxis(ar, np.arange(-vec_dims, 0), tensor_axes)
+    return ar
+
+
+def _generate_einstr(idx):
+    ein_ls = []
+    offset = ord('i')
+    for i in tuple(idx):
+        ein_ls.append(
+            "..." if i == ... else chr(offset + i)
+        )
+    einstr = "".join(ein_ls)
+    return einstr
+
+
+def tensormul_numpy_array(
+    a, b, a_axes=(..., 0), b_axes=(0, ...), res_axes=(..., )
+):
+    """
+    Einstein-sums two `numpy` tensors.
+
+    Parameters
+    ----------
+    a, b : `np.ndarray`
+        Tensor operands.
+    a_axes, b_axes, res_axes : `tuple(int)`
+        Indices of Einstein summation. Dimensions are interpreted
+        relative. Allows for use of ellipses.
+
+    Returns
+    -------
+    res : `np.ndarray`
+        Combined result tensor.
+
+    Notes
+    --------
+    This function wraps `numpy.einsum`.
+
+    Examples
+    --------
+    Denote: (a_axes), (b_axes) -> (res_axes) [`np.einsum` string]
+    * Matrix multiplication: e.g.
+      (0, 1), (1, 2) -> (0, 2) ["ij,jk->ik"].
+    * Tensor dot: e.g.
+      (0, 1, 2, 3), (4, 2, 3, 5) -> (0, 1, 4, 5) ["ijkl,mjkn->ilmn"].
+    * Tensor dot with broadcasting: e.g.
+      (0, 1, 2, 3), (0, 1, 2, 3) -> (0, 3) ["ijkl,ijkl->il"].
+    """
+    einstr = (_generate_einstr(a_axes) + "," + _generate_einstr(b_axes)
+              + "->" + _generate_einstr(res_axes))
+    return np.einsum(einstr, a, b)
+
+
+def tensorinv_numpy_array(ar, a_axes=-1, b_axes=-2):
+    """
+    Calculates the tensor inverse (w.r.t. to `tensormul_numpy_array`).
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Full tensor.
+    a_axes, b_axes : `tuple(int)`
+        Corresponding dimensions to be inverted.
+        These specified dimensions span an effective square matrix.
+
+    Returns
+    -------
+    ar : `np.ndarray`
+        Inverted full tensor.
+    """
+    a_axes = np.array(a_axes, ndmin=1) % ar.ndim
+    b_axes = np.array(b_axes, ndmin=1) % ar.ndim
+    b_vecaxes = []
+    for i, b in enumerate(b_axes):
+        _tmp = 0
+        for j in a_axes:
+            if j < b:
+                _tmp += 1
+        b_vecaxes.append(b - _tmp)
+
+    vec, a_shape = vectorize_numpy_array(
+        ar, tensor_axes=a_axes, vec_axis=-1, ret_shape=True
+    )
+    vec, b_shape = vectorize_numpy_array(
+        vec, tensor_axes=b_vecaxes, vec_axis=-2, ret_shape=True
+    )
+    inv_vec = np.linalg.inv(vec)
+    ar = tensorize_numpy_array(inv_vec, b_shape,
+                               tensor_axes=b_vecaxes, vec_axis=-2)
+    ar = tensorize_numpy_array(ar, a_shape, tensor_axes=a_axes, vec_axis=-1)
+    return ar
+
+
+def tensorsolve_numpy_array(ar, res, a_axes=-1, b_axes=-2, res_axes=-1):
+    # TODO: implement!
+    # Algorithm:
+    # * Vectorize (see tensorinv_numpy_array), ensure b_axes on the right
+    # * Solve with np.linalg.solve
+    # * Tensorize solution
+    raise NotImplementedError
 
 
 def transpose_array(ar):
