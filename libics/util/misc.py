@@ -953,6 +953,11 @@ def tensorsolve_numpy_array(ar, res, a_axes=-1, b_axes=-2, res_axes=-1):
     a_axes, b_axes, res_axes : `tuple(int)`
         Tensorial indices corresponding to
         :math:`\\sum_{b} A_{ab} x_b = y_{res}`.
+
+    Returns
+    -------
+    sol : `np.ndarray`
+        Solution vector tensor :math:`x` with solution indices res_axes.
     """
     ar_vec, a_shape, b_shape, a_vecaxes, b_axes = _matricize_numpy_array(
         ar, a_axes, b_axes
