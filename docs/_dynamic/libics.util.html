@@ -779,12 +779,10 @@ relative. Allows for use of ellipses.</p>
 <p class="rubric">Notes</p>
 <p>This function wraps <cite>numpy.einsum</cite>.</p>
 <p class="rubric">Examples</p>
-<p>Denote: (a_axes), (b_axes) -&gt; (res_axes) [<cite>np.einsum</cite> string]
-* Matrix multiplication: e.g.</p>
-<blockquote>
-<div><p>(0, 1), (1, 2) -&gt; (0, 2) [“ij,jk-&gt;ik”].</p>
-</div></blockquote>
+<p>Denote: (a_axes), (b_axes) -&gt; (res_axes) [<cite>np.einsum</cite> string]</p>
 <ul class="simple">
+<li><p>Matrix multiplication: e.g.
+(0, 1), (1, 2) -&gt; (0, 2) [“ij,jk-&gt;ik”].</p></li>
 <li><p>Tensor dot: e.g.
 (0, 1, 2, 3), (4, 2, 3, 5) -&gt; (0, 1, 4, 5) [“ijkl,mjkn-&gt;ilmn”].</p></li>
 <li><p>Tensor dot with broadcasting: e.g.
@@ -805,7 +803,7 @@ may be high-dimensional.</p>
 <dt><strong>res</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector tensor <span class="math notranslate nohighlight">\(b\)</span>.</p>
 </dd>
 <dt><strong>a_axes, b_axes, res_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensorial indices corresponding to
-<span class="math notranslate nohighlight">\(\sum_{b} A_{ab} x_b = y_a\)</span>.</p>
+<span class="math notranslate nohighlight">\(\sum_{b} A_{ab} x_b = y_{res}\)</span>.</p>
 </dd>
 </dl>
 </dd>
