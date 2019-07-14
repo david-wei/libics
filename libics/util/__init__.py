@@ -32,6 +32,7 @@ class InheritMap:
     -----
     Can be used to construct a child object from a base class and an
     inheritance map key, e.g.:
+
     >>> child_obj = parent_cls.INH_MAP[map_key]()
     """
 

@@ -274,62 +274,9 @@ Dependent data dimension (index).</p>
 <dt id="libics.func.peaked.FitGaussian2dTilt">
 <em class="property">class </em><code class="sig-prename descclassname">libics.func.peaked.</code><code class="sig-name descname">FitGaussian2dTilt</code><span class="sig-paren">(</span><em class="sig-param">fit_offset=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.peaked.FitGaussian2dTilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.func.fit.FitParamBase" title="libics.func.fit.FitParamBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.fit.FitParamBase</span></code></a></p>
-<p>Tilted (rotated) Gaussian in two dimensions.</p>
-<div class="math notranslate nohighlight">
-\[A e^{-\frac{((x - x_0) \cos \theta + (y - y_0) \sin \theta))^2}
-           {2 \sigma_u^2}
-     -\frac{((y - y_0) \cos \theta - (x - x_0) \sin \theta))^2}
-           {2 \sigma_v^2}} + C\]</div>
-<dl>
-<dt>var<span class="classifier"><cite>numpy.array(2, float)</cite></span></dt><dd><p>Variables <span class="math notranslate nohighlight">\(x, y\)</span>.</p>
-</dd>
-<dt>amplitude<span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
-</dd>
-<dt>center_x, center_y<span class="classifier"><cite>float</cite></span></dt><dd><p>Centers <span class="math notranslate nohighlight">\(x_0, y_0\)</span>.</p>
-</dd>
-<dt>width_u, width_v<span class="classifier"><cite>float</cite></span></dt><dd><p>Widths <span class="math notranslate nohighlight">\(\sigma_u, \sigma_v\)</span>.</p>
-</dd>
-<dt>tilt<span class="classifier"><cite>float(0, numpy.pi)</cite></span></dt><dd><p>Tilt angle <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
-</dd>
-<dt>offset<span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span>.</p>
-</dd>
-</dl>
-<p>Base class for fitting. Contains fitting parameters and function calls.
-Includes uncertainties.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>func</strong><span class="classifier">callable</span></dt><dd><dl class="simple">
-<dt>Fit function with call signature func(var, <a href="#id3"><span class="problematic" id="id4">*</span></a>param).</dt><dd><dl class="simple">
-<dt>var<span class="classifier">scalar, np.ndarray</span></dt><dd><p>If array-like, the first dimension must accept
-different independent parameters, i.e. (x, y, z, …).</p>
-</dd>
-<dt>param<span class="classifier">scalar</span></dt><dd><p>Fit parameters in the order as stored in this class.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt><strong>param</strong><span class="classifier">np.ndarray(1) or int</span></dt><dd><p>If np.ndarray: used as current parameters.
-If int: sets dimension of parameters (i.e. constructs an</p>
-<blockquote>
-<div><p>np.ndarray with <cite>param</cite> ones as elements).</p>
-</div></blockquote>
-</dd>
-<dt><strong>cov</strong><span class="classifier">np.ndarray(2) or np.ndarray(1) or scalar</span></dt><dd><p>If np.ndarray(2): used as current covariance matrix.
-If np.ndarray(1): used as current standard deviation. Off-diagonal</p>
-<blockquote>
-<div><p>elements are set to 0.</p>
-</div></blockquote>
-<p>If scalar: covariance matrix filled with given values.</p>
-</dd>
-<dt><strong>param_names</strong><span class="classifier">list(str) or None</span></dt><dd><p>List of unique parameter names.
-If None, default names are index numbers.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Attributes</dt>
-<dd class="field-even"><dl class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
 <dt><strong>std</strong></dt><dd></dd>
 </dl>
 </dd>

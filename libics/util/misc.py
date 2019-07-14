@@ -733,7 +733,8 @@ def vectorize_numpy_array(
     ar, tensor_axes=(-2, -1), vec_axis=-1, ret_shape=False
 ):
     """
-    Vectorizes a tensor (high-dimensional) `numpy` array.
+    Vectorizes a tensor (high-dimensional) `numpy` array. Opposite of
+    :py:func:`.tensorize_numpy_array`.
 
     Parameters
     ----------
@@ -760,14 +761,11 @@ def vectorize_numpy_array(
     Performance is maximal for back-aligned, ordered vectorization since
     in-place data ordering is possible.
 
-    See Also
-    --------
-    `tensorize_numpy_array`
-
     Examples
     --------
     Given a tensor A[i, j, k, l], required is a vectorized version
     A[i, j*k, l]. The corresponding call would be:
+
     >>> i, j, k, l = 2, 3, 4, 5
     >>> A = np.arange(i * j * k * l).reshape((i, j, k, l))
     >>> A.shape
@@ -794,7 +792,8 @@ def tensorize_numpy_array(
     vec, tensor_shape, tensor_axes=(-2, -1), vec_axis=-1
 ):
     """
-    Tensorizes a vectorized `numpy` array. Opposite of `vectorize_numpy_array`.
+    Tensorizes a vectorized `numpy` array. Opposite of
+    :py:func:`.vectorize_numpy_array`.
 
     Parameters
     ----------
@@ -812,10 +811,6 @@ def tensorize_numpy_array(
     -------
     ar : `np.ndarray`
         Tensor array.
-
-    See Also
-    --------
-    `vectorize_numpy_array`
     """
     tensor_shape = assume_iter(tensor_shape)
     tensor_axes = assume_iter(tensor_axes)
@@ -884,6 +879,7 @@ def _matricize_numpy_array(ar, a_axes, b_axes):
     Reduces a high-dimensional tensor to a right-aligned matrix.
     This matrix has the shape `(np.prod(a_axes), np.prod(b_axes))`.
     The left-aligned dimensions are broadcastable dimensions.
+    Opposite of :py:func:`._unmatricize_numpy_array`.
     """
     a_axes = np.array(a_axes, ndmin=1) % ar.ndim
     b_axes = np.array(b_axes, ndmin=1) % ar.ndim

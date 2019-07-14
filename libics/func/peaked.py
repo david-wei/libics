@@ -220,10 +220,6 @@ class FitGaussian2dTilt(fit.FitParamBase):
             self.param[6] = offset
 
 
-FitGaussian2dTilt.__doc__ = (gaussian_2d_tilt.__doc__
-                             + "\n\n\n" + fit.FitParamBase.__doc__)
-
-
 ###############################################################################
 # Oscillating Functions
 ###############################################################################

@@ -291,8 +291,8 @@ class ArrayData(hdf.HDFBase):
         Mode determining how a float index item is retrieved,
         i.e. whether and how the index value is interpolated.
 
-    Example
-    -------
+    Examples
+    --------
     >>> # Required steps
     >>> # 1) Create an instance using the default constructor
     >>> ard = ArrayData()
