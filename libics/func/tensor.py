@@ -4,6 +4,8 @@ from libics.util import misc
 
 
 ###############################################################################
+# Tensor Operations
+###############################################################################
 
 
 def vectorize_numpy_array(
@@ -247,3 +249,246 @@ def tensorsolve_numpy_array(ar, res, a_axes=-1, b_axes=-2, res_axes=-1):
         sol_vec, res_shape, tensor_axes=res_axes, vec_axis=-1
     )
     return sol
+
+
+###############################################################################
+# Eigensystems
+###############################################################################
+
+
+class LinearSystem(object):
+
+    """
+    Linear system solver for arbitrary diagonalizable matrices.
+
+    Usage
+    -----
+    * Equation: :math:`M x = y, x = \sum_p b_p m_p`,
+      where :math:`M` is the matrix, :math:`x` is the solution vector,
+      :math:`y` is the result vector, :math:`(\mu_p, m_p)` is the eigensystem
+      and :math:`b_p` is the overlap (eigenvector decomposition).
+    * Initialization: Set the matrix defining the linear system. Set the axes
+      for higher rank tensors.
+    * Given the matrix :math:`M`, this class allows for (1.) the calculation
+      of the eigensystem :math:`(\mu_p, m_p)`, (2.) solving for :math:`x`,
+      and (3.) calculating the result :math:`y`.
+    1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
+       right eigenvectors. Left eigenvectors are obtained by subsequently
+       calling :py:meth:`calc_left_eigenvectors`.
+    2. Given the result vector :math:`y`, there are two options to solve for
+       :math:`x`.
+       a. If the eigensystem was calculated before, one can use
+          :py:meth:`solve_overlap` to obtain the eigenvector decomposition.
+          Subsequently calling :py:meth:`calc_solution` calculates the
+          solution vector :math:`x`.
+       b. Alternatively, the solution can be obtained without eigensystem
+          decomposition with :py:math:`solve`, which only populates
+          the solution vector :math:`x`.
+    3. Given the solution vector :math:`x`, there are two options to obtain
+       the result :math:`y`.
+       a. If the eigensystem was calculated before, one can use
+          :py:meth:`eval_overlap` to obtain the eigenvector decomposition.
+          Subsequently calling :py:meth:`calc_result` calculates the
+          result vector :math:`y`.
+       b. Alternatively, the result can be obtained without eigensystem
+          decomposition with :py:math:`eval`, which only populates
+          the result vector :math:`y`.
+    """
+
+    def __init__(
+        self, matrix=None, mata_axes=-2, matb_axes=-1, vec_axes=-1
+    ):
+        # Tensor dimensions
+        self._mata_axes = None  # Tensor dimensions for mat dim i (ij, j -> i)
+        self._matb_axes = None  # Tensor dimensions for mat dim j (ij, j -> i)
+        self._vec_axes = None   # Tensor dimensions for vector
+        # Eigensystem variables
+        self._factor = None     # Factor to normalize matrix
+        self._matrix = None     # [..., n_dof, n_dof]
+        self._eigvals = None    # [..., n_dof]
+        self._eigvecs = None    # [..., n_dof, n_dof]
+        self._leigvecs = None   # [..., n_dof, n_dof]
+        self._result = None     # [..., n_dof]
+        self._overlap = None    # [..., n_dof]
+        self._solution = None   # [..., n_dof]
+        # Internal temporary variables
+        self._TMP_a_shape = None
+        self._TMP_b_shape = None
+        self._TMP_vec_shape = None
+        self._TMP_a_vecaxes = None
+        self._TMP_b_axes = None
+        self._TMP_vec_axis = -1
+        # Assign init args
+        self.mata_axes = mata_axes
+        self.matb_axes = matb_axes
+        self.vec_axes = vec_axes
+        self.matrix = matrix
+
+    @property
+    def mata_axes(self):
+        return self._mata_axes
+
+    @mata_axes.setter
+    def mata_axes(self, val):
+        if val is not None:
+            self._mata_axes = misc.assume_tuple(val)
+
+    @property
+    def matb_axes(self):
+        return self._matb_axes
+
+    @matb_axes.setter
+    def matb_axes(self, val):
+        if val is not None:
+            self._matb_axes = misc.assume_tuple(val)
+
+    @property
+    def vec_axes(self):
+        return self._vec_axes
+
+    @vec_axes.setter
+    def vec_axes(self, val):
+        if val is not None:
+            self._vec_axes = misc.assume_tuple(val)
+
+    @property
+    def matrix(self):
+        return self._factor * self._unmatricize(self._matrix)
+
+    @matrix.setter
+    def matrix(self, val):
+        if val is not None:
+            val = misc.assume_numpy_array(val)
+            self._factor = np.abs(np.max(val))
+            self._matrix = self._matricize(val / self._factor)
+
+    @property
+    def eigvals(self):
+        return self._factor * self._vectorize(self._eigvals)
+
+    @eigvals.setter
+    def eigvals(self, val):
+        val = misc.assume_numpy_array(val)
+        self._eigvals = self._unvectorize(val / self._factor)
+
+    @property
+    def eigvecs(self):
+        return self._unmatricize(self._eigvecs)
+
+    @eigvecs.setter
+    def eigvecs(self, val):
+        val = misc.assume_numpy_array(val)
+        self._eigvecs = self._matricize(val)
+        self._eigvecs /= np.linalg.norm(
+            self._eigvecs, axis=self._TMP_vec_axis
+        )
+
+    @property
+    def leigvecs(self):
+        return self._unmatricize(self._leigvecs)
+
+    @leigvecs.setter
+    def leigvecs(self, val):
+        val = misc.assume_numpy_array(val)
+        self._leigvecs = self._matricize(val)
+        self._leigvecs /= np.linalg.norm(
+            self._leigvecs, axis=self._TMP_vec_axis
+        )
+
+    @property
+    def result(self):
+        return self._result
+
+    @result.setter
+    def result(self, val):
+        val = misc.assume_numpy_array(val)
+        self._result = val
+
+    @property
+    def overlap(self):
+        return self._overlap
+
+    @overlap.setter
+    def overlap(self, val):
+        val = misc.assume_numpy_array(val)
+        self._overlap = val
+
+    @property
+    def solution(self):
+        return self._solution
+
+    @solution.setter
+    def solution(self, val):
+        val = misc.assume_numpy_array(val)
+        self._solution = val
+
+    # +++++++++++++++++++++++++++++++++++++++++++
+
+    def _matricize(self, ar):
+        (
+            mat, self._TMP_a_shape, self._TMP_b_shape,
+            self._TMP_a_vecaxes, self._TMP_b_axes
+        ) = _matricize_numpy_array(
+            ar, self._mata_axes, self._matb_axes
+        )
+        return mat
+
+    def _unmatricize(self, mat):
+        ar = _unmatricize_numpy_array(
+            mat, self._TMP_a_shape, self._TMP_b_shape,
+            self._TMP_a_vecaxes, self._TMP_b_axes
+        )
+        return ar
+
+    def _vectorize(self, ar):
+        vec, self._TMP_vec_shape = vectorize_numpy_array(
+            ar, tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis,
+            ret_shape=True
+        )
+        return vec
+
+    def _unvectorize(self, vec):
+        ar = tensorize_numpy_array(
+            vec, self._TMP_vec_shape,
+            tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis
+        )
+        return ar
+
+    # +++++++++++++++++++++++++++++++++++++++++++
+
+    def calc_eigensystem(self):
+        eigvals, eigvecs = np.linalg.eig(self._matrix)
+        self._eigvals = eigvals
+        self._eigvecs = eigvecs
+
+    def sort_eigensystem(self, func):
+        raise NotImplementedError
+
+    def calc_left_eigenvectors(self):
+        self._leigvecs = tensorinv_numpy_array(
+            self._eigvecs, a_axes=-2, b_axes=-1
+        )
+
+    def calc_overlap(self, vec):
+        raise NotImplementedError
+
+    def solve_overlap(self, vec):
+        self.calc_overlap(vec)
+        raise NotImplementedError
+
+    def solve_direct(self, res_vec):
+        res_vec = self._vectorize(res_vec)
+        self._solution = tensorsolve_numpy_array(
+            self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
+        )
+
+
+class ComplexSymmetricEigensystem(Eigensystem):
+
+    def __init__(self):
+        super().__init__()
+
+    # +++++++++++++++++++++++++++++++++++++++++++
+
+    def calc_overlap(self):
+        pass

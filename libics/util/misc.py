@@ -79,6 +79,25 @@ def assume_list(data):
         return [data]
 
 
+def assume_numpy_array(data):
+    """
+    Asserts that data is a `numpy.ndarray` object.
+
+    Parameters
+    ----------
+    data
+        Input data to be checked for `numpy.ndarray`.
+
+    Returns
+    -------
+    data : `np.ndarray`
+        Returns a numpy array `data`.
+    """
+    if not isinstance(data, np.ndarray):
+        data = np.array(data)
+    return data
+
+
 def assume_endswith(string, suffix):
     """
     Asserts that the passed `string` ends with with `suffix`. If it does not,
