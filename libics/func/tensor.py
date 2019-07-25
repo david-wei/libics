@@ -191,7 +191,30 @@ def _unmatricize_numpy_array(vec, a_shape, b_shape, a_vecaxes, b_axes):
     return ar
 
 
-def tensorinv_numpy_array(ar, a_axes=-1, b_axes=-2):
+def tensortranspose_numpy_array(ar, a_axes=-2, b_axes=-1):
+    """
+    Transposes the matrix spanned by `a_axes`, `b_axes`.
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Full tensor.
+    a_axes, b_axes : `tuple(int)`
+        Corresponding dimensions to be transposed.
+        These specified dimensions span an effective square matrix.
+
+    Returns
+    -------
+    ar : `np.ndarray`
+        Transposed full tensor.
+    """
+    a_axes, b_axes = misc.assume_iter(a_axes), misc.assume_iter(b_axes)
+    for i, a in enumerate(a_axes):
+        ar = np.swapaxes(ar, a, b_axes[i])
+    return ar
+
+
+def tensorinv_numpy_array(ar, a_axes=-2, b_axes=-1):
     """
     Calculates the tensor inverse (w.r.t. to :py:func:`tensormul_numpy_array`).
 
@@ -218,7 +241,7 @@ def tensorinv_numpy_array(ar, a_axes=-1, b_axes=-2):
     return ar
 
 
-def tensorsolve_numpy_array(ar, res, a_axes=-1, b_axes=-2, res_axes=-1):
+def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     """
     Solves a tensor equation :math:`A x = b` for :math:`x`, where all operands
     may be high-dimensional.
@@ -258,15 +281,31 @@ def tensorsolve_numpy_array(ar, res, a_axes=-1, b_axes=-2, res_axes=-1):
 
 class LinearSystem(object):
 
-    """
+    r"""
     Linear system solver for arbitrary diagonalizable matrices.
 
-    Usage
+    Parameters
+    ----------
+    matrix : `np.ndarray`
+        Possibly high rank tensor representable as diagonalizable
+        matrix, defining a linear system. There must be two sets of
+        dimensions which can be reshaped as square matrix. The remaining
+        dimensions will be broadcasted.
+    mata_axes, matb_axes, vec_axes : `tuple(int)`
+        Axes representing the multidimensional indices of the matrix.
+        :math:`M = M_{\{a1, ...\}, \{b1, ...\}}, x, y = x, y_{\{v1, ...\}}`.
+        :math:`M x = y = \sum_b M_{a, b} x_b = y_a`.
+        The shape of each dimension must be identical and the total number
+        defines the degrees of freedom :math:`n_{\text{dof}} = \prod_i n_i`.
+
+    Notes
     -----
+    Usage:
+
     * Equation: :math:`M x = y, x = \sum_p b_p m_p`,
       where :math:`M` is the matrix, :math:`x` is the solution vector,
       :math:`y` is the result vector, :math:`(\mu_p, m_p)` is the eigensystem
-      and :math:`b_p` is the overlap (eigenvector decomposition).
+      and :math:`b_p` is the eigenvector decomposition.
     * Initialization: Set the matrix defining the linear system. Set the axes
       for higher rank tensors.
     * Given the matrix :math:`M`, this class allows for (1.) the calculation
@@ -278,7 +317,7 @@ class LinearSystem(object):
     2. Given the result vector :math:`y`, there are two options to solve for
        :math:`x`.
        a. If the eigensystem was calculated before, one can use
-          :py:meth:`solve_overlap` to obtain the eigenvector decomposition.
+          :py:meth:`decomp_result` to obtain the eigenvector decomposition.
           Subsequently calling :py:meth:`calc_solution` calculates the
           solution vector :math:`x`.
        b. Alternatively, the solution can be obtained without eigensystem
@@ -287,9 +326,9 @@ class LinearSystem(object):
     3. Given the solution vector :math:`x`, there are two options to obtain
        the result :math:`y`.
        a. If the eigensystem was calculated before, one can use
-          :py:meth:`eval_overlap` to obtain the eigenvector decomposition.
-          Subsequently calling :py:meth:`calc_result` calculates the
-          result vector :math:`y`.
+          :py:meth:`decomp_solution` to obtain the eigenvector
+          decomposition. Subsequently calling :py:meth:`calc_result`
+          calculates the result vector :math:`y`.
        b. Alternatively, the result can be obtained without eigensystem
           decomposition with :py:math:`eval`, which only populates
           the result vector :math:`y`.
@@ -306,10 +345,10 @@ class LinearSystem(object):
         self._factor = None     # Factor to normalize matrix
         self._matrix = None     # [..., n_dof, n_dof]
         self._eigvals = None    # [..., n_dof]
-        self._eigvecs = None    # [..., n_dof, n_dof]
-        self._leigvecs = None   # [..., n_dof, n_dof]
+        self._reigvecs = None   # [..., n_dof, n_components]
+        self._leigvecs = None   # [..., n_dof, n_components]
         self._result = None     # [..., n_dof]
-        self._overlap = None    # [..., n_dof]
+        self._decomp = None     # [..., n_dof]
         self._solution = None   # [..., n_dof]
         # Internal temporary variables
         self._TMP_a_shape = None
@@ -373,14 +412,14 @@ class LinearSystem(object):
 
     @property
     def eigvecs(self):
-        return self._unmatricize(self._eigvecs)
+        return self._unmatricize(self._reigvecs)
 
     @eigvecs.setter
     def eigvecs(self, val):
         val = misc.assume_numpy_array(val)
-        self._eigvecs = self._matricize(val)
-        self._eigvecs /= np.linalg.norm(
-            self._eigvecs, axis=self._TMP_vec_axis
+        self._reigvecs = self._matricize(val)
+        self._reigvecs /= np.linalg.norm(
+            self._reigvecs, axis=self._TMP_vec_axis
         )
 
     @property
@@ -405,13 +444,13 @@ class LinearSystem(object):
         self._result = val
 
     @property
-    def overlap(self):
-        return self._overlap
+    def decomp(self):
+        return self._decomp
 
-    @overlap.setter
-    def overlap(self, val):
+    @decomp.setter
+    def decomp(self, val):
         val = misc.assume_numpy_array(val)
-        self._overlap = val
+        self._decomp = val
 
     @property
     def solution(self):
@@ -456,39 +495,151 @@ class LinearSystem(object):
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
-    def calc_eigensystem(self):
-        eigvals, eigvecs = np.linalg.eig(self._matrix)
-        self._eigvals = eigvals
-        self._eigvecs = eigvecs
+    def _calc_leigvecs(self):
+        """
+        Calculates the left eigenvectors from the right eigenvectors.
 
-    def sort_eigensystem(self, func):
-        raise NotImplementedError
-
-    def calc_left_eigenvectors(self):
+        Notes
+        -----
+        Inverts the right eigenvector matrix. To improve performance:
+        overload this function if matrix has additional symmetries.
+        """
         self._leigvecs = tensorinv_numpy_array(
-            self._eigvecs, a_axes=-2, b_axes=-1
+            tensortranspose_numpy_array(self._reigvecs, a_axes=-2, b_axes=-1),
+            a_axes=-2, b_axes=-1
         )
 
-    def calc_overlap(self, vec):
-        raise NotImplementedError
+    def calc_eigensystem(self):
+        """
+        Calculates eigenvalues, left and right eigenvectors.
+        """
+        eigvals, reigvecs = np.linalg.eig(self._matrix)
+        self._eigvals = eigvals
+        self._reigvecs = tensortranspose_numpy_array(
+            reigvecs, a_axes=-2, b_axes=-1
+        )
+        self._calc_leigvecs()
 
-    def solve_overlap(self, vec):
-        self.calc_overlap(vec)
-        raise NotImplementedError
+    def sort_eigensystem(self, order=None):
+        """
+        Sorts the eigensystem according to the given order.
 
-    def solve_direct(self, res_vec):
-        res_vec = self._vectorize(res_vec)
+        Parameters
+        ----------
+        order : `np.ndarray(1)` or `None`
+            `np.ndarray(1)`: index order defined by this array.
+            `None`: index order ascending in eigenvalue.
+        """
+        if order is None:
+            order = np.argsort(self._eigvals, axis=-1)
+        self._eigvals = self._eigvals[..., order]
+        self._reigvecs = self._reigvecs[..., order, :]
+        self._leigvecs = self._leigvecs[..., order, :]
+
+    def decomp_solution(self, sol_vec=None):
+        """
+        Decomposes a solution vector :math:`x` into an overlap vector
+        :math:`b`.
+        """
+        if sol_vec is None:
+            sol_vec = self._solution
+        else:
+            sol_vec = self._vectorize(sol_vec)
+        self._decomp = tensormul_numpy_array(
+            self._leigvecs, sol_vec,
+            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
+        )
+
+    def decomp_result(self, res_vec=None):
+        """
+        Decomposes a result vector :math:`y` into an overlap vector :math:`b`.
+        """
+        if res_vec is None:
+            res_vec = self._result
+        else:
+            res_vec = self._vectorize(res_vec)
+        self._decomp = tensormul_numpy_array(
+            self._leigvecs / self._eigvals, res_vec,
+            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
+        )
+
+    def calc_solution(self, decomp_vec=None):
+        """
+        Calculates the solution vector :math:`x` from a decomposition vector
+        :math:`b`.
+        """
+        if decomp_vec is None:
+            decomp_vec = self._decomp
+        else:
+            decomp_vec = self._vectorize(decomp_vec)
+        self._solution = tensormul_numpy_array(
+            decomp_vec, self._reigvecs,
+            a_axes=(..., 0), b_axes=(..., 0, 1), res_axes=(..., 1)
+        )
+
+    def calc_result(self, decomp_vec=None):
+        """
+        Calculates the result vector :math:`y` from a decomposition vector
+        :math:`b`.
+        """
+        if decomp_vec is None:
+            decomp_vec = self._decomp
+        else:
+            decomp_vec = self._vectorize(decomp_vec)
+        self._result = tensormul_numpy_array(
+            self._eigvals * decomp_vec, self._reigvecs,
+            a_axes=(..., 0), b_axes=(..., 0, 1), res_axes=(..., 1)
+        )
+
+    def solve(self, res_vec=None):
+        """
+        For a given result vector :math:`y`, directly solves for the solution
+        vector :math:`x`.
+        """
+        if res_vec is None:
+            res_vec = self._result
+        else:
+            res_vec = self._vectorize(res_vec)
         self._solution = tensorsolve_numpy_array(
             self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
         )
 
+    def eval(self, sol_vec=None):
+        """
+        For a given solution vector :math:`x`, directly evaluates the result
+        vector :math:`y`.
+        """
+        if sol_vec is None:
+            sol_vec = self._solution
+        else:
+            sol_vec = self._vectorize(sol_vec)
+        self._result = tensormul_numpy_array(
+            self._matrix, sol_vec,
+            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
+        )
 
-class ComplexSymmetricEigensystem(Eigensystem):
 
-    def __init__(self):
-        super().__init__()
+class HermitianLS(LinearSystem):
 
-    # +++++++++++++++++++++++++++++++++++++++++++
+    """
+    Linear system solver for Hermitian diagonalizable matrices.
+    """
 
-    def calc_overlap(self):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def calc_left_eigenvectors(self):
+        self._leigvecs = np.conjugate(self._reigvecs)
+
+
+class ComplexSymmetricLS(LinearSystem):
+
+    """
+    Linear system solver for complex symmetric diagonalizable matrices.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def calc_left_eigenvectors(self):
+        self._leigvecs = np.array(self._reigvecs)
