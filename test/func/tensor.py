@@ -83,21 +83,7 @@ class LinearSystemTestCase(unittest.TestCase):
         self.mulc_axes_t = (0, 5, 6, 3, 4)
         self.mulcres_axes = (0, 1, 2, 5, 6)
 
-        # """
-        self.mat_shape = (3, 3)
-        self.vec_shape = (3,)
-        self.mata_axes = (0,)
-        self.matb_axes = (1,)
-        self.vec_axes = (0,)
-        self.mula_axes = (0, 1)
-        self.mulb_axes = (1,)
-        self.mulc_axes = (1, 2)
-        self.mulres_axes = (0,)
-        self.mulc_axes_t = (2, 1)
-        self.mulcres_axes = (0, 2)
-        # """
-
-        np.random.seed(123)
+        np.random.seed(0)
         self.mat = self._generate_random_array(self.mat_shape)
         self.hmat = self._generate_random_array(self.mat_shape)
         self.hmat = (self.hmat + np.conjugate(
@@ -162,22 +148,12 @@ class LinearSystemTestCase(unittest.TestCase):
         ls.calc_eigensystem()
         ls.solution = self.x.copy()
         ls.decomp_solution()
-        print(tensor.tensormul_numpy_array(
-            ls.leigvecs, ls.reigvecs,
-            a_axes=self.mula_axes, b_axes=self.mulc_axes_t,
-            res_axes=self.mulcres_axes
-        ))
         # Hermitian linear system
         hls = tensor.HermitianLS(
             matrix=self.hmat, mata_axes=self.mata_axes,
             matb_axes=self.matb_axes, vec_axes=self.vec_axes
         )
         hls.calc_eigensystem()
-        print(tensor.tensormul_numpy_array(
-            hls.leigvecs, hls.reigvecs,
-            a_axes=self.mula_axes, b_axes=self.mulc_axes_t,
-            res_axes=self.mulcres_axes
-        ))
         self.assertTrue(np.allclose(hls.leigvecs, ls.leigvecs))
         hls.solution = self.x.copy()
         hls.decomp_solution()
@@ -188,11 +164,6 @@ class LinearSystemTestCase(unittest.TestCase):
             matb_axes=self.matb_axes, vec_axes=self.vec_axes
         )
         ls.calc_eigensystem()
-        print(tensor.tensormul_numpy_array(
-            ls.leigvecs, ls.reigvecs,
-            a_axes=self.mula_axes, b_axes=self.mulc_axes_t,
-            res_axes=self.mulcres_axes
-        ))
         ls.solution = self.x.copy()
         ls.decomp_solution()
         # Complex symmetric linear system
@@ -201,12 +172,6 @@ class LinearSystemTestCase(unittest.TestCase):
             matb_axes=self.matb_axes, vec_axes=self.vec_axes
         )
         sls.calc_eigensystem()
-        print(tensor.tensormul_numpy_array(
-            sls.leigvecs, sls.reigvecs,
-            a_axes=self.mula_axes, b_axes=self.mulc_axes_t,
-            res_axes=self.mulcres_axes
-        ))
-        print(sls.leigvecs - ls.leigvecs)
         self.assertTrue(np.allclose(sls.leigvecs, ls.leigvecs))
         sls.solution = self.x.copy()
         sls.decomp_solution()

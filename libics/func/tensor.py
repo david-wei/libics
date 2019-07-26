@@ -274,6 +274,32 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     return sol
 
 
+def complex_norm(ar, vec_axes=None):
+    r"""
+    Computes the norm :math:`\sqrt{x^T x}` on the complex (tensorial) vector
+    :math:`x`.
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Array constituting the vector to be normalized.
+    vec_axes : `tuple(int)`
+        Tensorial indices corresponding to the vectorial dimensions.
+
+    Returns
+    -------
+    norm : `np.ndarray`
+        Resulting norm with removed vectorial axes.
+    """
+    ar = misc.assume_numpy_array(ar)
+    if vec_axes is None:
+        vec_axes = tuple(range(ar.ndim))
+    vec_axes = misc.assume_tuple(vec_axes)
+    vec = vectorize_numpy_array(ar, tensor_axes=vec_axes, vec_axis=-1)
+    norm = np.einsum("...i,...i", vec, vec)
+    return norm
+
+
 ###############################################################################
 # Eigensystems
 ###############################################################################
@@ -683,4 +709,6 @@ class SymmetricLS(DiagonalizableLS):
         super().__init__(*args, **kwargs)
 
     def _calc_leigvecs(self):
+        cnorm = complex_norm(self._reigvecs, vec_axes=-1)
+        self._reigvecs /= cnorm[..., np.newaxis]
         self._leigvecs = np.array(self._reigvecs)
