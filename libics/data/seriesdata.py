@@ -77,8 +77,8 @@ class SeriesData(hdf.HDFBase):
         """
         Get data by variable index addressing [variable].
 
-        Example
-        -------
+        Examples
+        --------
         >>> sd = SeriesData()
         >>> sd.data = np.arange(30).reshape((3, 10))
         >>> sd.add_dimension(name="x")      # index 0

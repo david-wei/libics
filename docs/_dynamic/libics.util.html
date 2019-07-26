@@ -87,6 +87,12 @@ inheritance map key, e.g.:</p>
 <p>Decorator. Caches a function’s return value each time it is called.
 If called later with the same arguments, the cached value is returned
 (not reevaluated).</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@Memoize</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">example_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+</pre></div>
+</div>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -233,6 +239,26 @@ list. If not, a list is created with the data as single item.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>data</strong><span class="classifier">list</span></dt><dd><p>Returns a list containing <cite>data</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.assume_numpy_array">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">assume_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.assume_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that data is a <cite>numpy.ndarray</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd><p>Input data to be checked for <cite>numpy.ndarray</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>data</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Returns a numpy array <cite>data</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -442,6 +468,10 @@ mutual, ordered combinations.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>&gt;&gt;&gt;&gt; ls = [(1, 2), (5, ), (7, 8)]
+&gt;&gt;&gt;&gt; get_combinations(ls)
+[[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]</p>
 </dd></dl>
 
 <dl class="function">
@@ -551,6 +581,9 @@ values, i.e. func(<a href="#id1"><span class="problematic" id="id2">*</span></a>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>map_dicts(func, d1, d2) performs new_dict[key] = func(d1, d2) for all
+keys common to both d1 and d2.</p>
 </dd></dl>
 
 <dl class="function">
@@ -705,118 +738,6 @@ given string is cast to numerical format.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="libics.util.misc.tensorinv_numpy_array">
-<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">tensorinv_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">a_axes=-1</em>, <em class="sig-param">b_axes=-2</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.tensorinv_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the tensor inverse (w.r.t. to <a class="reference internal" href="#libics.util.misc.tensormul_numpy_array" title="libics.util.misc.tensormul_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensormul_numpy_array()</span></code></a>).</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Full tensor.</p>
-</dd>
-<dt><strong>a_axes, b_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Corresponding dimensions to be inverted.
-These specified dimensions span an effective square matrix.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Inverted full tensor.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="libics.util.misc.tensorize_numpy_array">
-<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">tensorize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">vec</em>, <em class="sig-param">tensor_shape</em>, <em class="sig-param">tensor_axes=(-2</em>, <em class="sig-param">-1)</em>, <em class="sig-param">vec_axis=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.tensorize_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tensorizes a vectorized <cite>numpy</cite> array. Opposite of
-<a class="reference internal" href="#libics.util.misc.vectorize_numpy_array" title="libics.util.misc.vectorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">vectorize_numpy_array()</span></code></a>.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>vec</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector array.</p>
-</dd>
-<dt><strong>tensor_shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Shape of tensorized dimensions.</p>
-</dd>
-<dt><strong>tensor_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensor axes of resulting array. Tensorization is performed
-in C-like order.</p>
-</dd>
-<dt><strong>vec_axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimension of vector array to be tensorized.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor array.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="libics.util.misc.tensormul_numpy_array">
-<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">tensormul_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">a_axes=(Ellipsis</em>, <em class="sig-param">0)</em>, <em class="sig-param">b_axes=(0</em>, <em class="sig-param">Ellipsis)</em>, <em class="sig-param">res_axes=(Ellipsis</em>, <em class="sig-param">)</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.tensormul_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Einstein-sums two <cite>numpy</cite> tensors.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>a, b</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor operands.</p>
-</dd>
-<dt><strong>a_axes, b_axes, res_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Indices of Einstein summation. Dimensions are interpreted
-relative. Allows for use of ellipses.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>res</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Combined result tensor.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This function wraps <cite>numpy.einsum</cite>.</p>
-<p class="rubric">Examples</p>
-<p>Denote: (a_axes), (b_axes) -&gt; (res_axes) [<cite>np.einsum</cite> string]</p>
-<ul class="simple">
-<li><p>Matrix multiplication: e.g.
-(0, 1), (1, 2) -&gt; (0, 2) [“ij,jk-&gt;ik”].</p></li>
-<li><p>Tensor dot: e.g.
-(0, 1, 2, 3), (4, 2, 3, 5) -&gt; (0, 1, 4, 5) [“ijkl,mjkn-&gt;ilmn”].</p></li>
-<li><p>Tensor dot with broadcasting: e.g.
-(0, 1, 2, 3), (0, 1, 2, 3) -&gt; (0, 3) [“ijkl,ijkl-&gt;il”].</p></li>
-</ul>
-</dd></dl>
-
-<dl class="function">
-<dt id="libics.util.misc.tensorsolve_numpy_array">
-<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">tensorsolve_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">res</em>, <em class="sig-param">a_axes=-1</em>, <em class="sig-param">b_axes=-2</em>, <em class="sig-param">res_axes=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.tensorsolve_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solves a tensor equation <span class="math notranslate nohighlight">\(A x = b\)</span> for <span class="math notranslate nohighlight">\(x\)</span>, where all operands
-may be high-dimensional.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Matrix tensor <span class="math notranslate nohighlight">\(A\)</span>.</p>
-</dd>
-<dt><strong>res</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector tensor <span class="math notranslate nohighlight">\(b\)</span>.</p>
-</dd>
-<dt><strong>a_axes, b_axes, res_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensorial indices corresponding to
-<span class="math notranslate nohighlight">\(\sum_{b} A_{ab} x_b = y_{res}\)</span>.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>sol</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Solution vector tensor <span class="math notranslate nohighlight">\(x\)</span> with solution indices res_axes.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="libics.util.misc.transpose_array">
 <code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">transpose_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.transpose_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transposes a rectangular array.</p>
@@ -834,52 +755,6 @@ may be high-dimensional.</p>
 </dl>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="libics.util.misc.vectorize_numpy_array">
-<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">vectorize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">tensor_axes=(-2</em>, <em class="sig-param">-1)</em>, <em class="sig-param">vec_axis=-1</em>, <em class="sig-param">ret_shape=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.vectorize_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vectorizes a tensor (high-dimensional) <cite>numpy</cite> array. Opposite of
-<a class="reference internal" href="#libics.util.misc.tensorize_numpy_array" title="libics.util.misc.tensorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensorize_numpy_array()</span></code></a>.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor array.</p>
-</dd>
-<dt><strong>tensor_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensor axes to be vectorized. Vectorization is performed
-in C-like order.</p>
-</dd>
-<dt><strong>vec_axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Vectorized dimension of resulting vector array.</p>
-</dd>
-<dt><strong>ret_shape</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to return the shape of the vectorized dimensions.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>vec</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector array.</p>
-</dd>
-<dt><strong>vec_shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>If ret_shape is set: shape of vectorized dimensions.
-Useful as parameter for tensorization.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Performance is maximal for back-aligned, ordered vectorization since
-in-place data ordering is possible.</p>
-<p class="rubric">Examples</p>
-<p>Given a tensor A[i, j, k, l], required is a vectorized version
-A[i, j*k, l]. The corresponding call would be:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(2, 3, 4, 5)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">vectorize_numpy_array</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">tensor_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">vec_axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(2, 12, 5)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </div>

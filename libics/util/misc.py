@@ -306,8 +306,8 @@ def map_dicts(
     d : dict
         Mapped dictionary.
 
-    Example
-    -------
+    Examples
+    --------
     map_dicts(func, d1, d2) performs new_dict[key] = func(d1, d2) for all
     keys common to both d1 and d2.
     """
@@ -688,8 +688,8 @@ def get_combinations(ls):
     comb : list
         Combinations list.
 
-    Example
-    -------
+    Examples
+    --------
     >>>> ls = [(1, 2), (5, ), (7, 8)]
     >>>> get_combinations(ls)
     [[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]

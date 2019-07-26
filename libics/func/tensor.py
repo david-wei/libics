@@ -276,8 +276,8 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
 
 def complex_norm(ar, vec_axes=None):
     r"""
-    Computes the norm :math:`\sqrt{x^T x}` on the complex (tensorial) vector
-    :math:`x`.
+    Computes the pseudonorm :math:`\sqrt{x^T x}` on the complex (tensorial)
+    vector :math:`x`.
 
     Parameters
     ----------
@@ -308,18 +308,21 @@ def complex_norm(ar, vec_axes=None):
 class LinearSystem(object):
 
     r"""
-    Linear system evaluator for arbitrary complex matrices.
+    Linear system solver for arbitrary complex matrices.
 
     The linear system is defined as
+
     .. math::
         M x = y,
+
     where :math:`M` is the matrix, :math:`x` is the solution vector, and
     :math:`y` is the result vector.
 
     For a given matrix :math:`M` and solution vector :math:`x`, this class
-    supports evaluation of :math:`y`. The matrix and vector dimensions can
-    consist of multiple indices which are automatically linearized.
-    For a system solver, refer to :py:class:`DiagonalizableLS`.
+    supports evaluation of :math:`y`. If :math:`y` is given, the system
+    supports direct solving for :math:`x`. The matrix and vector dimensions
+    can consist of multiple indices which are automatically linearized.
+    For an eigensystem solver, refer to :py:class:`DiagonalizableLS`.
 
     Parameters
     ----------
@@ -330,7 +333,7 @@ class LinearSystem(object):
         dimensions will be broadcasted.
     mata_axes, matb_axes, vec_axes : `tuple(int)`
         Axes representing the multidimensional indices of the matrix.
-        :math:`M = M_{\{a1, ...\}, \{b1, ...\}}, x, y = x, y_{\{v1, ...\}}`.
+        :math:`M = M_{\{a_1, ...\}, \{b_1, ...\}}, x, y = x, y_{\{v_1, ...\}}`.
         :math:`M x = y = \sum_b M_{a, b} x_b = y_a`.
         The shape of each dimension must be identical and the total number
         defines the degrees of freedom :math:`n_{\text{dof}} = \prod_i n_i`.
@@ -460,6 +463,7 @@ class LinearSystem(object):
             res_vec = self._result
         else:
             res_vec = self._vectorize(res_vec)
+        # TODO: scalable solution for non-square matrices
         self._solution = tensorsolve_numpy_array(
             self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
         )
@@ -485,8 +489,10 @@ class DiagonalizableLS(LinearSystem):
     Eigensystem solver for arbitrary square diagonalizable matrices.
 
     The linear system is defined as
+
     .. math::
         M x = y, x = \sum_p b_p m_p,
+
     where :math:`M` is the matrix, :math:`x` is the solution vector,
     :math:`y` is the result vector, :math:`(\mu_p, m_p)` is the eigensystem
     and :math:`b_p` is the eigenvector decomposition.
@@ -504,25 +510,27 @@ class DiagonalizableLS(LinearSystem):
       of the eigensystem :math:`(\mu_p, m_p)`, (2.) solving for :math:`x`,
       and (3.) calculating the result :math:`y`.
     1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
-       right eigenvectors. Left eigenvectors are obtained by subsequently
-       calling :py:meth:`calc_left_eigenvectors`.
+       left/right eigenvectors.
     2. Given the result vector :math:`y`, there are two options to solve for
        :math:`x`.
+
        a. If the eigensystem was calculated before, one can use
           :py:meth:`decomp_result` to obtain the eigenvector decomposition.
           Subsequently calling :py:meth:`calc_solution` calculates the
           solution vector :math:`x`.
        b. Alternatively, the solution can be obtained without eigensystem
-          decomposition with :py:math:`solve`, which only populates
+          decomposition with :py:meth:`solve`, which only populates
           the solution vector :math:`x`.
+
     3. Given the solution vector :math:`x`, there are two options to obtain
        the result :math:`y`.
+
        a. If the eigensystem was calculated before, one can use
           :py:meth:`decomp_solution` to obtain the eigenvector
           decomposition. Subsequently calling :py:meth:`calc_result`
           calculates the result vector :math:`y`.
        b. Alternatively, the result can be obtained without eigensystem
-          decomposition with :py:math:`eval`, which only populates
+          decomposition with :py:meth:`eval`, which only populates
           the result vector :math:`y`.
     """
 

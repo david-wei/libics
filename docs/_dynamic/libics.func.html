@@ -525,6 +525,606 @@ e^{-\frac{N}{\mu} x} + C\]</div>
 </dd></dl>
 
 </div>
+<div class="section" id="module-libics.func.tensor">
+<span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-libics.func.tensor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.func.tensor.DiagonalizableLS">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">DiagonalizableLS</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.func.tensor.LinearSystem" title="libics.func.tensor.LinearSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.tensor.LinearSystem</span></code></a></p>
+<p>Eigensystem solver for arbitrary square diagonalizable matrices.</p>
+<p>The linear system is defined as</p>
+<div class="math notranslate nohighlight">
+\[M x = y, x = \sum_p b_p m_p,\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the matrix, <span class="math notranslate nohighlight">\(x\)</span> is the solution vector,
+<span class="math notranslate nohighlight">\(y\)</span> is the result vector, <span class="math notranslate nohighlight">\((\mu_p, m_p)\)</span> is the eigensystem
+and <span class="math notranslate nohighlight">\(b_p\)</span> is the eigenvector decomposition.</p>
+<p>If the matrix has additional properties, please use the subclasses
+<a class="reference internal" href="#libics.func.tensor.HermitianLS" title="libics.func.tensor.HermitianLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">HermitianLS</span></code></a> and <a class="reference internal" href="#libics.func.tensor.SymmetricLS" title="libics.func.tensor.SymmetricLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">SymmetricLS</span></code></a>.</p>
+<p class="rubric">Notes</p>
+<p>Usage:</p>
+<ul class="simple">
+<li><p>Initialization: Set the matrix defining the linear system. Set the axes
+for higher rank tensors.</p></li>
+<li><p>Given the matrix <span class="math notranslate nohighlight">\(M\)</span>, this class allows for (1.) the calculation
+of the eigensystem <span class="math notranslate nohighlight">\((\mu_p, m_p)\)</span>, (2.) solving for <span class="math notranslate nohighlight">\(x\)</span>,
+and (3.) calculating the result <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Run <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_eigensystem" title="libics.func.tensor.DiagonalizableLS.calc_eigensystem"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_eigensystem()</span></code></a> to calculate eigenvalues and
+left/right eigenvectors.</p></li>
+<li><p>Given the result vector <span class="math notranslate nohighlight">\(y\)</span>, there are two options to solve for
+<span class="math notranslate nohighlight">\(x\)</span>.</p>
+<ol class="loweralpha simple">
+<li><p>If the eigensystem was calculated before, one can use
+<a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.decomp_result" title="libics.func.tensor.DiagonalizableLS.decomp_result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decomp_result()</span></code></a> to obtain the eigenvector decomposition.
+Subsequently calling <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_solution" title="libics.func.tensor.DiagonalizableLS.calc_solution"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_solution()</span></code></a> calculates the
+solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p>Alternatively, the solution can be obtained without eigensystem
+decomposition with <code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code>, which only populates
+the solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+</ol>
+</li>
+<li><p>Given the solution vector <span class="math notranslate nohighlight">\(x\)</span>, there are two options to obtain
+the result <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<ol class="loweralpha simple">
+<li><p>If the eigensystem was calculated before, one can use
+<a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.decomp_solution" title="libics.func.tensor.DiagonalizableLS.decomp_solution"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decomp_solution()</span></code></a> to obtain the eigenvector
+decomposition. Subsequently calling <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_result" title="libics.func.tensor.DiagonalizableLS.calc_result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_result()</span></code></a>
+calculates the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p>Alternatively, the result can be obtained without eigensystem
+decomposition with <code class="xref py py-meth docutils literal notranslate"><span class="pre">eval()</span></code>, which only populates
+the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+</ol>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>decomp</strong></dt><dd></dd>
+<dt><strong>eigvals</strong></dt><dd></dd>
+<dt><strong>eigvecs</strong></dt><dd></dd>
+<dt><strong>leigvecs</strong></dt><dd></dd>
+<dt><strong>mata_axes</strong></dt><dd></dd>
+<dt><strong>matb_axes</strong></dt><dd></dd>
+<dt><strong>matrix</strong></dt><dd></dd>
+<dt><strong>reigvecs</strong></dt><dd></dd>
+<dt><strong>result</strong></dt><dd></dd>
+<dt><strong>solution</strong></dt><dd></dd>
+<dt><strong>vec_axes</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_eigensystem" title="libics.func.tensor.DiagonalizableLS.calc_eigensystem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_eigensystem</span></code></a>(self)</p></td>
+<td><p>Calculates eigenvalues, left and right eigenvectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_result" title="libics.func.tensor.DiagonalizableLS.calc_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_result</span></code></a>(self[, decomp_vec])</p></td>
+<td><p>Calculates the result vector <span class="math notranslate nohighlight">\(y\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.calc_solution" title="libics.func.tensor.DiagonalizableLS.calc_solution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_solution</span></code></a>(self[, decomp_vec])</p></td>
+<td><p>Calculates the solution vector <span class="math notranslate nohighlight">\(x\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.decomp_result" title="libics.func.tensor.DiagonalizableLS.decomp_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_result</span></code></a>(self[, res_vec])</p></td>
+<td><p>Decomposes a result vector <span class="math notranslate nohighlight">\(y\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.decomp_solution" title="libics.func.tensor.DiagonalizableLS.decomp_solution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_solution</span></code></a>(self[, sol_vec])</p></td>
+<td><p>Decomposes a solution vector <span class="math notranslate nohighlight">\(x\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self[, sol_vec])</p></td>
+<td><p>For a given solution vector <span class="math notranslate nohighlight">\(x\)</span>, directly evaluates the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code>(self[, res_vec])</p></td>
+<td><p>For a given result vector <span class="math notranslate nohighlight">\(y\)</span>, directly solves for the solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.tensor.DiagonalizableLS.sort_eigensystem" title="libics.func.tensor.DiagonalizableLS.sort_eigensystem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_eigensystem</span></code></a>(self[, order])</p></td>
+<td><p>Sorts the eigensystem according to the given order.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.calc_eigensystem">
+<code class="sig-name descname">calc_eigensystem</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.calc_eigensystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates eigenvalues, left and right eigenvectors.
+By default the eigenvalues are sorted in a descending order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.calc_result">
+<code class="sig-name descname">calc_result</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">decomp_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.calc_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the result vector <span class="math notranslate nohighlight">\(y\)</span> from a decomposition vector
+<span class="math notranslate nohighlight">\(b\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.calc_solution">
+<code class="sig-name descname">calc_solution</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">decomp_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.calc_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the solution vector <span class="math notranslate nohighlight">\(x\)</span> from a decomposition vector
+<span class="math notranslate nohighlight">\(b\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.decomp">
+<em class="property">property </em><code class="sig-name descname">decomp</code><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.decomp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.decomp_result">
+<code class="sig-name descname">decomp_result</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">res_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.decomp_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decomposes a result vector <span class="math notranslate nohighlight">\(y\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.decomp_solution">
+<code class="sig-name descname">decomp_solution</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sol_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.decomp_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decomposes a solution vector <span class="math notranslate nohighlight">\(x\)</span> into an overlap vector
+<span class="math notranslate nohighlight">\(b\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.eigvals">
+<em class="property">property </em><code class="sig-name descname">eigvals</code><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.eigvals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.eigvecs">
+<em class="property">property </em><code class="sig-name descname">eigvecs</code><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.eigvecs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.leigvecs">
+<em class="property">property </em><code class="sig-name descname">leigvecs</code><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.leigvecs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.reigvecs">
+<em class="property">property </em><code class="sig-name descname">reigvecs</code><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.reigvecs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.DiagonalizableLS.sort_eigensystem">
+<code class="sig-name descname">sort_eigensystem</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">order=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.DiagonalizableLS.sort_eigensystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts the eigensystem according to the given order.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>order</strong><span class="classifier"><cite>np.ndarray(1)</cite> or <cite>None</cite></span></dt><dd><p><cite>np.ndarray(1)</cite>: index order defined by this array.
+<cite>None</cite>: index order ascending in eigenvalue.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.func.tensor.HermitianLS">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">HermitianLS</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.HermitianLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS" title="libics.func.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.tensor.DiagonalizableLS</span></code></a></p>
+<p>Eigensystem solver for Hermitian diagonalizable matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>decomp</strong></dt><dd></dd>
+<dt><strong>eigvals</strong></dt><dd></dd>
+<dt><strong>eigvecs</strong></dt><dd></dd>
+<dt><strong>leigvecs</strong></dt><dd></dd>
+<dt><strong>mata_axes</strong></dt><dd></dd>
+<dt><strong>matb_axes</strong></dt><dd></dd>
+<dt><strong>matrix</strong></dt><dd></dd>
+<dt><strong>reigvecs</strong></dt><dd></dd>
+<dt><strong>result</strong></dt><dd></dd>
+<dt><strong>solution</strong></dt><dd></dd>
+<dt><strong>vec_axes</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_eigensystem</span></code>(self)</p></td>
+<td><p>Calculates eigenvalues, left and right eigenvectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_result</span></code>(self[, decomp_vec])</p></td>
+<td><p>Calculates the result vector <span class="math notranslate nohighlight">\(y\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_solution</span></code>(self[, decomp_vec])</p></td>
+<td><p>Calculates the solution vector <span class="math notranslate nohighlight">\(x\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_result</span></code>(self[, res_vec])</p></td>
+<td><p>Decomposes a result vector <span class="math notranslate nohighlight">\(y\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_solution</span></code>(self[, sol_vec])</p></td>
+<td><p>Decomposes a solution vector <span class="math notranslate nohighlight">\(x\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self[, sol_vec])</p></td>
+<td><p>For a given solution vector <span class="math notranslate nohighlight">\(x\)</span>, directly evaluates the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code>(self[, res_vec])</p></td>
+<td><p>For a given result vector <span class="math notranslate nohighlight">\(y\)</span>, directly solves for the solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_eigensystem</span></code>(self[, order])</p></td>
+<td><p>Sorts the eigensystem according to the given order.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.func.tensor.LinearSystem">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">LinearSystem</code><span class="sig-paren">(</span><em class="sig-param">matrix=None</em>, <em class="sig-param">mata_axes=-2</em>, <em class="sig-param">matb_axes=-1</em>, <em class="sig-param">vec_axes=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.LinearSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Linear system solver for arbitrary complex matrices.</p>
+<p>The linear system is defined as</p>
+<div class="math notranslate nohighlight">
+\[M x = y,\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the matrix, <span class="math notranslate nohighlight">\(x\)</span> is the solution vector, and
+<span class="math notranslate nohighlight">\(y\)</span> is the result vector.</p>
+<p>For a given matrix <span class="math notranslate nohighlight">\(M\)</span> and solution vector <span class="math notranslate nohighlight">\(x\)</span>, this class
+supports evaluation of <span class="math notranslate nohighlight">\(y\)</span>. If <span class="math notranslate nohighlight">\(y\)</span> is given, the system
+supports direct solving for <span class="math notranslate nohighlight">\(x\)</span>. The matrix and vector dimensions
+can consist of multiple indices which are automatically linearized.
+For an eigensystem solver, refer to <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS" title="libics.func.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiagonalizableLS</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>matrix</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Possibly high rank tensor representable as diagonalizable
+matrix, defining a linear system. There must be two sets of
+dimensions which can be reshaped as square matrix. The remaining
+dimensions will be broadcasted.</p>
+</dd>
+<dt><strong>mata_axes, matb_axes, vec_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Axes representing the multidimensional indices of the matrix.
+<span class="math notranslate nohighlight">\(M = M_{\{a1, ...\}, \{b1, ...\}}, x, y = x, y_{\{v1, ...\}}\)</span>.
+<span class="math notranslate nohighlight">\(M x = y = \sum_b M_{a, b} x_b = y_a\)</span>.
+The shape of each dimension must be identical and the total number
+defines the degrees of freedom <span class="math notranslate nohighlight">\(n_{\text{dof}} = \prod_i n_i\)</span>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>mata_axes</strong></dt><dd></dd>
+<dt><strong>matb_axes</strong></dt><dd></dd>
+<dt><strong>matrix</strong></dt><dd></dd>
+<dt><strong>result</strong></dt><dd></dd>
+<dt><strong>solution</strong></dt><dd></dd>
+<dt><strong>vec_axes</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.func.tensor.LinearSystem.eval" title="libics.func.tensor.LinearSystem.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a>(self[, sol_vec])</p></td>
+<td><p>For a given solution vector <span class="math notranslate nohighlight">\(x\)</span>, directly evaluates the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.func.tensor.LinearSystem.solve" title="libics.func.tensor.LinearSystem.solve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code></a>(self[, res_vec])</p></td>
+<td><p>For a given result vector <span class="math notranslate nohighlight">\(y\)</span>, directly solves for the solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.eval">
+<code class="sig-name descname">eval</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sol_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.LinearSystem.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given solution vector <span class="math notranslate nohighlight">\(x\)</span>, directly evaluates the result
+vector <span class="math notranslate nohighlight">\(y\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.mata_axes">
+<em class="property">property </em><code class="sig-name descname">mata_axes</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.mata_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.matb_axes">
+<em class="property">property </em><code class="sig-name descname">matb_axes</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.matb_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.matrix">
+<em class="property">property </em><code class="sig-name descname">matrix</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.result">
+<em class="property">property </em><code class="sig-name descname">result</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.solution">
+<em class="property">property </em><code class="sig-name descname">solution</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.solution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">res_vec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.LinearSystem.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given result vector <span class="math notranslate nohighlight">\(y\)</span>, directly solves for the solution
+vector <span class="math notranslate nohighlight">\(x\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.func.tensor.LinearSystem.vec_axes">
+<em class="property">property </em><code class="sig-name descname">vec_axes</code><a class="headerlink" href="#libics.func.tensor.LinearSystem.vec_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.func.tensor.SymmetricLS">
+<em class="property">class </em><code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">SymmetricLS</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.SymmetricLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.func.tensor.DiagonalizableLS" title="libics.func.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.func.tensor.DiagonalizableLS</span></code></a></p>
+<p>Eigensystem solver for complex symmetric diagonalizable matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>decomp</strong></dt><dd></dd>
+<dt><strong>eigvals</strong></dt><dd></dd>
+<dt><strong>eigvecs</strong></dt><dd></dd>
+<dt><strong>leigvecs</strong></dt><dd></dd>
+<dt><strong>mata_axes</strong></dt><dd></dd>
+<dt><strong>matb_axes</strong></dt><dd></dd>
+<dt><strong>matrix</strong></dt><dd></dd>
+<dt><strong>reigvecs</strong></dt><dd></dd>
+<dt><strong>result</strong></dt><dd></dd>
+<dt><strong>solution</strong></dt><dd></dd>
+<dt><strong>vec_axes</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_eigensystem</span></code>(self)</p></td>
+<td><p>Calculates eigenvalues, left and right eigenvectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_result</span></code>(self[, decomp_vec])</p></td>
+<td><p>Calculates the result vector <span class="math notranslate nohighlight">\(y\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_solution</span></code>(self[, decomp_vec])</p></td>
+<td><p>Calculates the solution vector <span class="math notranslate nohighlight">\(x\)</span> from a decomposition vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_result</span></code>(self[, res_vec])</p></td>
+<td><p>Decomposes a result vector <span class="math notranslate nohighlight">\(y\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomp_solution</span></code>(self[, sol_vec])</p></td>
+<td><p>Decomposes a solution vector <span class="math notranslate nohighlight">\(x\)</span> into an overlap vector <span class="math notranslate nohighlight">\(b\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self[, sol_vec])</p></td>
+<td><p>For a given solution vector <span class="math notranslate nohighlight">\(x\)</span>, directly evaluates the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code>(self[, res_vec])</p></td>
+<td><p>For a given result vector <span class="math notranslate nohighlight">\(y\)</span>, directly solves for the solution vector <span class="math notranslate nohighlight">\(x\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_eigensystem</span></code>(self[, order])</p></td>
+<td><p>Sorts the eigensystem according to the given order.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.complex_norm">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">complex_norm</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">vec_axes=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.complex_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the norm <span class="math notranslate nohighlight">\(\sqrt{x^T x}\)</span> on the complex (tensorial) vector
+<span class="math notranslate nohighlight">\(x\)</span>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Array constituting the vector to be normalized.</p>
+</dd>
+<dt><strong>vec_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensorial indices corresponding to the vectorial dimensions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>norm</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Resulting norm with removed vectorial axes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.tensorinv_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">tensorinv_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">a_axes=-2</em>, <em class="sig-param">b_axes=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.tensorinv_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the tensor inverse (w.r.t. to <a class="reference internal" href="#libics.func.tensor.tensormul_numpy_array" title="libics.func.tensor.tensormul_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensormul_numpy_array()</span></code></a>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Full tensor.</p>
+</dd>
+<dt><strong>a_axes, b_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Corresponding dimensions to be inverted.
+These specified dimensions span an effective square matrix.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Inverted full tensor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.tensorize_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">tensorize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">vec</em>, <em class="sig-param">tensor_shape</em>, <em class="sig-param">tensor_axes=(-2</em>, <em class="sig-param">-1)</em>, <em class="sig-param">vec_axis=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.tensorize_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tensorizes a vectorized <cite>numpy</cite> array. Opposite of
+<a class="reference internal" href="#libics.func.tensor.vectorize_numpy_array" title="libics.func.tensor.vectorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">vectorize_numpy_array()</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>vec</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector array.</p>
+</dd>
+<dt><strong>tensor_shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Shape of tensorized dimensions.</p>
+</dd>
+<dt><strong>tensor_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensor axes of resulting array. Tensorization is performed
+in C-like order.</p>
+</dd>
+<dt><strong>vec_axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimension of vector array to be tensorized.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.tensormul_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">tensormul_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">a_axes=(Ellipsis</em>, <em class="sig-param">0)</em>, <em class="sig-param">b_axes=(0</em>, <em class="sig-param">Ellipsis)</em>, <em class="sig-param">res_axes=(Ellipsis</em>, <em class="sig-param">)</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.tensormul_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Einstein-sums two <cite>numpy</cite> tensors.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>a, b</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor operands.</p>
+</dd>
+<dt><strong>a_axes, b_axes, res_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Indices of Einstein summation. Dimensions are interpreted
+relative. Allows for use of ellipses.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>res</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Combined result tensor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function wraps <cite>numpy.einsum</cite>.</p>
+<p class="rubric">Examples</p>
+<p>Denote: (a_axes), (b_axes) -&gt; (res_axes) [<cite>np.einsum</cite> string]</p>
+<ul class="simple">
+<li><p>Matrix multiplication: e.g.
+(0, 1), (1, 2) -&gt; (0, 2) [“ij,jk-&gt;ik”].</p></li>
+<li><p>Tensor dot: e.g.
+(0, 1, 2, 3), (4, 2, 3, 5) -&gt; (0, 1, 4, 5) [“ijkl,mjkn-&gt;ilmn”].</p></li>
+<li><p>Tensor dot with broadcasting: e.g.
+(0, 1, 2, 3), (0, 1, 2, 3) -&gt; (0, 3) [“ijkl,ijkl-&gt;il”].</p></li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.tensorsolve_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">tensorsolve_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">res</em>, <em class="sig-param">a_axes=-2</em>, <em class="sig-param">b_axes=-1</em>, <em class="sig-param">res_axes=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.tensorsolve_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves a tensor equation <span class="math notranslate nohighlight">\(A x = b\)</span> for <span class="math notranslate nohighlight">\(x\)</span>, where all operands
+may be high-dimensional.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Matrix tensor <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>res</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector tensor <span class="math notranslate nohighlight">\(b\)</span>.</p>
+</dd>
+<dt><strong>a_axes, b_axes, res_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensorial indices corresponding to
+<span class="math notranslate nohighlight">\(\sum_{b} A_{ab} x_b = y_{res}\)</span>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>sol</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Solution vector tensor <span class="math notranslate nohighlight">\(x\)</span> with solution indices res_axes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.tensortranspose_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">tensortranspose_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">a_axes=-2</em>, <em class="sig-param">b_axes=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.tensortranspose_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transposes the matrix spanned by <cite>a_axes</cite>, <cite>b_axes</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Full tensor.</p>
+</dd>
+<dt><strong>a_axes, b_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Corresponding dimensions to be transposed.
+These specified dimensions span an effective square matrix.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Transposed full tensor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.func.tensor.vectorize_numpy_array">
+<code class="sig-prename descclassname">libics.func.tensor.</code><code class="sig-name descname">vectorize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">tensor_axes=(-2</em>, <em class="sig-param">-1)</em>, <em class="sig-param">vec_axis=-1</em>, <em class="sig-param">ret_shape=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.func.tensor.vectorize_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vectorizes a tensor (high-dimensional) <cite>numpy</cite> array. Opposite of
+<a class="reference internal" href="#libics.func.tensor.tensorize_numpy_array" title="libics.func.tensor.tensorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensorize_numpy_array()</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Tensor array.</p>
+</dd>
+<dt><strong>tensor_axes</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Tensor axes to be vectorized. Vectorization is performed
+in C-like order.</p>
+</dd>
+<dt><strong>vec_axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Vectorized dimension of resulting vector array.</p>
+</dd>
+<dt><strong>ret_shape</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to return the shape of the vectorized dimensions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>vec</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Vector array.</p>
+</dd>
+<dt><strong>vec_shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>If ret_shape is set: shape of vectorized dimensions.
+Useful as parameter for tensorization.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Performance is maximal for back-aligned, ordered vectorization since
+in-place data ordering is possible.</p>
+<p class="rubric">Examples</p>
+<p>Given a tensor A[i, j, k, l], required is a vectorized version
+A[i, j*k, l]. The corresponding call would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 3, 4, 5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">vectorize_numpy_array</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">tensor_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">vec_axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 12, 5)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -539,6 +1139,9 @@ e^{-\frac{N}{\mu} x} + C\]</div>
 <li><a class="reference internal" href="#module-libics.func.fit">fit</a></li>
 <li><a class="reference internal" href="#module-libics.func.flat">flat</a></li>
 <li><a class="reference internal" href="#module-libics.func.peaked">peaked</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.func.tensor">tensor</a><ul>
 </ul>
 </li>
 </ul>

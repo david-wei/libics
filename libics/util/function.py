@@ -12,8 +12,8 @@ class Memoize(object):
     If called later with the same arguments, the cached value is returned
     (not reevaluated).
 
-    Example
-    -------
+    Examples
+    --------
     >>> @Memoize
     ... def example_function(*args):
     ...     pass

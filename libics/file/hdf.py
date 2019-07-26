@@ -107,8 +107,8 @@ class HDFList(HDFBase):
     Conversion class to allow non-numpy-like lists and tuples to be HDF
     serialized.
 
-    Example
-    -------
+    Examples
+    --------
     >>> # Serialization procedure
     >>> ls = [1, 2, [3, 4], "bla"]
     >>> hdf_ls = HDFList()

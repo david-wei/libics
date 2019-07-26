@@ -29,3 +29,11 @@ peaked
     :members:
     :undoc-members:
     :show-inheritance:
+
+tensor
+-------
+
+.. automodule:: libics.func.tensor
+    :members:
+    :undoc-members:
+    :show-inheritance:

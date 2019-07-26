@@ -436,8 +436,8 @@ class PY_ALP_API:
         Data needs to be an array of Bytes (e.g. char"s) in C,
         values of 0 to 255.
 
-        Example
-        -------
+        Examples
+        --------
         >>> import numpy as np
         >>> import ctypes as ct
         >>> height = 768

@@ -2561,6 +2561,25 @@ Add verbose option to switch function call printing.</p></li>
 <dd><p>Loads the sequence to the ALP.
 Data needs to be an array of Bytes (e.g. char”s) in C,
 values of 0 to 255.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ctypes</span> <span class="k">as</span> <span class="nn">ct</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">height</span> <span class="o">=</span> <span class="mi">768</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">width</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nBytes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C_ByteArray</span> <span class="o">=</span> <span class="n">nBytes</span> <span class="o">*</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_uint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myArray</span> <span class="o">=</span> <span class="n">C_ByteArray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">testpicture</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">testpicture</span><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">:</span><span class="mi">400</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span> <span class="o">*</span> <span class="mi">255</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myArray</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">create_string_buffer</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">testpicture</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">Values &gt; 127 are interpreted as 1 (&quot;on&quot;),</span>
+<span class="go">values &lt; 128 are interpreted as 0 (&quot;off&quot;).</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">

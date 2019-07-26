@@ -158,6 +158,17 @@ serialization metadata elements.</p>
 <dd><p>Bases: <a class="reference internal" href="#libics.file.hdf.HDFBase" title="libics.file.hdf.HDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.file.hdf.HDFBase</span></code></a></p>
 <p>Conversion class to allow non-numpy-like lists and tuples to be HDF
 serialized.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Serialization procedure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;bla&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdf_ls</span> <span class="o">=</span> <span class="n">HDFList</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdf_ls</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdf_ls</span><span class="o">.</span><span class="vm">__dict__</span>
+<span class="go">{&quot;it0&quot;: 1, &quot;it1&quot;: 2, &quot;it2&quot;: [3, 4], &quot;it3&quot;: &quot;bla&quot;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdf_ls</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span> <span class="o">==</span> <span class="n">ls</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>

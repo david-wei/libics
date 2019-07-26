@@ -183,8 +183,8 @@ class QtImage(QWidget, object):
         val_target : int
             Channel intensity value on the `bpc-target`-scale.
 
-        Example
-        -------
+        Examples
+        --------
         >>> bpc_src, bpc_trg = 10, 8
         >>> val = 2**bpc_src - 1  # half intensity on source scale
         >>> QtImage._scale_bpc(val, bpc_src, bpc_trg) == 2**bpc_trg - 1
