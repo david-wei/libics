@@ -282,7 +282,18 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
 class LinearSystem(object):
 
     r"""
-    Linear system solver for arbitrary diagonalizable matrices.
+    Linear system evaluator for arbitrary complex matrices.
+
+    The linear system is defined as
+    .. math::
+        M x = y,
+    where :math:`M` is the matrix, :math:`x` is the solution vector, and
+    :math:`y` is the result vector.
+
+    For a given matrix :math:`M` and solution vector :math:`x`, this class
+    supports evaluation of :math:`y`. The matrix and vector dimensions can
+    consist of multiple indices which are automatically linearized.
+    For a system solver, refer to :py:class:`DiagonalizableLS`.
 
     Parameters
     ----------
@@ -297,41 +308,6 @@ class LinearSystem(object):
         :math:`M x = y = \sum_b M_{a, b} x_b = y_a`.
         The shape of each dimension must be identical and the total number
         defines the degrees of freedom :math:`n_{\text{dof}} = \prod_i n_i`.
-
-    Notes
-    -----
-    Usage:
-
-    * Equation: :math:`M x = y, x = \sum_p b_p m_p`,
-      where :math:`M` is the matrix, :math:`x` is the solution vector,
-      :math:`y` is the result vector, :math:`(\mu_p, m_p)` is the eigensystem
-      and :math:`b_p` is the eigenvector decomposition.
-    * Initialization: Set the matrix defining the linear system. Set the axes
-      for higher rank tensors.
-    * Given the matrix :math:`M`, this class allows for (1.) the calculation
-      of the eigensystem :math:`(\mu_p, m_p)`, (2.) solving for :math:`x`,
-      and (3.) calculating the result :math:`y`.
-    1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
-       right eigenvectors. Left eigenvectors are obtained by subsequently
-       calling :py:meth:`calc_left_eigenvectors`.
-    2. Given the result vector :math:`y`, there are two options to solve for
-       :math:`x`.
-       a. If the eigensystem was calculated before, one can use
-          :py:meth:`decomp_result` to obtain the eigenvector decomposition.
-          Subsequently calling :py:meth:`calc_solution` calculates the
-          solution vector :math:`x`.
-       b. Alternatively, the solution can be obtained without eigensystem
-          decomposition with :py:math:`solve`, which only populates
-          the solution vector :math:`x`.
-    3. Given the solution vector :math:`x`, there are two options to obtain
-       the result :math:`y`.
-       a. If the eigensystem was calculated before, one can use
-          :py:meth:`decomp_solution` to obtain the eigenvector
-          decomposition. Subsequently calling :py:meth:`calc_result`
-          calculates the result vector :math:`y`.
-       b. Alternatively, the result can be obtained without eigensystem
-          decomposition with :py:math:`eval`, which only populates
-          the result vector :math:`y`.
     """
 
     def __init__(
@@ -341,14 +317,10 @@ class LinearSystem(object):
         self._mata_axes = None  # Tensor dimensions for mat dim i (ij, j -> i)
         self._matb_axes = None  # Tensor dimensions for mat dim j (ij, j -> i)
         self._vec_axes = None   # Tensor dimensions for vector
-        # Eigensystem variables
+        # Linear system variables
         self._factor = None     # Factor to normalize matrix
         self._matrix = None     # [..., n_dof, n_dof]
-        self._eigvals = None    # [..., n_dof]
-        self._reigvecs = None   # [..., n_dof, n_components]
-        self._leigvecs = None   # [..., n_dof, n_components]
         self._result = None     # [..., n_dof]
-        self._decomp = None     # [..., n_dof]
         self._solution = None   # [..., n_dof]
         # Internal temporary variables
         self._TMP_a_shape = None
@@ -402,64 +374,22 @@ class LinearSystem(object):
             self._matrix = self._matricize(val / self._factor)
 
     @property
-    def eigvals(self):
-        return self._factor * self._vectorize(self._eigvals)
-
-    @eigvals.setter
-    def eigvals(self, val):
-        val = misc.assume_numpy_array(val)
-        self._eigvals = self._unvectorize(val / self._factor)
-
-    @property
-    def eigvecs(self):
-        return self._unmatricize(self._reigvecs)
-
-    @eigvecs.setter
-    def eigvecs(self, val):
-        val = misc.assume_numpy_array(val)
-        self._reigvecs = self._matricize(val)
-        self._reigvecs /= np.linalg.norm(
-            self._reigvecs, axis=self._TMP_vec_axis
-        )
-
-    @property
-    def leigvecs(self):
-        return self._unmatricize(self._leigvecs)
-
-    @leigvecs.setter
-    def leigvecs(self, val):
-        val = misc.assume_numpy_array(val)
-        self._leigvecs = self._matricize(val)
-        self._leigvecs /= np.linalg.norm(
-            self._leigvecs, axis=self._TMP_vec_axis
-        )
-
-    @property
     def result(self):
-        return self._result
+        return self._factor * self._unvectorize(self._result)
 
     @result.setter
     def result(self, val):
         val = misc.assume_numpy_array(val)
-        self._result = val
-
-    @property
-    def decomp(self):
-        return self._decomp
-
-    @decomp.setter
-    def decomp(self, val):
-        val = misc.assume_numpy_array(val)
-        self._decomp = val
+        self._result = self._vectorize(val) / self._factor
 
     @property
     def solution(self):
-        return self._solution
+        return self._unvectorize(self._solution)
 
     @solution.setter
     def solution(self, val):
         val = misc.assume_numpy_array(val)
-        self._solution = val
+        self._solution = self._vectorize(val)
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
@@ -495,6 +425,143 @@ class LinearSystem(object):
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
+    def solve(self, res_vec=None):
+        """
+        For a given result vector :math:`y`, directly solves for the solution
+        vector :math:`x`.
+        """
+        if res_vec is None:
+            res_vec = self._result
+        else:
+            res_vec = self._vectorize(res_vec)
+        self._solution = tensorsolve_numpy_array(
+            self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
+        )
+
+    def eval(self, sol_vec=None):
+        """
+        For a given solution vector :math:`x`, directly evaluates the result
+        vector :math:`y`.
+        """
+        if sol_vec is None:
+            sol_vec = self._solution
+        else:
+            sol_vec = self._vectorize(sol_vec)
+        self._result = tensormul_numpy_array(
+            self._matrix, sol_vec,
+            a_axes=(..., 0, 1), b_axes=(..., 1), res_axes=(..., 0)
+        )
+
+
+class DiagonalizableLS(LinearSystem):
+
+    r"""
+    Eigensystem solver for arbitrary square diagonalizable matrices.
+
+    The linear system is defined as
+    .. math::
+        M x = y, x = \sum_p b_p m_p,
+    where :math:`M` is the matrix, :math:`x` is the solution vector,
+    :math:`y` is the result vector, :math:`(\mu_p, m_p)` is the eigensystem
+    and :math:`b_p` is the eigenvector decomposition.
+
+    If the matrix has additional properties, please use the subclasses
+    :py:class:`HermitianLS` and :py:class:`SymmetricLS`.
+
+    Notes
+    -----
+    Usage:
+
+    * Initialization: Set the matrix defining the linear system. Set the axes
+      for higher rank tensors.
+    * Given the matrix :math:`M`, this class allows for (1.) the calculation
+      of the eigensystem :math:`(\mu_p, m_p)`, (2.) solving for :math:`x`,
+      and (3.) calculating the result :math:`y`.
+    1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
+       right eigenvectors. Left eigenvectors are obtained by subsequently
+       calling :py:meth:`calc_left_eigenvectors`.
+    2. Given the result vector :math:`y`, there are two options to solve for
+       :math:`x`.
+       a. If the eigensystem was calculated before, one can use
+          :py:meth:`decomp_result` to obtain the eigenvector decomposition.
+          Subsequently calling :py:meth:`calc_solution` calculates the
+          solution vector :math:`x`.
+       b. Alternatively, the solution can be obtained without eigensystem
+          decomposition with :py:math:`solve`, which only populates
+          the solution vector :math:`x`.
+    3. Given the solution vector :math:`x`, there are two options to obtain
+       the result :math:`y`.
+       a. If the eigensystem was calculated before, one can use
+          :py:meth:`decomp_solution` to obtain the eigenvector
+          decomposition. Subsequently calling :py:meth:`calc_result`
+          calculates the result vector :math:`y`.
+       b. Alternatively, the result can be obtained without eigensystem
+          decomposition with :py:math:`eval`, which only populates
+          the result vector :math:`y`.
+    """
+
+    def __init__(
+        self, *args, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        # Eigensystem variables
+        self._eigvals = None    # [..., n_dof]
+        self._reigvecs = None   # [..., n_dof, n_components]
+        self._leigvecs = None   # [..., n_dof, n_components]
+        self._decomp = None     # [..., n_dof]
+
+    @property
+    def eigvals(self):
+        return self._factor * self._vectorize(self._eigvals)
+
+    @eigvals.setter
+    def eigvals(self, val):
+        val = misc.assume_numpy_array(val)
+        self._eigvals = self._unvectorize(val / self._factor)
+
+    @property
+    def reigvecs(self):
+        return self._unmatricize(self._reigvecs)
+
+    @reigvecs.setter
+    def reigvecs(self, val):
+        val = misc.assume_numpy_array(val)
+        self._reigvecs = self._matricize(val)
+        self._reigvecs /= np.linalg.norm(
+            self._reigvecs, axis=self._TMP_vec_axis
+        )
+
+    @property
+    def leigvecs(self):
+        return self._unmatricize(self._leigvecs)
+
+    @leigvecs.setter
+    def leigvecs(self, val):
+        val = misc.assume_numpy_array(val)
+        self._leigvecs = self._matricize(val)
+        self._leigvecs /= np.linalg.norm(
+            self._leigvecs, axis=self._TMP_vec_axis
+        )
+
+    @property
+    def eigvecs(self):
+        return self.reigvecs
+
+    @eigvecs.setter
+    def eigvecs(self, val):
+        self.reigvecs(val)
+
+    @property
+    def decomp(self):
+        return self._decomp
+
+    @decomp.setter
+    def decomp(self, val):
+        val = misc.assume_numpy_array(val)
+        self._decomp = val
+
+    # +++++++++++++++++++++++++++++++++++++++++++
+
     def _calc_leigvecs(self):
         """
         Calculates the left eigenvectors from the right eigenvectors.
@@ -512,6 +579,7 @@ class LinearSystem(object):
     def calc_eigensystem(self):
         """
         Calculates eigenvalues, left and right eigenvectors.
+        By default the eigenvalues are sorted in a descending order.
         """
         eigvals, reigvecs = np.linalg.eig(self._matrix)
         self._eigvals = eigvals
@@ -547,7 +615,7 @@ class LinearSystem(object):
             sol_vec = self._vectorize(sol_vec)
         self._decomp = tensormul_numpy_array(
             self._leigvecs, sol_vec,
-            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
+            a_axes=(..., 0, 1), b_axes=(..., 1), res_axes=(..., 0)
         )
 
     def decomp_result(self, res_vec=None):
@@ -559,8 +627,8 @@ class LinearSystem(object):
         else:
             res_vec = self._vectorize(res_vec)
         self._decomp = tensormul_numpy_array(
-            self._leigvecs / self._eigvals, res_vec,
-            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
+            self._leigvecs / self._eigvals[..., np.newaxis], res_vec,
+            a_axes=(..., 0, 1), b_axes=(..., 1), res_axes=(..., 0)
         )
 
     def calc_solution(self, decomp_vec=None):
@@ -591,55 +659,28 @@ class LinearSystem(object):
             a_axes=(..., 0), b_axes=(..., 0, 1), res_axes=(..., 1)
         )
 
-    def solve(self, res_vec=None):
-        """
-        For a given result vector :math:`y`, directly solves for the solution
-        vector :math:`x`.
-        """
-        if res_vec is None:
-            res_vec = self._result
-        else:
-            res_vec = self._vectorize(res_vec)
-        self._solution = tensorsolve_numpy_array(
-            self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
-        )
 
-    def eval(self, sol_vec=None):
-        """
-        For a given solution vector :math:`x`, directly evaluates the result
-        vector :math:`y`.
-        """
-        if sol_vec is None:
-            sol_vec = self._solution
-        else:
-            sol_vec = self._vectorize(sol_vec)
-        self._result = tensormul_numpy_array(
-            self._matrix, sol_vec,
-            a_axes=(..., 0), b_axes=(..., 0), res_axes=(..., )
-        )
-
-
-class HermitianLS(LinearSystem):
+class HermitianLS(DiagonalizableLS):
 
     """
-    Linear system solver for Hermitian diagonalizable matrices.
+    Eigensystem solver for Hermitian diagonalizable matrices.
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def calc_left_eigenvectors(self):
+    def _calc_leigvecs(self):
         self._leigvecs = np.conjugate(self._reigvecs)
 
 
-class ComplexSymmetricLS(LinearSystem):
+class SymmetricLS(DiagonalizableLS):
 
     """
-    Linear system solver for complex symmetric diagonalizable matrices.
+    Eigensystem solver for complex symmetric diagonalizable matrices.
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def calc_left_eigenvectors(self):
+    def _calc_leigvecs(self):
         self._leigvecs = np.array(self._reigvecs)
