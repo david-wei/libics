@@ -352,9 +352,7 @@ class LinearSystem(object):
         self._result = None     # [..., n_dof]
         self._solution = None   # [..., n_dof]
         # Internal temporary variables
-        self._TMP_a_shape = None
-        self._TMP_b_shape = None
-        self._TMP_vec_shape = None
+        self._TMP_shape = None
         self._TMP_a_vecaxes = None
         self._TMP_b_axes = None
         self._TMP_vec_axis = -1
@@ -424,7 +422,7 @@ class LinearSystem(object):
 
     def _matricize(self, ar):
         (
-            mat, self._TMP_a_shape, self._TMP_b_shape,
+            mat, self._TMP_shape, self._TMP_shape,
             self._TMP_a_vecaxes, self._TMP_b_axes
         ) = _matricize_numpy_array(
             ar, self._mata_axes, self._matb_axes
@@ -433,13 +431,13 @@ class LinearSystem(object):
 
     def _unmatricize(self, mat):
         ar = _unmatricize_numpy_array(
-            mat, self._TMP_a_shape, self._TMP_b_shape,
+            mat, self._TMP_shape, self._TMP_shape,
             self._TMP_a_vecaxes, self._TMP_b_axes
         )
         return ar
 
     def _vectorize(self, ar):
-        vec, self._TMP_vec_shape = vectorize_numpy_array(
+        vec, self._TMP_shape = vectorize_numpy_array(
             ar, tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis,
             ret_shape=True
         )
@@ -447,7 +445,7 @@ class LinearSystem(object):
 
     def _unvectorize(self, vec):
         ar = tensorize_numpy_array(
-            vec, self._TMP_vec_shape,
+            vec, self._TMP_shape,
             tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis
         )
         return ar
@@ -555,24 +553,24 @@ class DiagonalizableLS(LinearSystem):
 
     @property
     def reigvecs(self):
-        return self._unmatricize(self._reigvecs)
+        return self._unvectorize(self._reigvecs)
 
     @reigvecs.setter
     def reigvecs(self, val):
         val = misc.assume_numpy_array(val)
-        self._reigvecs = self._matricize(val)
+        self._reigvecs = self._vectorize(val)
         self._reigvecs /= np.linalg.norm(
             self._reigvecs, axis=self._TMP_vec_axis
         )
 
     @property
     def leigvecs(self):
-        return self._unmatricize(self._leigvecs)
+        return self._unvectorize(self._leigvecs)
 
     @leigvecs.setter
     def leigvecs(self, val):
         val = misc.assume_numpy_array(val)
-        self._leigvecs = self._matricize(val)
+        self._leigvecs = self._vectorize(val)
         self._leigvecs /= np.linalg.norm(
             self._leigvecs, axis=self._TMP_vec_axis
         )
