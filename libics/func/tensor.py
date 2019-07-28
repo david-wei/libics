@@ -553,24 +553,24 @@ class DiagonalizableLS(LinearSystem):
 
     @property
     def reigvecs(self):
-        return self._unvectorize(self._reigvecs)
+        return self._unmatricize(self._reigvecs)
 
     @reigvecs.setter
     def reigvecs(self, val):
         val = misc.assume_numpy_array(val)
-        self._reigvecs = self._vectorize(val)
+        self._reigvecs = self._matricize(val)
         self._reigvecs /= np.linalg.norm(
             self._reigvecs, axis=self._TMP_vec_axis
         )
 
     @property
     def leigvecs(self):
-        return self._unvectorize(self._leigvecs)
+        return self._unmatricize(self._leigvecs)
 
     @leigvecs.setter
     def leigvecs(self, val):
         val = misc.assume_numpy_array(val)
-        self._leigvecs = self._vectorize(val)
+        self._leigvecs = self._matricize(val)
         self._leigvecs /= np.linalg.norm(
             self._leigvecs, axis=self._TMP_vec_axis
         )
