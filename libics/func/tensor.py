@@ -331,7 +331,7 @@ class LinearSystem(object):
         matrix, defining a linear system. There must be two sets of
         dimensions which can be reshaped as square matrix. The remaining
         dimensions will be broadcasted.
-    mata_axes, matb_axes, vec_axes : `tuple(int)`
+    mata_axes, matb_axes, veca_axes, veca_bxes : `tuple(int)`
         Axes representing the multidimensional indices of the matrix.
         :math:`M = M_{\{a_1, ...\}, \{b_1, ...\}}, x, y = x, y_{\{v_1, ...\}}`.
         :math:`M x = y = \sum_b M_{a, b} x_b = y_a`.
@@ -340,26 +340,33 @@ class LinearSystem(object):
     """
 
     def __init__(
-        self, matrix=None, mata_axes=-2, matb_axes=-1, vec_axes=-1
+        self, matrix=None,
+        mata_axes=-2, matb_axes=-1, veca_axes=-1, vecb_axes=-1, vec_axes=None
     ):
         # Tensor dimensions
         self._mata_axes = None  # Tensor dimensions for mat dim i (ij, j -> i)
         self._matb_axes = None  # Tensor dimensions for mat dim j (ij, j -> i)
-        self._vec_axes = None   # Tensor dimensions for vector
+        self._veca_axes = None  # Tensor dimensions for result vector
+        self._vecb_axes = None  # Tensor dimensions for solution vector
         # Linear system variables
         self._factor = None     # Factor to normalize matrix
         self._matrix = None     # [..., n_dof, n_dof]
         self._result = None     # [..., n_dof]
         self._solution = None   # [..., n_dof]
         # Internal temporary variables
-        self._TMP_shape = None
+        self._TMP_a_shape = None
+        self._TMP_b_shape = None
         self._TMP_a_vecaxes = None
         self._TMP_b_axes = None
         self._TMP_vec_axis = -1
         # Assign init args
         self.mata_axes = mata_axes
         self.matb_axes = matb_axes
-        self.vec_axes = vec_axes
+        if vec_axes is None:
+            self.veca_axes = veca_axes
+            self.vecb_axes = vecb_axes
+        else:
+            self.vec_axes = vec_axes
         self.matrix = matrix
 
     @property
@@ -381,13 +388,35 @@ class LinearSystem(object):
             self._matb_axes = misc.assume_tuple(val)
 
     @property
+    def veca_axes(self):
+        return self._veca_axes
+
+    @veca_axes.setter
+    def veca_axes(self, val):
+        if val is not None:
+            self._veca_axes = misc.assume_tuple(val)
+
+    @property
+    def vecb_axes(self):
+        return self._vecb_axes
+
+    @vecb_axes.setter
+    def vecb_axes(self, val):
+        if val is not None:
+            self._vecb_axes = misc.assume_tuple(val)
+
+    @property
     def vec_axes(self):
-        return self._vec_axes
+        if self.veca_axes == self.vecb_axes:
+            return self.vecb_axes
+        else:
+            raise ValueError("unequal vec_axes (a/b)")
 
     @vec_axes.setter
     def vec_axes(self, val):
         if val is not None:
-            self._vec_axes = misc.assume_tuple(val)
+            self.veca_axes = val
+            self.vecb_axes = val
 
     @property
     def matrix(self):
@@ -402,27 +431,27 @@ class LinearSystem(object):
 
     @property
     def result(self):
-        return self._factor * self._unvectorize(self._result)
+        return self._factor * self._unvectorize_a(self._result)
 
     @result.setter
     def result(self, val):
         val = misc.assume_numpy_array(val)
-        self._result = self._vectorize(val) / self._factor
+        self._result = self._vectorize_a(val) / self._factor
 
     @property
     def solution(self):
-        return self._unvectorize(self._solution)
+        return self._unvectorize_b(self._solution)
 
     @solution.setter
     def solution(self, val):
         val = misc.assume_numpy_array(val)
-        self._solution = self._vectorize(val)
+        self._solution = self._vectorize_b(val)
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
     def _matricize(self, ar):
         (
-            mat, self._TMP_shape, self._TMP_shape,
+            mat, self._TMP_a_shape, self._TMP_b_shape,
             self._TMP_a_vecaxes, self._TMP_b_axes
         ) = _matricize_numpy_array(
             ar, self._mata_axes, self._matb_axes
@@ -431,24 +460,44 @@ class LinearSystem(object):
 
     def _unmatricize(self, mat):
         ar = _unmatricize_numpy_array(
-            mat, self._TMP_shape, self._TMP_shape,
+            mat, self._TMP_a_shape, self._TMP_b_shape,
             self._TMP_a_vecaxes, self._TMP_b_axes
         )
         return ar
 
-    def _vectorize(self, ar):
-        vec, self._TMP_shape = vectorize_numpy_array(
-            ar, tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis,
+    def _vectorize_a(self, ar):
+        vec, self._TMP_a_shape = vectorize_numpy_array(
+            ar, tensor_axes=self._veca_axes, vec_axis=self._TMP_vec_axis,
             ret_shape=True
         )
         return vec
 
-    def _unvectorize(self, vec):
+    def _unvectorize_a(self, vec):
         ar = tensorize_numpy_array(
-            vec, self._TMP_shape,
-            tensor_axes=self._vec_axes, vec_axis=self._TMP_vec_axis
+            vec, self._TMP_a_shape,
+            tensor_axes=self._veca_axes, vec_axis=self._TMP_vec_axis
         )
         return ar
+
+    def _vectorize_b(self, ar):
+        vec, self._TMP_b_shape = vectorize_numpy_array(
+            ar, tensor_axes=self._vecb_axes, vec_axis=self._TMP_vec_axis,
+            ret_shape=True
+        )
+        return vec
+
+    def _unvectorize_b(self, vec):
+        ar = tensorize_numpy_array(
+            vec, self._TMP_b_shape,
+            tensor_axes=self._vecb_axes, vec_axis=self._TMP_vec_axis
+        )
+        return ar
+
+    def _vectorize(self, ar):
+        return self._vectorize_a(ar)
+
+    def _unvectorize(self, vec):
+        return self._unvectorize_a(vec)
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
@@ -460,7 +509,7 @@ class LinearSystem(object):
         if res_vec is None:
             res_vec = self._result
         else:
-            res_vec = self._vectorize(res_vec)
+            res_vec = self._vectorize_a(res_vec)
         # TODO: scalable solution for non-square matrices
         self._solution = tensorsolve_numpy_array(
             self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
@@ -474,7 +523,7 @@ class LinearSystem(object):
         if sol_vec is None:
             sol_vec = self._solution
         else:
-            sol_vec = self._vectorize(sol_vec)
+            sol_vec = self._vectorize_b(sol_vec)
         self._result = tensormul_numpy_array(
             self._matrix, sol_vec,
             a_axes=(..., 0, 1), b_axes=(..., 1), res_axes=(..., 0)
