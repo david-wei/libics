@@ -593,12 +593,12 @@ class DiagonalizableLS(LinearSystem):
 
     @property
     def eigvals(self):
-        return self._factor * self._vectorize(self._eigvals)
+        return self._factor * self._unvectorize(self._eigvals)
 
     @eigvals.setter
     def eigvals(self, val):
         val = misc.assume_numpy_array(val)
-        self._eigvals = self._unvectorize(val / self._factor)
+        self._eigvals = self._vectorize(val / self._factor)
 
     @property
     def reigvecs(self):

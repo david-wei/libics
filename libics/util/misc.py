@@ -52,6 +52,8 @@ def assume_tuple(data):
         return data
     elif isinstance(data, list):
         return tuple(data)
+    elif isinstance(data, np.ndarray):
+        return tuple(data)
     else:
         return (data, )
 
