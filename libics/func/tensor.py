@@ -297,7 +297,7 @@ def complex_norm(ar, vec_axes=None):
     vec_axes = misc.assume_tuple(vec_axes)
     vec = vectorize_numpy_array(ar, tensor_axes=vec_axes, vec_axis=-1)
     norm = np.einsum("...i,...i", vec, vec)
-    return norm
+    return np.sqrt(norm)
 
 
 ###############################################################################
@@ -634,12 +634,12 @@ class DiagonalizableLS(LinearSystem):
 
     @property
     def decomp(self):
-        return self._decomp
+        return self._unvectorize(self._decomp)
 
     @decomp.setter
     def decomp(self, val):
         val = misc.assume_numpy_array(val)
-        self._decomp = val
+        self._decomp = self._vectorize(val)
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
@@ -652,10 +652,6 @@ class DiagonalizableLS(LinearSystem):
         Inverts the right eigenvector matrix. To improve performance:
         overload this function if matrix has additional symmetries.
         """
-        self._leigvecs = tensorinv_numpy_array(
-            tensortranspose_numpy_array(self._reigvecs, a_axes=-2, b_axes=-1),
-            a_axes=-2, b_axes=-1
-        )
 
     def calc_eigensystem(self):
         """
@@ -667,7 +663,7 @@ class DiagonalizableLS(LinearSystem):
         self._reigvecs = tensortranspose_numpy_array(
             reigvecs, a_axes=-2, b_axes=-1
         )
-        self._calc_leigvecs()
+        self._leigvecs = tensorinv_numpy_array(reigvecs, a_axes=-2, b_axes=-1)
 
     def sort_eigensystem(self, order=None):
         """
@@ -736,7 +732,7 @@ class DiagonalizableLS(LinearSystem):
         else:
             decomp_vec = self._vectorize(decomp_vec)
         self._result = tensormul_numpy_array(
-            self._eigvals * decomp_vec, self._reigvecs,
+            decomp_vec * self._eigvals, self._reigvecs,
             a_axes=(..., 0), b_axes=(..., 0, 1), res_axes=(..., 1)
         )
 
@@ -750,7 +746,16 @@ class HermitianLS(DiagonalizableLS):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _calc_leigvecs(self):
+    def calc_eigensystem(self):
+        """
+        Calculates eigenvalues, left and right eigenvectors.
+        By default the eigenvalues are sorted in a descending order.
+        """
+        eigvals, reigvecs = np.linalg.eig(self._matrix)
+        self._eigvals = eigvals
+        self._reigvecs = tensortranspose_numpy_array(
+            reigvecs, a_axes=-2, b_axes=-1
+        )
         self._leigvecs = np.conjugate(self._reigvecs)
 
 
@@ -763,7 +768,16 @@ class SymmetricLS(DiagonalizableLS):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _calc_leigvecs(self):
+    def calc_eigensystem(self):
+        """
+        Calculates eigenvalues, left and right eigenvectors.
+        By default the eigenvalues are sorted in a descending order.
+        """
+        eigvals, reigvecs = np.linalg.eig(self._matrix)
+        self._eigvals = eigvals
+        self._reigvecs = tensortranspose_numpy_array(
+            reigvecs, a_axes=-2, b_axes=-1
+        )
         cnorm = complex_norm(self._reigvecs, vec_axes=-1)
         self._reigvecs /= cnorm[..., np.newaxis]
-        self._leigvecs = np.array(self._reigvecs)
+        self._leigvecs = self._reigvecs.copy()
