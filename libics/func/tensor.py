@@ -349,7 +349,6 @@ class LinearSystem(object):
         self._veca_axes = None  # Tensor dimensions for result vector
         self._vecb_axes = None  # Tensor dimensions for solution vector
         # Linear system variables
-        self._factor = None     # Factor to normalize matrix
         self._matrix = None     # [..., n_dof, n_dof]
         self._result = None     # [..., n_dof]
         self._solution = None   # [..., n_dof]
@@ -420,23 +419,22 @@ class LinearSystem(object):
 
     @property
     def matrix(self):
-        return self._factor * self._unmatricize(self._matrix)
+        return self._unmatricize(self._matrix)
 
     @matrix.setter
     def matrix(self, val):
         if val is not None:
             val = misc.assume_numpy_array(val)
-            self._factor = np.abs(np.max(val))
-            self._matrix = self._matricize(val / self._factor)
+            self._matrix = self._matricize(val)
 
     @property
     def result(self):
-        return self._factor * self._unvectorize_a(self._result)
+        return self._unvectorize_a(self._result)
 
     @result.setter
     def result(self, val):
         val = misc.assume_numpy_array(val)
-        self._result = self._vectorize_a(val) / self._factor
+        self._result = self._vectorize_a(val)
 
     @property
     def solution(self):
@@ -586,19 +584,27 @@ class DiagonalizableLS(LinearSystem):
     ):
         super().__init__(*args, **kwargs)
         # Eigensystem variables
-        self._eigvals = None    # [..., n_dof]
-        self._reigvecs = None   # [..., n_dof, n_components]
-        self._leigvecs = None   # [..., n_dof, n_components]
-        self._decomp = None     # [..., n_dof]
+        self._eigvals = None        # [..., n_dof]
+        self._reigvecs = None       # [..., n_dof, n_components]
+        self._leigvecs = None       # [..., n_dof, n_components]
+        self._decomp = None         # [..., n_dof]
+        self._is_invertible = None  # Flag for diagonalizability
+
+    @LinearSystem.matrix.setter
+    def matrix(self, val):
+        if val is not None:
+            val = misc.assume_numpy_array(val)
+            self._matrix = self._matricize(val)
+            self._is_invertible = None
 
     @property
     def eigvals(self):
-        return self._factor * self._unvectorize(self._eigvals)
+        return self._unvectorize(self._eigvals)
 
     @eigvals.setter
     def eigvals(self, val):
         val = misc.assume_numpy_array(val)
-        self._eigvals = self._vectorize(val / self._factor)
+        self._eigvals = self._vectorize(val)
 
     @property
     def reigvecs(self):
@@ -640,6 +646,32 @@ class DiagonalizableLS(LinearSystem):
     def decomp(self, val):
         val = misc.assume_numpy_array(val)
         self._decomp = self._vectorize(val)
+
+    @property
+    def is_invertible(self):
+        """
+        Checks the rank of the matrix. Can be computationally expensive!
+        """
+        if self._is_invertible is None:
+            a_dim, b_dim = self._matrix.shape[-2:]
+            self._is_invertible = (a_dim == b_dim)
+            if self._is_invertible:
+                self._is_invertible = np.all(
+                    np.linalg.matrix_rank(self._matrix) == a_dim
+                )
+        return self._is_invertible
+
+    @property
+    def is_diagonalizable(self):
+        return self.is_invertible
+
+    @property
+    def is_singular(self):
+        return not self.is_invertible
+
+    @property
+    def is_defective(self):
+        return not self.is_invertible
 
     # +++++++++++++++++++++++++++++++++++++++++++
 

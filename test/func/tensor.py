@@ -101,6 +101,16 @@ class LinearSystemTestCase(unittest.TestCase):
             a_axes=self.mula_axes, b_axes=self.mulb_axes,
             res_axes=self.mulres_axes
         )
+        self.hy = tensor.tensormul_numpy_array(
+            self.hmat, self.x,
+            a_axes=self.mula_axes, b_axes=self.mulb_axes,
+            res_axes=self.mulres_axes
+        )
+        self.sy = tensor.tensormul_numpy_array(
+            self.smat, self.x,
+            a_axes=self.mula_axes, b_axes=self.mulb_axes,
+            res_axes=self.mulres_axes
+        )
 
     def tearDown(self):
         pass
@@ -145,6 +155,7 @@ class LinearSystemTestCase(unittest.TestCase):
             matrix=self.hmat, mata_axes=self.mata_axes,
             matb_axes=self.matb_axes, vec_axes=self.vec_axes
         )
+        self.assertTrue(ls.is_invertible)
         ls.calc_eigensystem()
         ls.solution = self.x.copy()
         ls.decomp_solution()
@@ -159,14 +170,9 @@ class LinearSystemTestCase(unittest.TestCase):
         hls.decomp_solution()
         hls.calc_solution()
         hls.calc_result()
-        print((tensor.tensormul_numpy_array(
-            hls.matrix, hls.eigvecs,
-            (0, 1, 2, 3, 4), (0, 5, 6, 3, 4), (0, 5, 6, 1, 2)
-        ) / hls.eigvecs).shape)
-        print(hls.eigvals.shape)
         self.assertTrue(np.allclose(hls.decomp, ls.decomp))
         self.assertTrue(np.allclose(hls.solution, self.x))
-        self.assertTrue(np.allclose(hls.result, self.y))
+        self.assertTrue(np.allclose(hls.result, self.hy))
         # Complex symmetric linear system
         sls = tensor.SymmetricLS(
             matrix=self.smat, mata_axes=self.mata_axes,
@@ -178,14 +184,14 @@ class LinearSystemTestCase(unittest.TestCase):
         sls.calc_solution()
         sls.calc_result()
         self.assertTrue(np.allclose(sls.solution, self.x))
-        self.assertTrue(np.allclose(sls.result, self.y))
+        self.assertTrue(np.allclose(sls.result, self.sy))
         decomp = sls.decomp.copy()
-        sls.result = self.y.copy()
+        sls.result = self.sy.copy()
         sls.decomp_result()
         sls.calc_result()
         sls.calc_solution()
         self.assertTrue(np.allclose(sls.solution, self.x))
-        self.assertTrue(np.allclose(sls.result, self.y))
+        self.assertTrue(np.allclose(sls.result, self.sy))
         self.assertTrue(np.allclose(sls.decomp, decomp))
 
 
