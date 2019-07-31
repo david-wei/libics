@@ -772,6 +772,47 @@ def transpose_array(ar):
         return tuple(map(tuple, zip(*ar)))
 
 
+def extract_index_nonunique_array(vec, min_count=2, rtol=1e-8):
+    """
+    Filters a vector for non-unique values and returns their indices.
+
+    Parameters
+    ----------
+    vec : `np.ndarray(1)`
+        Vector from which to extract indices of non-unique values.
+    min_count : `int`
+        Minimum multiplicity of values.
+    rtol : `float`
+        Relative tolerance defining the minimum deviation
+        required to regard values as different.
+        Only used for non-integer types.
+
+    Returns
+    -------
+    idx : `iter(np.ndarray(1, int))`
+        Iterable filter of lists of indices.
+    """
+    # Round precision errors (float->int->float)
+    if vec.dtype == float:
+        factor = 1 / np.max(np.abs(vec)) / rtol
+        int_vec = (factor * vec).astype(int)
+        vec = (int_vec / factor).astype(float)
+    elif vec.dtype == complex:
+        factor = 1 / np.max(np.abs(vec)) / rtol
+        int_vec_re = (factor * np.real(vec)).astype(int)
+        int_vec_im = (factor * np.imag(vec)).astype(int)
+        vec = ((int_vec_re + 1j * int_vec_im) / factor).astype(complex)
+    # Argsort vector to group same values
+    idx_order = np.argsort(vec)
+    vals, idx_start, counts = np.unique(
+        vec[idx_order], return_index=True, return_counts=True
+    )
+    # Split argsort into index arrays of same vector value and filter unique
+    idx = np.split(idx_order, idx_start[1:])
+    idx = filter(lambda x: x.size >= min_count, idx)
+    return idx
+
+
 ###############################################################################
 # Identity Functions
 ###############################################################################

@@ -274,7 +274,7 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     return sol
 
 
-def complex_norm(ar, vec_axes=None):
+def complex_norm(ar, axis=None):
     r"""
     Computes the pseudonorm :math:`\sqrt{x^T x}` on the complex (tensorial)
     vector :math:`x`.
@@ -283,7 +283,7 @@ def complex_norm(ar, vec_axes=None):
     ----------
     ar : `np.ndarray`
         Array constituting the vector to be normalized.
-    vec_axes : `tuple(int)`
+    axis : `tuple(int)`
         Tensorial indices corresponding to the vectorial dimensions.
 
     Returns
@@ -292,12 +292,41 @@ def complex_norm(ar, vec_axes=None):
         Resulting norm with removed vectorial axes.
     """
     ar = misc.assume_numpy_array(ar)
-    if vec_axes is None:
-        vec_axes = tuple(range(ar.ndim))
-    vec_axes = misc.assume_tuple(vec_axes)
-    vec = vectorize_numpy_array(ar, tensor_axes=vec_axes, vec_axis=-1)
+    if axis is None:
+        axis = tuple(range(ar.ndim))
+    axis = misc.assume_tuple(axis)
+    vec = vectorize_numpy_array(ar, tensor_axes=axis, vec_axis=-1)
     norm = np.einsum("...i,...i", vec, vec)
     return np.sqrt(norm)
+
+
+def ortho_gram_schmidt(vectors, norm_func=np.linalg.norm):
+    """
+    Naive Gram-Schmidt orthogonalization.
+
+    Parameters
+    ----------
+    vectors : `np.ndarray`
+        Normalized, linearly independent row vectors to be orthonormalized.
+        Dimensions: [n_vector, n_components].
+    norm : `callable`
+        Function computing a vector norm.
+        Call signature: `norm_func(vector)->scalar`.
+
+    Returns
+    -------
+    basis : `np.ndarray`
+        Orthonormal basis of space spanned by `vectors`.
+        Dimensions: [n_vector, n_components].
+    """
+    basis = np.zeros_like(vectors)
+    basis[0] = vectors[0]
+    counter = 1
+    for i, vec in enumerate(vectors[1:]):
+        v_proj = vec - (basis[:counter] @ vec) @ basis[:counter]
+        basis[i + 1] = v_proj / norm_func(v_proj)
+        counter += 1
+    return basis
 
 
 ###############################################################################
@@ -497,6 +526,17 @@ class LinearSystem(object):
     def _unvectorize(self, vec):
         return self._unvectorize_a(vec)
 
+    def _norm(self, ar, axis=None):
+        return np.linalg.norm(ar, axis=axis)
+
+    def _get_broadcast_dim_iter(self):
+        non_mat_shape = self._matrix.shape[:-2]
+        if len(non_mat_shape) < 1:
+            return None
+        else:
+            non_mat_idx = [range(i) for i in non_mat_shape]
+            return misc.get_combinations(non_mat_idx)
+
     # +++++++++++++++++++++++++++++++++++++++++++
 
     def solve(self, res_vec=None):
@@ -556,6 +596,14 @@ class DiagonalizableLS(LinearSystem):
       and (3.) calculating the result :math:`y`.
     1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
        left/right eigenvectors.
+
+      a. If the eigenvalues should be arranged meaningfully, they can be
+         ordered using :py:meth:`sort_eigensystem`.
+      b. For non-symmetric and non-Hermitian matrices or for degenerate
+         eigenvalues, the eigenvectors are not orthogonal. A computationally
+         expensive orthonormalization can be obtained with
+         :py:meth:`ortho_eigensystem`.
+
     2. Given the result vector :math:`y`, there are two options to solve for
        :math:`x`.
 
@@ -675,27 +723,29 @@ class DiagonalizableLS(LinearSystem):
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
-    def _calc_leigvecs(self):
+    def calc_eigensystem(self):
         """
-        Calculates the left eigenvectors from the right eigenvectors.
+        Calculates eigenvalues, normalized left and right eigenvectors.
 
         Notes
         -----
-        Inverts the right eigenvector matrix. To improve performance:
-        overload this function if matrix has additional symmetries.
-        """
-
-    def calc_eigensystem(self):
-        """
-        Calculates eigenvalues, left and right eigenvectors.
-        By default the eigenvalues are sorted in a descending order.
+        * The eigenvalues are in no guaranteed order.
+          See :py:meth:`sort_eigensystem`.
+        * The eigenvectors are not necessarily orthogonal.
+          See :py:meth:`ortho_eigensystem`.
         """
         eigvals, reigvecs = np.linalg.eig(self._matrix)
         self._eigvals = eigvals
         self._reigvecs = tensortranspose_numpy_array(
             reigvecs, a_axes=-2, b_axes=-1
         )
-        self._leigvecs = tensorinv_numpy_array(reigvecs, a_axes=-2, b_axes=-1)
+        self._calc_leigvecs()
+
+    def _calc_leigvecs(self):
+        self._leigvecs = tensorinv_numpy_array(
+            tensortranspose_numpy_array(self._reigvecs, a_axes=-2, b_axes=-1),
+            a_axes=-2, b_axes=-1
+        )
 
     def sort_eigensystem(self, order=None):
         """
@@ -708,10 +758,29 @@ class DiagonalizableLS(LinearSystem):
             `None`: index order ascending in eigenvalue.
         """
         if order is None:
-            order = np.argsort(self._eigvals, axis=-1)
+            order = np.argsort(np.abs(self._eigvals), axis=-1)
+        elif order.ndim > 1:
+            order = self._vectorize(order)
         self._eigvals = self._eigvals[..., order]
         self._reigvecs = self._reigvecs[..., order, :]
         self._leigvecs = self._leigvecs[..., order, :]
+
+    def ortho_eigensystem(self):
+        """
+        Orthonormalizes the eigenvectors.
+        """
+        bc_indices = self._get_broadcast_dim_iter()
+        if bc_indices is None:
+            bc_indices = [tuple()]  # Enter the loop once
+        for bc_idx in bc_indices:
+            nonunique_indices = misc.extract_index_nonunique_array(
+                self._eigvals[bc_idx], min_count=2
+            )
+            for idx in nonunique_indices:
+                self._reigvecs[bc_idx + (idx, )] = ortho_gram_schmidt(
+                    self._reigvecs[bc_idx + (idx, )], norm_func=self._norm
+                )
+        self._calc_leigvecs()
 
     def decomp_solution(self, sol_vec=None):
         """
@@ -779,15 +848,14 @@ class HermitianLS(DiagonalizableLS):
         super().__init__(*args, **kwargs)
 
     def calc_eigensystem(self):
-        """
-        Calculates eigenvalues, left and right eigenvectors.
-        By default the eigenvalues are sorted in a descending order.
-        """
         eigvals, reigvecs = np.linalg.eig(self._matrix)
         self._eigvals = eigvals
         self._reigvecs = tensortranspose_numpy_array(
             reigvecs, a_axes=-2, b_axes=-1
         )
+        self._calc_leigvecs()
+
+    def _calc_leigvecs(self):
         self._leigvecs = np.conjugate(self._reigvecs)
 
 
@@ -800,16 +868,17 @@ class SymmetricLS(DiagonalizableLS):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def _norm(self, ar, axis=None):
+        return complex_norm(ar, axis=axis)
+
     def calc_eigensystem(self):
-        """
-        Calculates eigenvalues, left and right eigenvectors.
-        By default the eigenvalues are sorted in a descending order.
-        """
         eigvals, reigvecs = np.linalg.eig(self._matrix)
         self._eigvals = eigvals
         self._reigvecs = tensortranspose_numpy_array(
             reigvecs, a_axes=-2, b_axes=-1
         )
-        cnorm = complex_norm(self._reigvecs, vec_axes=-1)
-        self._reigvecs /= cnorm[..., np.newaxis]
+        self._reigvecs /= self._norm(self._reigvecs, axis=-1)[..., np.newaxis]
+        self._calc_leigvecs()
+
+    def _calc_leigvecs(self):
         self._leigvecs = self._reigvecs.copy()
