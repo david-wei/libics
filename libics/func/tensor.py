@@ -128,6 +128,7 @@ def tensormul_numpy_array(
     a_axes, b_axes, res_axes : `tuple(int)`
         Indices of Einstein summation. Dimensions are interpreted
         relative. Allows for use of ellipses.
+        `res_axes` allows for `None` to obtain a scalar.
 
     Returns
     -------
@@ -149,8 +150,9 @@ def tensormul_numpy_array(
     * Tensor dot with broadcasting: e.g.
       (0, 1, 2, 3), (0, 1, 2, 3) -> (0, 3) ["ijkl,ijkl->il"].
     """
-    einstr = (_generate_einstr(a_axes) + "," + _generate_einstr(b_axes)
-              + "->" + _generate_einstr(res_axes))
+    einstr = (_generate_einstr(a_axes) + "," + _generate_einstr(b_axes))
+    if res_axes is not None and len(misc.assume_tuple(res_axes)) > 0:
+        einstr += "->" + _generate_einstr(res_axes)
     return np.einsum(einstr, a, b)
 
 
@@ -753,12 +755,21 @@ class DiagonalizableLS(LinearSystem):
 
         Parameters
         ----------
-        order : `np.ndarray(1)` or `None`
-            `np.ndarray(1)`: index order defined by this array.
-            `None`: index order ascending in eigenvalue.
+        order : `np.ndarray` or `callable` or `None`
+            `np.ndarray`:
+                Index order defined by this array.
+                Dimensions: [n_dof].
+            `callable`:
+                Eigenvalue measurement function whose ascendingly sorted
+                return value defines the index order.
+                Call signature: `func(np.ndarray(..., n_dof))->float`.
+            `None`:
+                Index order ascending in modulus of eigenvalue.
         """
         if order is None:
             order = np.argsort(np.abs(self._eigvals), axis=-1)
+        elif callable(order):
+            order = np.argsort(order(self._eigvals), axis=-1)
         elif order.ndim > 1:
             order = self._vectorize(order)
         self._eigvals = self._eigvals[..., order]
