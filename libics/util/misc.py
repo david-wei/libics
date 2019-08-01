@@ -814,6 +814,30 @@ def extract_index_nonunique_array(vec, min_count=2, rtol=1e-8):
 
 
 ###############################################################################
+# Coordinate Systems
+###############################################################################
+
+
+def cv_coord_spherical_to_cartesian(radial, polar, azimuthal):
+    r"""
+    Converts 3D spherical (standard parametrization) to cartesian coordinates.
+
+    .. math:
+        x = r \cdot \sin (\theta) \cos (\phi), \\
+        y = r \cdot \sin (\theta) \sin (\phi), \\
+        z = r \cdot \cos (\theta),
+
+    where :math:`r \in [0, \infty]` is the radial, :math:`\theta \in [0, \pi]`
+    is the polar, and :math:`\phi \in [0, 2 \pi]` is the azimuthal coordinate.
+    Supports broadcasting.
+    """
+    x = radial * np.sin(polar) * np.cos(azimuthal)
+    y = radial * np.sin(polar) * np.sin(azimuthal)
+    z = radial * np.cos(polar)
+    return np.array((x, y, z))
+
+
+###############################################################################
 # Identity Functions
 ###############################################################################
 
