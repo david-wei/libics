@@ -221,6 +221,42 @@ class FitGaussian2dTilt(fit.FitParamBase):
 
 
 ###############################################################################
+# Lorentzian Functions
+###############################################################################
+
+
+def lorentzian_1d_complex(
+    var, amplitude, center, width, offset=0.0
+):
+    return amplitude / (1j + (var - center) / width) + offset
+
+
+def lorentzian_1d_abs(
+    var, amplitude, center, width, offset=0.0
+):
+    return amplitude / (1 + ((var - center) / width)**2) + offset
+
+
+class FitLorentzian1dAbs(fit.FitParamBase):
+
+    def __init__(self, fit_offset=True, **kwargs):
+        super().__init__(
+            lorentzian_1d_abs, 4 if fit_offset else 3, **kwargs
+        )
+
+    def find_init_param(self, var_data, func_data):
+        """
+        Algorithm: dummy max.
+        """
+        idx_max = np.argmax(func_data)
+        self.param[0] = func_data[idx_max]
+        self.param[1] = var_data[idx_max]
+        self.param[2] = (np.max(var_data) - np.min(var_data)) / 4
+        if len(self.param) == 4:
+            self.param[3] = 0.0
+
+
+###############################################################################
 # Oscillating Functions
 ###############################################################################
 

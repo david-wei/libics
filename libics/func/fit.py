@@ -194,8 +194,7 @@ class FitParamBase(abc.ABC):
         ValueError
             If parameter is invalid.
         """
-        if np.isscalar(param):
-            param = np.array(param)
+        param = misc.assume_numpy_array(param)
         if param.ndim != self.param.ndim or param.size != self.param.size:
             raise ValueError("invalid parameters")
         self.param = param

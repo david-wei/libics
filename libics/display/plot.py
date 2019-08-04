@@ -1137,3 +1137,24 @@ def disable_plot_style():
     """
     if _MplRcParam is not None:
         _MplRcParam.__exit__()
+
+
+###############################################################################
+# #########################          NEW API          #########################
+###############################################################################
+
+
+class GraphBase(object):
+
+    def __init__(self):
+        self.x = None
+        self.y = None
+        self.mode = None
+        self.marker = None
+
+
+class Scatter(GraphBase):
+
+    def __init__(self):
+        super().__init__()
+        self.data = None
