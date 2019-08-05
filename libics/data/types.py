@@ -42,7 +42,7 @@ class Quantity(hdf.HDFBase):
     def __repr__(self):
         return str(type(self)) + ": " + str(self)
 
-    def mathstr(self, name=True, symbol=True, unit=True):
+    def mathstr(self, name=True, symbol=True, unit=True, **kwargs):
         s = ""
         if name:
             s += self.name
@@ -110,7 +110,7 @@ class ValQuantity(Quantity):
         return s
 
     def mathstr(self, name=True, symbol=True, unit=True,
-                val=True, val_format=None):
+                val=True, val_format=None, unit_math=False):
         s = ""
         if name:
             s += self.name
@@ -124,10 +124,11 @@ class ValQuantity(Quantity):
             else:
                 s += " $" + val_format.format(self.val) + "$"
         if unit and self.unit is not None:
+            str_unit = ("$" + self.unit + "$") if unit_math else self.unit
             if val and self.val is not None:
-                s += " " + self.unit
+                s += " " + str_unit
             else:
-                s += " [" + self.unit + "]"
+                s += " [" + str_unit + "]"
         return s
 
     def __eq__(self, other):
