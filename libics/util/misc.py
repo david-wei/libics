@@ -2,6 +2,7 @@ import math
 import operator
 import os
 import re
+import time
 
 import numpy as np
 
@@ -582,6 +583,38 @@ def char_range(start, stop=None, step=1):
         num_stop = ord(stop.lower()) + 1
     for ord_ in range(num_start, num_stop, step):
         yield chr(ord_)
+
+
+def print_progress(
+    count, total, subcount=None, subtotal=None, start_time=None,
+    prefix="", fill="#", empty="·", bar_length=40, total_length=80, end=None
+):
+    if prefix != "":
+        prefix += " "
+    has_subprogress = subcount is not None and subtotal is not None
+    progress = count / total
+    if has_subprogress:
+        progress = min(1, (count + subcount / subtotal) / (total))
+    chars = int(round(progress * bar_length))
+    progress_bar = "|{:s}{:s}| ".format(
+        generate_fill_chars(chars, fill_char=fill),
+        generate_fill_chars(bar_length - chars, fill_char=empty)
+    )
+    progress_str = "{:d}/{:d}".format(count, total)
+    if has_subprogress:
+        progress_str += " ({:d}/{:d})".format(subcount, subtotal)
+    if start_time is not None:
+        progress_str += ", {:.0f}s".format(time.time() - start_time)
+    s = "\r" + prefix + progress_bar + progress_str
+    diff_length = total_length - len(s)
+    if diff_length > 0:
+        s += generate_fill_chars(diff_length, fill_char=" ")
+    if end is None:
+        end = (count == total)
+        if has_subprogress:
+            end &= (subcount == subtotal)
+    end = "\n" if end else ""
+    print(s, end=end)
 
 
 ###############################################################################
