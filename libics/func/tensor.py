@@ -276,6 +276,31 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     return sol
 
 
+def euclid_norm(ar, axis=None):
+    r"""
+    Computes the Euclidean norm :math:`\sqrt{x^\dagger x}` on the complex
+    (tensorial) vector :math:`x`.
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Array constituting the vector to be normalized.
+    axis : `tuple(int)`
+        Tensorial indices corresponding to the vectorial dimensions.
+
+    Returns
+    -------
+    norm : `np.ndarray`
+        Resulting norm with removed vectorial axes.
+    """
+    ar = misc.assume_numpy_array(ar)
+    if axis is None:
+        axis = tuple(range(ar.ndim))
+    axis = misc.assume_tuple(axis)
+    vec = vectorize_numpy_array(ar, tensor_axes=axis, vec_axis=-1)
+    return np.linalg.norm(vec, axis=-1)
+
+
 def complex_norm(ar, axis=None):
     r"""
     Computes the pseudonorm :math:`\sqrt{x^T x}` on the complex (tensorial)
