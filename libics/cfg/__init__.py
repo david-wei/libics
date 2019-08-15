@@ -3,6 +3,7 @@ import collections
 
 from . import default   # noqa
 from . import err       # noqa
+from . import io        # noqa
 
 from libics.file import hdf
 from libics.util import InheritMap
