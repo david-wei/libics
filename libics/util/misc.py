@@ -79,7 +79,7 @@ def assume_list(data):
     elif isinstance(data, tuple):
         return list(data)
     elif isinstance(data, np.ndarray):
-        return list(data)
+        return list(data.tolist())
     else:
         return [data]
 
