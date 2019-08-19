@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import special
+from scipy import special, stats
 
 from libics.func import fit
 
@@ -308,6 +308,224 @@ class FitAiryDisk2d(fit.FitParamBase):
         self.param[4] = 0.0
         if fit_offset:
             self.param[4] = offset
+
+
+def dsc_bloch_osc_1d(
+    var, hopping, gradient
+):
+    r"""
+    .. math::
+        J_n^2 \left( \frac{4 J}{\Delta}
+        \cdot \left| \sin \frac{\Delta t}{2} \right| \right)
+
+    :math:`\Delta = F a` specifies the energy difference between neighbouring
+    sites with distance :math:`a` at a potential gradient :math:`F`.
+    Energies :math:`J, \Delta` should be given in :math:`2 \pi` frequency
+    units, i.e. in units of :math:`\hbar`.
+
+    Parameters
+    ----------
+    `var` :math:`(n, t)`, `hopping` :math:`J`, `gradient` :math:`\Delta`.
+
+    Returns
+    -------
+    res
+        Probability distribution of 1D Bloch oscillations for the given
+        site `var[0]` at the given time `var[1]`.
+    """
+    arg = np.abs(np.sin(gradient * var[-1] / 2))
+    return special.jv(var[0], 4 * hopping / gradient * arg)**2
+
+
+class RndDscBlochOsc1d(stats.rv_discrete):
+    """
+    1D Bloch oscillation site occupation random variable.
+
+    Parameters
+    ----------
+    site : `tuple(int)`
+        Minimum and maximum sites `(site_min, site_max)`.
+    time : `float`
+        Evolution time in seconds (s).
+    hopping : `float`
+        Hopping frequency in Hertz (Hz).
+    gradient : `float`
+        Frequency difference between neighbouring sites in Hertz (Hz).
+    """
+
+    def __new__(
+        cls, *args,
+        sites=None, time=None, hopping=None, gradient=None, **kwargs
+    ):
+        return super().__new__(cls, *args, name="bloch_osc_1d", **kwargs)
+
+    def __init__(
+        self, *args,
+        sites=(-100, 100), time=0, hopping=1, gradient=1, **kwargs
+    ):
+        super().__init__(*args, name="bloch_osc_1d", **kwargs)
+        self.sites = sites
+        self.time = time
+        self.hopping = hopping
+        self.gradient = gradient
+
+    def _get_support(self, *args):
+        return self.sites
+
+    def _pmf(self, x):
+        t = np.full_like(x, self.time, dtype=float)
+        return dsc_bloch_osc_1d([x, t], self.hopping, self.gradient)
+
+
+def dsc_bloch_osc_2d(
+    var, hopping_x, hopping_y, gradient_x, gradient_y
+):
+    """
+    See :py:func:`bloch_osc_1d`.
+
+    `var` :math:`(n_x, n_y, t)`
+    """
+    arg_x = np.abs(np.sin(gradient_x * var[-1] / 2))
+    arg_y = np.abs(np.sin(gradient_y * var[-1] / 2))
+    prb_x = special.jv(var[0], 4 * hopping_x / gradient_x * arg_x)**2
+    prb_y = special.jv(var[1], 4 * hopping_y / gradient_y * arg_y)**2
+    return prb_x * prb_y
+
+
+def dsc_bloch_osc_3d(
+    var, hopping_x, hopping_y, hopping_z, gradient_x, gradient_y, gradient_z
+):
+    """
+    See :py:func:`bloch_osc_1d`.
+
+    `var` :math:`(n_x, n_y, n_z, t)`
+    """
+    arg_x = np.abs(np.sin(gradient_x * var[-1] / 2))
+    arg_y = np.abs(np.sin(gradient_y * var[-1] / 2))
+    arg_z = np.abs(np.sin(gradient_z * var[-1] / 2))
+    prb_x = special.jv(var[0], 4 * hopping_x / gradient_x * arg_x)**2
+    prb_y = special.jv(var[1], 4 * hopping_y / gradient_y * arg_y)**2
+    prb_z = special.jv(var[2], 4 * hopping_z / gradient_z * arg_z)**2
+    return prb_x * prb_y * prb_z
+
+
+def dsc_ballistic_1d(var, hopping):
+    r"""
+    .. math::
+        J_n^2 \left( 2 J t \right)
+
+    The hopping energy :math:`J` should be given in :math:`2 \pi` frequency
+    units, i.e. in units of :math:`\hbar`.
+
+    Parameters
+    ----------
+    `var` :math:`(n, t)`, `hopping` :math:`J`.
+
+    Returns
+    -------
+    res
+        Probability distribution of 1D ballistic transport for the given
+        site `var[0]` at the given time `var[1]`.
+    """
+    return special.jv(var[0], 2 * hopping * var[-1])**2
+
+
+class RndDscBallistic1d(stats.rv_discrete):
+    """
+    1D ballistic transport site occupation random variable.
+
+    Parameters
+    ----------
+    site : `tuple(int)`
+        Minimum and maximum sites `(site_min, site_max)`.
+    time : `float`
+        Evolution time in seconds (s).
+    hopping : `float`
+        Hopping frequency in Hertz (Hz).
+    """
+
+    def __new__(
+        cls, *args,
+        sites=None, time=None, hopping=None, **kwargs
+    ):
+        return super().__new__(cls, *args, name="ballistic_1d", **kwargs)
+
+    def __init__(
+        self, *args,
+        sites=(-100, 100), time=0, hopping=1, **kwargs
+    ):
+        super().__init__(*args, name="ballistic_1d", **kwargs)
+        self.sites = sites
+        self.time = time
+        self.hopping = hopping
+
+    def _get_support(self, *args):
+        return self.sites
+
+    def _pmf(self, x):
+        t = np.full_like(x, self.time, dtype=float)
+        return dsc_ballistic_1d([x, t], self.hopping)
+
+
+def dsc_diffusive_1d(var, diffusion):
+    r"""
+    .. math::
+        \frac{1}{\sqrt{4 \pi D t}}
+        \exp \left( -\frac{n^2}{4 D t} \right)
+
+    The diffusion constant :math:`D` should be given in units of the
+    lattice constant :math:`a`, i.e. :math:`D_\text{SI} = D / a^2`.
+
+    Parameters
+    ----------
+    `var` :math:`(n, t)`, `hopping` :math:`J`.
+
+    Returns
+    -------
+    res
+        Probability distribution of 1D ballistic transport for the given
+        site `var[0]` at the given time `var[1]`.
+    """
+    width = np.sqrt(2 * diffusion * var[-1])
+    amplitude = 1 / np.sqrt(4 * np.pi * diffusion * var[-1])
+    return gaussian_1d(var[0], amplitude, 0, width, offset=0)
+
+
+class RndDscDiffusive1d(stats.rv_discrete):
+    """
+    1D random variable for diffusive transport on discrete sites.
+
+    Parameters
+    ----------
+    site : `tuple(int)`
+        Minimum and maximum sites `(site_min, site_max)`.
+    time : `float`
+        Evolution time in seconds (s).
+    diffusion : `float`
+        Diffusion constant in sites² per second (1/s).
+    """
+
+    def __new__(
+        cls, *args,
+        sites=None, time=None, diffusion=None, **kwargs
+    ):
+        return super().__new__(cls, *args, name="diffusive_1d", **kwargs)
+
+    def __init__(
+        self, *args,
+        sites=(-100, 100), time=0, diffusion=1, **kwargs
+    ):
+        super().__init__(*args, name="diffusive_1d", **kwargs)
+        self.sites = sites
+        self.time = time
+        self.diffusion = diffusion
+
+    def _get_support(self, *args):
+        return self.sites
+
+    def _pmf(self, x):
+        t = np.full_like(x, self.time, dtype=float)
+        return dsc_diffusive_1d([x, t], self.diffusion)
 
 
 ###############################################################################
