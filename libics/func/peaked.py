@@ -486,9 +486,24 @@ def dsc_diffusive_1d(var, diffusion):
         Probability distribution of 1D ballistic transport for the given
         site `var[0]` at the given time `var[1]`.
     """
-    width = np.sqrt(2 * diffusion * var[-1])
-    amplitude = 1 / np.sqrt(4 * np.pi * diffusion * var[-1])
-    return gaussian_1d(var[0], amplitude, 0, width, offset=0)
+    _is_nonzero = (var[-1] != 0)  # Handling time division by zero
+    result = None
+    if np.isscalar(_is_nonzero):
+        if _is_nonzero:
+            _width = np.sqrt(2 * diffusion * var[-1])
+            _amplitude = 1 / np.sqrt(4 * np.pi * diffusion * var[-1])
+            result = gaussian_1d(var[0], _amplitude, 0, _width, offset=0)
+        else:
+            result = 1 if var[0] == 0 else 0
+    else:
+        _width = np.sqrt(2 * diffusion * var[-1][_is_nonzero])
+        _amplitude = 1 / np.sqrt(4 * np.pi * diffusion * var[-1][_is_nonzero])
+        result = np.zeros_like(var[0], dtype=float)
+        result[(~_is_nonzero) & (var[0] == 0)] = 1
+        result[_is_nonzero] = gaussian_1d(
+            var[0][_is_nonzero], _amplitude, 0, _width, offset=0
+        )
+    return result
 
 
 class RndDscDiffusive1d(stats.rv_discrete):
