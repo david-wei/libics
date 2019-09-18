@@ -262,6 +262,12 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     -------
     sol : `np.ndarray`
         Solution vector tensor :math:`x` with solution indices res_axes.
+
+    Notes
+    -----
+    Tries to solve the linear equation using a deterministic full-rank solver.
+    If this fails, a least-squares algorithm is used. The least-squares solver
+    does not support broadcasting.
     """
     ar_vec, a_shape, b_shape, a_vecaxes, b_axes = _matricize_numpy_array(
         ar, a_axes, b_axes
@@ -269,7 +275,12 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     res_vec, res_shape = vectorize_numpy_array(
         res, tensor_axes=res_axes, vec_axis=-1, ret_shape=True
     )
-    sol_vec = np.linalg.solve(ar_vec, res_vec)
+    # Solve using full-rank solver
+    try:
+        sol_vec = np.linalg.solve(ar_vec, res_vec)
+    # Solve using least squares optimization
+    except np.linalg.LinAlgError:
+        sol_vec = np.linalg.lstsq(ar_vec, res_vec, rcond=None)[0]
     sol = tensorize_numpy_array(
         sol_vec, res_shape, tensor_axes=res_axes, vec_axis=-1
     )
