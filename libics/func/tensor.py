@@ -243,7 +243,9 @@ def tensorinv_numpy_array(ar, a_axes=-2, b_axes=-1):
     return ar
 
 
-def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
+def tensorsolve_numpy_array(
+    ar, res, a_axes=-2, b_axes=-1, res_axes=-1, algorithm=None
+):
     """
     Solves a tensor equation :math:`A x = b` for :math:`x`, where all operands
     may be high-dimensional.
@@ -257,6 +259,9 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     a_axes, b_axes, res_axes : `tuple(int)`
         Tensorial indices corresponding to
         :math:`\\sum_{b} A_{ab} x_b = y_{res}`.
+    algorithm : `None` or `str`
+        `None` or `"lu_fac": LU factorization.
+        `"lst_sq": least squares optimization.
 
     Returns
     -------
@@ -275,12 +280,19 @@ def tensorsolve_numpy_array(ar, res, a_axes=-2, b_axes=-1, res_axes=-1):
     res_vec, res_shape = vectorize_numpy_array(
         res, tensor_axes=res_axes, vec_axis=-1, ret_shape=True
     )
-    # Solve using full-rank solver
     try:
-        sol_vec = np.linalg.solve(ar_vec, res_vec)
-    # Solve using least squares optimization
+        if algorithm is None or algorithm == "lu_fac":
+            sol_vec = np.linalg.solve(ar_vec, res_vec)
+        elif algorithm == "lst_sq":
+            sol_vec = np.linalg.lstsq(ar_vec, res_vec, rcond=None)[0]
+        else:
+            raise KeyError("invalid algorithm ({:s})".format(str(algorithm)))
+    # Fallback solver using least squares optimization
     except np.linalg.LinAlgError:
-        sol_vec = np.linalg.lstsq(ar_vec, res_vec, rcond=None)[0]
+        if algorithm == "lst_sq":
+            raise
+        else:
+            sol_vec = np.linalg.lstsq(ar_vec, res_vec, rcond=None)[0]
     sol = tensorize_numpy_array(
         sol_vec, res_shape, tensor_axes=res_axes, vec_axis=-1
     )
@@ -577,7 +589,7 @@ class LinearSystem(object):
 
     # +++++++++++++++++++++++++++++++++++++++++++
 
-    def solve(self, res_vec=None):
+    def solve(self, res_vec=None, algorithm=None):
         """
         For a given result vector :math:`y`, directly solves for the solution
         vector :math:`x`.
@@ -588,7 +600,8 @@ class LinearSystem(object):
             res_vec = self._vectorize_a(res_vec)
         # TODO: scalable solution for non-square matrices
         self._solution = tensorsolve_numpy_array(
-            self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1
+            self._matrix, res_vec, a_axes=-2, b_axes=-1, res_axes=-1,
+            algorithm=algorithm
         )
 
     def eval(self, sol_vec=None):
