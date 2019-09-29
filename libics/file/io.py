@@ -362,9 +362,6 @@ class ObjDecoder(object):
 ###############################################################################
 
 
-FILE_FORMATS = ["json", "bson", "hdf"]
-
-
 def get_file_format(file_path, fmt=None):
     """
     Deduces the file format (or returns the format if given).
@@ -381,8 +378,6 @@ def get_file_format(file_path, fmt=None):
             raise KeyError("could not deduce file format ({:s})"
                            .format(str(file_path)))
     fmt = fmt.lower()
-    if fmt not in FILE_FORMATS:
-        raise KeyError("invalid file format ({:s})".format(str(fmt)))
     return fmt
 
 
@@ -408,7 +403,8 @@ def save(
     fmt = get_file_format(file_path, fmt=fmt)
     ser = enc.encode(obj)
     if "json" in fmt:
-        json.dump(ser, open(file_path, "w"), **kwargs)
+        with open(file_path, "w") as f:
+            json.dump(ser, f, **kwargs)
     elif "bson" in fmt:
         stream = bson.BSON.encode(ser)
         with open(file_path, "wb") as f:
@@ -454,7 +450,8 @@ def load(
     if isinstance(obj_or_cls, type):
         obj = obj_or_cls()
     if "json" in fmt:
-        ser = json.load(open(file_path, "r"))
+        with open(file_path, "r") as f:
+            ser = json.load(f)
         obj = dec.decode(
             ser, obj=obj, req_version=req_version, raise_err=raise_err
         )
@@ -482,18 +479,15 @@ class FileBase(object):
       base class.
     * By default the serialization algorithm calls :py:meth:`attributes`,
       which returns a name->value dictionary of the attributes to be
-      serialized. These attributes are given in the class variable `KEYS`,
+      serialized. These attributes are given in the class variable `SER_KEYS`,
       which is a set containing the respective attribute names.
     * The subclass should add the required attribute names to this set, i.e.
-      setting `KEYS = FileBase.KEYS | {"ATTR0", "ATTR1", ...}`.
+      setting `SER_KEYS = FileBase.SER_KEYS | {"ATTR0", "ATTR1", ...}`.
     * Alternatively, the :py:meth:`attributes` method itself can be
       overwritten to obtain more customizability.
     """
 
-    KEYS = set()
-
-    def __init__(self):
-        raise NotImplementedError
+    SER_KEYS = set()
 
     def save(self, file_path, **kwargs):
         """
@@ -521,4 +515,4 @@ class FileBase(object):
             Saved attributes dictionary mapping the attribute name
             to the attribute value.
         """
-        return {k: getattr(self, k) for k in self.KEYS}
+        return {k: getattr(self, k) for k in self.SER_KEYS}

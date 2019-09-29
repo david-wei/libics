@@ -1,3 +1,4 @@
+from . import cfg           # noqa
 from . import hdf           # noqa
 from . import image         # noqa
 from . import imageutil     # noqa
