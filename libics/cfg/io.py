@@ -1,59 +1,5 @@
 import collections
-from importlib import import_module
 import numpy as np
-
-
-###############################################################################
-
-
-def get_class_from_fqname(fqname):
-    """
-    Gets the class specified by the given fully qualified class name.
-
-    Parameters
-    ----------
-    fqname : `str`
-        Fully qualified class name (i.e. Python-attribute-style string
-        specifying class), e.g. `libics.data.arraydata.ArrayData`.
-
-    Returns
-    -------
-    _cls : `class`
-        Requested class object.
-    """
-    module_path, _, class_name = fqname.rpartition('.')
-    try:
-        mod = import_module(module_path)
-        _cls = getattr(mod, class_name)
-        return _cls
-    except (AttributeError, ValueError):
-        raise ImportError("invalid class ({:s})".format(str(fqname)))
-
-
-def get_fqname_from_class(_cls):
-    """
-    Gets the fully qualified class name from the given class.
-
-    Parameters
-    ----------
-    _cls : `class`
-        Class object.
-
-    Returns
-    -------
-    fqname : `str`
-        Requested fully qualified class name.
-
-    Notes
-    -----
-    See: https://stackoverflow.com/questions/2020014
-    """
-    fqname = []
-    module = _cls.__class__.__module__
-    if not (module is None or module == str.__class__.__module__):
-        fqname.append(module)
-    fqname.append(_cls.__class__.__name__)
-    return ".".join(fqname)
 
 
 ###############################################################################

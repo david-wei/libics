@@ -28,7 +28,7 @@ setup(name='libics',
       },
       install_requires=[
             'matplotlib', 'numpy', 'scipy', 'pandas',
-            'pyserial', 'h5py', 'Pillow', 'PyQt5'
+            'pyserial', 'pymongo', 'h5py', 'Pillow', 'PyQt5'
       ],
       dependency_links=[
             'https://github.com/morefigs/pymba',

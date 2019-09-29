@@ -739,6 +739,30 @@ def get_combinations(ls):
 ###############################################################################
 
 
+def get_numpy_dtype_str(dtype):
+    """
+    Gets the Python built-in type string corresponding to the given
+    numpy dtype. If no matching built-in type is found, the numpy string
+    representation of the dtype is returned.
+
+    Parameters
+    ----------
+    dtype : `numpy.dtype`
+        Numpy data type.
+
+    Returns
+    -------
+    dtype_str : `str`
+        String corresponding to numpy data type.
+    """
+    for dtype_str in ["bool", "int", "float", "complex", "object"]:
+        if dtype == dtype_str:
+            return dtype_str
+    if "U" in str(dtype):
+        return "str"
+    return str(dtype)
+
+
 def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
     """
     Pads or shrinks a numpy array to a requested shape.
