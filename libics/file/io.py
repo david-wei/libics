@@ -14,7 +14,7 @@ from libics.file import hdf
 ###############################################################################
 
 
-def get_class_from_fqname(fqname):
+def get_class_from_fqname(fqname, cls_map=None):
     """
     Gets the class specified by the given fully qualified class name.
 
@@ -23,12 +23,20 @@ def get_class_from_fqname(fqname):
     fqname : `str`
         Fully qualified class name (i.e. Python-attribute-style string
         specifying class), e.g. `libics.data.arraydata.ArrayData`.
+    cls_map : `dict(str->cls)`
+        Dictionary mapping fully qualified name to a class.
+        Is handled prioritized, so it can be used for legacy purposes,
+        where dependencies have changed.
 
     Returns
     -------
     _cls : `class`
         Requested class object.
     """
+    # Use class map
+    if cls_map is not None and fqname in cls_map:
+        return cls_map[fqname]
+    # Use modules
     module_path, _, class_name = fqname.rpartition('.')
     try:
         mod = import_module(module_path)
@@ -38,7 +46,7 @@ def get_class_from_fqname(fqname):
         raise ImportError("invalid class ({:s})".format(str(fqname)))
 
 
-def get_fqname_from_class(_cls):
+def get_fqname_from_class(_cls, cls_map=None):
     """
     Gets the fully qualified class name from the given class.
 
@@ -46,6 +54,10 @@ def get_fqname_from_class(_cls):
     ----------
     _cls : `class`
         Class object.
+    cls_map : `dict(cls->str)`
+        Dictionary mapping class to a fully qualified name.
+        Is handled prioritized, so it can be used for legacy purposes,
+        where dependencies have changed.
 
     Returns
     -------
@@ -56,6 +68,10 @@ def get_fqname_from_class(_cls):
     -----
     See: https://stackoverflow.com/questions/2020014
     """
+    # Use class map
+    if cls_map is not None and _cls in cls_map:
+        return cls_map[_cls]
+    # Use modules
     fqname = []
     module = _cls.__module__
     if not (module is None or module == str.__class__.__module__):
@@ -94,12 +110,17 @@ class ObjEncoder(object):
     Serializes an object to a file or dictionary.
 
     For serialization to file (with metadata), use :py:meth:`encode`.
+    For legacy class to fully qualified name map (:py:attr:`CLS_MAP`),
+    inherit from this class and populate the attribute according to
+    :py:func:`get_fqname_from_class`.
 
     Raises
     ------
     NotImplementedError
         If class of object to be serialized is not supported.
     """
+
+    CLS_MAP = None
 
     @classmethod
     def _serialize_numpy_ndarray(cls, obj):
@@ -142,7 +163,9 @@ class ObjEncoder(object):
             return {k: v for k, v in obj.items()}
         else:
             d = {}
-            d["__cls__"] = get_fqname_from_class(type(obj))
+            d["__cls__"] = get_fqname_from_class(
+                type(obj), cls_map=cls.CLS_MAP
+            )
             if isinstance(obj, FileBase):
                 d["__obj__"] = cls.serialize(obj.attributes())
             elif isinstance(obj, np.ndarray):
@@ -188,12 +211,17 @@ class ObjDecoder(object):
     Deserializes a file or dictionary to an object.
 
     For deserialization from file (with metadata), use :py:meth:`decode`.
+    For legacy fully qualified name to class map (:py:attr:`CLS_MAP`),
+    inherit from this class and populate the attribute according to
+    :py:func:`get_class_from_fqname`.
 
     Raises
     ------
     KeyError
         If deserialization failed.
     """
+
+    CLS_MAP = None
 
     @classmethod
     def _deserialize_special_types(cls, ser):
@@ -277,7 +305,9 @@ class ObjDecoder(object):
                     # Construct object and fill attributes
                     try:
                         if obj is None:
-                            obj = get_class_from_fqname(name)()
+                            obj = get_class_from_fqname(
+                                name, cls_map=cls.CLS_MAP
+                            )()
                         for k, v in data.items():
                             setattr(obj, k, cls.deserialize(v))
                     # If object construction fails
