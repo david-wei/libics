@@ -348,9 +348,9 @@ class RndDscBlochOsc1d(stats.rv_discrete):
     time : `float`
         Evolution time in seconds (s).
     hopping : `float`
-        Hopping frequency in Hertz (Hz).
+        Hopping frequency in radians (rad).
     gradient : `float`
-        Frequency difference between neighbouring sites in Hertz (Hz).
+        Frequency difference between neighbouring sites in radians (rad).
     """
 
     def __new__(
@@ -361,7 +361,7 @@ class RndDscBlochOsc1d(stats.rv_discrete):
 
     def __init__(
         self, *args,
-        sites=(-100, 100), time=0, hopping=1, gradient=1, **kwargs
+        sites=(-100, 100), time=0, hopping=2*np.pi, gradient=2*np.pi, **kwargs
     ):
         super().__init__(*args, name="bloch_osc_1d", **kwargs)
         self.sites = sites
@@ -441,7 +441,7 @@ class RndDscBallistic1d(stats.rv_discrete):
     time : `float`
         Evolution time in seconds (s).
     hopping : `float`
-        Hopping frequency in Hertz (Hz).
+        Hopping frequency in radians (rad).
     """
 
     def __new__(
@@ -452,7 +452,7 @@ class RndDscBallistic1d(stats.rv_discrete):
 
     def __init__(
         self, *args,
-        sites=(-100, 100), time=0, hopping=1, **kwargs
+        sites=(-100, 100), time=0, hopping=2*np.pi, **kwargs
     ):
         super().__init__(*args, name="ballistic_1d", **kwargs)
         self.sites = sites

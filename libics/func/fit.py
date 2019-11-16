@@ -153,7 +153,8 @@ class FitParamBase(abc.ABC):
             Parameter (value, standard deviation) or covariance.
         """
         # If tuple as key, return covariance
-        if type(key) == tuple:
+        if isinstance(key, tuple) or isinstance(key, list):
+            key = list(key)
             for i in range(len(key)):
                 if type(key[i]) == str:
                     key[i] = self.name_to_ind[key[i]]
