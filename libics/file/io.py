@@ -94,6 +94,26 @@ def type_is_primitive(obj):
     return obj is None or type(obj) in (bool, int, float, str)
 
 
+def filter_primitive(obj):
+    """
+    Filters primitive types requiring special handling (i.a. `np.generic`)
+    into Python built-in types.
+
+    Parameters
+    ----------
+    obj : `object`
+        Object to be filtered.
+
+    Returns
+    -------
+    obj : `object`
+        Converted object if applicable, otherwise returns identity.
+    """
+    if isinstance(obj, np.generic):
+        obj = obj.item()
+    return obj
+
+
 # Efficiently encode special types as lists with leading string `"_^ID"`
 ID_COMPLEX = "_^CX"
 ALL_IDS = (ID_COMPLEX,)
@@ -153,6 +173,7 @@ class ObjEncoder(object):
 
     @classmethod
     def serialize(cls, obj):
+        obj = filter_primitive(obj)
         if type_is_primitive(obj):
             return obj
         elif isinstance(obj, complex):
@@ -160,7 +181,7 @@ class ObjEncoder(object):
         elif isinstance(obj, (list, tuple)):
             return [cls.serialize(item) for item in obj]
         elif isinstance(obj, dict):
-            return {k: v for k, v in obj.items()}
+            return {k: cls.serialize(v) for k, v in obj.items()}
         else:
             d = {}
             d["__cls__"] = get_fqname_from_class(
@@ -386,7 +407,12 @@ class ObjDecoder(object):
                 raise RuntimeError("incompatible libics version ({:s})"
                                    .format(ser["__meta__"]["libics_version"]))
         # Deserialize data
-        return cls.deserialize(ser["__data__"], obj=obj, raise_err=raise_err)
+        data = None
+        if "__data__" in ser:   # libics encoded data
+            data = ser["__data__"]
+        else:
+            data = ser          # undefined dict data
+        return cls.deserialize(data, obj=obj, raise_err=raise_err)
 
 
 ###############################################################################
