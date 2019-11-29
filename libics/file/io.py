@@ -267,6 +267,8 @@ class ObjDecoder(object):
                                .format("complex numpy.ndarray"))
             else:
                 return ser["data"]
+        else:
+            return np.array(ser["data"], dtype=dtype)
 
     @classmethod
     def _deserialize_pandas_dataframe(cls, ser, raise_err=True):
