@@ -8,7 +8,7 @@ import bson
 
 from libics import env
 from libics.util import misc
-from libics.file import hdf
+from libics.file import hdf, image
 
 
 ###############################################################################
@@ -522,6 +522,14 @@ def load(
         )
     elif "hdf" in fmt:
         obj = hdf.read_hdf(obj_or_cls, file_path=file_path)
+    elif "bmp" in fmt:
+        obj = image.load_bmp_to_arraydata(file_path, arraydata=obj_or_cls)
+    elif "png" in fmt:
+        obj = image.load_png_to_arraydata(file_path, arraydata=obj_or_cls)
+    elif "wct" in fmt:
+        obj = image.load_wct_to_arraydata(file_path, arraydata=obj_or_cls)
+    elif "sif" in fmt:
+        obj = image.load_sif_to_arraydata(file_path, arraydata=obj_or_cls)
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
     return obj

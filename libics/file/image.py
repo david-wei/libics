@@ -65,6 +65,50 @@ def load_bmp_to_arraydata(file_path, arraydata=None):
 
 
 ###############################################################################
+# Portable Network Graphic (png)
+###############################################################################
+
+
+def load_png_to_arraydata(file_path, arraydata=None):
+    """
+    Reads a portable network graphic (png) file and loads the data as
+    grayscale image into a `data.arraydata.ArrayData` structure.
+
+    Parameters
+    ----------
+    file_path : `str`
+        Path to the bitmap image file.
+    arraydata : `data.arraydata.ArrayData` or `None
+        Sets the array data to the loaded bitmap values.
+        If `None`, creates a new ArrayData object using the
+        default values as defined in `cfg.default`.
+
+    Returns
+    -------
+    arraydata : `data.arraydata.ArrayData`
+        Image grayscales as ArrayData.
+
+    Raises
+    ------
+    FileNotFoundError
+        If `file_path` does not exist.
+    AttributeError
+        If given file is not a bitmap file.
+    """
+    # Check file (path)
+    file_path = misc.assume_endswith(file_path, ".png")
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(file_path)
+    # Setup arraydata
+    if arraydata is None:
+        arraydata = imageutil.create_default_arraydata()
+    # Load bitmap
+    image = np.array(PIL.Image.open(file_path).convert("L"))
+    arraydata.data = image.T
+    return arraydata
+
+
+###############################################################################
 # WinCamD (wct)
 ###############################################################################
 
