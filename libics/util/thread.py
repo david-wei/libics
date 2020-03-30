@@ -120,6 +120,7 @@ class PeriodicTimer():
         """
         if self._thread is not None and self._thread.is_alive():
             self._thread.stop()
+        self._thread = None
 
     def set_stop_action(self, stop_action):
         """
