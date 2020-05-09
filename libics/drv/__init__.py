@@ -33,6 +33,8 @@ def get_drv(cfg):
         return drvcam.get_cam_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.PIEZO:
         return drvpiezo.get_piezo_drv(cfg)
+    elif cfg.driver == drv.DRV_DRIVER.PICO:
+        return drvpiezo.get_pico_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.SPAN:
         return drvspan.get_span_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.OSC:
