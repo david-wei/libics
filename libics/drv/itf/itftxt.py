@@ -4,6 +4,8 @@ import select
 import serial
 import socket
 import time
+import usb.core
+import usb.util
 
 # Package Imports
 from libics.drv.itf import itf
@@ -17,6 +19,8 @@ def get_txt_itf(cfg):
         return TxtSerialItf(cfg)
     elif cfg.interface == itf.ITF_TXT.ETHERNET:
         return get_txt_ethernet_itf(cfg)
+    elif cfg.interface == itf.ITF_TXT.USB:
+        return TxtUsbItf(cfg)
 
 
 class TxtItfBase(abc.ABC):
@@ -240,3 +244,58 @@ class PrologixGpibEthernetItf(TxtEthernetItf):
         if self.cfg.gpib_mode == itf.TXT_ETHERNET_GPIB.MODE.CONTROLLER:
             self.send("++read")
         return super().recv()
+
+
+class TxtUsbItf(TxtItfBase):
+
+    def __init__(self, cfg):
+        super().__init__(cfg=cfg)
+        self._usb_dev = None
+        self._usb_itf = None
+        self._usb_ep_in = None
+        self._usb_ep_out = None
+
+    def setup(self, cfg=None):
+        if cfg is not None:
+            self.cfg = cfg
+
+    def shutdown(self):
+        return True
+
+    def connect(self):
+        self._usb_dev = usb.core.find(
+            idVendor=self.cfg.usb_vendor,
+            idProduct=self.cfg.usb_product
+        )
+        self._usb_dev.set_configuration()
+        self._usb_itf = self._usb_dev.get_active_configuration()[(0, 0)]
+        self._usb_ep_in = usb.util.find_descriptor(
+            self._usb_itf, custom_match=lambda e: (
+                usb.util.endpoint_direction(e.bEndpointAddress)
+                == usb.util.ENDPOINT_IN
+            )
+        )
+        self._usb_ep_out = usb.util.find_descriptor(
+            self._usb_itf, custom_match=lambda e: (
+                usb.util.endpoint_direction(e.bEndpointAddress)
+                == usb.util.ENDPOINT_OUT
+            )
+        )
+
+    def close(self):
+        usb.core.util.dispose_resources(self._usb_dev)
+        self._usb_dev = None
+        self._usb_itf = None
+        self._usb_ep_in = None
+        self._usb_ep_out = None
+
+    def send(self, s_data):
+        s_data = str(s_data) + self.cfg.send_termchar
+        self._usb_ep_out.write(s_data, timeout=int(1000*self.cfg.send_timeout))
+
+    def recv(self):
+        ar_data = self._usb_ep_in.read(
+            self.cfg.buffer_size, timeout=int(1000*self.cfg.recv_timeout)
+        )
+        s_data = "".join(chr(c) for c in ar_data)
+        return s_data

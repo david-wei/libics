@@ -93,6 +93,7 @@ class ITF_TXT:
 
     SERIAL = 11
     ETHERNET = 12
+    USB = 13
 
 
 @InheritMap(map_key=("libics", "TxtCfgBase"))
@@ -136,7 +137,8 @@ class TxtCfgBase(ProtocolCfgBase):
     def get_hl_cfg(self):
         MAP = {
             ITF_TXT.SERIAL: TxtSerialCfg,
-            ITF_TXT.ETHERNET: TxtEthernetCfg
+            ITF_TXT.ETHERNET: TxtEthernetCfg,
+            ITF_TXT.USB: TxtUsbCfg,
         }
         obj = MAP[self.interface](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
@@ -271,6 +273,34 @@ class TxtEthernetCfg(TxtCfgBase):
             return TxtEthernetGpibCfg(ll_obj=self, **self._kwargs)
         else:
             return self
+
+
+@InheritMap(map_key=("libics", "TxtUsbCfg"))
+class TxtUsbCfg(TxtCfgBase):
+
+    """
+    ProtocolCfgBase -> TxtCfgBase -> TxtUsbCfg.
+
+    Parameters
+    ----------
+    usb_vendor : str
+        USB vendor ID.
+    usb_product : str
+        USB product ID.
+    """
+
+    def __init__(self, usb_vendor=0x104d, usb_product=0x4000,
+                 cls_name="TxtUsbCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_TXT.USB
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+        self.usb_vendor = usb_vendor
+        self.usb_product = usb_product
+
+    def get_hl_cfg(self):
+        return self
 
 
 @InheritMap(map_key=("libics", "BinVimbaCfg"))
