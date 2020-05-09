@@ -203,6 +203,23 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
             raise raise_exception
 
 
+def cv_bitfield(n):
+    """
+    Converts an integer to a list of booleans.
+
+    Parameters
+    ----------
+    n : int
+        Integer number representing the bit field.
+
+    Returns
+    -------
+    bf : list(bool)
+        Converted bitfield.
+    """
+    return [1 if digit == "1" else 0 for digit in bin(n)[2:]]
+
+
 ###############################################################################
 # Dictionary Manipulations
 ###############################################################################

@@ -151,6 +151,7 @@ class TxtEthernetItf(TxtItfBase):
 
     def connect(self):
         self._socket.connect((self.cfg.address, self.cfg.port))
+        self.empty_buffer()
 
     def close(self):
         self._socket.shutdown(socket.SHUT_RDWR)
@@ -184,6 +185,22 @@ class TxtEthernetItf(TxtItfBase):
                 break
         self._socket.setblocking(self.cfg.blocking)
         return s_data
+
+    def empty_buffer(self):
+        self._socket.setblocking(0)
+        t0 = time.time()
+        while True:
+            ready = select.select(
+                [self._socket], [], [],
+                self.cfg.send_timeout
+            )
+            if ready[0]:
+                self._socket.recv(self.cfg.buffer_size)
+            else:
+                break
+            dt = time.time() - t0
+            if dt > 10 * self.cfg.recv_timeout:
+                break
 
 
 class PrologixGpibEthernetItf(TxtEthernetItf):
