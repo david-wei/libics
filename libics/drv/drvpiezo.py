@@ -237,7 +237,7 @@ class Newport8742(PicoDrvBase):
         """
         self.interface_access.acquire()
         self._itf_send("PR{:.0f}".format(steps), use_channel=True)
-        _repetitions = 6
+        _repetitions = 30
         _wait = max(0.1, steps / self.cfg.velocity.val)
         for _i in range(_repetitions):
             time.sleep(_wait)
@@ -262,7 +262,7 @@ class Newport8742(PicoDrvBase):
         """
         self.interface_access.acquire()
         self._itf_send("SC", use_channel=False)
-        _repetitions = 10
+        _repetitions = 30
         for _i in range(_repetitions):
             time.sleep(0.1)
             self._itf_send("SD?", use_channel=False)

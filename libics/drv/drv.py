@@ -149,6 +149,7 @@ class DRV_DRIVER:
     SPAN = 20       # Spectrum analyzer
     OSC = 30        # Oscilloscope
     DSP = 40        # Display
+    LASER = 50      # Laser
 
 
 class DRV_MODEL:
@@ -162,7 +163,7 @@ class DRV_MODEL:
     THORLABS_MDT694A = THORLABS_MDT69XA
 
     # Pico
-    NEWPORT_8742 = 1111
+    NEWPORT_8742 = 1201
 
     # SpAn
     STANFORD_SR760 = 2101
@@ -174,6 +175,9 @@ class DRV_MODEL:
 
     # Dsp
     TEXASINSTRUMENTS_DLP7000 = 4101
+
+    # Laser
+    IPG_YLR = 5101
 
 
 @InheritMap(map_key=("libics", "DrvCfgBase"))
@@ -222,7 +226,8 @@ class DrvCfgBase(cfg.CfgBase):
             DRV_DRIVER.PICO: PicoCfg,
             DRV_DRIVER.SPAN: SpAnCfg,
             DRV_DRIVER.OSC: OscCfg,
-            DRV_DRIVER.DSP: DspCfg
+            DRV_DRIVER.DSP: DspCfg,
+            DRV_DRIVER.LASER: LaserCfg,
         }
         obj = MAP[self.driver.val](ll_obj=self, **self._kwargs)
         return obj.get_hl_cfg()
@@ -653,6 +658,43 @@ class DspCfg(DrvCfgBase):
         self.picture_time = picture_time
         self.dark_time = dark_time
         self.sequence_repetitions = sequence_repetitions
+        self.temperature = temperature
+
+    def get_hl_cfg(self):
+        return self
+
+
+@InheritMap(map_key=("libics", "LaserCfg"))
+class LaserCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> LaserCfg.
+
+    Parameters
+    ----------
+    current : float
+        Current in Ampere (A).
+    temperature : float
+        Temperature in degrees (°C).
+    """
+
+    current = cfg.CfgItemDesc()
+    temperature = cfg.CfgItemDesc()
+
+    def __init__(
+        self, current=0.1, temperature=25.0,
+        cls_name="LaserCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.LASER
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.current = current
         self.temperature = temperature
 
     def get_hl_cfg(self):

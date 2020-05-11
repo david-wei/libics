@@ -5,6 +5,7 @@ from . import drvdsp        # noqa
 from . import drvosc        # noqa
 from . import drvpiezo      # noqa
 from . import drvspan       # noqa
+from . import drvlaser      # noqa
 
 
 ###############################################################################
@@ -41,5 +42,7 @@ def get_drv(cfg):
         return drvosc.get_osc_drv(cfg)
     elif cfg.driver == drv.DRV_DRIVER.DSP:
         return drvdsp.get_dsp_drv(cfg)
+    elif cfg.driver == drv.DRV_DRIVER.LASER:
+        return drvlaser.get_laser_drv(cfg)
     else:
         raise KeyError("Invalid cfg.driver: {}".format(cfg.driver))
