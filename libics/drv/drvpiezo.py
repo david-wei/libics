@@ -214,7 +214,7 @@ class Newport8742(PicoDrvBase):
     def read_position(self):
         self.interface_access.acquire()
         self._itf_send("PR?", use_channel=True)
-        position = int(self._interface.recv())
+        position = int(self._itf_recv())
         self.interface_access.release()
         return position
 
@@ -322,8 +322,8 @@ class Newport8742(PicoDrvBase):
 
     def _assert_identifier(self):
         self.interface_access.acquire()
-        self._interface.send("*IDN?")
-        _id = misc.extract(self._interface.recv(), r"New_Focus 8742 v.* (\d+)")
+        self._itf_send("*IDN?", use_channel=False)
+        _id = misc.extract(self._itf_recv(), r"New_Focus 8742 v.* (\d+)")
         self.interface_access.release()
         if _id != self.cfg.identifier:
             raise ValueError("Wrong device ID ({:s})".format(_id))
@@ -337,7 +337,9 @@ class Newport8742(PicoDrvBase):
         self._interface.send(prefix + msg)
 
     def _itf_recv(self):
-        return self._strip_recv(self._interface.recv())
+        msg = self._interface.recv()
+        msg = msg.split(">")[-1]
+        return self._strip_recv(msg)
 
     @staticmethod
     def _assert_channel(value):
