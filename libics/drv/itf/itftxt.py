@@ -246,6 +246,9 @@ class PrologixGpibEthernetItf(TxtEthernetItf):
         return super().recv()
 
 
+USBError = usb.core.USBError
+
+
 class TxtUsbItf(TxtItfBase):
 
     def __init__(self, cfg):
@@ -267,6 +270,8 @@ class TxtUsbItf(TxtItfBase):
             idVendor=self.cfg.usb_vendor,
             idProduct=self.cfg.usb_product
         )
+        if self._usb_dev is None:
+            raise USBError("USB device not found.")
         self._usb_dev.set_configuration()
         self._usb_itf = self._usb_dev.get_active_configuration()[(0, 0)]
         self._usb_ep_in = usb.util.find_descriptor(
