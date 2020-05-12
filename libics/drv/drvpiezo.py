@@ -245,7 +245,7 @@ class Newport8742(PicoDrvBase):
             if int(self._itf_recv()) == 1:
                 break
             if _i >= _repetitions - 1:
-                raise ValueError("Scan timeout")
+                raise RuntimeError("Scan timeout")
         self.interface_access.release()
 
     def scan_slave_devices(self):
@@ -269,12 +269,12 @@ class Newport8742(PicoDrvBase):
             if int(self._itf_recv()) == 1:
                 break
             if _i >= _repetitions - 1:
-                raise ValueError("Scan timeout")
+                raise RuntimeError("Scan timeout")
         self._itf_send("SC?", use_channel=False)
         bf = list(reversed(misc.cv_bitfield(int(self._itf_recv()))))
         self.interface_access.release()
         if bf[0]:
-            raise ValueError("Address conflict")
+            raise RuntimeError("Address conflict")
         addr = []
         for i in bf[1:]:
             if i:
