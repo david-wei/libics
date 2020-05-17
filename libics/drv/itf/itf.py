@@ -156,11 +156,14 @@ class ITF_BIN:
     ----------
     VIMBA:
         AlliedVision Vimba.
+    VRMAGIC:
+        VRmagic USB.
     VIALUX:
         Vialux ALP4.x.
     """
 
     VIMBA = 101
+    VRMAGIC = 102
     VIALUX = 111
 
 
@@ -190,6 +193,7 @@ class BinCfgBase(ProtocolCfgBase):
     def get_hl_cfg(self):
         MAP = {
             ITF_BIN.VIMBA: BinVimbaCfg,
+            ITF_BIN.VRMAGIC: BinVRmagicCfg,
             ITF_BIN.VIALUX: BinVialuxCfg
         }
         obj = MAP[self.interface](ll_obj=self, **self._kwargs)
@@ -331,6 +335,24 @@ class BinVimbaCfg(BinCfgBase):
         return self
 
 
+@InheritMap(map_key=("libics", "BinVRmagicCfg"))
+class BinVRmagicCfg(BinCfgBase):
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
+    """
+
+    def __init__(self, cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VRMAGIC
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+
+    def get_hl_cfg(self):
+        return self
+
+
 @InheritMap(map_key=("libics", "BinVialuxCfg"))
 class BinVialuxCfg(BinCfgBase):
 
@@ -344,7 +366,7 @@ class BinVialuxCfg(BinCfgBase):
     def __init__(self,
                  cls_name="BinVialuxCfg", ll_obj=None, **kwargs):
         if "interface" not in kwargs.keys():
-            kwargs["interface"] = ITF_BIN.VIMBA
+            kwargs["interface"] = ITF_BIN.VIALUX
         super().__init__(cls_name=cls_name, **kwargs)
         if ll_obj is not None:
             self.__dict__.update(ll_obj.__dict__)

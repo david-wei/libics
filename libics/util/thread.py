@@ -13,6 +13,9 @@ class StoppableThread(threading.Thread):
     """
     Thread that ends on a stop event.
 
+    To stop the thread, wait conditionally for the `StoppableThread.stop_event`
+    to trigger.
+
     Parameters
     ----------
     stop_action : callable or None
@@ -33,7 +36,7 @@ class StoppableThread(threading.Thread):
         """
         Stops the thread.
         """
-        if self.isAlive():
+        if self.is_alive():
             # set event to signal thread to terminate
             self.stop_event.set()
             # block calling thread until thread really has terminated
