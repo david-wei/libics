@@ -61,3 +61,8 @@ APIs
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: libics.drv.itf.api.vrmusbcamapi
+    :members:
+    :undoc-members:
+    :show-inheritance:

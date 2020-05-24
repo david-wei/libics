@@ -366,6 +366,59 @@ chooses one (depending on implementation).</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="libics.drv.itf.itf.BinVRmagicCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">BinVRmagicCfg</code><span class="sig-paren">(</span><em class="sig-param">cls_name='BinVimbaCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVRmagicCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.BinCfgBase" title="libics.drv.itf.itf.BinCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.BinCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; BinCfgBase -&gt; BinVimbaCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.BinVRmagicCfg.get_hl_cfg" title="libics.drv.itf.itf.BinVRmagicCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.BinVRmagicCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVRmagicCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="libics.drv.itf.itf.BinVialuxCfg">
 <em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">BinVialuxCfg</code><span class="sig-paren">(</span><em class="sig-param">cls_name='BinVialuxCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.BinVialuxCfg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.BinCfgBase" title="libics.drv.itf.itf.BinCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.BinCfgBase</span></code></a></p>
@@ -489,6 +542,8 @@ chooses one (depending on implementation).</p>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>VIMBA:</strong></dt><dd><p>AlliedVision Vimba.</p>
 </dd>
+<dt><strong>VRMAGIC:</strong></dt><dd><p>VRmagic USB.</p>
+</dd>
 <dt><strong>VIALUX:</strong></dt><dd><p>Vialux ALP4.x.</p>
 </dd>
 </dl>
@@ -502,6 +557,11 @@ chooses one (depending on implementation).</p>
 <dl class="attribute">
 <dt id="libics.drv.itf.itf.ITF_BIN.VIMBA">
 <code class="sig-name descname">VIMBA</code><em class="property"> = 101</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_BIN.VIMBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_BIN.VRMAGIC">
+<code class="sig-name descname">VRMAGIC</code><em class="property"> = 102</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_BIN.VRMAGIC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -556,6 +616,11 @@ chooses one (depending on implementation).</p>
 <dl class="attribute">
 <dt id="libics.drv.itf.itf.ITF_TXT.SERIAL">
 <code class="sig-name descname">SERIAL</code><em class="property"> = 11</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_TXT.SERIAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.itf.ITF_TXT.USB">
+<code class="sig-name descname">USB</code><em class="property"> = 13</em><a class="headerlink" href="#libics.drv.itf.itf.ITF_TXT.USB" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -961,6 +1026,67 @@ constructors and check for base class objects.</p></li>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="libics.drv.itf.itf.TxtUsbCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itf.</code><code class="sig-name descname">TxtUsbCfg</code><span class="sig-paren">(</span><em class="sig-param">usb_vendor=4173</em>, <em class="sig-param">usb_product=16384</em>, <em class="sig-param">cls_name='TxtUsbCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtUsbCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itf.TxtCfgBase" title="libics.drv.itf.itf.TxtCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itf.TxtCfgBase</span></code></a></p>
+<p>ProtocolCfgBase -&gt; TxtCfgBase -&gt; TxtUsbCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>usb_vendor</strong><span class="classifier">str</span></dt><dd><p>USB vendor ID.</p>
+</dd>
+<dt><strong>usb_product</strong><span class="classifier">str</span></dt><dd><p>USB product ID.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.itf.TxtUsbCfg.get_hl_cfg" title="libics.drv.itf.itf.TxtUsbCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itf.TxtUsbCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itf.TxtUsbCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError:</dt><dd><p>If highest level object could not be constructed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <span class="target" id="module-libics.drv.itf.itfbin"></span><dl class="class">
 <dt id="libics.drv.itf.itfbin.BinItfBase">
 <em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">BinItfBase</code><span class="sig-paren">(</span><em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase" title="Permalink to this definition">¶</a></dt>
@@ -1004,6 +1130,53 @@ constructors and check for base class objects.</p></li>
 <dl class="method">
 <dt id="libics.drv.itf.itfbin.BinItfBase.shutdown">
 <em class="property">abstract </em><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.BinItfBase.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itfbin.VRmagicItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itfbin.</code><code class="sig-name descname">VRmagicItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VRmagicItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itfbin.BinItfBase" title="libics.drv.itf.itfbin.BinItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itfbin.BinItfBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VRmagicItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VRmagicItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VRmagicItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VRmagicItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VRmagicItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VRmagicItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itfbin.VRmagicItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itfbin.VRmagicItf.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1469,8 +1642,8 @@ will be called.</p>
 <p class="rubric">Methods</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 55%" />
-<col style="width: 45%" />
+<col style="width: 62%" />
+<col style="width: 38%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>close</strong></p></td>
@@ -1479,19 +1652,22 @@ will be called.</p>
 <tr class="row-even"><td><p><strong>connect</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<tr class="row-odd"><td><p><strong>empty_buffer</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<tr class="row-even"><td><p><strong>query</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<tr class="row-odd"><td><p><strong>recv</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<tr class="row-even"><td><p><strong>send</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -1520,8 +1696,8 @@ will be called.</p>
 <p class="rubric">Methods</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 55%" />
-<col style="width: 45%" />
+<col style="width: 62%" />
+<col style="width: 38%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>close</strong></p></td>
@@ -1530,19 +1706,22 @@ will be called.</p>
 <tr class="row-even"><td><p><strong>connect</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<tr class="row-odd"><td><p><strong>empty_buffer</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<tr class="row-even"><td><p><strong>query</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<tr class="row-odd"><td><p><strong>recv</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<tr class="row-even"><td><p><strong>send</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -1555,6 +1734,11 @@ will be called.</p>
 <dl class="method">
 <dt id="libics.drv.itf.itftxt.TxtEthernetItf.connect">
 <code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtEthernetItf.empty_buffer">
+<code class="sig-name descname">empty_buffer</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtEthernetItf.empty_buffer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1712,6 +1896,72 @@ will be called.</p>
 <dl class="method">
 <dt id="libics.drv.itf.itftxt.TxtSerialItf.shutdown">
 <code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtSerialItf.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.itftxt.</code><code class="sig-name descname">TxtUsbItf</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.itftxt.TxtItfBase" title="libics.drv.itf.itftxt.TxtItfBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.itftxt.TxtItfBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>query</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>recv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>send</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.recv">
+<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.recv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.itftxt.TxtUsbItf.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.itftxt.TxtUsbItf.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2596,6 +2846,2357 @@ values of 0 to 255.</p>
 <dd></dd></dl>
 
 </div>
+<span class="target" id="module-libics.drv.itf.api.vrmusbcamapi"></span><p>Wrapper for vrmusbcam2.h</p>
+<p>Generated with:
+/usr/bin/ctypesgen.py -llibvrmusbcam2.so -lvrmusbcam2.dll vrmusbcam2.h vrmusbcam2l.h vrmusbcam2props.h -o vrmusbcamapi.py</p>
+<p>Do not modify this file.</p>
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">DarwinLibraryLoader</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.LibraryLoader</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getdirs" title="libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getdirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getdirs</span></code></a>(self, libname)</p></td>
+<td><p>Implements the dylib search as specified in Apple documentation:</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpaths</span></code>(self, libname)</p></td>
+<td><p>Return a list of paths where the library might be found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(self, path)</p></td>
+<td><p>Given a path to a library, load it.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_library</span></code>(self, libname)</p></td>
+<td><p>Given the name of a library, load it.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 67%" />
+<col style="width: 33%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>getplatformpaths</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getdirs">
+<code class="sig-name descname">getdirs</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getdirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the dylib search as specified in Apple documentation:</p>
+<dl class="simple">
+<dt><a class="reference external" href="http://developer.apple.com/documentation/DeveloperTools/Conceptual/">http://developer.apple.com/documentation/DeveloperTools/Conceptual/</a></dt><dd><p>DynamicLibraries/Articles/DynamicLibraryUsageGuidelines.html</p>
+</dd>
+</dl>
+<p>Before commencing the standard search, the method first checks
+the bundle’s <code class="docutils literal notranslate"><span class="pre">Frameworks</span></code> directory if the application is running
+within a bundle (OS X .app).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getplatformpaths">
+<code class="sig-name descname">getplatformpaths</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.getplatformpaths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.name_formats">
+<code class="sig-name descname">name_formats</code><em class="property"> = ['lib%s.dylib', 'lib%s.so', 'lib%s.bundle', '%s.dylib', '%s.so', '%s.bundle', '%s']</em><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.DarwinLibraryLoader.name_formats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.LibraryLoader">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">LibraryLoader</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getpaths" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getpaths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpaths</span></code></a>(self, libname)</p></td>
+<td><p>Return a list of paths where the library might be found.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(self, path)</p></td>
+<td><p>Given a path to a library, load it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load_library" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load_library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_library</span></code></a>(self, libname)</p></td>
+<td><p>Given the name of a library, load it.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 67%" />
+<col style="width: 33%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>getplatformpaths</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getpaths">
+<code class="sig-name descname">getpaths</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getpaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of paths where the library might be found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getplatformpaths">
+<code class="sig-name descname">getplatformpaths</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.getplatformpaths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a path to a library, load it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load_library">
+<code class="sig-name descname">load_library</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader.load_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the name of a library, load it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.MutableString">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">MutableString</code><span class="sig-paren">(</span><em class="sig-param">string=''</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.MutableString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.UserString" title="libics.drv.itf.api.vrmusbcamapi.UserString"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.UserString</span></code></a></p>
+<p>mutable string objects</p>
+<p>Python strings are immutable objects.  This has the advantage, that
+strings may be used as dictionary keys.  If this property isn’t needed
+and you insist on changing string values in place instead, you may cheat
+and use MutableString.</p>
+<p>But the purpose of this class is an educational one: to prevent
+people from inventing their own mutable string class derived
+from UserString and than forget thereby to remove (override) the
+__hash__ method inherited from UserString.  This would lead to
+errors that would be very hard to track down.</p>
+<p>A faster and better solution is to rewrite your program using lists.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">capitalize</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 42%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>center</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>decode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>encode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>endswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>expandtabs</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>find</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>immutable</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>index</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isalnum</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isalpha</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isdecimal</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isdigit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>islower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isnumeric</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isspace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>istitle</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isupper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>join</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>ljust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>lower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>lstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>partition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>replace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rfind</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rindex</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rjust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rpartition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rsplit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>split</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>splitlines</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>startswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>strip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>swapcase</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>title</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>translate</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>upper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>zfill</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.MutableString.immutable">
+<code class="sig-name descname">immutable</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.MutableString.immutable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.vrmusbcamapi.POINTER">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">POINTER</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.POINTER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.PosixLibraryLoader">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">PosixLibraryLoader</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.PosixLibraryLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.LibraryLoader</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpaths</span></code>(self, libname)</p></td>
+<td><p>Return a list of paths where the library might be found.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(self, path)</p></td>
+<td><p>Given a path to a library, load it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_library</span></code>(self, libname)</p></td>
+<td><p>Given the name of a library, load it.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 67%" />
+<col style="width: 33%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>getplatformpaths</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.PosixLibraryLoader.getplatformpaths">
+<code class="sig-name descname">getplatformpaths</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.PosixLibraryLoader.getplatformpaths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.vrmusbcamapi.ReturnString">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">ReturnString</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">func=None</em>, <em class="sig-param">arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.ReturnString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.String">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">String</code><span class="sig-paren">(</span><em class="sig-param">obj=''</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.String" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.MutableString" title="libics.drv.itf.api.vrmusbcamapi.MutableString"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.MutableString</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Union</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>raw</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">capitalize</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.String.from_param" title="libics.drv.itf.api.vrmusbcamapi.String.from_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_param</span></code></a>(obj)</p></td>
+<td><p>Convert a Python object into a function call parameter.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 42%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>center</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>decode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>encode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>endswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>expandtabs</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>find</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>immutable</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>index</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isalnum</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isalpha</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isdecimal</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isdigit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>islower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isnumeric</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isspace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>istitle</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isupper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>join</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>ljust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>lower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>lstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>partition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>replace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rfind</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rindex</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rjust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rpartition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rsplit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>split</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>splitlines</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>startswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>strip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>swapcase</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>title</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>translate</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>upper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>zfill</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.String.data">
+<code class="sig-name descname">data</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.String.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.String.from_param">
+<em class="property">classmethod </em><code class="sig-name descname">from_param</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.String.from_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a Python object into a function call parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.String.raw">
+<code class="sig-name descname">raw</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.String.raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UNCHECKED">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">UNCHECKED</code><span class="sig-paren">(</span><em class="sig-param">type</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UNCHECKED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">UserString</code><span class="sig-paren">(</span><em class="sig-param">seq</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.UserString.capitalize" title="libics.drv.itf.api.vrmusbcamapi.UserString.capitalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">capitalize</span></code></a>(self)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 42%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>center</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>decode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>encode</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>endswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>expandtabs</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>find</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>index</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isalnum</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isalpha</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isdecimal</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isdigit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>islower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>isnumeric</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isspace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>istitle</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>isupper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>join</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ljust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>lower</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>lstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>partition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>replace</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rfind</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rindex</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rjust</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rpartition</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>rsplit</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>rstrip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>split</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>splitlines</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>startswith</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>strip</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>swapcase</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>title</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>translate</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>upper</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>zfill</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.capitalize">
+<code class="sig-name descname">capitalize</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.capitalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.center">
+<code class="sig-name descname">center</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">width</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.count">
+<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sub</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.decode">
+<code class="sig-name descname">decode</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">encoding=None</em>, <em class="sig-param">errors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.decode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.encode">
+<code class="sig-name descname">encode</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">encoding=None</em>, <em class="sig-param">errors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.encode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.endswith">
+<code class="sig-name descname">endswith</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">suffix</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.endswith" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.expandtabs">
+<code class="sig-name descname">expandtabs</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">tabsize=8</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.expandtabs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sub</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.find" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.index">
+<code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sub</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isalnum">
+<code class="sig-name descname">isalnum</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isalnum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isalpha">
+<code class="sig-name descname">isalpha</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isalpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isdecimal">
+<code class="sig-name descname">isdecimal</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isdecimal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isdigit">
+<code class="sig-name descname">isdigit</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isdigit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.islower">
+<code class="sig-name descname">islower</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.islower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isnumeric">
+<code class="sig-name descname">isnumeric</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isnumeric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isspace">
+<code class="sig-name descname">isspace</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isspace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.istitle">
+<code class="sig-name descname">istitle</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.istitle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.isupper">
+<code class="sig-name descname">isupper</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.isupper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.join">
+<code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">seq</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.ljust">
+<code class="sig-name descname">ljust</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">width</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.ljust" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.lower">
+<code class="sig-name descname">lower</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.lstrip">
+<code class="sig-name descname">lstrip</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">chars=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.lstrip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.partition">
+<code class="sig-name descname">partition</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sep</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.replace">
+<code class="sig-name descname">replace</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">old</em>, <em class="sig-param">new</em>, <em class="sig-param">maxsplit=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.replace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rfind">
+<code class="sig-name descname">rfind</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sub</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rfind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rindex">
+<code class="sig-name descname">rindex</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sub</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rindex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rjust">
+<code class="sig-name descname">rjust</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">width</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rjust" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rpartition">
+<code class="sig-name descname">rpartition</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sep</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rpartition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rsplit">
+<code class="sig-name descname">rsplit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sep=None</em>, <em class="sig-param">maxsplit=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rsplit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.rstrip">
+<code class="sig-name descname">rstrip</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">chars=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.rstrip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.split">
+<code class="sig-name descname">split</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sep=None</em>, <em class="sig-param">maxsplit=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.splitlines">
+<code class="sig-name descname">splitlines</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">keepends=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.splitlines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.startswith">
+<code class="sig-name descname">startswith</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">prefix</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=9223372036854775807</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.startswith" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.strip">
+<code class="sig-name descname">strip</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">chars=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.strip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.swapcase">
+<code class="sig-name descname">swapcase</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.swapcase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.title">
+<code class="sig-name descname">title</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.translate">
+<code class="sig-name descname">translate</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.translate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.upper">
+<code class="sig-name descname">upper</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.upper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.UserString.zfill">
+<code class="sig-name descname">zfill</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">width</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.UserString.zfill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmDeviceKey">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmDeviceKey</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmDeviceKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmImage">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmImage</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmImage</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmImageFormat">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmImageFormat</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmImageFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPointI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPointI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPointI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsB">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsB</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsB" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsD">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsD</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsD" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsE">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsE</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsF">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsF</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsF" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsPointI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsPointI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsPointI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsRectI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsRectI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsRectI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsS">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsS</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsS" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsSizeI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropAttribsSizeI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropAttribsSizeI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmPropInfo">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmPropInfo</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmPropInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmRectI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmRectI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmRectI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSTRING">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSTRING</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSTRING" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.String" title="libics.drv.itf.api.vrmusbcamapi.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.String</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings1">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings1</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings1" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings2">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings2</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings2" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings3">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings3</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings3" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings4">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings4</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings4" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings5">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings5</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings5" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings6">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings6</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings6" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings7">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings7</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings7" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings8">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings8</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings8" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSettings9">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSettings9</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSettings9" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmSizeI">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmSizeI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmSizeI" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmStaticCallbackCMemAllocationChangeParams">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmStaticCallbackCMemAllocationChangeParams</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmStaticCallbackCMemAllocationChangeParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmTriggerStats">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmTriggerStats</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmTriggerStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmUsbCamDevice">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmUsbCamDevice</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmUsbCamDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.LP_struct_VRmUsbCamDeviceInternal</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmUsbCamDeviceInternal">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmUsbCamDeviceInternal</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmUsbCamDeviceInternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct_VRmUsbCamDeviceInternal" title="libics.drv.itf.api.vrmusbcamapi.struct_VRmUsbCamDeviceInternal"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct_VRmUsbCamDeviceInternal</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.VRmUserData">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">VRmUserData</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.VRmUserData" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData" title="libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">WindowsLibraryLoader</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.LibraryLoader" title="libics.drv.itf.api.vrmusbcamapi.LibraryLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.itf.api.vrmusbcamapi.LibraryLoader</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpaths</span></code>(self, libname)</p></td>
+<td><p>Return a list of paths where the library might be found.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load" title="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(self, path)</p></td>
+<td><p>Given a path to a library, load it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load_library" title="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load_library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_library</span></code></a>(self, libname)</p></td>
+<td><p>Given the name of a library, load it.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 67%" />
+<col style="width: 33%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>getplatformpaths</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.getplatformpaths">
+<code class="sig-name descname">getplatformpaths</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.getplatformpaths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a path to a library, load it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load_library">
+<code class="sig-name descname">load_library</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.load_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the name of a library, load it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.name_formats">
+<code class="sig-name descname">name_formats</code><em class="property"> = ['%s.dll', 'lib%s.dll', '%slib.dll']</em><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.WindowsLibraryLoader.name_formats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.vrmusbcamapi.add_library_search_dirs">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">add_library_search_dirs</code><span class="sig-paren">(</span><em class="sig-param">other_dirs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.add_library_search_dirs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.c_void">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">c_void</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.c_void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dummy</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.c_void.dummy">
+<code class="sig-name descname">dummy</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.c_void.dummy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.itf.api.vrmusbcamapi.load_library">
+<code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">load_library</code><span class="sig-paren">(</span><em class="sig-param">libname</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.load_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the name of a library, load it.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct_VRmUsbCamDeviceInternal">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct_VRmUsbCamDeviceInternal</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct_VRmUsbCamDeviceInternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmDeviceKey</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_busy</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_serial</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_manufacturer_str</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_private</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_product_str</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.m_busy">
+<code class="sig-name descname">m_busy</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.m_busy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.m_serial">
+<code class="sig-name descname">m_serial</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.m_serial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_manufacturer_str">
+<code class="sig-name descname">mp_manufacturer_str</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_manufacturer_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_private">
+<code class="sig-name descname">mp_private</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_private" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_product_str">
+<code class="sig-name descname">mp_product_str</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmDeviceKey.mp_product_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmImage</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_image_format</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pitch</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_time_stamp</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_buffer</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_private</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_image_format">
+<code class="sig-name descname">m_image_format</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_image_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_pitch">
+<code class="sig-name descname">m_pitch</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_pitch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_time_stamp">
+<code class="sig-name descname">m_time_stamp</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.m_time_stamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.mp_buffer">
+<code class="sig-name descname">mp_buffer</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.mp_buffer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.mp_private">
+<code class="sig-name descname">mp_private</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImage.mp_private" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmImageFormat</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_color_format</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_image_modifier</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_color_format">
+<code class="sig-name descname">m_color_format</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_color_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_height">
+<code class="sig-name descname">m_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_image_modifier">
+<code class="sig-name descname">m_image_modifier</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_image_modifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_width">
+<code class="sig-name descname">m_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmImageFormat.m_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPointI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_x</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_y</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI.m_x">
+<code class="sig-name descname">m_x</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI.m_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI.m_y">
+<code class="sig-name descname">m_y</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPointI.m_y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsB</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsB.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsD</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsD.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsE</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsE.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsF</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsF.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsI.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsPointI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsPointI.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsRectI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsRectI.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsS</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsS.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropAttribsSizeI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_default</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_max</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_min</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_step</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_default">
+<code class="sig-name descname">m_default</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_max">
+<code class="sig-name descname">m_max</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_min">
+<code class="sig-name descname">m_min</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_step">
+<code class="sig-name descname">m_step</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropAttribsSizeI.m_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmPropInfo</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_description</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_id</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_id_string</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_type</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_writeable</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_description">
+<code class="sig-name descname">m_description</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_id">
+<code class="sig-name descname">m_id</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_id_string">
+<code class="sig-name descname">m_id_string</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_id_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_type">
+<code class="sig-name descname">m_type</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_writeable">
+<code class="sig-name descname">m_writeable</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmPropInfo.m_writeable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmRectI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_left</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_top</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_height">
+<code class="sig-name descname">m_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_left">
+<code class="sig-name descname">m_left</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_top">
+<code class="sig-name descname">m_top</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_width">
+<code class="sig-name descname">m_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmRectI.m_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings1</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_blue_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_exposure_time_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_green_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pixel_bias_voltage</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pixel_clock_mhz</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_red_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_reset_level</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_left</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_top</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_blue_gain">
+<code class="sig-name descname">m_blue_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_blue_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_exposure_time_ms">
+<code class="sig-name descname">m_exposure_time_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_exposure_time_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_green_gain">
+<code class="sig-name descname">m_green_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_green_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_pixel_bias_voltage">
+<code class="sig-name descname">m_pixel_bias_voltage</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_pixel_bias_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_pixel_clock_mhz">
+<code class="sig-name descname">m_pixel_clock_mhz</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_pixel_clock_mhz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_red_gain">
+<code class="sig-name descname">m_red_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_red_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_reset_level">
+<code class="sig-name descname">m_reset_level</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_reset_level" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_height">
+<code class="sig-name descname">m_roi_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_left">
+<code class="sig-name descname">m_roi_left</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_top">
+<code class="sig-name descname">m_roi_top</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_width">
+<code class="sig-name descname">m_roi_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_roi_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_sensor_height">
+<code class="sig-name descname">m_sensor_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_sensor_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_sensor_width">
+<code class="sig-name descname">m_sensor_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings1.m_sensor_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings2</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_illumination_intensity</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2.m_illumination_intensity">
+<code class="sig-name descname">m_illumination_intensity</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings2.m_illumination_intensity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings3</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_contrast</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_gamma</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_luminance</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_contrast">
+<code class="sig-name descname">m_contrast</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_contrast" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_gamma">
+<code class="sig-name descname">m_gamma</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_gamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_luminance">
+<code class="sig-name descname">m_luminance</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings3.m_luminance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings4</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_chrominance_hue</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_chrominance_saturation</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_format</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_luminance_brightness</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_luminance_contrast</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_chrominance_hue">
+<code class="sig-name descname">m_chrominance_hue</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_chrominance_hue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_chrominance_saturation">
+<code class="sig-name descname">m_chrominance_saturation</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_chrominance_saturation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_format">
+<code class="sig-name descname">m_format</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_luminance_brightness">
+<code class="sig-name descname">m_luminance_brightness</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_luminance_brightness" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_luminance_contrast">
+<code class="sig-name descname">m_luminance_contrast</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings4.m_luminance_contrast" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings5</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_adapt_readout_to_exposure</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_blue_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_exposure_time_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_green_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pixel_clock_mhz</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_red_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_left</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_top</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_vblank_lines</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_vrst_low_voltage</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_adapt_readout_to_exposure">
+<code class="sig-name descname">m_adapt_readout_to_exposure</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_adapt_readout_to_exposure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_blue_gain">
+<code class="sig-name descname">m_blue_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_blue_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_exposure_time_ms">
+<code class="sig-name descname">m_exposure_time_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_exposure_time_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_green_gain">
+<code class="sig-name descname">m_green_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_green_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_pixel_clock_mhz">
+<code class="sig-name descname">m_pixel_clock_mhz</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_pixel_clock_mhz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_red_gain">
+<code class="sig-name descname">m_red_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_red_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_height">
+<code class="sig-name descname">m_roi_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_left">
+<code class="sig-name descname">m_roi_left</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_top">
+<code class="sig-name descname">m_roi_top</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_width">
+<code class="sig-name descname">m_roi_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_roi_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_sensor_height">
+<code class="sig-name descname">m_sensor_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_sensor_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_sensor_width">
+<code class="sig-name descname">m_sensor_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_sensor_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_vblank_lines">
+<code class="sig-name descname">m_vblank_lines</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_vblank_lines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_vrst_low_voltage">
+<code class="sig-name descname">m_vrst_low_voltage</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings5.m_vrst_low_voltage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings6</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_delay_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_polarity</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6.m_delay_ms">
+<code class="sig-name descname">m_delay_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6.m_delay_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6.m_polarity">
+<code class="sig-name descname">m_polarity</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings6.m_polarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings7</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_vblank_lines</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7.m_vblank_lines">
+<code class="sig-name descname">m_vblank_lines</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings7.m_vblank_lines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings8</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_blue_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_exposure_time_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_green_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pixel_clock_mhz</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_red_gain</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_left</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_top</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_roi_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_sensor_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_vblank_lines</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_blue_gain">
+<code class="sig-name descname">m_blue_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_blue_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_exposure_time_ms">
+<code class="sig-name descname">m_exposure_time_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_exposure_time_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_green_gain">
+<code class="sig-name descname">m_green_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_green_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_pixel_clock_mhz">
+<code class="sig-name descname">m_pixel_clock_mhz</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_pixel_clock_mhz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_red_gain">
+<code class="sig-name descname">m_red_gain</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_red_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_height">
+<code class="sig-name descname">m_roi_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_left">
+<code class="sig-name descname">m_roi_left</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_top">
+<code class="sig-name descname">m_roi_top</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_width">
+<code class="sig-name descname">m_roi_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_roi_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_sensor_height">
+<code class="sig-name descname">m_sensor_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_sensor_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_sensor_width">
+<code class="sig-name descname">m_sensor_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_sensor_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_vblank_lines">
+<code class="sig-name descname">m_vblank_lines</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings8.m_vblank_lines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSettings9</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_delay_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_polarity</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_pulse_width_ms</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_delay_ms">
+<code class="sig-name descname">m_delay_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_delay_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_polarity">
+<code class="sig-name descname">m_polarity</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_polarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_pulse_width_ms">
+<code class="sig-name descname">m_pulse_width_ms</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSettings9.m_pulse_width_ms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmSizeI</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_height</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_width</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI.m_height">
+<code class="sig-name descname">m_height</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI.m_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI.m_width">
+<code class="sig-name descname">m_width</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmSizeI.m_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmStaticCallbackCMemAllocationChangeParams</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_allocate</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_size</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_physical</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_virtual</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.m_allocate">
+<code class="sig-name descname">m_allocate</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.m_allocate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.m_size">
+<code class="sig-name descname">m_size</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.m_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.mp_physical">
+<code class="sig-name descname">mp_physical</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.mp_physical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.mp_virtual">
+<code class="sig-name descname">mp_virtual</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmStaticCallbackCMemAllocationChangeParams.mp_virtual" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmTriggerStats</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_caught_count</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_dropped_count</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>m_time_stamp</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_caught_count">
+<code class="sig-name descname">m_caught_count</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_caught_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_dropped_count">
+<code class="sig-name descname">m_dropped_count</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_dropped_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_time_stamp">
+<code class="sig-name descname">m_time_stamp</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmTriggerStats.m_time_stamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.itf.api.vrmusbcamapi.</code><code class="sig-name descname">struct__VRmUserData</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m_length</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_data</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+<dt><strong>mp_private</strong></dt><dd><p>Structure/Union member</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.m_length">
+<code class="sig-name descname">m_length</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.m_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.mp_data">
+<code class="sig-name descname">mp_data</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.mp_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.mp_private">
+<code class="sig-name descname">mp_private</code><a class="headerlink" href="#libics.drv.itf.api.vrmusbcamapi.struct__VRmUserData.mp_private" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

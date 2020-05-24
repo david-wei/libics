@@ -335,6 +335,35 @@ If None: uses start as stop character</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="libics.util.misc.cv_bitfield">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">cv_bitfield</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.cv_bitfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an integer to a list of booleans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Integer number representing the bit field.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>bf</strong><span class="classifier">list(bool)</span></dt><dd><p>Converted bitfield.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.cv_coord_spherical_to_cartesian">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">cv_coord_spherical_to_cartesian</code><span class="sig-paren">(</span><em class="sig-param">radial</em>, <em class="sig-param">polar</em>, <em class="sig-param">azimuthal</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.cv_coord_spherical_to_cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts 3D spherical (standard parametrization) to cartesian coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial, <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span>
+is the polar, and <span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the azimuthal coordinate.
+Supports broadcasting.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="libics.util.misc.do_nothing">
 <code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">do_nothing</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.do_nothing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes any arguments and keyword arguments and does nothing.</p>
@@ -372,6 +401,32 @@ as defined by the <cite>group</cite> parameter.</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>KeyError</dt><dd><p>If extraction failed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.extract_index_nonunique_array">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">extract_index_nonunique_array</code><span class="sig-paren">(</span><em class="sig-param">vec</em>, <em class="sig-param">min_count=2</em>, <em class="sig-param">rtol=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.extract_index_nonunique_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters a vector for non-unique values and returns their indices.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>vec</strong><span class="classifier"><cite>np.ndarray(1)</cite></span></dt><dd><p>Vector from which to extract indices of non-unique values.</p>
+</dd>
+<dt><strong>min_count</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Minimum multiplicity of values.</p>
+</dd>
+<dt><strong>rtol</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Relative tolerance defining the minimum deviation
+required to regard values as different.
+Only used for non-integer types.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>idx</strong><span class="classifier"><cite>iter(np.ndarray(1, int))</cite></span></dt><dd><p>Iterable filter of lists of indices.</p>
 </dd>
 </dl>
 </dd>
@@ -488,6 +543,28 @@ mutual, ordered combinations.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt>elem</dt><dd><p>First element of the iterable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.get_numpy_dtype_str">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">get_numpy_dtype_str</code><span class="sig-paren">(</span><em class="sig-param">dtype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.get_numpy_dtype_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the Python built-in type string corresponding to the given
+numpy dtype. If no matching built-in type is found, the numpy string
+representation of the dtype is returned.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dtype</strong><span class="classifier"><cite>numpy.dtype</cite></span></dt><dd><p>Numpy data type.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>dtype_str</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String corresponding to numpy data type.</p>
 </dd>
 </dl>
 </dd>
@@ -630,6 +707,11 @@ separated by the specified delimiter.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="function">
+<dt id="libics.util.misc.print_progress">
+<code class="sig-prename descclassname">libics.util.misc.</code><code class="sig-name descname">print_progress</code><span class="sig-paren">(</span><em class="sig-param">count</em>, <em class="sig-param">total</em>, <em class="sig-param">subcount=None</em>, <em class="sig-param">subtotal=None</em>, <em class="sig-param">start_time=None</em>, <em class="sig-param">prefix=''</em>, <em class="sig-param">fill='#'</em>, <em class="sig-param">empty='·'</em>, <em class="sig-param">bar_length=40</em>, <em class="sig-param">total_length=80</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.misc.print_progress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="libics.util.misc.resize_numpy_array">
@@ -1136,6 +1218,8 @@ Call signature: <cite>stop_action()</cite>.</p>
 <em class="property">class </em><code class="sig-prename descclassname">libics.util.thread.</code><code class="sig-name descname">StoppableThread</code><span class="sig-paren">(</span><em class="sig-param">stop_action=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.thread.StoppableThread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
 <p>Thread that ends on a stop event.</p>
+<p>To stop the thread, wait conditionally for the <cite>StoppableThread.stop_event</cite>
+to trigger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1217,6 +1301,95 @@ Call signature: <cite>stop_action()</cite>.</p>
 </div>
 <div class="section" id="module-libics.util.types">
 <span id="types"></span><h2>types<a class="headerlink" href="#module-libics.util.types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.util.types.DirectedGraph">
+<em class="property">class </em><code class="sig-prename descclassname">libics.util.types.</code><code class="sig-name descname">DirectedGraph</code><a class="headerlink" href="#libics.util.types.DirectedGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A simple Python directed graph class.</p>
+<p>Stores the graph in a dictionary mapping vertex-&gt;set(vertex).</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.types.DirectedGraph.add_edge" title="libics.util.types.DirectedGraph.add_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_edge</span></code></a>(self, vertex_from, vertex_to)</p></td>
+<td><p>Adds a directed edge from <cite>vertex_from</cite> to <cite>vertex_to</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.types.DirectedGraph.add_vertex" title="libics.util.types.DirectedGraph.add_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_vertex</span></code></a>(self, vertex)</p></td>
+<td><p>If the vertex <cite>vertex</cite> is not in <cite>self.__graph_dict</cite>, a key <cite>vertex</cite> with an empty list as a value is added to the dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.types.DirectedGraph.find_connected_vertices" title="libics.util.types.DirectedGraph.find_connected_vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_connected_vertices</span></code></a>(self)</p></td>
+<td><p>Finds all connected vertices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.util.types.DirectedGraph.get_edge_number" title="libics.util.types.DirectedGraph.get_edge_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edge_number</span></code></a>(self, vertex)</p></td>
+<td><p>Gets the number of edges connected at the given <cite>vertex</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.util.types.DirectedGraph.vertices" title="libics.util.types.DirectedGraph.vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertices</span></code></a>(self)</p></td>
+<td><p>Returns the vertices of a graph.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>has_edge</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.add_edge">
+<code class="sig-name descname">add_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a directed edge from <cite>vertex_from</cite> to <cite>vertex_to</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.add_vertex">
+<code class="sig-name descname">add_vertex</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.add_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the vertex <cite>vertex</cite> is not in <cite>self.__graph_dict</cite>,
+a key <cite>vertex</cite> with an empty list as a value is added
+to the dictionary. Otherwise nothing has to be done.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.find_connected_vertices">
+<code class="sig-name descname">find_connected_vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.find_connected_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all connected vertices.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>connections</strong><span class="classifier"><cite>list(list)</cite></span></dt><dd><p>List of list containing vertices.
+Vertices within a deque are mutually connected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.get_edge_number">
+<code class="sig-name descname">get_edge_number</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.get_edge_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of edges connected at the given <cite>vertex</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.has_edge">
+<code class="sig-name descname">has_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.has_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.util.types.DirectedGraph.vertices">
+<code class="sig-name descname">vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.DirectedGraph.vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the vertices of a graph.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="libics.util.types.FlaggedType">
 <em class="property">class </em><code class="sig-prename descclassname">libics.util.types.</code><code class="sig-name descname">FlaggedType</code><span class="sig-paren">(</span><em class="sig-param">val</em>, <em class="sig-param">flag=False</em>, <em class="sig-param">cond=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.util.types.FlaggedType" title="Permalink to this definition">¶</a></dt>
@@ -1370,7 +1543,9 @@ state.
 <li><a class="reference internal" href="#module-libics.util.thread">thread</a><ul>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-libics.util.types">types</a></li>
+<li><a class="reference internal" href="#module-libics.util.types">types</a><ul>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

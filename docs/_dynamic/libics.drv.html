@@ -582,8 +582,18 @@ If one boundary should not be checked, pass None.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.LASER">
+<code class="sig-name descname">LASER</code><em class="property"> = 50</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.LASER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="libics.drv.drv.DRV_DRIVER.OSC">
 <code class="sig-name descname">OSC</code><em class="property"> = 30</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.OSC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_DRIVER.PICO">
+<code class="sig-name descname">PICO</code><em class="property"> = 11</em><a class="headerlink" href="#libics.drv.drv.DRV_DRIVER.PICO" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -657,6 +667,16 @@ If one boundary should not be checked, pass None.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.IPG_YLR">
+<code class="sig-name descname">IPG_YLR</code><em class="property"> = 5101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.IPG_YLR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.NEWPORT_8742">
+<code class="sig-name descname">NEWPORT_8742</code><em class="property"> = 1201</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.NEWPORT_8742" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="libics.drv.drv.DRV_MODEL.STANFORD_SR760">
 <code class="sig-name descname">STANFORD_SR760</code><em class="property"> = 2101</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.STANFORD_SR760" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -687,9 +707,48 @@ If one boundary should not be checked, pass None.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="libics.drv.drv.DRV_MODEL.VRMAGIC_VRMCX">
+<code class="sig-name descname">VRMAGIC_VRMCX</code><em class="property"> = 201</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.VRMAGIC_VRMCX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="libics.drv.drv.DRV_MODEL.YOKAGAWA_AQ6315">
 <code class="sig-name descname">YOKAGAWA_AQ6315</code><em class="property"> = 2201</em><a class="headerlink" href="#libics.drv.drv.DRV_MODEL.YOKAGAWA_AQ6315" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.DRV_PICO">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">DRV_PICO</code><a class="headerlink" href="#libics.drv.drv.DRV_PICO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>FEEDBACK_MODE</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.drv.drv.DRV_PICO.FEEDBACK_MODE">
+<em class="property">class </em><code class="sig-name descname">FEEDBACK_MODE</code><a class="headerlink" href="#libics.drv.drv.DRV_PICO.FEEDBACK_MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_PICO.FEEDBACK_MODE.CLOSED_LOOP">
+<code class="sig-name descname">CLOSED_LOOP</code><em class="property"> = 1</em><a class="headerlink" href="#libics.drv.drv.DRV_PICO.FEEDBACK_MODE.CLOSED_LOOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.DRV_PICO.FEEDBACK_MODE.OPEN_LOOP">
+<code class="sig-name descname">OPEN_LOOP</code><em class="property"> = 0</em><a class="headerlink" href="#libics.drv.drv.DRV_PICO.FEEDBACK_MODE.OPEN_LOOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </dd></dl>
 
@@ -1447,6 +1506,124 @@ If one boundary should not be checked, pass None.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="libics.drv.drv.LaserCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">LaserCfg</code><span class="sig-paren">(</span><em class="sig-param">current=0.1</em>, <em class="sig-param">temperature=25.0</em>, <em class="sig-param">cls_name='LaserCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.LaserCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; LaserCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>current</strong><span class="classifier">float</span></dt><dd><p>Current in Ampere (A).</p>
+</dd>
+<dt><strong>temperature</strong><span class="classifier">float</span></dt><dd><p>Temperature in degrees (°C).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.LaserCfg.get_hl_cfg" title="libics.drv.drv.LaserCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.LaserCfg.current">
+<code class="sig-name descname">current</code><a class="headerlink" href="#libics.drv.drv.LaserCfg.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.LaserCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.LaserCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.LaserCfg.temperature">
+<code class="sig-name descname">temperature</code><a class="headerlink" href="#libics.drv.drv.LaserCfg.temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="libics.drv.drv.OscCfg">
 <em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">OscCfg</code><span class="sig-paren">(</span><em class="sig-param">cls_name='OscCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.OscCfg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
@@ -1500,6 +1677,182 @@ If one boundary should not be checked, pass None.</p>
 getting the child class corresponding to a given variable value.
 Call and return the <cite>get_hl_cfg</cite> method of this child class to
 recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drv.PicoCfg">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drv.</code><code class="sig-name descname">PicoCfg</code><span class="sig-paren">(</span><em class="sig-param">acceleration=100000</em>, <em class="sig-param">velocity=1750</em>, <em class="sig-param">channel=1</em>, <em class="sig-param">feedback_mode=0</em>, <em class="sig-param">cls_name='PicoCfg'</em>, <em class="sig-param">ll_obj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.PicoCfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvCfgBase" title="libics.drv.drv.DrvCfgBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvCfgBase</span></code></a></p>
+<p>DrvCfgBase -&gt; PicoCfg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>channel</strong><span class="classifier">int or tuple(int)</span></dt><dd><p>If <cite>int</cite>, indicates pico motor channel.
+If <cite>tuple(int)</cite>, represents slave device tree
+(slave level 0, slave level 1, …, motor channel).</p>
+</dd>
+<dt><strong>acceleration</strong><span class="classifier">int</span></dt><dd><p>Picomotor acceleration in steps per square seconds (st/s²).</p>
+</dd>
+<dt><strong>velocity</strong><span class="classifier">int</span></dt><dd><p>Picomotor velocity in steps per second (st/s).</p>
+</dd>
+<dt><strong>feedback_mode</strong><span class="classifier">DRV_PIEZO.FEEDBACK_MODE</span></dt><dd><p>Feedback operation mode.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">val</span></code></dt><dd><p>Unnecessary property function to obtain same behaviour as CfgItem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_obj_dict</span></code>(self, d)</p></td>
+<td><p>Converts nested configuration dictionary to object dictionary of current object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drv.PicoCfg.get_hl_cfg" title="libics.drv.drv.PicoCfg.get_hl_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hl_cfg</span></code></a>(self)</p></td>
+<td><p>Gets the higher level configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Update all configuration items by reading all values from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_obj_dict</span></code>(self[, ignore_protected])</p></td>
+<td><p>Converts object dictionary to nested dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Set all configuration items by writing all values to interface.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.drv.drv.PicoCfg.acceleration">
+<code class="sig-name descname">acceleration</code><a class="headerlink" href="#libics.drv.drv.PicoCfg.acceleration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PicoCfg.channel">
+<code class="sig-name descname">channel</code><a class="headerlink" href="#libics.drv.drv.PicoCfg.channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PicoCfg.feedback_mode">
+<code class="sig-name descname">feedback_mode</code><a class="headerlink" href="#libics.drv.drv.PicoCfg.feedback_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drv.PicoCfg.get_hl_cfg">
+<code class="sig-name descname">get_hl_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drv.PicoCfg.get_hl_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the higher level configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">class derived from ProtocolCfgBase</span></dt><dd><p>Highest level object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Implement construction of higher level configuration class by
+getting the child class corresponding to a given variable value.
+Call and return the <cite>get_hl_cfg</cite> method of this child class to
+recursively obtain the highest level configuration object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="libics.drv.drv.PicoCfg.velocity">
+<code class="sig-name descname">velocity</code><a class="headerlink" href="#libics.drv.drv.PicoCfg.velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptor class for CfgBase attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">str</span></dt><dd><p>Group name the attribute belongs to.</p>
+</dd>
+<dt><strong>val_check</strong><span class="classifier">None or list or tuple</span></dt><dd><dl class="simple">
+<dt>None:</dt><dd><p>No value check.</p>
+</dd>
+<dt>list:</dt><dd><p>Checks that value is in list.</p>
+</dd>
+<dt>tuple (length 2):</dt><dd><p>Checks that value is within interval [min, max].
+If one boundary should not be checked, pass None.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>assert_write</strong><span class="classifier">bool</span></dt><dd><p>Whether to read to validate a write command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2180,6 +2533,116 @@ Shape: height x width x channel</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="libics.drv.drvcam.VRmagicVRmCX">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvcam.</code><code class="sig-name descname">VRmagicVRmCX</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.VRmagicVRmCX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvcam.CamDrvBase" title="libics.drv.drvcam.CamDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvcam.CamDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_exposure_time</span></code>(self[, max_cutoff, …])</p></td>
+<td><p>Varies the camera’s exposure time to maximize image brightness while keeping the maximum ADC value below saturation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.VRmagicVRmCX.get" title="libics.drv.drvcam.VRmagicVRmCX.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(self)</p></td>
+<td><p>Get image from internal buffer (previously taken image).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.VRmagicVRmCX.grab" title="libics.drv.drvcam.VRmagicVRmCX.grab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grab</span></code></a>(self)</p></td>
+<td><p>Grab image from camera (wait for next image).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvcam.VRmagicVRmCX.run" title="libics.drv.drvcam.VRmagicVRmCX.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self[, callback])</p></td>
+<td><p>Start capturing images.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvcam.VRmagicVRmCX.stop" title="libics.drv.drvcam.VRmagicVRmCX.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stop capturing images.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvcam.VRmagicVRmCX.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.VRmagicVRmCX.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get image from internal buffer (previously taken image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.VRmagicVRmCX.grab">
+<code class="sig-name descname">grab</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.VRmagicVRmCX.grab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grab image from camera (wait for next image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">numpy.ndarray(3)</span></dt><dd><p>Image aas numpy array.
+Shape: height x width x channel</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.VRmagicVRmCX.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.VRmagicVRmCX.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start capturing images.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvcam.VRmagicVRmCX.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.VRmagicVRmCX.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop capturing images.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="libics.drv.drvcam.get_cam_drv">
 <code class="sig-prename descclassname">libics.drv.drvcam.</code><code class="sig-name descname">get_cam_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvcam.get_cam_drv" title="Permalink to this definition">¶</a></dt>
@@ -2374,6 +2837,222 @@ None: Uses images set by the init method.</p>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-libics.drv.drvlaser">
+<span id="drvlaser"></span><h2>drvlaser<a class="headerlink" href="#module-libics.drv.drvlaser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.drv.drvlaser.IpgYLR">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvlaser.</code><code class="sig-name descname">IpgYLR</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvlaser.LaserDrvBase" title="libics.drv.drvlaser.LaserDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvlaser.LaserDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_current</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_power</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>run</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>stop</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_current</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_power</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.read_current">
+<code class="sig-name descname">read_current</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.read_current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.read_power">
+<code class="sig-name descname">read_power</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.read_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.write_current">
+<code class="sig-name descname">write_current</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">current</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.write_current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.IpgYLR.write_power">
+<code class="sig-name descname">write_power</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">power</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.IpgYLR.write_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvlaser.LaserDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvlaser.</code><code class="sig-name descname">LaserDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p>Laser driver API.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_current</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_power</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>run</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>stop</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_current</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_power</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.read_current">
+<em class="property">abstract </em><code class="sig-name descname">read_current</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.read_current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.read_power">
+<em class="property">abstract </em><code class="sig-name descname">read_power</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.read_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.run">
+<em class="property">abstract </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.stop">
+<em class="property">abstract </em><code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.write_current">
+<em class="property">abstract </em><code class="sig-name descname">write_current</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">current</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.write_current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvlaser.LaserDrvBase.write_power">
+<em class="property">abstract </em><code class="sig-name descname">write_power</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">power</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.LaserDrvBase.write_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvlaser.get_laser_drv">
+<code class="sig-prename descclassname">libics.drv.drvlaser.</code><code class="sig-name descname">get_laser_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvlaser.get_laser_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
 <div class="section" id="module-libics.drv.drvosc">
 <span id="drvosc"></span><h2>drvosc<a class="headerlink" href="#module-libics.drv.drvosc" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -2385,6 +3064,220 @@ None: Uses images set by the init method.</p>
 <div class="section" id="drvpiezo">
 <h2>drvpiezo<a class="headerlink" href="#drvpiezo" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-libics.drv.drvpiezo"></span><dl class="class">
+<dt id="libics.drv.drvpiezo.Newport8742">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">Newport8742</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drvpiezo.PicoDrvBase" title="libics.drv.drvpiezo.PicoDrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drvpiezo.PicoDrvBase</span></code></a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.drv.drvpiezo.Newport8742.move_relative" title="libics.drv.drvpiezo.Newport8742.move_relative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_relative</span></code></a>(self, steps)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.drv.drvpiezo.Newport8742.scan_slave_devices" title="libics.drv.drvpiezo.Newport8742.scan_slave_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_slave_devices</span></code></a>(self)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>abort_motion</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_error</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_position</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>zero_position</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.abort_motion">
+<code class="sig-name descname">abort_motion</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.abort_motion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.move_relative">
+<code class="sig-name descname">move_relative</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">steps</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.move_relative" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If timeout.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.read_error">
+<code class="sig-name descname">read_error</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.read_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.read_position">
+<code class="sig-name descname">read_position</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.read_position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.scan_slave_devices">
+<code class="sig-name descname">scan_slave_devices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.scan_slave_devices" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>addr</strong><span class="classifier">list(int)</span></dt><dd><p>Available slave device addresses.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If scan timed out or slave devices have address conflicts.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.Newport8742.zero_position">
+<code class="sig-name descname">zero_position</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.Newport8742.zero_position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.drv.drvpiezo.PicoDrvBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">PicoDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PicoDrvBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
+<p>Picomotor driver API.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code>(self)</p></td>
+<td><p>Processes the message queue in the configuration object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_all</span></code>(self)</p></td>
+<td><p>Reads all configuration items from interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_all</span></code>(self)</p></td>
+<td><p>Writes all configuration items from interface.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>abort_motion</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>close</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>connect</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_drv</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>move_relative</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setup</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shutdown</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>zero_position</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.drv.drvpiezo.PicoDrvBase.abort_motion">
+<em class="property">abstract </em><code class="sig-name descname">abort_motion</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PicoDrvBase.abort_motion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.PicoDrvBase.move_relative">
+<em class="property">abstract </em><code class="sig-name descname">move_relative</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">steps</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PicoDrvBase.move_relative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.drv.drvpiezo.PicoDrvBase.zero_position">
+<em class="property">abstract </em><code class="sig-name descname">zero_position</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PicoDrvBase.zero_position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="libics.drv.drvpiezo.PiezoDrvBase">
 <em class="property">class </em><code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">PiezoDrvBase</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.PiezoDrvBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.drv.drv.DrvBase" title="libics.drv.drv.DrvBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.drv.drv.DrvBase</span></code></a></p>
@@ -2527,6 +3420,11 @@ None: Uses images set by the init method.</p>
 <dd></dd></dl>
 
 </dd></dl>
+
+<dl class="function">
+<dt id="libics.drv.drvpiezo.get_pico_drv">
+<code class="sig-prename descclassname">libics.drv.drvpiezo.</code><code class="sig-name descname">get_pico_drv</code><span class="sig-paren">(</span><em class="sig-param">cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.drv.drvpiezo.get_pico_drv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="libics.drv.drvpiezo.get_piezo_drv">
@@ -2804,6 +3702,9 @@ metadata accompanying the spectral data (e.g. frequency)</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-libics.drv.drvdsp">drvdsp</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.drv.drvlaser">drvlaser</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-libics.drv.drvosc">drvosc</a></li>

@@ -36,6 +36,14 @@ drvdsp
     :undoc-members:
     :show-inheritance:
 
+drvlaser
+--------
+
+.. automodule:: libics.drv.drvlaser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 drvosc
 ------
 

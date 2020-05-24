@@ -888,7 +888,6 @@ particularly, includes the tabular data.</p>
 </dd>
 <dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">style</span></code></dt><dd><p>Property returning a Styler object containing methods for building a styled HTML representation fo the DataFrame.</p>
 </dd>
-<dt><strong>timetuple</strong></dt><dd></dd>
 <dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></dt><dd><p>Return a Numpy representation of the DataFrame.</p>
 </dd>
 </dl>
@@ -905,7 +904,7 @@ particularly, includes the tabular data.</p>
 <td><p>Return a Series/DataFrame with absolute numeric value of each element.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Addition of dataframe and other, element-wise (binary operator <cite>add</cite>).</p></td>
+<td><p>Get Addition of dataframe and other, element-wise (binary operator <cite>add</cite>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_prefix</span></code>(self, prefix)</p></td>
 <td><p>Prefix labels with string <cite>prefix</cite>.</p></td>
@@ -980,7 +979,7 @@ particularly, includes the tabular data.</p>
 <td><p>Trim values above a given threshold.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine</span></code>(self, other, func[, fill_value, …])</p></td>
-<td><p>Perform column-wise combine with another DataFrame based on a passed function.</p></td>
+<td><p>Perform column-wise combine with another DataFrame.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_first</span></code>(self, other)</p></td>
 <td><p>Update null elements with value in the same location in <cite>other</cite>.</p></td>
@@ -988,80 +987,80 @@ particularly, includes the tabular data.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compound</span></code>(self[, axis, skipna, level])</p></td>
 <td><p>Return the compound percentage of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_objects</span></code>(self[, convert_dates, …])</p></td>
-<td><p>Attempt to infer better dtype for object columns.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>(self[, deep])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>(self[, deep])</p></td>
 <td><p>Make a copy of this object’s indices and data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corr</span></code>(self[, method, min_periods])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corr</span></code>(self[, method, min_periods])</p></td>
 <td><p>Compute pairwise correlation of columns, excluding NA/null values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrwith</span></code>(self, other[, axis, drop, method])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrwith</span></code>(self, other[, axis, drop, method])</p></td>
 <td><p>Compute pairwise correlation between rows or columns of DataFrame with rows or columns of Series or DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>(self[, axis, level, numeric_only])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>(self[, axis, level, numeric_only])</p></td>
 <td><p>Count non-NA cells for each column or row.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cov</span></code>(self[, min_periods])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cov</span></code>(self[, min_periods])</p></td>
 <td><p>Compute pairwise covariance of columns, excluding NA/null values.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return cumulative maximum over a DataFrame or Series axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummin</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummin</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return cumulative minimum over a DataFrame or Series axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return cumulative product over a DataFrame or Series axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return cumulative sum over a DataFrame or Series axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">describe</span></code>(self[, percentiles, include, exclude])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">describe</span></code>(self[, percentiles, include, exclude])</p></td>
 <td><p>Generate descriptive statistics that summarize the central tendency, dispersion and shape of a dataset’s distribution, excluding <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code>(self[, periods, axis])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code>(self[, periods, axis])</p></td>
 <td><p>First discrete difference of element.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">div</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">div</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code>(self, other)</p></td>
-<td><p>Compute the matrix mutiplication between the DataFrame and other.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code>(self, other)</p></td>
+<td><p>Compute the matrix multiplication between the DataFrame and other.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>(self[, labels, axis, index, columns, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>(self[, labels, axis, index, columns, …])</p></td>
 <td><p>Drop specified labels from rows or columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_duplicates</span></code>(self[, subset, keep, inplace])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_duplicates</span></code>(self[, subset, keep, inplace])</p></td>
 <td><p>Return DataFrame with duplicate rows removed, optionally only considering certain columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">droplevel</span></code>(self, level[, axis])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">droplevel</span></code>(self, level[, axis])</p></td>
 <td><p>Return DataFrame with requested index / column level(s) removed.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code>(self[, axis, how, thresh, subset, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code>(self[, axis, how, thresh, subset, …])</p></td>
 <td><p>Remove missing values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duplicated</span></code>(self[, subset, keep])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duplicated</span></code>(self[, subset, keep])</p></td>
 <td><p>Return boolean Series denoting duplicate rows, optionally only considering certain columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq</span></code>(self, other[, axis, level])</p></td>
-<td><p>Equal to of dataframe and other, element-wise (binary operator <cite>eq</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Equal to of dataframe and other, element-wise (binary operator <cite>eq</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code>(self, other)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code>(self, other)</p></td>
 <td><p>Test whether two objects contain the same elements.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self, expr[, inplace])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self, expr[, inplace])</p></td>
 <td><p>Evaluate a string describing operations on DataFrame columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ewm</span></code>(self[, com, span, halflife, alpha, …])</p></td>
-<td><p>Provides exponential weighted functions.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ewm</span></code>(self[, com, span, halflife, alpha, …])</p></td>
+<td><p>Provide exponential weighted functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">expanding</span></code>(self[, min_periods, center, axis])</p></td>
-<td><p>Provides expanding transformations.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">expanding</span></code>(self[, min_periods, center, axis])</p></td>
+<td><p>Provide expanding transformations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">explode</span></code>(self, column, Tuple])</p></td>
+<td><p>Transform each element of a list-like to a row, replicating the index values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffill</span></code>(self[, axis, inplace, limit, downcast])</p></td>
 <td><p>Synonym for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFrame.fillna()</span></code> with <code class="docutils literal notranslate"><span class="pre">method='ffill'</span></code>.</p></td>
@@ -1079,223 +1078,217 @@ particularly, includes the tabular data.</p>
 <td><p>Return index for first non-NA/null value.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">floordiv</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Integer division of dataframe and other, element-wise (binary operator <cite>floordiv</cite>).</p></td>
+<td><p>Get Integer division of dataframe and other, element-wise (binary operator <cite>floordiv</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_csv</span></code>(path[, header, sep, index_col, …])</p></td>
-<td><p>Read CSV file.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code>(data[, orient, dtype, columns])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code>(data[, orient, dtype, columns])</p></td>
 <td><p>Construct DataFrame from dict of array-like or dicts.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_items</span></code>(items[, columns, orient])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_items</span></code>(items[, columns, orient])</p></td>
 <td><p>Construct a DataFrame from a list of tuples.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_records</span></code>(data[, index, exclude, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_records</span></code>(data[, index, exclude, …])</p></td>
 <td><p>Convert structured or record ndarray to DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ge</span></code>(self, other[, axis, level])</p></td>
-<td><p>Greater than or equal to of dataframe and other, element-wise (binary operator <cite>ge</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ge</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Greater than or equal to of dataframe and other, element-wise (binary operator <cite>ge</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(self, key[, default])</p></td>
-<td><p>Get item from object for given key (DataFrame column, Panel slice, etc.).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(self, key[, default])</p></td>
+<td><p>Get item from object for given key (ex: DataFrame column).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dtype_counts</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dtype_counts</span></code>(self)</p></td>
 <td><p>Return counts of unique dtypes in this object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ftype_counts</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ftype_counts</span></code>(self)</p></td>
 <td><p>Return counts of unique ftypes in this object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.data.datasequence.DataSequence.get_names" title="libics.data.datasequence.DataSequence.get_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_names</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.data.datasequence.DataSequence.get_names" title="libics.data.datasequence.DataSequence.get_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_names</span></code></a>(self)</p></td>
 <td><p>Gets the names/headers of the data sequence.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value</span></code>(self, index, col[, takeable])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value</span></code>(self, index, col[, takeable])</p></td>
 <td><p>Quickly retrieve single value at passed column and index.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_values</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_values</span></code>(self)</p></td>
 <td><p>Return an ndarray after converting sparse values to dense.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupby</span></code>(self[, by, axis, level, as_index, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupby</span></code>(self[, by, axis, level, as_index, …])</p></td>
 <td><p>Group DataFrame or Series using a mapper or by a Series of columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gt</span></code>(self, other[, axis, level])</p></td>
-<td><p>Greater than of dataframe and other, element-wise (binary operator <cite>gt</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gt</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Greater than of dataframe and other, element-wise (binary operator <cite>gt</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code>(self[, n])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code>(self[, n])</p></td>
 <td><p>Return the first <cite>n</cite> rows.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hist</span></code>(data[, column, by, grid, xlabelsize, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hist</span></code>(data[, column, by, grid, xlabelsize, …])</p></td>
 <td><p>Make a histogram of the DataFrame’s.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmax</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmax</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return index of first occurrence of maximum over requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmin</span></code>(self[, axis, skipna])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmin</span></code>(self[, axis, skipna])</p></td>
 <td><p>Return index of first occurrence of minimum over requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_objects</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_objects</span></code>(self)</p></td>
 <td><p>Attempt to infer better dtypes for object columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code>(self[, verbose, buf, max_cols, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code>(self[, verbose, buf, max_cols, …])</p></td>
 <td><p>Print a concise summary of a DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code>(self, loc, column, value[, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code>(self, loc, column, value[, …])</p></td>
 <td><p>Insert column into DataFrame at specified location.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code>(self[, method, axis, limit, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code>(self[, method, axis, limit, …])</p></td>
 <td><p>Interpolate values according to different methods.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isin</span></code>(self, values)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isin</span></code>(self, values)</p></td>
 <td><p>Whether each element in the DataFrame is contained in values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isna</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isna</span></code>(self)</p></td>
 <td><p>Detect missing values.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isnull</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isnull</span></code>(self)</p></td>
 <td><p>Detect missing values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>(self)</p></td>
 <td><p>Iterator over (column name, Series) pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iteritems</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iteritems</span></code>(self)</p></td>
 <td><p>Iterator over (column name, Series) pairs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterrows</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterrows</span></code>(self)</p></td>
 <td><p>Iterate over DataFrame rows as (index, Series) pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertuples</span></code>(self[, index, name])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertuples</span></code>(self[, index, name])</p></td>
 <td><p>Iterate over DataFrame rows as namedtuples.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>(self, other[, on, how, lsuffix, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>(self, other[, on, how, lsuffix, …])</p></td>
 <td><p>Join columns of another DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>(self)</p></td>
 <td><p>Get the ‘info axis’ (see Indexing for more)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurt</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurt</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return unbiased kurtosis over requested axis using Fisher’s definition of kurtosis (kurtosis of normal == 0.0).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurtosis</span></code>(self[, axis, skipna, level, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurtosis</span></code>(self[, axis, skipna, level, …])</p></td>
 <td><p>Return unbiased kurtosis over requested axis using Fisher’s definition of kurtosis (kurtosis of normal == 0.0).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last</span></code>(self, offset)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last</span></code>(self, offset)</p></td>
 <td><p>Convenience method for subsetting final periods of time series data based on a date offset.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_valid_index</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_valid_index</span></code>(self)</p></td>
 <td><p>Return index for last non-NA/null value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">le</span></code>(self, other[, axis, level])</p></td>
-<td><p>Less than or equal to of dataframe and other, element-wise (binary operator <cite>le</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">le</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Less than or equal to of dataframe and other, element-wise (binary operator <cite>le</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup</span></code>(self, row_labels, col_labels)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup</span></code>(self, row_labels, col_labels)</p></td>
 <td><p>Label-based “fancy indexing” function for DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lt</span></code>(self, other[, axis, level])</p></td>
-<td><p>Less than of dataframe and other, element-wise (binary operator <cite>lt</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lt</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Less than of dataframe and other, element-wise (binary operator <cite>lt</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mad</span></code>(self[, axis, skipna, level])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mad</span></code>(self[, axis, skipna, level])</p></td>
 <td><p>Return the mean absolute deviation of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code>(self, cond[, other, inplace, axis, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code>(self, cond[, other, inplace, axis, …])</p></td>
 <td><p>Replace values where the condition is True.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return the maximum of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return the mean of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return the median of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">melt</span></code>(self[, id_vars, value_vars, var_name, …])</p></td>
-<td><p>Unpivots a DataFrame from wide format to long format, optionally leaving identifier variables set.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">melt</span></code>(self[, id_vars, value_vars, var_name, …])</p></td>
+<td><p>Unpivot a DataFrame from wide format to long format, optionally leaving identifier variables set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">memory_usage</span></code>(self[, index, deep])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">memory_usage</span></code>(self[, index, deep])</p></td>
 <td><p>Return the memory usage of each column in bytes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge</span></code>(self, right[, how, on, left_on, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge</span></code>(self, right[, how, on, left_on, …])</p></td>
 <td><p>Merge DataFrame or named Series objects with a database-style join.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return the minimum of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Modulo of dataframe and other, element-wise (binary operator <cite>mod</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Modulo of dataframe and other, element-wise (binary operator <cite>mod</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code>(self[, axis, numeric_only, dropna])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code>(self[, axis, numeric_only, dropna])</p></td>
 <td><p>Get the mode(s) of each element along the selected axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ne</span></code>(self, other[, axis, level])</p></td>
-<td><p>Not equal to of dataframe and other, element-wise (binary operator <cite>ne</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ne</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Not equal to of dataframe and other, element-wise (binary operator <cite>ne</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlargest</span></code>(self, n, columns[, keep])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlargest</span></code>(self, n, columns[, keep])</p></td>
 <td><p>Return the first <cite>n</cite> rows ordered by <cite>columns</cite> in descending order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notna</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notna</span></code>(self)</p></td>
 <td><p>Detect existing (non-missing) values.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notnull</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notnull</span></code>(self)</p></td>
 <td><p>Detect existing (non-missing) values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nsmallest</span></code>(self, n, columns[, keep])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nsmallest</span></code>(self, n, columns[, keep])</p></td>
 <td><p>Return the first <cite>n</cite> rows ordered by <cite>columns</cite> in ascending order.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nunique</span></code>(self[, axis, dropna])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nunique</span></code>(self[, axis, dropna])</p></td>
 <td><p>Count distinct observations over requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pct_change</span></code>(self[, periods, fill_method, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pct_change</span></code>(self[, periods, fill_method, …])</p></td>
 <td><p>Percentage change between the current and a prior element.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pipe</span></code>(self, func, \*args, \*\*kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pipe</span></code>(self, func, \*args, \*\*kwargs)</p></td>
 <td><p>Apply func(self, *args, **kwargs).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot</span></code>(self[, index, columns, values])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot</span></code>(self[, index, columns, values])</p></td>
 <td><p>Return reshaped DataFrame organized by given index / column values.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot_table</span></code>(self[, values, index, columns, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot_table</span></code>(self[, values, index, columns, …])</p></td>
 <td><p>Create a spreadsheet-style pivot table as a DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></p></td>
-<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.plotting._core.FramePlotMethods</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.plotting._core.PlotAccessor</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(self, item)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(self, item)</p></td>
 <td><p>Return item and drop from frame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pow</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Exponential power of dataframe and other, element-wise (binary operator <cite>pow</cite>).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pow</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Exponential power of dataframe and other, element-wise (binary operator <cite>pow</cite>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code>(self[, axis, skipna, level, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code>(self[, axis, skipna, level, …])</p></td>
 <td><p>Return the product of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">product</span></code>(self[, axis, skipna, level, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">product</span></code>(self[, axis, skipna, level, …])</p></td>
 <td><p>Return the product of the values for the requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantile</span></code>(self[, q, axis, numeric_only, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantile</span></code>(self[, q, axis, numeric_only, …])</p></td>
 <td><p>Return values at the given quantile over requested axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(self, expr[, inplace])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(self, expr[, inplace])</p></td>
 <td><p>Query the columns of a DataFrame with a boolean expression.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radd</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Addition of dataframe and other, element-wise (binary operator <cite>radd</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radd</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Addition of dataframe and other, element-wise (binary operator <cite>radd</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code>(self[, axis, method, numeric_only, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code>(self[, axis, method, numeric_only, …])</p></td>
 <td><p>Compute numerical data ranks (1 through n) along axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdiv</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdiv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex</span></code>(self[, labels, index, columns, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex</span></code>(self[, labels, index, columns, …])</p></td>
 <td><p>Conform DataFrame to new index with optional filling logic, placing NA/NaN in locations having no value in the previous index.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex_axis</span></code>(self, labels[, axis, method, …])</p></td>
-<td><p>Conform input object to new index.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex_like</span></code>(self, other[, method, copy, …])</p></td>
 <td><p>Return an object with matching indices as other object.</p></td>
@@ -1319,64 +1312,64 @@ particularly, includes the tabular data.</p>
 <td><p>Reset the index, or a level of it.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rfloordiv</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Integer division of dataframe and other, element-wise (binary operator <cite>rfloordiv</cite>).</p></td>
+<td><p>Get Integer division of dataframe and other, element-wise (binary operator <cite>rfloordiv</cite>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmod</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Modulo of dataframe and other, element-wise (binary operator <cite>rmod</cite>).</p></td>
+<td><p>Get Modulo of dataframe and other, element-wise (binary operator <cite>rmod</cite>).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmul</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Multiplication of dataframe and other, element-wise (binary operator <cite>rmul</cite>).</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>rmul</cite>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling</span></code>(self, window[, min_periods, center, …])</p></td>
-<td><p>Provides rolling window calculations.</p></td>
+<td><p>Provide rolling window calculations.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code>(self[, decimals])</p></td>
 <td><p>Round a DataFrame to a variable number of decimal places.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rpow</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Exponential power of dataframe and other, element-wise (binary operator <cite>rpow</cite>).</p></td>
+<td><p>Get Exponential power of dataframe and other, element-wise (binary operator <cite>rpow</cite>).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsub</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Subtraction of dataframe and other, element-wise (binary operator <cite>rsub</cite>).</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>rsub</cite>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtruediv</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code>(self[, n, frac, replace, weights, …])</p></td>
 <td><p>Return a random sample of items from an axis of object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code>(self, crit[, axis])</p></td>
-<td><p>Return data corresponding to axis labels matching criteria.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_dtypes</span></code>(self[, include, exclude])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_dtypes</span></code>(self[, include, exclude])</p></td>
 <td><p>Return a subset of the DataFrame’s columns based on the column dtypes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sem</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sem</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
 <td><p>Return unbiased standard error of the mean over requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axis</span></code>(self, labels[, axis, inplace])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axis</span></code>(self, labels[, axis, inplace])</p></td>
 <td><p>Assign desired index to given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_index</span></code>(self, keys[, drop, append, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_index</span></code>(self, keys[, drop, append, …])</p></td>
 <td><p>Set the DataFrame index using existing columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_value</span></code>(self, index, col, value[, takeable])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_value</span></code>(self, index, col, value[, takeable])</p></td>
 <td><p>Put single value at passed column and index.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code>(self[, periods, freq, axis, fill_value])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code>(self[, periods, freq, axis, fill_value])</p></td>
 <td><p>Shift index by desired number of periods with an optional time <cite>freq</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">skew</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">skew</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
 <td><p>Return unbiased skew over requested axis Normalized by N-1.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_shift</span></code>(self[, periods, axis])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_shift</span></code>(self[, periods, axis])</p></td>
 <td><p>Equivalent to <cite>shift</cite> without copying data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_index</span></code>(self[, axis, level, ascending, …])</p></td>
-<td><p>Sort object by labels (along an axis)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_index</span></code>(self[, axis, level, ascending, …])</p></td>
+<td><p>Sort object by labels (along an axis).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_values</span></code>(self, by[, axis, ascending, …])</p></td>
-<td><p>Sort by the values along either axis</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_values</span></code>(self, by[, axis, ascending, …])</p></td>
+<td><p>Sort by the values along either axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.core.arrays.sparse.SparseFrameAccessor</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code>(self[, axis])</p></td>
 <td><p>Squeeze 1 dimensional axis objects into scalars.</p></td>
@@ -1388,10 +1381,10 @@ particularly, includes the tabular data.</p>
 <td><p>Return sample standard deviation over requested axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code>(self[, axis, skipna, level, …])</p></td>
 <td><p>Return the sum of the values for the requested axis.</p></td>
@@ -1405,7 +1398,7 @@ particularly, includes the tabular data.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tail</span></code>(self[, n])</p></td>
 <td><p>Return the last <cite>n</cite> rows.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code>(self, indices[, axis, convert, is_copy])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code>(self, indices[, axis, is_copy])</p></td>
 <td><p>Return the elements in the given <em>positional</em> indices along an axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_clipboard</span></code>(self[, excel, sep])</p></td>
@@ -1415,7 +1408,7 @@ particularly, includes the tabular data.</p>
 <td><p>Write object to a comma-separated values (csv) file.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dense</span></code>(self)</p></td>
-<td><p>Return dense representation of NDFrame (as opposed to sparse).</p></td>
+<td><p>Return dense representation of Series/DataFrame (as opposed to sparse).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code>(self[, orient, into])</p></td>
 <td><p>Convert the DataFrame to a dictionary.</p></td>
@@ -1447,73 +1440,70 @@ particularly, includes the tabular data.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_numpy</span></code>(self[, dtype, copy])</p></td>
 <td><p>Convert the DataFrame to a NumPy array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_panel</span></code>(self)</p></td>
-<td><p>Transform long (stacked) format (DataFrame) into wide (3D, Panel) format.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_parquet</span></code>(self, fname[, engine, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_parquet</span></code>(self, fname[, engine, …])</p></td>
 <td><p>Write a DataFrame to the binary parquet format.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_period</span></code>(self[, freq, axis, copy])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_period</span></code>(self[, freq, axis, copy])</p></td>
 <td><p>Convert DataFrame from DatetimeIndex to PeriodIndex with desired frequency (inferred from index if not passed).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code>(self, path[, compression, protocol])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code>(self, path[, compression, protocol])</p></td>
 <td><p>Pickle (serialize) object to file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_records</span></code>(self[, index, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_records</span></code>(self[, index, …])</p></td>
 <td><p>Convert DataFrame to a NumPy record array.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sparse</span></code>(self[, fill_value, kind])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sparse</span></code>(self[, fill_value, kind])</p></td>
 <td><p>Convert to SparseDataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sql</span></code>(self, name, con[, schema, if_exists, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sql</span></code>(self, name, con[, schema, if_exists, …])</p></td>
 <td><p>Write records stored in a DataFrame to a SQL database.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_stata</span></code>(self, fname[, convert_dates, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_stata</span></code>(self, fname[, convert_dates, …])</p></td>
 <td><p>Export DataFrame object to Stata dta format.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_string</span></code>(self[, buf, columns, col_space, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_string</span></code>(self[, buf, columns, col_space, …])</p></td>
 <td><p>Render a DataFrame to a console-friendly tabular output.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_timestamp</span></code>(self[, freq, how, axis, copy])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_timestamp</span></code>(self[, freq, how, axis, copy])</p></td>
 <td><p>Cast to DatetimeIndex of timestamps, at <em>beginning</em> of period.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code>(self)</p></td>
 <td><p>Return an xarray object from the pandas object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(self, func[, axis])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(self, func[, axis])</p></td>
 <td><p>Call <code class="docutils literal notranslate"><span class="pre">func</span></code> on self producing a DataFrame with transformed values and that has the same axis length as self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Transpose index and columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truediv</span></code>(self, other[, axis, level, fill_value])</p></td>
-<td><p>Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truediv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truncate</span></code>(self[, before, after, axis, copy])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truncate</span></code>(self[, before, after, axis, copy])</p></td>
 <td><p>Truncate a Series or DataFrame before and after some index value.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tshift</span></code>(self[, periods, freq, axis])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tshift</span></code>(self[, periods, freq, axis])</p></td>
 <td><p>Shift the time index, using the index’s frequency if available.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_convert</span></code>(self, tz[, axis, level, copy])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_convert</span></code>(self, tz[, axis, level, copy])</p></td>
 <td><p>Convert tz-aware axis to target time zone.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_localize</span></code>(self, tz[, axis, level, copy, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_localize</span></code>(self, tz[, axis, level, copy, …])</p></td>
 <td><p>Localize tz-naive index of a Series or DataFrame to target time zone.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unstack</span></code>(self[, level, fill_value])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unstack</span></code>(self[, level, fill_value])</p></td>
 <td><p>Pivot a level of the (necessarily hierarchical) index labels, returning a DataFrame having a new level of column labels whose inner-most level consists of the pivoted index labels.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(self, other[, join, overwrite, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(self, other[, join, overwrite, …])</p></td>
 <td><p>Modify in place using non-NA values from another DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
 <td><p>Return unbiased variance over requested axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code>(self, cond[, other, inplace, axis, …])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code>(self, cond[, other, inplace, axis, …])</p></td>
 <td><p>Replace values where the condition is False.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xs</span></code>(self, key[, axis, level, drop_level])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xs</span></code>(self, key[, axis, level, drop_level])</p></td>
 <td><p>Return cross-section from the Series/DataFrame.</p></td>
 </tr>
 </tbody>
@@ -2116,7 +2106,7 @@ unitless quantity.</p>
 </table>
 <dl class="method">
 <dt id="libics.data.types.Quantity.mathstr">
-<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.data.types.Quantity.mathstr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.data.types.Quantity.mathstr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2155,7 +2145,7 @@ unitless quantity.</p>
 </table>
 <dl class="method">
 <dt id="libics.data.types.ValQuantity.mathstr">
-<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">val=True</em>, <em class="sig-param">val_format=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.data.types.ValQuantity.mathstr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">val=True</em>, <em class="sig-param">val_format=None</em>, <em class="sig-param">unit_math=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.data.types.ValQuantity.mathstr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
