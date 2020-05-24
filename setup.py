@@ -7,14 +7,14 @@ def readme():
 
 
 setup(name='libics',
-      version='0.0',
+      version='0.1',
       description='Incoherent source library',
       long_description=readme(),
       classifiers=[
-            'Development Status :: 2 - Pre-Alpha',
+            'Development Status :: 3 - Alpha',
             'Programming Language :: Python :: 3',
       ],
-      keywords='data analysis incoherent light',
+      keywords='data analysis driver',
       url='https://github.com/david-wei/libics',
       author='David Wei',
       author_email='david94.wei@gmail.com',
@@ -28,7 +28,7 @@ setup(name='libics',
       },
       install_requires=[
             'matplotlib', 'numpy', 'scipy', 'pandas',
-            'pyserial', 'pymongo', 'h5py', 'Pillow', 'PyQt5'
+            'pyserial', 'pyusb', 'pymongo', 'h5py', 'Pillow', 'PyQt5'
       ],
       dependency_links=[
             'https://github.com/morefigs/pymba',
