@@ -1,6 +1,9 @@
 # LibICS
 
-Incoherent Source Library
+LibICS consists of three sub-libraries:
+* `core` provides general purpose data structures and I/O,
+* `driver` allows accessing drivers to communicate with external devices and
+* `tools` contains a set of analysis functions.
 
 
 # Dependencies
@@ -15,16 +18,23 @@ gives an overview of these additional external dependencies.
 
 ## Drivers
 
+### Interfaces
+
+| Developer | Library | Type | Description |
+| --------- | ------- | ---- | ----------- |
+| [libusb](https://libusb.info) | [libusb 1.0](https://github.com/libusb/libusb/releases) | C API | Windows USB library, DLL needs to be on system path |
+
+
 ### Cameras
 
-| Developer | Library | Type | Camera dependency |
-| --------- | ------- | ---- | ----------------- |
-| [AlliedVision](https://www.alliedvision.com) | [Vimba](https://www.alliedvision.com/en/products/software.html) | C API | i.a. Manta G-145B-NIR |
-| [Github: morefigs](https://github.com/morefigs) | [pymba](https://github.com/morefigs/pymba) | Python wrapper | i.a. Manta G-145B-NIR |
+| Developer | Library | Type | Description |
+| --------- | ------- | ---- | ----------- |
+| [AlliedVision](https://www.alliedvision.com) | [Vimba](https://www.alliedvision.com/en/products/software.html) | C API | communication with AlliedVision Vimba cameras, i.a. Manta G-145B-NIR |
+| [Github: morefigs](https://github.com/morefigs) | [pymba](https://github.com/morefigs/pymba) | Python wrapper | communication with AlliedVision Vimba cameras, i.a. Manta G-145B-NIR |
 
 
 ## Files
 
-| Developer | Library | Type | Camera dependency |
-| --------- | ------- | ---- | ----------------- |
-| [Github: fujii-team](https://github.com/fujii-team) | [sif_reader](https://github.com/fujii-team/sif_reader) | Python wrapper | image files (.sif) |
+| Developer | Library | Type | Description |
+| --------- | ------- | ---- | ----------- |
+| [Github: fujii-team](https://github.com/fujii-team) | [sif_reader](https://github.com/fujii-team/sif_reader) | Python wrapper | R/W singularity image files (.sif) |
