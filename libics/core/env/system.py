@@ -25,7 +25,7 @@ def _get_parent_dir(dir, level=1):
         return _get_parent_dir(dir, level=level)
 
 
-def _add_to_sys_path(path, index=None):
+def add_to_sys_path(path, index=None):
     """
     Adds 'path' to 'sys.path'.
 
@@ -53,4 +53,4 @@ if __name__ == "__main__":
         inspect.getfile(inspect.currentframe())
     ))
     _parent_dir = _get_parent_dir(_current_dir, level=2)
-    _add_to_sys_path(_parent_dir, index=None)
+    add_to_sys_path(_parent_dir, index=None)

@@ -3,6 +3,7 @@ import json
 import os
 import sys
 
+from . import logging
 from . import system
 
 
@@ -60,32 +61,3 @@ if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
 
 
 FILE_MPLRC = os.path.join(DIR_DOC_LIBICS, "mplrc.env.libics")
-
-
-###############################################################################
-# File format
-###############################################################################
-
-
-FORMAT_JSON_INDENT = 4
-
-
-###############################################################################
-# Threading
-###############################################################################
-
-
-THREAD_DELAY_COM = 0.05
-
-
-###############################################################################
-# Logging
-###############################################################################
-
-
-# TODO: change for logging package
-VERBOSITY_SILENT = -1
-VERBOSITY_NORMAL = 0
-VERBOSITY_VERBOSE = 1
-VERBOSITY_VERY_VERBOSE = 2
-VERBOSITY_DEBUG = 3
