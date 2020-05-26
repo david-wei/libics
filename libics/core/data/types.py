@@ -1,6 +1,12 @@
+import numpy as np
+
+
 ###############################################################################
 # Primitive containers
 ###############################################################################
+
+
+NO_NAME = "N/A"
 
 
 class Quantity(object):
@@ -19,13 +25,14 @@ class Quantity(object):
         unitless quantity.
     """
 
-    def __init__(self,
-                 name="N/A", symbol=None, unit=None,
-                 cls_name="Quantity"):
-        super().__init__(pkg_name="libics", cls_name=cls_name)
+    def __init__(self, name=NO_NAME, symbol=None, unit=None):
         self.name = name
         self.symbol = symbol
         self.unit = unit
+
+    # ++++++++++++++++
+    # Unary operations
+    # ++++++++++++++++
 
     def __str__(self):
         s = self.name
@@ -48,6 +55,13 @@ class Quantity(object):
             s += r" [$\mathregular{" + self.unit + r"}$]"
         return s
 
+    # +++++++++++++++++
+    # Binary operations
+    # +++++++++++++++++
+
+    def _is_quantity(self, other):
+        return isinstance(other, type(self))
+
     def __eq__(self, other):
         return (
             self.name == other.name
@@ -68,6 +82,11 @@ class ValQuantity(Quantity):
     """
     Data type for physical quantities with values.
 
+    Supports common arithmetic operations (`+, -, *, /, //, %, **`)
+    and comparison operations (`==, !=, <, <=, >, >=`)
+    with other `ValQuantity` objects or numeric values.
+    Supports numeric casting into `int, float, complex`.
+
     Parameters
     ----------
     name : `str`, optional
@@ -81,11 +100,13 @@ class ValQuantity(Quantity):
         Value of physical quantity.
     """
 
-    def __init__(self, name="N/A", symbol=None, unit=None, val=None):
-        super().__init__(
-            name=name, symbol=symbol, unit=unit, cls_name="ValQuantity"
-        )
+    def __init__(self, name=NO_NAME, symbol=None, unit=None, val=None):
+        super().__init__(name=name, symbol=symbol, unit=unit)
         self.val = val
+
+    # ++++++++++++++++
+    # Unary operations
+    # ++++++++++++++++
 
     def __str__(self):
         s = self.name
@@ -126,201 +147,442 @@ class ValQuantity(Quantity):
                 s += " [" + str_unit + "]"
         return s
 
-    def __eq__(self, other):
-        return (
-            self.val == other.val
-            and super().__eq__(other)
-        )
-
-    def __ne__(self, other):
-        return (
-            self.val != other.val
-            or super().__ne__(other)
-        )
-
-    def __lt__(self, other):
-        return self.val < other.val
-
-    def __le__(self, other):
-        return self.val <= other.val
-
-    def __gt__(self, other):
-        return self.val > other.val
-
-    def __ge__(self, other):
-        return self.val >= other.val
-
-
-class FlaggedType:
-
-    """
-    Container for values with boolean flag.
-
-    Provides a validity checker (range or subset based).
-    Implements operators mathematical operators. On combinatory operation
-    (e.g. `+`), flags are combined as `or` and conditions are dropped (`None`).
-
-    Parameters
-    ----------
-    val
-        Value to be stored.
-    flag : bool
-        Boolean flag.
-    cond : tuple or list or None
-        Value validity condition.
-        tuple with length 2: range from min[0] to max[1].
-        list: discrete set of allowed values.
-        None: no validity check.
-    """
-
-    def __init__(self, val, flag=False, cond=None):
-        self._val = None
-        self._cond = None
-        self.val = val
-        self.flag = flag
-
-    @property
-    def val(self):
-        return self._val
-
-    @val.setter
-    def val(self, v):
-        if self._cond is not None:
-            if type(self._cond) == tuple:
-                if v < self._cond[0] or v > self._cond[1]:
-                    raise ValueError("libics.util.types.FlaggedType.val: {:s}"
-                                     .format(str(v)))
-            else:
-                if v not in self._cond:
-                    raise ValueError("libics.util.types.FlaggedType.val: {:s}"
-                                     .format(str(v)))
-        self._val = v
-
-    @property
-    def cond(self):
-        return self._cond
-
-    @cond.setter
-    def cond(self, c):
-        if (c is None or type(c) == list or
-                (type(c) == tuple and len(c) == 2 and c[0] <= c[1])):
-            self._cond = c
-        else:
-            raise TypeError("libics.util.types.FlaggedType.cond: {:s}"
-                            .format(str(c)))
-
-    def invert(self):
-        self.flag = not self.flag
-        return self.flag
-
-    def assign(self, other, diff_flag=False):
-        """
-        Copies the attributes of another `FlaggedType` object into the current
-        object.
-
-        Parameters
-        ----------
-        other : FlaggedType
-            The object to be copied.
-        diff_flag : bool
-            Whether to copy the flag state or the differential flag
-            state.
-            `False`:
-                Copies the flag state.
-            `True`:
-                Compares the values and sets the flag to
-                `self.val != other.val`.
-        """
-        if diff_flag:
-            self.flag = (self.val != other.val)
-        else:
-            self.flag = other.flag
-        self.cond = other.cond
-        self.val = other.val
-
-    def set_val(self, val, diff_flag=True):
-        """
-        Sets the value without changing the condition.
-
-        Parameters
-        ----------
-        val
-            New value of flagged type.
-        diff_flag : bool
-            Whether to set a differential flag.
-            `False`:
-                Keeps the current flag state.
-            `True`:
-                Compares the values and sets the flag to
-                `self.val != val`.
-        """
-        _old_val = self.val
-        self.val = val
-        if diff_flag:
-            self.flag = (val != _old_val)
-
-    def copy(self):
-        """
-        Returns an independent copy of itself.
-        """
-        return FlaggedType(self.val, flag=self.flag, cond=self.cond)
-
-    def __eq__(self, other):
-        return self.val == other.val
-
-    def __ne__(self, other):
-        return self.val != other.val
-
-    def __lt__(self, other):
-        return self.val < other.val
-
-    def __le__(self, other):
-        return self.val <= other.val
-
-    def __gt__(self, other):
-        return self.val > other.val
-
-    def __ge__(self, other):
-        return self.val >= other.val
-
-    def __add__(self, other):
-        return FlaggedType(
-            self.val + other.val,
-            flag=(self.flag or other.flag)
-        )
-
-    def __sub__(self, other):
-        return FlaggedType(
-            self.val - other.val,
-            flag=(self.flag or other.flag)
-        )
-
-    def __mul__(self, other):
-        return FlaggedType(
-            self.val * other.val,
-            flag=(self.flag or other.flag)
-        )
-
-    def __truediv__(self, other):
-        return FlaggedType(
-            self.val / other.val,
-            flag=(self.flag or other.flag)
-        )
-
-    def __pow__(self, other):
-        return FlaggedType(
-            self.val**other.val,
-            flag=(self.flag or other.flag)
-        )
-
-    def __neg__(self):
-        return FlaggedType(-self.val, flag=self.flag, cond=self.cond)
-
     def __int__(self):
         return int(self.val)
 
     def __float__(self):
         return float(self.val)
 
-    def __str__(self):
-        return str(self.val)
+    def __complex__(self):
+        return complex(self.val)
+
+    def __neg__(self):
+        _name, _symbol, _unit = self.name, self.symbol, self.unit
+        _val = -self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    # +++++++++++++++++
+    # Binary operations
+    # +++++++++++++++++
+
+    ALL_OPS = ["+", "-", "*", "/", "//", "%", "**", "&"]
+    LINEAR_OPS = ["+", "-", "%", "&"]
+    COMBINE_OPS = ["*"]
+    CANCEL_OPS = ["/", "//"]
+    NUMERIC_OPS = ["**"]
+    STR_OP = {i: i for i in ALL_OPS}
+    MATHSTR_OP = {
+        "+": "+", "-": "-", "*": "\\cdot", "/": "/", "//": "\\mathrm{{div}}",
+        "%": "\\mathrm{{mod}}", "**": "^", "&": "&"
+    }
+
+    @staticmethod
+    def _brk(s):
+        """
+        Surrounds with brackets if string `s` contains a space.
+        """
+        if " " in s:
+            return "({:s})".format(s)
+        else:
+            return s
+
+    def _get_common_name(self, other, op="&", rev=False):
+        _name = NO_NAME
+        if self.name == NO_NAME:
+            _name = other.name
+        elif other.name == NO_NAME:
+            _name = self.name
+        else:
+            _a = [self._brk(self.name), self.STR_OP[op], self._brk(other.name)]
+            _name = "{:s} {:s} {:s}".format(*(reversed(_a) if rev else _a))
+        return _name
+
+    def _get_common_symbol(self, other, self_first=True, op="&", rev=False):
+        _symbol = None
+        if self.symbol is None:
+            _symbol = other.symbol
+        elif other.symbol is None:
+            _symbol = self.symbol
+        else:
+            _a = [self._brk(self.symbol), self.MATHSTR_OP[op],
+                  self._brk(other.symbol)]
+            _symbol = "{:s} {:s} {:s}".format(*(reversed(_a) if rev else _a))
+        return _symbol
+
+    def _get_common_unit(self, other, op="&", rev=False):
+        _unit = None
+        if op in self.LINEAR_OPS:
+            if self.unit is None:
+                _unit = other.unit
+            elif other.unit is None:
+                _unit = self.unit
+            elif self.unit != other.unit:
+                _a = [self._brk(self.unit), self.STR_OP[op],
+                      self._brk(other.unit)]
+                raise ValueError("invalid units: {:s} {:s} {:s}"
+                                 .format(*(reversed(_a) if rev else _a)))
+            else:
+                _unit = self.unit
+        elif op in self.COMBINE_OPS:
+            if self.unit is None:
+                _unit = other.unit
+            elif other.unit is None:
+                _unit = self.unit
+            else:
+                _a = [self._brk(self.unit), self.STR_OP[op],
+                      self._brk(other.unit)]
+                _unit = "{:s} {:s} {:s}".format(*(reversed(_a) if rev else _a))
+        elif op in self.CANCEL_OPS:
+            if self.unit is None:
+                if rev:
+                    _unit = other.unit
+                else:
+                    _a = [self.STR_OP[op], self._brk(other.unit)]
+                    _unit = "1 {:s} {:s}".format(_a)
+            elif other.unit is None:
+                if rev:
+                    _unit = self.unit
+                else:
+                    _a = [self.STR_OP[op], self._brk(self.unit)]
+                    _unit = "1 {:s} {:s}".format(_a)
+            elif self.unit == other.unit:
+                _unit = None
+            else:
+                _a = [self._brk(self.unit), self.STR_OP[op],
+                      self._brk(other.unit)]
+                _unit = "{:s} {:s} {:s}".format(*(reversed(_a) if rev else _a))
+        elif op in self.NUMERIC_OPS:
+            _unit = None
+        return _unit
+
+    def __eq__(self, other):
+        if self._is_quantity(other):
+            return self.val == other.val and super().__eq__(other)
+        else:
+            return self.val == other
+
+    def __ne__(self, other):
+        if self._is_quantity(other):
+            return self.val != other.val or super().__ne__(other)
+        else:
+            return self.val != other
+
+    def __lt__(self, other):
+        if self._is_quantity(other):
+            return self.val < other.val
+        else:
+            return self.val < other
+
+    def __le__(self, other):
+        if self._is_quantity(other):
+            return self.val <= other.val
+        else:
+            return self.val <= other
+
+    def __gt__(self, other):
+        if self._is_quantity(other):
+            return self.val > other.val
+        else:
+            return self.val > other
+
+    def __ge__(self, other):
+        if self._is_quantity(other):
+            return self.val >= other.val
+        else:
+            return self.val >= other
+
+    def __add__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="+")
+            _symbol = self._get_common_symbol(other, op="+")
+            _unit = self._get_common_unit(other, op="+")
+            _val = self.val + other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val + other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __sub__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="-")
+            _symbol = self._get_common_symbol(other, op="-")
+            _unit = self._get_common_unit(other, op="-")
+            _val = self.val - other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val - other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __mul__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="*")
+            _symbol = self._get_common_symbol(other, op="*")
+            _unit = self._get_common_unit(other, op="*")
+            _val = self.val * other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val * other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __truediv__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="/")
+            _symbol = self._get_common_symbol(other, op="/")
+            _unit = self._get_common_unit(other, op="/")
+            _val = self.val / other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val / other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __floordiv__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="//")
+            _symbol = self._get_common_symbol(other, op="//")
+            _unit = self._get_common_unit(other, op="//")
+            _val = self.val // other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val // other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __mod__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="%")
+            _symbol = self._get_common_symbol(other, op="%")
+            _unit = self._get_common_unit(other, op="%")
+            _val = self.val % other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = self.unit
+            _val = self.val % other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __pow__(self, other):
+        if self._is_quantity(other):
+            _name = self._get_common_name(other, op="**")
+            _symbol = self._get_common_symbol(other, op="**")
+            _unit = self._get_common_unit(other, op="**")
+            _val = self.val**other.val
+        else:
+            _name = self.name
+            _symbol = self.symbol
+            _unit = None
+            _val = self.val**other
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        _name = self.name
+        _symbol = self.symbol
+        _unit = self.unit
+        _val = other - self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other):
+        _name = self.name
+        _symbol = self.symbol
+        _unit = self.unit
+        _val = other / self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __rfloordiv__(self, other):
+        _name = self.name
+        _symbol = self.symbol
+        _unit = self.unit
+        _val = other // self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __rmod__(self, other):
+        _name = self.name
+        _symbol = self.symbol
+        _unit = self.unit
+        _val = other % self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __rpow__(self, other):
+        _name = self.name
+        _symbol = self.symbol
+        _unit = self.unit
+        _val = other**self.val
+        return ValQuantity(name=_name, symbol=_symbol, unit=_unit, val=_val)
+
+    def __iadd__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="+")
+            self.symbol = self._get_common_symbol(other, op="+")
+            self.unit = self._get_common_unit(other, op="+")
+            self.val += other.val
+        else:
+            self.val += other
+        return self
+
+    def __isub__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="-")
+            self.symbol = self._get_common_symbol(other, op="-")
+            self.unit = self._get_common_unit(other, op="-")
+            self.val -= other.val
+        else:
+            self.val -= other
+        return self
+
+    def __imul__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="*")
+            self.symbol = self._get_common_symbol(other, op="*")
+            self.unit = self._get_common_unit(other, op="*")
+            self.val *= other.val
+        else:
+            self.val *= other
+        return self
+
+    def __itruediv__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="/")
+            self.symbol = self._get_common_symbol(other, op="/")
+            self.unit = self._get_common_unit(other, op="/")
+            self.val /= other.val
+        else:
+            self.val /= other
+        return self
+
+    def __ifloordiv__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="//")
+            self.symbol = self._get_common_symbol(other, op="//")
+            self.unit = self._get_common_unit(other, op="//")
+            self.val //= other.val
+        else:
+            self.val //= other
+        return self
+
+    def __imod__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="%")
+            self.symbol = self._get_common_symbol(other, op="%")
+            self.unit = self._get_common_unit(other, op="%")
+            self.val %= other.val
+        else:
+            self.val %= other
+        return self
+
+    def __ipow__(self, other):
+        if self._is_quantity(other):
+            self.name = self._get_common_name(other, op="**")
+            self.symbol = self._get_common_symbol(other, op="**")
+            self.unit = self._get_common_unit(other, op="**")
+            self.val **= other.val
+        else:
+            self.unit = None
+            self.val **= other
+        return self
+
+
+###############################################################################
+# Functional descriptors
+###############################################################################
+
+
+class ValCheckDesc:
+
+    """
+    Descriptor class for validity-checked attributes.
+
+    Also provides an interface for data structure assumptions.
+    Raises `ValueError` if invalid.
+
+    Parameters
+    ----------
+    allow_none : `bool`
+        Flag whether to allow the `None` value regardless of other validity
+        checks.
+    check_func : `callable` or `None`
+        Call signature: `val_check(new_val)->bool`.
+        Should return `True` if valid and `False` if not.
+    check_type : `class` or `None`
+        Valid classes an object can be an instance of.
+    check_iter : `iterable` or `None`
+        Iterable containing valid values.
+    check_min, check_max : `object` or `None`
+        Objects implementing the `<=, >=` operators, which are checked against.
+        Allows for vectorized values.
+    assume_func : `callable` or `None`
+        Function that changes the input into a data format the value should
+        be stored in. Call signature: `assume_func(new_val)->object`.
+        Is called after the check functions.
+    add_io_key : `bool`
+        Flag whether to include descriptor when serializing the owning class
+        using the functions in `libics.file.io`.
+    """
+
+    def __init__(
+        self, allow_none=True, check_func=None, check_type=None,
+        check_iter=None, check_min=None, check_max=None,
+        assume_func=None, add_io_key=True
+    ):
+        self.allow_none = allow_none
+        self.check_func = check_func
+        self.check_type = check_type
+        self.check_iter = check_iter
+        self.check_min = check_min
+        self.check_max = check_max
+        self.assume_func = assume_func
+        self.add_io_key = add_io_key
+
+    def __set_name__(self, owner, name):
+        self.name = name
+        import libics.core.io
+        if self.add_io_key and isinstance(owner, libics.core.io.FileBase):
+            owner.SER_KEYS.add(name)
+
+    def __get__(self, instance, owner):
+        return instance.__dict__[self.name]
+
+    def __set__(self, instance, value):
+        if value is None and self.allow_none:
+            pass
+        else:
+            if self.check_func is not None and not self.check_func(value):
+                self._handle_invalid(value)
+            if (
+                self.check_type is not None
+                and not isinstance(value, self.check_type)
+            ):
+                self._handle_invalid(value)
+            if self.check_iter is not None and value not in self.check_iter:
+                self._handle_invalid(value)
+            if (
+                self.check_min is not None
+                and not np.all(self.check_min <= value)
+            ):
+                self._handle_invalid(value)
+            if (
+                self.check_max is not None
+                and not np.all(self.check_max >= value)
+            ):
+                self._handle_invalid(value)
+        if self.assume_func is not None:
+            value = self.assume_func(value)
+        instance.__dict__[self.name] = value
+
+    def _handle_invalid(self, value):
+        raise ValueError(
+            "invalid {:s} value ({:s})".format(self.name, str(value))
+        )
