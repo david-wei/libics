@@ -1,141 +1,233 @@
 import copy
 import numpy as np
+
 from scipy import interpolate
+
+from libics.env import logging
+from libics.core.data import types
+from libics.core.util import misc
 
 
 ###############################################################################
 
 
-class ArrayScale(object):
+class ArrayData(object):
 
     """
-    Stores metadata for `ArrayData`.
-
-    Provides linear scaling (offset, scale) for discrete arrays and physical
-    quantities (name, unit) for each dimension.
-
-    Parameters
-    ----------
-    dim : int, optional
-        Dimension of associated `ArrayData` + 1.
-
-    Notes
-    -----
-    The stored dimensions must be one higher than the stored data array to
-    accomodate the dimension of the function value.
-
-    Attributes
-    ----------
-    INDEX, QUANTITY:
-        Mode determining how an array item is addressed, i.e.
-        whether the value given to the getter function is
-        interpreted as index or as physical quantity.
+    Stores a multidimensional array and its scaling information (linear
+    scaling and physical quantity).
     """
 
-    INDEX = 0
-    QUANTITY = 1
+    POINTS = "POINTS"
+    RANGE = "RANGE"
+    LINSPACE = "LINSPACE"
+    VAR_MODES = {POINTS, RANGE, LINSPACE}
 
-    def __init__(self, dim=0):
-        self.init(dim)
+    LOGGER = logging.get_loggger("libics.core.data.arrays.ArrayData")
 
-    def init(self, dim=0):
-        dim = round(dim)
-        ERR.assertion(ERR.INVAL_POS, dim >= 0)
-        self.offset = dim * [0.0]
-        self.scale = dim * [1.0]
-        self.max = dim * [None]
-        self.quantity = dim * [types.Quantity()]
-        self.set_index_mode(ArrayScale.INDEX)
+    def __init__(self):
+        # Data
+        self.data_quantity = None
+        self._data = np.empty(0)
+        # Variable
+        self.var_quantity = []
+        self.var_mode = []
+        # Mode: points
+        self._points = []
+        # Mode: range
+        self._offset = []
+        self._center = []
+        self._step = []
+        # Mode: linspace
+        self._low = []
+        self._high = []
 
-    def set_index_mode(self, index_mode):
+    @staticmethod
+    def _get_quantity(**kwargs):
         """
-        Sets the mode how the `__getitem__` operator (`[]`) is interpreted.
+        Generates a quantity object from keyword arguments.
 
         Parameters
         ----------
-        index_mode : ArrayScale.INDEX, ArrayScale.QUANTITY
-            INDEX: Interpretation as index.
-            QUANTITY: Interpretation as physical quantity.
+        quantity : `types.Quantity`
+            Directly specified quantity. Takes precedence
+            over other methods.
+        name, symbol, unit : `str`
+            Parameters used to construct `types.Quantity` instance.
         """
-        self.index_mode = index_mode
-
-    def set_max(self, ar):
-        """
-        Determines the quantity maxima from the stored scaling and a given
-        array.
-
-        Parameters
-        ----------
-        ar : numpy.ndarray or tuple
-            Array (or its shape) from which the maximum is determined.
-        """
-        if type(ar) == np.ndarray:
-            ar = ar.shape
-        # Add 0.1 * scale to avoid floating point imprecision
-        # (i.e. ensure integer cutoff keeps same index as integer rounding).
-        # +[1] as functional dimension dummy max to keep length consistent.
-        self.max = [self.cv_index_to_quantity(ind, dim) + self.scale[dim] * 0.1
-                    for dim, ind in enumerate(ar)] + [1]
-
-    def get_index_by_index(self, val, **kwargs):
-        """
-        Identity function.
-        """
-        return val
-
-    def get_index_by_quantity(self, val, dim=None, _incl_max=True):
-        """
-        Gets an index combination.
-
-        Parameters
-        ----------
-        val : scalar, slice, tuple, list, numpy.ndarray
-            Any argument of numpy fancy indexing.
-        dim : int or None
-            None: Dimension starting from 0.
-            int: dimension for scalar.
-        _incl_max: bool, optional
-            Flag: whether to limit the returned index to be
-            smaller or equal to the length of the array
-            (i.e. whether to include stop in [start, stop]).
-
-        Returns
-        -------
-        ind : scalar, slice, tuple
-            Requested index in a format depending on val.
-        """
-        ind = None
-        if type(val) == tuple or type(val) == list or type(val) == np.ndarray:
-            ind = tuple([self.get_index_by_quantity(v, dim=d, _incl_max=True)
-                         for d, v in enumerate(val)])
-        elif type(val) == slice:
-            ind = slice(
-                self.get_index_by_quantity(val.start, dim=dim, _incl_max=True),
-                self.get_index_by_quantity(val.stop, dim=dim, _incl_max=False),
+        if "quantity" in kwargs:
+            _quantity = misc.assume_construct_obj(
+                kwargs["quantity"], types.Quantity
             )
-        elif val is not None:
-            ind = self.cv_quantity_to_index(val, dim, incl_maxpoint=_incl_max)
-        return ind
+        else:
+            _quantity = types.Quantity()
+            if "name" in kwargs:
+                _quantity.name = kwargs["name"]
+            if "symbol" in kwargs:
+                _quantity.symbol = kwargs["symbol"]
+            if "unit" in kwargs:
+                _quantity.unit = kwargs["unit"]
+        return _quantity
 
-    def get_index(self, val):
+    def set_data_quantity(self, **kwargs):
         """
-        Gets the index associated with the given value being interpreted
-        according to the index mode.
+        Sets the data quantity object.
+
+        See :py:meth:`_get_quantity`.
+        """
+        _quantity = self._get_quantity(**kwargs)
+        self.data_quantity = _quantity
+
+    def set_var_quantity(self, dim, **kwargs):
+        """
+        Sets the data quantity object.
+
+        See :py:meth:`_get_quantity`.
 
         Parameters
         ----------
-        val :
-            Physical quantity or index.
-
-        Returns
-        -------
-        ind : int
-            Requested index.
+        dim : `int`
+            Variable dimension to be set.
         """
-        if self.index_mode == ArrayScale.INDEX:
-            return self.get_index_by_index(val)
-        elif self.index_mode == ArrayScale.QUANTITY:
-            return self.get_index_by_quantity(val)
+        _quantity = self._get_quantity(**kwargs)
+        self.var_quantity[dim] = _quantity
+
+    def set_dim(self, dim, **kwargs):
+        """
+        Sets the numeric variable description for a dimension.
+
+        Parameters
+        ----------
+        dim : `int`
+            Variable dimension to be set.
+        **kwargs
+            A dimension can be defined by either of the three modes
+            `POINTS, RANGE, LINSPACE`.
+        ArrayData.POINTS
+            `points` : `np.ndarray`
+                1D array directly specifying the coordinates.
+        ArrayData.RANGE
+            `offset` : `float`
+                Range offset (starting value).
+            `center` : `float`
+                Range center. Is ignored if `offset` is specified.
+            `step` : `float`
+                Range step (difference value).
+        ArrayData.LINSPACE
+            `low` : `float`
+                Lower bound of linear spacing.
+            `high` : `float`
+                Upper bound of linear spacing.
+        """
+        # Mode: points
+        if "points" in kwargs:
+            self.var_mode[dim] = self.POINTS
+            self._points[dim] = kwargs["points"]
+            self._offset[dim] = None
+            self._center[dim] = None
+            self._step[dim] = None
+            self._low[dim] = None
+            self._high[dim] = None
+        # Mode: range
+        if ("offset" in kwargs or "center" in kwargs) and "step" in kwargs:
+            self.var_mode[dim] = self.RANGE
+            self._points[dim] = None
+            if "offset" in kwargs:
+                self._offset[dim] = kwargs["offset"]
+                self._center[dim] = None
+            else:
+                self._offset[dim] = None
+                self._center[dim] = kwargs["center"]
+            self._step[dim] = kwargs["step"]
+            self._low[dim] = None
+            self._high[dim] = None
+        # Mode: linspace
+        if "low" in kwargs and "high" in kwargs:
+            self.var_mode[dim] = self.LINSPACE
+            self._points[dim] = None
+            self._offset[dim] = None
+            self._center[dim] = None
+            self._step[dim] = None
+            self._low[dim] = kwargs["low"]
+            self._high[dim] = kwargs["high"]
+        # Mode: unspecified
+        else:
+            self.var_mode[dim] = self.RANGE
+            self._points[dim] = None
+            self._offset[dim] = 0
+            self._center[dim] = None
+            self._step[dim] = 1
+            self._low[dim] = None
+            self._high[dim] = None
+
+    def add_dim(self, *args):
+        """
+        Appends variable dimension(s) to the object.
+
+        Parameters
+        ----------
+        *args : `dict` or `int`
+            Dictionaries in the order they should be added.
+            These dictionaries are used as ``kwargs`` for iteratively
+            setting dimensions.
+            An integer is equivalent to passing an this-integer-length
+            list of empty dictionaries.
+
+        Raises
+        ------
+        ValueError
+            If arguments are invalid.
+        """
+        # Add nothing
+        if len(args) == 0:
+            return
+        # Add empty dimensions
+        if len(args) == 1 and isinstance(args[0], int):
+            return self.add_dim(args[0] * [{}])
+        # Invalid value handling
+        for arg in args:
+            if not isinstance(arg, dict):
+                raise ValueError("invalid args: {:s}".format(str(args)))
+        # Add dimensions
+        self.var_mode.append(None)
+        self._points.append(None)
+        self._offset.append(None)
+        self._center.append(None)
+        self._step.append(None)
+        self._low.append(None)
+        self._high.append(None)
+        # Set dimensions
+        for i, arg in range(-len(args), 0):
+            self.set_var_quantity(i, **arg)
+            self.set_dim(i, **arg)
+
+    def rmv_dim(self, *dims, num=None):
+        """
+        Removes variable dimension(s) from the object.
+
+        Parameters
+        ----------
+        *dims : `int`
+            Dimensions to be removed.
+        num : `int`
+            Removes `num` last dimensions. Is only applied
+            if `dims` is not specified.
+        """
+        if len(dims) == 0 and isinstance(num, int):
+            dims = np.arange(-num, 0)
+        dims = np.sort(dims) % self.var_ndim
+        for dim in reversed(dims):
+            del self.var_mode[dim]
+            del self._points[dim]
+            del self._offset[dim]
+            del self._center[dim]
+            del self._step[dim]
+            del self._low[dim]
+            del self._high[dim]
+
+    # ++++++++++
+    # Conversion
+    # ++++++++++
 
     def cv_index_to_quantity(self, ind, dim):
         """
@@ -153,6 +245,7 @@ class ArrayScale(object):
         val :
             Physical quantity associated with given quantity.
         """
+        # TODO:
         return self.offset[dim] + self.scale[dim] * ind
 
     def cv_quantity_to_index(self, val, dim,
@@ -184,6 +277,7 @@ class ArrayScale(object):
         IndexError:
             If dim is out of bounds.
         """
+        # TODO:
         val = max(val, self.offset[dim])
         if self.max[dim] is not None:
             val = min(val, self.max[dim])
@@ -194,268 +288,252 @@ class ArrayScale(object):
             ind = round(ind)
         return ind
 
-    def chk_attr(self):
+    def cv_unit(self, dim, new_unit, op, val):
         """
-        Checks attribute consistency (dimensionality).
-
-        Returns
-        -------
-        ret : bool
-            Whether attributes are consistent.
-        """
-        ret = True
-        try:
-            ret = (len(self.offset) == len(self.scale)
-                   == len(self.quantity) == len(self.max))
-        except(TypeError):
-            ret = False
-        return ret
-
-    def get_dim(self):
-        """
-        Gets the dimension of stored attributes (incl. actual data).
-
-        Raises
-        ------
-        AttributeError:
-            If dimensionality is inconsistent.
-        """
-        if not self.chk_attr():
-            raise AttributeError
-        else:
-            return len(self.quantity)
-
-    def add_dim(self,
-                offset=0.0, scale=1.0, max=None,
-                quantity=None, name="N/A", symbol=None, unit=None):
-        """
-        Appends a dimension to the object.
+        Converts the unit of a given dimension.
 
         Parameters
         ----------
-        offset : float or int
-            Scaling offset.
-        scale : float or int
-            Linear scaling.
-        max : float or int or None
-            Maximum quantity.
-        quantity : types.Quantity or None
-            Quantity. If specified, overwrites name and unit.
-        name : str
-            Quantity name.
-        symbol : str or None
-            Quantity symbol.
-        unit : str or None
-            Quantity unit.
+        dim : int
+            Dimension of conversion.
+        new_unit : str
+            New unit string.
+        op : str or callable
+            Performed operation as function or encoded as string.
+            str:
+                Supported string encoded operations include:
+                "+", "-", "*", "/".
+                Passed val parameter is used as second
+                operand.
+            callable:
+                Call signature must be:
+                `op(stored_value, val)`.
+        val : int or float
+            Value with which the operation is performed.
         """
-        self.offset.append(offset)
-        self.scale.append(scale)
-        self.max.append(max)
-        if quantity is not None:
-            self.quantity.append(quantity)
+        # TODO:
+        if not callable(op):
+            try:
+                op = misc.operator_mapping[op]
+            except(KeyError):
+                return
+        self.quantity[dim].unit = new_unit
+        if dim < self.scale.get_dim() - 1:
+            self.scale.offset[dim] = op(self.scale.offset[dim], val)
+            self.scale.scale[dim] = op(self.scale.scale[dim], val)
+            if self.scale.max[dim] is not None:
+                self.scale.max[dim] = op(self.scale.max[dim], val)
         else:
-            self.quantity.append(
-                types.Quantity(name=name, symbol=symbol, unit=unit)
+            self.data = op(self.data, val)
+
+    def get_points(self, dim):
+        """
+        Gets the variable points for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            return self._points[dim]
+        elif self.var_mode[dim] == self.RANGE:
+            _step = self._step[dim]
+            _range = self.shape[dim] * _step
+            if self._offset[dim] is not None:
+                _offset = self._offset[dim]
+            else:
+                _offset = self._center[dim] - _range / 2
+            _stop = _offset + _range + 0.1 * _step
+            return np.arange(_offset, _stop, _step)
+        elif self.var_mode[dim] == self.LINSPACE:
+            _num = self.shape[dim]
+            return np.linspace(self._low[dim], self._high[dim], num=_num)
+        else:
+            raise ValueError("invalid mode: {:s}".format(str(self.var_mode)))
+
+    def get_offset(self, dim):
+        """
+        Gets the variable offset for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            self.LOGGER.warning(
+                "getting variable offset on a dimension in POINTS mode"
             )
+            return np.min(self._points[dim])
+        elif self.var_mode[dim] == self.RANGE:
+            if self._offset[dim] is not None:
+                return self._offset[dim]
+            else:
+                _step = self._step[dim]
+                _range = self.shape[dim] * _step
+                _center = self._center[dim]
+                return _center - _range / 2
+        elif self.var_mode[dim] == self.LINSPACE:
+            return self._low[dim]
+
+    def get_center(self, dim):
+        """
+        Gets the variable center for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            self.LOGGER.warning(
+                "getting mean as variable center on a dimension in POINTS mode"
+            )
+            return np.mean(self._points[dim])
+        elif self.var_mode[dim] == self.RANGE:
+            if self._center[dim] is not None:
+                return self._center[dim]
+            else:
+                _step = self._step[dim]
+                _range = self.shape[dim] * _step
+                _offset = self._offset[dim]
+                return _offset + _range / 2
+        elif self.var_mode[dim] == self.LINSPACE:
+            return np.mean([self._low[dim], self._high[dim]])
+
+    def get_step(self, dim):
+        """
+        Gets the variable step for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            self.LOGGER.warning(
+                "getting differential mean as variable step on a dimension "
+                + "in POINTS mode"
+            )
+            _points = np.sort(self._points[dim])
+            return np.mean(_points[1:] - _points[:-1])
+        elif self.var_mode[dim] == self.RANGE:
+            return self._step[dim]
+        elif self.var_mode[dim] == self.LINSPACE:
+            return (self._high[dim] - self._low[dim]) / (self.shape[dim] - 1)
+
+    def get_low(self, dim):
+        """
+        Gets the variable low for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            self.LOGGER.warning(
+                "getting variable low on a dimension in POINTS mode"
+            )
+            return np.min(self._points[dim])
+        elif self.var_mode[dim] == self.RANGE:
+            if self._offset[dim] is not None:
+                return self._offset[dim]
+            else:
+                _step = self._step[dim]
+                _range = self.shape[dim] * _step
+                _center = self._center[dim]
+                return _center - _range / 2
+        elif self.var_mode[dim] == self.LINSPACE:
+            return self._low[dim]
+
+    def get_high(self, dim):
+        """
+        Gets the variable high for the specified dimension.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            self.LOGGER.warning(
+                "getting variable high on a dimension in POINTS mode"
+            )
+            return np.min(self._points[dim])
+        elif self.var_mode[dim] == self.RANGE:
+            _step = self._step[dim]
+            _range = self.shape[dim] * _step
+            if self._offset[dim] is not None:
+                return self._offset[dim] + _range
+            else:
+                _center = self._center[dim]
+                return _center + _range / 2
+        elif self.var_mode[dim] == self.LINSPACE:
+            return self._high[dim]
+
+    # ++++++++++
+    # Properties
+    # ++++++++++
+
+    @property
+    def ndim(self):
+        return self._data.ndim
+
+    @property
+    def var_ndim(self):
+        return len(self.var_mode)
+
+    @property
+    def shape(self):
+        return self._data.shape
+
+    def __len__(self):
+        return len(self._data)
+
+    @property
+    def points(self):
+        return [self.get_points(dim) for dim in range(self.ndim)]
+
+    @property
+    def offset(self):
+        return [self.get_offset(dim) for dim in range(self.ndim)]
+
+    @property
+    def center(self):
+        return [self.get_center(dim) for dim in range(self.ndim)]
+
+    @property
+    def step(self):
+        return [self.get_step(dim) for dim in range(self.ndim)]
+
+    @property
+    def low(self):
+        return [self.get_low(dim) for dim in range(self.ndim)]
+
+    @property
+    def high(self):
+        return [self.get_high(dim) for dim in range(self.ndim)]
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, val):
+        self._data = val
+        diff_ndim = self.ndim - self.var_ndim
+        if diff_ndim > 0:
+            self.add_dim(diff_ndim)
+        elif diff_ndim < 0:
+            self.rmv_dim(num=np.abs(diff_ndim))
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __setitem__(self, key, val):
+        self.data[key] = val
 
     def __str__(self):
-        return (
-            "Offset: " + str(self.offset) + "\n"
-            + "Scale: " + str(self.scale) + "\n"
-            + "Max: " + str(self.max) + "\n"
-            + "Quantity: " + str(self.quantity)
-        )
-
-
-###############################################################################
-
-
-@InheritMap(map_key=("libics", "ArrayData"))
-class ArrayData(hdf.HDFBase):
-
-    """
-    Stores a multidimensional array and its scaling information (linear
-    scaling and physical quantity).
-
-    Attributes
-    ----------
-    ROUND, UNIFORM, NORM1, NORM2, NORMINF:
-        Mode determining how a float index item is retrieved,
-        i.e. whether and how the index value is interpolated.
-
-    Examples
-    --------
-    >>> # Required steps
-    >>> # 1) Create an instance using the default constructor
-    >>> ard = ArrayData()
-    >>> # 2) Set the data
-    >>> some_data = np.arange(24).reshape((4, 6))
-    >>> offset, scale = [10.0, -20.0], [4.0, 2.5]
-    >>> ard.data = some_data
-    >>> # 3) Add metadata (data description)
-    >>> ard.scale.add_dim(
-    ...     offset=offset[0], scale=scale[0],
-    ...     name="some variable", symbol="x", unit="mm"
-    ... )
-    >>> ard.scale.add_dim(
-    ...     offset=offset[1], scale=scale[1],
-    ...     name="other variable", symbol="y", unit="kV"
-    ... )
-    >>> # 4) Update scale maxima
-    >>> ard.set_max()
-    >>> # Optionally set modes
-    >>> # A) Index mode
-    >>> ard.set_index_mode(ArrayScale.QUANTITY)
-    >>> # B) Float index mode
-    >>> ard.set_float_index_mode(ArrayData.ROUND)
-    """
-
-    ROUND = 0
-    UNIFORM = 1
-    NORM1 = 2
-    NORM2 = 3
-    NORMINF = 4
-
-    def __init__(self):
-        super().__init__(pkg_name="libics", cls_name="ArrayData")
-        self.init()
-
-    def init(self):
-        self._data = np.empty(0)
-        self.scale = ArrayScale()
-        self.get_float_item_func = self.get_float_item_by_round
-
-    # ++++ Scale +++++++++++++++++++++++++
-
-    def set_index_mode(self, index_mode):
-        """
-        Sets the mode how the `__getitem__` operator (`[]`) is interpreted.
-
-        Parameters
-        ----------
-        index_mode : ArrayScale.CONST
-            INDEX: Interpretation as index.
-            QUANTITY: Interpretation as physical quantity.
-
-        Notes
-        -----
-        If an invalid parameter is given, the index mode remains unchanged.
-        """
-        return self.scale.set_index_mode(index_mode)
-
-    def set_max(self):
-        """
-        Determines the quantity maxima from the stored scale and data.
-
-        Raises
-        ------
-        AttributeError
-            If data shape does not correspond to scale.
-
-        Notes
-        -----
-        Only sets the maximum quantity values if the dimensions correspond.
-        """
-        if (
-            self._data.ndim == len(self.scale.quantity) - 1
-            and self._data.ndim > 0
-            and np.all(0 != np.array(self._data.shape))
-        ):
-            self.scale.set_max(self.data)
-        else:
-            raise AttributeError("invalid data shape")
-
-    def center(self, axis=None, val=0.0):
-        """
-        Moves the offset such that the array is centered at a given value.
-
-        Parameters
-        ----------
-        axis : list(int) or int or None
-            Dimensions to be centered. None corresponds to centering
-            all axes.
-        val : float
-            Center value.
-        """
-        if axis is None:
-            axis = np.arange(self.scale.get_dim() - 1)
-        if not np.isscalar(axis):
-            for a in axis:
-                self.center(axis=a, val=val)
-        else:
-            size_excl = self.data.shape[axis] - 1
-            self.scale.offset[axis] = -self.scale.scale[axis] * size_excl / 2
-
-    # ++++ Float index +++++++++++++++++++
-
-    def set_float_index_mode(self, float_index_mode):
-        """
-        Sets the mode how a fractional index (get_float_item) is interpreted.
-
-        Parameters
-        ----------
-        float_index_mode : ArrayData.CONST
-            ROUND: Rounds to closest integer.
-            UNIFORM: Averages uniformly with surrounding points.
-            NORM1: Averages with 1-norm as weight.
-            NORM2: Averages with Euclidean distance as weight.
-            NORMINF: Averages with inf-norm as weight.
-
-        Notes
-        -----
-        If an invalid parameter is given, the index mode remains unchanged.
-        """
-        if float_index_mode == ArrayData.ROUND:
-            self.get_float_item_func = self.get_float_item_by_round
-        elif float_index_mode == ArrayData.UNIFORM:
-            self.get_float_item_func = self.get_float_item_by_uniform
-        elif float_index_mode == ArrayData.NORM1:
-            self.float_item_norm = 1
-            self.get_float_item_func = self.get_float_item_by_norm
-        elif float_index_mode == ArrayData.NORM2:
-            self.float_item_norm = 2
-            self.get_float_item_func = self.get_float_item_by_norm
-        elif float_index_mode == ArrayData.NORMINF:
-            self.float_item_norm = np.inf
-            self.get_float_item_func = self.get_float_item_by_norm
-
-    def get_float_item(self, ind):
-        return self.get_float_item_func(tuple(ind))
-
-    def get_float_item_by_round(self, ind):
-        ind = [round(x) for x in ind]
-        if len(ind) == 1:
-            ind = ind[0]
-        return self.data[ind]
-
-    @staticmethod
-    def _cv_float_index_to_int_index(ind):
-        inds = []
-        for x in ind:
-            xx = int(x)
-            if np.isclose(x, xx):
-                inds.append((xx, ))
+        s = str(self.data_quantity)
+        s += "Quantity:\n["
+        for i in range(self.ndim):
+            if i > 0:
+                s += " "
+            s += str(self.var_quantity[i])
+            if i < self.ndim - 1:
+                s += ",\n"
+        s += "Var:\n["
+        for i in range(self.ndim):
+            if i > 0:
+                s += " "
+            if self.var_mode[i] == self.POINTS:
+                s += "{:s}".format(str(self.get_points(i)))
             else:
-                inds.append((xx, xx + 1))
-        return inds
+                s += "range({:f}, {:f}, {:f})".format(
+                    self.get_low(i), self.get_high(i), self.get_step(i)
+                )
+            if i < self.ndim - 1:
+                s += ",\n"
+        s += "]\n"
+        s += "Data:\n"
+        s += "{:s}".format(str(self.data))
+        return s
 
-    def get_float_item_by_uniform(self, ind):
-        inds = ArrayData._cv_float_index_to_int_index(ind)
-        items = [self.data[ind] for ind in misc.get_combinations(inds)]
-        return np.mean(items)
-
-    def get_float_item_by_norm(self, ind):
-        inds = ArrayData._cv_float_index_to_int_index(ind)
-        inds = misc.get_combinations(inds)
-        weights = []
-        ind = np.array(ind)
-        for i in inds:
-            weights.append(np.linalg.norm(ind - np.array(i)))
-        weights = np.array(weights) / np.sum(weights)
-        items = np.array([self.data[i] for i in inds])
-        return items * weights
-
-    # ++++ Interpolation ++++++++++++++++++
+    # +++++++++++++
+    # Interpolation
+    # +++++++++++++
 
     def __call__(self, var, mode="nearest", extrapolation=False):
         """
@@ -470,7 +548,7 @@ class ArrayData(hdf.HDFBase):
             Shape:
                 (data dimension, *) where * can be any scalar
                 or array.
-        mode : Calibration.MODE
+        mode : str
             "nearest": Value of nearest neighbour.
             "linear": Linear interpolation.
         extrapolation : bool or float
@@ -496,7 +574,7 @@ class ArrayData(hdf.HDFBase):
         """
         # Convert to seriesdata-structure-like
         shape = None
-        dim = self.scale.get_dim() - 1
+        dim = self.ndim
         if dim == 1:
             if np.isscalar(var) or len(var) != 1:
                 var = [var]
@@ -506,11 +584,7 @@ class ArrayData(hdf.HDFBase):
             var = var.reshape((dim, var.size // dim))
             var = np.moveaxis(var, 0, -1)
         # Set up interpolation variables
-        points = [
-            np.linspace(self.scale.offset[i], self.scale.max[i],
-                        num=s, endpoint=False)
-            for i, s in enumerate(self.data.shape)
-        ]
+        points = self.points
         values = self.data
         xi = var
         method = mode
@@ -533,110 +607,9 @@ class ArrayData(hdf.HDFBase):
             func_val = func_val.reshape(shape)
         return func_val
 
-    # ++++ Conversion +++++++++++++++++++++
-
-    def cv_unit(self, dim, new_unit, op, val):
-        """
-        Converts the unit of a given dimension.
-
-        Parameters
-        ----------
-        dim : int
-            Dimension of conversion.
-        new_unit : str
-            New unit string.
-        op : str or function
-            Performed operation as function or encoded as string.
-            str:
-                Supported string encoded operations include:
-                "+", "-", "*", "/".
-                Passed val parameter is used as second
-                operand.
-            function:
-                Call signature must be:
-                function(stored_value, val).
-        val : int or float
-            Value with which the operation is performed.
-        """
-        if not callable(op):
-            try:
-                op = misc.operator_mapping[op]
-            except(KeyError):
-                return
-        self.scale.quantity[dim].unit = new_unit
-        if dim < self.scale.get_dim() - 1:
-            self.scale.offset[dim] = op(self.scale.offset[dim], val)
-            self.scale.scale[dim] = op(self.scale.scale[dim], val)
-            if self.scale.max[dim] is not None:
-                self.scale.max[dim] = op(self.scale.max[dim], val)
-        else:
-            self.data = op(self.data, val)
-
-    # ++++ Self operations ++++++++++++++++
-
-    @property
-    def data(self):
-        return self._data
-
-    @data.setter
-    def data(self, val):
-        self._data = val
-        self.set_max()
-
-    def __getitem__(self, key):
-        return self.data[self.scale.get_index(key)]
-
-    def __setitem__(self, key, val):
-        self[key] = val
-
-    def __str__(self):
-        return str(self.scale) + "\nData:\n" + str(self.data)
-
-    def add_dim(self,
-                offset=0.0, scale=1.0, max=None,
-                quantity=None, name="N/A", symbol=None, unit=None):
-        """
-        Appends a dimension to the object.
-
-        Parameters
-        ----------
-        offset : float or int
-            Scaling offset.
-        scale : float or int
-            Linear scaling.
-        max : float or int or None
-            Maximum quantity.
-        quantity : types.Quantity or None
-            Quantity. If specified, overwrites name and unit.
-        name : str
-            Quantity name.
-        symbol : str or None
-            Quantity symbol.
-        unit : str or None
-            Quantity unit.
-        """
-        self.scale.add_dim(
-            offset=offset, scale=scale, max=max,
-            quantity=quantity, name=name, symbol=symbol, unit=unit
-        )
-
-    def chk_attr(self):
-        """
-        Checks the object's attribute consistency (data and scale dimension).
-
-        Returns
-        -------
-        ret : bool
-            Whether attributes are consistent.
-        """
-        ret = True
-        try:
-            ret = (len(self.data.shape) == self.scale.get_dim() - 1)
-        except(TypeError, AttributeError):
-            ret = False
-        return ret
-
-    # ++++ Combination operations ++++++++
+    # ++++++++++++++++++++++
+    # Combination operations
+    # ++++++++++++++++++++++
 
     def cmp_attr(self, other):
         return self.chk_attr() and other.chk_attr()
@@ -894,13 +867,6 @@ class ArrayData(hdf.HDFBase):
     def __bool__(self):
         return isinstance(self.data, np.ndarray) and len(self.data) > 0
 
-    def __len__(self):
-        return len(self.data)
-
-    @property
-    def shape(self):
-        return self.data.shape
-
     # ++++ Type conversions ++++++
 
     def __int__(self):
@@ -1072,31 +1038,3 @@ class SeriesData(object):
             self.data[[key]] = val
         else:
             self.data[key] = val
-
-
-###############################################################################
-
-
-if __name__ == "__main__":
-
-    # Create test data (image)
-    data = np.arange(100, dtype="float64").reshape((10, 10))
-    pq_data = types.Quantity(name="intensity", symbol="I", unit="mW/cm2")
-    pixel_size = 6.45
-    pixel_offset = 0.0
-    pq_x_pos = types.Quantity(name="position", symbol="x", unit="µm")
-    pq_y_pos = types.Quantity(name="position", symbol="y", unit="µm")
-
-    # Load into data structure
-    ardata = ArrayData()
-    ardata.data = data
-    ardata.scale.init()
-    ardata.scale.add_dim(pixel_offset, pixel_size, quantity=pq_x_pos)
-    ardata.scale.add_dim(pixel_offset, pixel_size, quantity=pq_y_pos)
-    ardata.scale.add_dim(pixel_offset, pixel_size, quantity=pq_data)
-    print("------\nardata\n------\n" + str(ardata) + "\n")
-
-    # Slice data in QUANTITY mode
-    ardata.set_index_mode(ArrayScale.QUANTITY)
-    print("-------------\nsliced ardata\n-------------\n"
-          + str(ardata[6.4:13, :20]))
