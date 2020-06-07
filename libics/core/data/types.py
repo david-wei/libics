@@ -2,6 +2,37 @@ import numpy as np
 
 
 ###############################################################################
+# Operators
+###############################################################################
+
+
+BINARY_OPS_NUMPY = {
+    "+": np.add,
+    "-": np.subtract,
+    "*": np.multiply,
+    "/": np.true_divide,
+    "//": np.floor_divide,
+    "%": np.mod,
+    "**": np.power,
+    "&": np.bitwise_and,
+    "|": np.bitwise_or,
+    "^": np.bitwise_xor,
+    "<": np.less,
+    "<=": np.less_equal,
+    "==": np.equal,
+    "!=": np.not_equal,
+    ">=": np.greater_equal,
+    ">": np.greater,
+    "<<": np.left_shift,
+    ">>": np.right_shift
+}
+UNARY_OPS_NUMPY = {
+    "~": np.invert,
+    "-": np.negative
+}
+
+
+###############################################################################
 # Primitive containers
 ###############################################################################
 

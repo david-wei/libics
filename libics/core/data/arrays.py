@@ -29,8 +29,10 @@ class ArrayData(object):
     Object modification:
     * Metadata can be also added after data assignment. This is done using the
       :py:meth:`set_dim` method.
-    * The numeric metadata mode (i.e. the scaling behaviour) can be changed
-      using :py:meth:`change_dim`.
+    * The numeric metadata mode (i.e. the scaling behaviour) can be modified
+      using :py:meth:`mod_dim`.
+    * The metadata can be numerically changed by computing an arithmetic
+      operations using :py:meth:`comp_dim`.
     * The object supports common unary and binary operations, as well as
       vectorized `numpy` ufuncs.
     Object properties:
@@ -165,9 +167,9 @@ class ArrayData(object):
             self._low[dim] = None
             self._high[dim] = None
 
-    def change_dim(self, *args):
+    def mod_dim(self, *args):
         """
-        Changes the numeric variable description mode (if possible).
+        Modifies the numeric variable description mode (if possible).
 
         Parameters
         ----------
@@ -193,7 +195,7 @@ class ArrayData(object):
         if len(args) == 1:
             mode = args[0]
             for dim in range(self.ndim):
-                self.change_dim(dim, mode)
+                self.mod_dim(dim, mode)
             return
         # Error handling
         elif len(args) > 2:
@@ -226,6 +228,78 @@ class ArrayData(object):
                 self.set_dim(dim, offset=_p[0], step=_dp)
             elif mode == self.LINSPACE:
                 self.set_dim(dim, low=_p[0], high=_p[-1])
+
+    def comp_dim(self, dim, op, other=None, rev=False):
+        """
+        Performs an arithmetic operation on the specified variable dimension.
+
+        Parameters
+        ----------
+        dim : `int`
+            Variable dimension to be changed.
+        op : `str` or `callable`
+            Operator string. Mapped by `data.types.BINARY_OPS_NUMPY`
+            and `data.types.UNARY_OPS_NUMPY`.
+            Can also be a function having a binary or unary call signature.
+        other : `numeric` or `None`
+            Second operand for binary operations or `None` for unary ones.
+        rev : `bool`
+            Flag whether to use `other` as first operand, i.e. as
+            `op(other, self)` instead of `op(self, other)`.
+
+        Raises
+        ------
+        KeyError
+            If `op` is invalid.
+
+        Notes
+        -----
+        For the variable modes `"RANGE", "LINSPACE"`, it is assumed
+        that the operation is an affine transformation.
+        """
+        # Unary operations
+        if other is None:
+            if isinstance(op, str):
+                op = types.UNARY_OPS_NUMPY[op]
+            if self.var_mode[dim] == self.POINTS:
+                self._points[dim] = op(self._points[dim])
+            elif self.var_mode[dim] == self.RANGE:
+                s = self._step[dim]
+                if self._center[dim] is None:
+                    o = self._offset[dim]
+                    self._offset[dim] = op(o)
+                    self._step[dim] = op(o + s) - self._offset[dim]
+                elif self._offset[dim] is None:
+                    c = self._center[dim]
+                    self._center[dim] = op(c)
+                    self._step[dim] = op(c + s) - self._center[dim]
+            elif self.var_mode[dim] == self.LINSPACE:
+                self._low[dim] = op(self._low[dim])
+                self._high[dim] = op(self._high[dim])
+        # Binary operations
+        else:
+            if isinstance(op, str):
+                op = types.BINARY_OPS_NUMPY[op]
+            if rev:
+                def _op(x, y):
+                    return op(y, x)
+            else:
+                _op = op
+            if self.var_mode[dim] == self.POINTS:
+                self._points[dim] = _op(self._points[dim], other)
+            elif self.var_mode[dim] == self.RANGE:
+                s = self._step[dim]
+                if self._center[dim] is None:
+                    o = self._offset[dim]
+                    self._offset[dim] = _op(o, other)
+                    self._step[dim] = _op(o + s, other) - self._offset[dim]
+                elif self._offset[dim] is None:
+                    c = self._center[dim]
+                    self._center[dim] = _op(c, other)
+                    self._step[dim] = _op(c + s, other) - self._center[dim]
+            elif self.var_mode[dim] == self.LINSPACE:
+                self._low[dim] = _op(self._low[dim], other)
+                self._high[dim] = _op(self._high[dim], other)
 
     def add_dim(self, *args):
         """
