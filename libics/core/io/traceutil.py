@@ -1,9 +1,8 @@
+import numpy as np
 import os
 
-import numpy as np
-
-from libics.data import types
-from libics.util import misc
+from libics.core.data import types
+from libics.core.util import misc
 
 
 ###############################################################################

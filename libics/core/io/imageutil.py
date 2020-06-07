@@ -1,11 +1,7 @@
-# System Imports
 import os
 import pandas as pd
 
-# Package Imports
-from libics.cfg import default as DEF
-from libics.cfg import err as ERR
-from libics.data import arraydata
+from libics.core.data.arrays import ArrayData
 
 
 ###############################################################################
@@ -15,35 +11,28 @@ from libics.data import arraydata
 
 def create_default_arraydata():
     """
-    Creates an instance of `data.matrixdata.MatrixData` with the metadata as
-    defined in `cfg.default`.
+    Creates an instance of `data.arrays.ArrayData`.
 
     Returns
     -------
-    array_data : `data.arraydata.ArrayData`
+    ad : `data.arrays.ArrayData`
         Image default initialized ArrayData.
     """
-    array_data = arraydata.ArrayData()
-    array_data.add_dim(
-        offset=0,
-        scale=1,
-        name="position",
-        symbol="x",
-        unit="px"
+    ad = ArrayData()
+    ad.add_dim([
+        {
+            "offset": 0, "step": 1,
+            "name": "position", "symbol": "x", "unit": "px"
+        },
+        {
+            "offset": 0, "step": 1,
+            "name": "position", "symbol": "y", "unit": "px"
+        },
+    ])
+    ad.set_data_quantity(
+        name="intensity", symbol="I", unit="ADC"
     )
-    array_data.add_dim(
-        offset=0,
-        scale=1,
-        name="position",
-        symbol="y",
-        unit="px"
-    )
-    array_data.add_dim(
-        name=DEF.DATA.IMAGE.VALUE_PQUANT,
-        symbol="I",
-        unit=DEF.DATA.IMAGE.VALUE_UNIT
-    )
-    return array_data
+    return ad
 
 
 ###############################################################################
@@ -104,7 +93,8 @@ def parse_wct_to_numpy_array(file_path):
         for header_item in ["code_wct", "pxcount_x", "pxcount_y",
                             "pxsize_x", "pxsize_y"]:
             if header_item not in header_data.keys():
-                raise AttributeError(ERR.INVAL_FILE_WCTHEADER)
+                raise AttributeError("invalid .wct file header ({:s})"
+                                     .format(file_path))
     # Read image data
     try:
         parsed_data = pd.read_csv(
@@ -116,7 +106,8 @@ def parse_wct_to_numpy_array(file_path):
     # Verify pixel count
     if (parsed_data.shape
             != (header_data["pxcount_x"], header_data["pxcount_y"])):
-        raise AttributeError(ERR.INVAL_FILE_WCTPXCOUNT)
+        raise AttributeError("invalid .wct pixel count ({:s})"
+                             .format(file_path))
     # Remove redundant metadata keys
     header_data.pop("code_wct")
     header_data.pop("pxcount_x")

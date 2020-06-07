@@ -1,14 +1,14 @@
+import bson
 import datetime
-from importlib import import_module
+import json
 import numpy as np
 import pandas as pd
-import json
-import bson
+from importlib import import_module
 
 
 from libics import env
 from libics.util import misc
-from libics.file import hdf, image
+from libics.file import image
 
 
 ###############################################################################
@@ -468,7 +468,7 @@ def save(
         with open(file_path, "wb") as f:
             f.write(stream)
     elif "hdf" in fmt:
-        hdf.write_hdf(obj, file_path=file_path)
+        raise NotImplementedError("hdf format not yet implemented")
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
 
@@ -521,7 +521,7 @@ def load(
             ser, obj=obj, req_version=req_version, raise_err=raise_err
         )
     elif "hdf" in fmt:
-        obj = hdf.read_hdf(obj_or_cls, file_path=file_path)
+        raise NotImplementedError("hdf format not yet implemented")
     elif "bmp" in fmt:
         obj = image.load_bmp_to_arraydata(file_path, arraydata=obj_or_cls)
     elif "png" in fmt:

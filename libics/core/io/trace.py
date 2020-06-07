@@ -1,21 +1,18 @@
 import numbers
-
 import numpy as np
 
-from libics.data import arraydata, seriesdata, dataset, types
-from libics.drv import drv
-from libics.file import traceutil
-from libics.util import misc
+from libics.core.data import types
+from libics.core.data.arrays import ArrayData
+from libics.core.io import traceutil
+from libics.core.util import misc
 
 
 ###############################################################################
 
 
-def load_csv_span_agilent_to_dataset(file_path):
+def load_csv_span_agilent_to_arraydata(file_path):
     """
-    Reads an Agilent spectrum analyzer text (csv) file and loads the data
-    into a `data.dataset.DataSet` structure with `data.arraydata.ArrayData`
-    as underlying data storage.
+    Reads an Agilent spectrum analyzer text (csv) file into an ArrayData.
 
     Parameters
     ----------
@@ -24,8 +21,11 @@ def load_csv_span_agilent_to_dataset(file_path):
 
     Returns
     -------
-    ds : `data.dataset.DataSet`
-        Power spectral density.
+    ds : `dict`
+        Power spectral density data set containing metadata
+        `"data"` : `data.arrays.ArrayData`
+            Power spectral density.
+        Further attributes: `"
 
     Raises
     ------
@@ -34,81 +34,76 @@ def load_csv_span_agilent_to_dataset(file_path):
     """
     # Parse data
     _, ar, md = traceutil.parse_csv_span_agilent_to_numpy_array(file_path)
-    cfg = {}
-    cfg["driver"] = drv.DRV_DRIVER.SPAN
-    cfg["interface"] = None
-    cfg["model"] = None
+    ds = {}
     if "N9320" in md["Model"].val:
-        cfg["model"] = drv.DRV_MODEL.AGILENT_N9320X
-    cfg["identifier"] = cfg["model"]
+        ds["model"] = "AGILENT_N9320X"
     if "Serial Number" in md.keys():
-        cfg["identifier"] = md["Serial Number"].val
+        ds["identifier"] = md["Serial Number"].val
     bandwidth = float(md["Resolution Bandwidth"].val)
-    cfg["bandwidth"] = bandwidth
+    ds["bandwidth"] = bandwidth
     freq_center = float(md["Center Frequency"].val)
     freq_span = float(md["Span"].val)
-    cfg["frequency_start"] = freq_center - freq_span / 2
-    cfg["frequency_stop"] = freq_center + freq_span / 2
+    ds["frequency_start"] = freq_center - freq_span / 2
+    ds["frequency_stop"] = freq_center + freq_span / 2
     # Convert from dBm via 50 Ohms to dBV
     vmax_dbm = float(md["Reference Level"].val)
-    cfg["voltage_max"] = vmax_dbm + 10 * np.log10(50 / 2**2) - 30
+    ds["voltage_max"] = vmax_dbm + 10 * np.log10(50 / 2**2) - 30
     # Convert spectrum to spectral density (dBm -> dBV/√Hz)
     num = int(md["Num Points"].val) - 1
     ar = ar + 10 * np.log10(50 / 2**2) - 30 - 10 * np.log10(bandwidth)
     # Setup variables
-    cfg = drv.SpAnCfg(**cfg)
-    ad = arraydata.ArrayData()
-    ad.add_dim(
-        offset=cfg.frequency_start.val,
-        scale=((cfg.frequency_stop.val - cfg.frequency_start.val) / num),
-        quantity=md["_frequency_unit"]
+    ad = ArrayData()
+    ad.add_dim(1)
+    ad.set_dim(
+        0, offset=ds["frequency_start"].val,
+        step=((ds["frequency_stop"].val - ds["frequency_start"].val) / num),
     )
-    ad.add_dim(
+    ad.set_var_quantity(0, quantity=md["_frequency_unit"])
+    ad.set_data_quantity(
         name="power spectral density", symbol="PSD", unit="dBV/√Hz"
     )
     ad.data = ar
-    ds = dataset.DataSet(data=ad, cfg=cfg)
+    ds["data"] = ad
     return ds
 
 
-def load_txt_span_numpy_to_dataset(
+def load_txt_span_numpy_to_arraydata(
     file_path, spectral_quantity=None, weight_quantity=None,
     normalization=None
 ):
     """
-    Reads a numpy spectrum text (txt) file and loads the data into a
-    `data.dataset.DataSet` structure with `data.seriesdata.SeriesData`
-    as underlying data storage.
+    Reads a numpy spectrum text (txt) file into an `ArrayData`.
+
     Assumes a 2D array with spectral data in the first dimension and
     the spectral weight in the second dimension.
 
     Parameters
     ----------
     file_path : `str`
-        Path to the Agilent spectrum analyzer text file.
+        Path to the numpy text file.
     spectral_quantity : `data.types.Quantity`
         Quantity description for spectral data (usually
         frequency or wavelength).
     weight_quantity : `data.types.Quantity`
         Quantity description for spectral weight (usually
         relative or power density).
-    normalization : None or str or float
-        None:
+    normalization : `None` or `str` or `float`
+        `None`:
             No normalization performed.
-        "max":
+        `"max"`:
             Normalizes to the weights' maximum.
-        "sum":
+        `"sum"`:
             Normalizes to the weights' sum.
-        "weighted_sum":
+        `"weighted_sum"`:
             Normalizes to the weighted sum, i.e.
             weighs the sum by the spectral bin size.
-        float:
+        `float`:
             Normalizes such that the maximum has the
             given value.
 
     Returns
     -------
-    ds : `data.dataset.DataSet`
+    ad : `data.arrays.ArrayData`
         Spectral density.
 
     Raises
@@ -149,10 +144,8 @@ def load_txt_span_numpy_to_dataset(
         elif isinstance(normalization, numbers.Number):
             weights *= normalization / weights.max()
         spectrum = np.array([spec, weights])
-    sd = seriesdata.SeriesData()
-    sd.add_dim(quantity=spectral_quantity)
-    sd.add_dim(quantity=weight_quantity)
-    sd.data = spectrum
-    # Setup data set
-    ds = dataset.DataSet(data=sd)
-    return ds
+    ad = ArrayData()
+    ad.add_dim(quantity=spectral_quantity, points=spectrum[0])
+    ad.data_quantity(quantity=weight_quantity)
+    ad.data = spectrum[-1]
+    return ad
