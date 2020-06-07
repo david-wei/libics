@@ -9,6 +9,8 @@ from libics.core.util import misc
 
 
 ###############################################################################
+# ArrayData
+###############################################################################
 
 
 class ArrayData(object):
@@ -16,6 +18,26 @@ class ArrayData(object):
     """
     Stores a multidimensional array and its scaling information (linear
     scaling and physical quantity).
+
+    Usage
+    -----
+    Object creation:
+    1. Instantiate an `ArrayData` object.
+    2. Optional: Define the dimensions of the data using :py:meth:`add_dim`
+       by specifying the metadata and scaling behaviour.
+    3. Set the data using the :py:attr:`data` attribute. Default dimensions
+       are added or removed if they are not commensurate.
+    Object modification:
+    * Metadata can be also added after data assignment. This is done using the
+      :py:meth:`set_dim` method.
+    * The numeric metadata mode (i.e. the scaling behaviour) can be changed
+      using :py:meth:`change_dim`.
+    * The object supports common unary and binary operations, as well as
+      vectorized `numpy` ufuncs.
+    Object properties:
+    * Numeric metadata can be extracted (depending on the metadata mode).
+    * Upon calling the object with some given variables, an interpolated
+      result is returned.
     """
 
     POINTS = "POINTS"
@@ -42,54 +64,38 @@ class ArrayData(object):
         self._low = []
         self._high = []
 
-    @staticmethod
-    def _get_quantity(**kwargs):
-        """
-        Generates a quantity object from keyword arguments.
-
-        Parameters
-        ----------
-        quantity : `types.Quantity`
-            Directly specified quantity. Takes precedence
-            over other methods.
-        name, symbol, unit : `str`
-            Parameters used to construct `types.Quantity` instance.
-        """
-        if "quantity" in kwargs:
-            _quantity = misc.assume_construct_obj(
-                kwargs["quantity"], types.Quantity
-            )
-        else:
-            _quantity = types.Quantity()
-            if "name" in kwargs:
-                _quantity.name = kwargs["name"]
-            if "symbol" in kwargs:
-                _quantity.symbol = kwargs["symbol"]
-            if "unit" in kwargs:
-                _quantity.unit = kwargs["unit"]
-        return _quantity
+    # ++++
+    # Data
+    # ++++
 
     def set_data_quantity(self, **kwargs):
         """
         Sets the data quantity object.
 
-        See :py:meth:`_get_quantity`.
+        Parameters
+        ----------
+        **kwargs
+            See :py:func:`assume_quantity`.
         """
-        _quantity = self._get_quantity(**kwargs)
+        _quantity = assume_quantity(**kwargs)
         self.data_quantity = _quantity
+
+    # +++++++++++++++++++++++++++++++
+    # Variable (dimension management)
+    # +++++++++++++++++++++++++++++++
 
     def set_var_quantity(self, dim, **kwargs):
         """
         Sets the data quantity object.
 
-        See :py:meth:`_get_quantity`.
-
         Parameters
         ----------
         dim : `int`
             Variable dimension to be set.
+        **kwargs
+            See :py:func:`assume_quantity`.
         """
-        _quantity = self._get_quantity(**kwargs)
+        _quantity = assume_quantity(**kwargs)
         self.var_quantity[dim] = _quantity
 
     def set_dim(self, dim, **kwargs):
@@ -160,6 +166,68 @@ class ArrayData(object):
             self._low[dim] = None
             self._high[dim] = None
 
+    def change_dim(self, *args):
+        """
+        Changes the numeric variable description mode (if possible).
+
+        Parameters
+        ----------
+        *args : `ArrayData.VAR_MODES` or `(int, ArrayData.VAR_MODES)`
+            If two parameters are given, they are interpreted as
+            `(dim, mode)`.
+            If one parameter is given, changes all dimensions
+            to the given `mode`.
+        dim : `int`
+            Variable dimension to be changed.
+        mode : `ArrayData.VAR_MODES`
+            Mode to be changed to.
+
+        Raises
+        ------
+        ValueError
+            If mode change is not possible. This happens mainly for
+            conversion from `POINT` mode where the points are not
+            linearly spaced.
+            If `mode` is invalid.
+        """
+        # Loop over all dimensions
+        if len(args) == 1:
+            mode = args[0]
+            for dim in range(self.ndim):
+                self.change_dim(dim, mode)
+            return
+        # Error handling
+        elif len(args) > 2:
+            raise ValueError("invalid argument ({:s})".format(str(args)))
+        # Change dimension
+        dim, mode = args
+        if mode not in self.VAR_MODES:
+            raise ValueError("invalid variable mode ({:s})".format(str(mode)))
+        if self.var_mode[dim] == self.RANGE:
+            if mode == self.POINTS:
+                self.set_dim(dim, points=self.get_points(dim))
+            elif mode == self.LINSPACE:
+                self.set_dim(
+                    dim, offset=self.get_offset(dim), step=self.get_step(dim)
+                )
+        elif self.var_mode[dim] == self.LINSPACE:
+            if mode == self.POINTS:
+                self.set_dim(dim, points=self.get_points(dim))
+            elif mode == self.RANGE:
+                self.set_dim(
+                    dim, low=self.get_low(dim), high=self.get_high(dim)
+                )
+        elif self.var_mode[dim] == self.POINTS:
+            _p = self.get_points(dim)
+            _dp = _p[1] - _p[0]
+            if not np.allclose(_p[1:] - _p[:-1], _dp):
+                raise ValueError("could not convert from POINTS to {:s} mode"
+                                 .format(str(mode)))
+            if mode == self.RANGE:
+                self.set_dim(dim, offset=_p[0], step=_dp)
+            elif mode == self.LINSPACE:
+                self.set_dim(dim, low=_p[0], high=_p[-1])
+
     def add_dim(self, *args):
         """
         Appends variable dimension(s) to the object.
@@ -217,6 +285,7 @@ class ArrayData(object):
             dims = np.arange(-num, 0)
         dims = np.sort(dims) % self.var_ndim
         for dim in reversed(dims):
+            del self.var_quantity[dim]
             del self.var_mode[dim]
             del self._points[dim]
             del self._offset[dim]
@@ -225,106 +294,9 @@ class ArrayData(object):
             del self._low[dim]
             del self._high[dim]
 
-    # ++++++++++
-    # Conversion
-    # ++++++++++
-
-    def cv_index_to_quantity(self, ind, dim):
-        """
-        Converts an array index to a physical quantity value.
-
-        Parameters
-        ----------
-        ind :
-            Index to be converted.
-        dim : int
-            Dimension.
-
-        Returns
-        -------
-        val :
-            Physical quantity associated with given quantity.
-        """
-        # TODO:
-        return self.offset[dim] + self.scale[dim] * ind
-
-    def cv_quantity_to_index(self, val, dim,
-                             round_index=True, incl_maxpoint=False):
-        """
-        Converts a physical quantity value to an array index.
-
-        Parameters
-        ----------
-        val :
-            Physical quantity value to be converted.
-        dim : int
-            Dimension.
-        round_index : bool, optional
-            Flag: whether to round to nearest index integer.
-        incl_maxpoint: bool, optional
-            Flag: whether to limit the returned index to be
-            smaller or equal to the length of the array
-            (i.e. whether to include stop in [start, stop]).
-
-        Returns
-        -------
-        ind : int or float
-            Index associated with given quantity.
-            Data type depends on round_index parameter.
-
-        Raises
-        ------
-        IndexError:
-            If dim is out of bounds.
-        """
-        # TODO:
-        val = max(val, self.offset[dim])
-        if self.max[dim] is not None:
-            val = min(val, self.max[dim])
-            if val == self.max[dim] and not incl_maxpoint:
-                val -= self.scale[dim]
-        ind = (val - self.offset[dim]) / self.scale[dim]
-        if round_index:
-            ind = round(ind)
-        return ind
-
-    def cv_unit(self, dim, new_unit, op, val):
-        """
-        Converts the unit of a given dimension.
-
-        Parameters
-        ----------
-        dim : int
-            Dimension of conversion.
-        new_unit : str
-            New unit string.
-        op : str or callable
-            Performed operation as function or encoded as string.
-            str:
-                Supported string encoded operations include:
-                "+", "-", "*", "/".
-                Passed val parameter is used as second
-                operand.
-            callable:
-                Call signature must be:
-                `op(stored_value, val)`.
-        val : int or float
-            Value with which the operation is performed.
-        """
-        # TODO:
-        if not callable(op):
-            try:
-                op = misc.operator_mapping[op]
-            except(KeyError):
-                return
-        self.quantity[dim].unit = new_unit
-        if dim < self.scale.get_dim() - 1:
-            self.scale.offset[dim] = op(self.scale.offset[dim], val)
-            self.scale.scale[dim] = op(self.scale.scale[dim], val)
-            if self.scale.max[dim] is not None:
-                self.scale.max[dim] = op(self.scale.max[dim], val)
-        else:
-            self.data = op(self.data, val)
+    # ++++++
+    # Getter
+    # ++++++
 
     def get_points(self, dim):
         """
@@ -443,6 +415,22 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return self._high[dim]
 
+    def get_var_meshgrid(self, indexing="ij"):
+        """
+        Creates a `numpy` meshgrid for the variable dimensions.
+
+        Parameters
+        ----------
+        indexing : `"ij"` or `"xy"`
+            See :py:func:`numpy.meshgrid`.
+
+        Returns
+        -------
+        mg : `np.ndarray`
+            Meshgrid as `numpy` array.
+        """
+        return np.array(np.meshgrid(*self.points, indexing=indexing))
+
     # ++++++++++
     # Properties
     # ++++++++++
@@ -454,6 +442,10 @@ class ArrayData(object):
     @property
     def var_ndim(self):
         return len(self.var_mode)
+
+    @property
+    def total_ndim(self):
+        return self.ndim + 1
 
     @property
     def shape(self):
@@ -531,6 +523,58 @@ class ArrayData(object):
         s += "{:s}".format(str(self.data))
         return s
 
+    # ++++++++++
+    # Conversion
+    # ++++++++++
+
+    def cv_index_to_quantity(self, ind, dim):
+        """
+        Converts a variable array index to the corresponding variable
+        physical quantity value.
+
+        Parameters
+        ----------
+        ind :
+            Index to be converted.
+        dim : `int`
+            Dimension.
+
+        Returns
+        -------
+        val :
+            Physical quantity associated with given quantity.
+        """
+        return self.get_offset(dim) + self.get_step(dim) * ind
+
+    def cv_quantity_to_index(self, val, dim):
+        """
+        Converts a variable physical quantity value to the corresponding
+        variable array index.
+
+        Parameters
+        ----------
+        val : numeric
+            Physical quantity value to be converted.
+        dim : `int`
+            Dimension.
+
+        Returns
+        -------
+        ind : `int`
+            Index associated with given quantity.
+
+        Raises
+        ------
+        IndexError:
+            If `dim` is out of bounds.
+        """
+        if self.var_mode[dim] == self.POINTS:
+            ind = np.argmin(np.abs(self.get_points(dim) - val))
+        else:
+            val = max(val, self.get_offset(dim))
+            ind = round((val - self.offset[dim]) / self.scale[dim])
+        return ind
+
     # +++++++++++++
     # Interpolation
     # +++++++++++++
@@ -539,7 +583,7 @@ class ArrayData(object):
         """
         Parameters
         ----------
-        var : list(float) or list(np.ndarray(float))
+        var : `list(float)` or `list(np.ndarray(float))`
             Requested variables for which the functional value is
             obtained. The variable format must be a list of each
             variable dimension (typically a flattened ij-indexed
@@ -548,29 +592,29 @@ class ArrayData(object):
             Shape:
                 (data dimension, *) where * can be any scalar
                 or array.
-        mode : str
-            "nearest": Value of nearest neighbour.
-            "linear": Linear interpolation.
-        extrapolation : bool or float
-            True: Performs nearest/linear extrapolation.
-            False: Raises ValueError if extrapolated value is
+        mode : `str`
+            `"nearest"`: Value of nearest neighbour.
+            `"linear"`: Linear interpolation.
+        extrapolation : `bool` or `float`
+            `True`: Performs nearest/linear extrapolation.
+            `False`: Raises ValueError if extrapolated value is
                    requested.
-            float: Used as extrapolation fill value.
+            `float`: Used as extrapolation fill value.
 
         Returns
         -------
-        func_val : np.ndarray(float)
+        func_val : `np.ndarray(float)`
             Functional values of given variables.
-            Shape: var.shape[1:].
+            Shape: `var.shape[1:]`.
 
         Raises
         ------
         ValueError
-            See parameter extrapolation.
+            See parameter `extrapolation`.
 
         See Also
         --------
-        scipy.interpolate.interpn
+        :py:func:`scipy.interpolate.interpn`
         """
         # Convert to seriesdata-structure-like
         shape = None
@@ -611,16 +655,15 @@ class ArrayData(object):
     # Combination operations
     # ++++++++++++++++++++++
 
-    def cmp_attr(self, other):
-        return self.chk_attr() and other.chk_attr()
-
-    def cmp_unit(self, other):
+    def cmp_quantity(self, other):
         """
-        Compares whether the units of two ArrayData objects are identical.
+        Compares whether the quantities of two ArrayData objects are identical.
         """
-        for dim, quantity in enumerate(self.scale.quantity):
-            if not quantity.unit == other.quantity[dim].unit:
+        for dim, _vq in enumerate(self.var_quantity):
+            if not _vq != other.var_quantity[dim]:
                 return False
+        if self.data_quantity != other.data_quantity:
+            return False
         return True
 
     def cmp_shape(self, other):
@@ -629,160 +672,81 @@ class ArrayData(object):
         """
         return self.data.shape == other.data.shape
 
-    def cmp_scale(self, other):
+    def cmp_var(self, other):
         """
-        Compares whether the scales of two ArrayData objects are identical.
+        Compares whether the variables of two ArrayData objects are identical.
         """
-        return np.all(np.isclose(self.scale.scale, other.scale.scale))
+        return np.all([
+            np.allclose(self.get_points(dim), other.get_points(dim))
+            for dim in self.ndim
+        ])
 
-    def cmp_offset(self, other):
-        """
-        Compares whether the offsets of two ArrayData objects are identical.
-        """
-        return np.all(np.isclose(self.scale.offset, other.scale.offset))
-
-    def cmp_necessary(self, other):
-        """
-        Performs necessary pre-combination comparison checks.
-        """
-        return (
-            self.cmp_attr(other)
-            and self.cmp_unit(other)
-        )
-
-    def chk_commensurable(self, other):
-        """
-        Checks whether two ArrayData objects are commensurable, i.e. can be
-        combined based on arrays (without index interpolation by quantity).
-        """
-        scale_multiple = (
-            (np.array(other.scale.offset) - np.array(self.scale.offset))
-            / np.array(other.scale.scale)
-        )
-        return (
-            self.cmp_scale(other)
-            and np.all(np.isclose(scale_multiple, np.round(scale_multiple)))
-        )
-
-    def get_common_rect(self, other):
-        """
-        Gets the common offset and max values.
-
-        Returns
-        -------
-        offset : list
-            Offset of common rectangle.
-        max_ : list
-            Max of common rectangle (excluding index).
-        self_offset_index
-        self_max_index
-        other_offset_index
-        other_max_index
-        """
-        offset, max_ = [], []
-        for i, _ in enumerate(self.scale.offset):
-            offset.append(max(self.scale.offset[i], other.scale.offset[i]))
-            max_.append(min(self.scale.max[i], other.scale.max[i]))
-        return (
-            offset, max_,
-            self.scale.get_index_by_quantity(offset),
-            self.scale.get_index_by_quantity(max_),
-            other.scale.get_index_by_quantity(offset),
-            other.scale.get_index_by_quantity(max_)
-        )
-
-    def get_common_obj(self, other, op, in_place=False):
+    def get_common_obj(self, other, op, in_place=False, rev=False, raw=False):
         """
         Creates the common result after operation.
 
-        The data space is chosen to be common to both ArrayData objects.
-        The given operation is performed to combine both.
-
         Parameters
         ----------
-        op : callable
+        op : `callable`
             Function signature:
-            op(numpy.ndarray, numpy.ndarray) -> numpy.ndarray.
-        in_place : bool
+            `op(numpy.ndarray, numpy.ndarray) -> numpy.ndarray`.
+        in_place : `bool`
             Flag whether to store result in same instance.
+        rev : `bool`
+            Flag whether to reverse operand order, i.e. to call
+            `op(other, self)` instead of `op(self, other)`.
+        raw : `bool`
+            Flag whether to return only the data, i.e. without
+            the `ArrayData` container.
 
         Returns
         -------
-        obj : ArrayData
+        obj : `ArrayData` or `numpy.ndarray`
             Processed object.
-
-        Raises
-        ------
-        ValueError:
-            If the two ArrayData objects cannot be combined.
         """
-        obj = self
-
+        obj = self if in_place else copy.deepcopy(self)
         # Non-homogeneous operation
         if not isinstance(other, ArrayData):
-            if not in_place:
-                obj = copy.deepcopy(self)
-            obj.data = op(self.data, other)
+            if rev:
+                obj.data = op(other, self.data)
+            else:
+                obj.data = op(self.data, other)
+            return obj
+        # Perform operation on data array
+        if rev:
+            obj.data = op(other.data, obj.data)
+        else:
+            obj.data = op(obj.data, other.data)
+        # Return type
+        if raw:
+            return obj.data
+        else:
             return obj
 
-        # Check homogeneous operation validity
-        if not self.cmp_necessary(other):
-            raise ValueError("Invalid necessary values")
-        # Initialize minimal ArrayData object
-        if not in_place:
-            obj = ArrayData()
-            obj.scale = copy.deepcopy(self.scale)
-            (
-                obj.scale.offset, obj.scale.max,
-                si_offset, si_max,
-                oi_offset, oi_max
-            ) = self.get_common_rect(other)
-            obj.data = self.data[
-                [slice(si_offset[i], si_max[i]) for i in range(len(si_offset))]
-            ]
-
-        # Perform operation on data array
-        # TODO: Add efficient on-array operations for integer-shifted and
-        #       commensurately scaled data (m + n -> f * m + n + n')
-        if self.chk_commensurable():
-            obj.data = op(
-                obj.data,
-                other.data[
-                    [slice(oi_offset[i], oi_max[i])
-                     for i in range(len(oi_offset))]
-                ]
-            )
-        # Interpolate between data arrays
-        else:
-            it = np.nditer(obj.data, flags=["multi_index"])
-            while not it.finished:
-                ind = other.get_index_by_quantity(
-                    obj.scale.cv_index_to_quantity(it.multi_index)
-                )
-                obj.data[it.multi_index] = op(
-                    obj.data[it.multi_index],
-                    other.data[ind]
-                )
-                it.iternext()
-        return obj
-
-    def get_copy_obj(self, op):
+    def get_copy_obj(self, op, raw=False):
         """
         Creates a copy of self object and applies given operation on it.
 
         Parameters
         ----------
-        op : callable
+        op : `callable`
             Function signature:
-            op(numpy.ndarray) -> numpy.ndarray
+            `op(numpy.ndarray) -> numpy.ndarray`
+        raw : `bool`
+            Flag whether to return only the data, i.e. without
+            the `ArrayData` container.
 
         Returns
         -------
-        obj : ArrayData
+        obj : `ArrayData`
+            Processed object.
         """
         obj = copy.deepcopy(self)
         obj.data = op(obj.data)
-        return obj
+        if raw:
+            return obj.data
+        else:
+            return obj
 
     # ++++ Arithmetics ++++++++++++
 
@@ -807,34 +771,6 @@ class ArrayData(object):
     def __pow__(self, other):
         return self.get_common_obj(other, np.power)
 
-    # ++++ Comparisons +++++++++++
-
-    def __lt__(self, other):
-        return np.all(self.get_common_obj(other, np.less).data)
-
-    def __le__(self, other):
-        return np.all(self.get_common_obj(other, np.less_equal).data)
-
-    def __eq__(self, other):
-        try:
-            return np.all(self.get_common_obj(other, np.equal).data)
-        except ValueError:
-            return False
-
-    def __ne__(self, other):
-        try:
-            return np.all(self.get_common_obj(other, np.not_equal).data)
-        except ValueError:
-            return True
-
-    def __ge__(self, other):
-        return np.all(self.get_common_obj(other, np.greater_equal).data)
-
-    def __gt__(self, other):
-        return np.all(self.get_common_obj(other, np.greater).data)
-
-    # ++++ Binary operations +++++
-
     def __and__(self, other):
         return self.get_common_obj(other, np.bitwise_and)
 
@@ -843,6 +779,96 @@ class ArrayData(object):
 
     def __xor__(self, other):
         return self.get_common_obj(other, np.bitwise_xor)
+
+    # ++++ Reflected arithmetics ++
+
+    def __radd__(self, other):
+        return self.get_common_obj(other, np.add, rev=True)
+
+    def __rsub__(self, other):
+        return self.get_common_obj(other, np.subtract, rev=True)
+
+    def __rmul__(self, other):
+        return self.get_common_obj(other, np.multiply, rev=True)
+
+    def __rtruediv__(self, other):
+        return self.get_common_obj(other, np.true_divide, rev=True)
+
+    def __rfloordiv__(self, other):
+        return self.get_common_obj(other, np.floor_divide, rev=True)
+
+    def __rmod__(self, other):
+        return self.get_common_obj(other, np.mod, rev=True)
+
+    def __rpow__(self, other):
+        return self.get_common_obj(other, np.power, rev=True)
+
+    def __rand__(self, other):
+        return self.get_common_obj(other, np.bitwise_and, rev=True)
+
+    def __ror__(self, other):
+        return self.get_common_obj(other, np.bitwise_or, rev=True)
+
+    def __rxor__(self, other):
+        return self.get_common_obj(other, np.bitwise_xor, rev=True)
+
+    # ++++ In-place arithmetics ++
+
+    def __iadd__(self, other):
+        return self.get_common_obj(other, np.add, in_place=True)
+
+    def __isub__(self, other):
+        return self.get_common_obj(other, np.subtract, in_place=True)
+
+    def __imul__(self, other):
+        return self.get_common_obj(other, np.multiply, in_place=True)
+
+    def __itruediv__(self, other):
+        return self.get_common_obj(other, np.true_divide, in_place=True)
+
+    def __ifloordiv__(self, other):
+        return self.get_common_obj(other, np.floor_divide, in_place=True)
+
+    def __imod__(self, other):
+        return self.get_common_obj(other, np.mod, in_place=True)
+
+    def __ipow__(self, other):
+        return self.get_common_obj(other, np.power, in_place=True)
+
+    def __iand__(self, other):
+        return self.get_common_obj(other, np.bitwise_and, in_place=True)
+
+    def __ior__(self, other):
+        return self.get_common_obj(other, np.bitwise_or, in_place=True)
+
+    def __ixor__(self, other):
+        return self.get_common_obj(other, np.bitwise_xor, in_place=True)
+
+    # ++++ Comparisons +++++++++++
+
+    def __lt__(self, other):
+        return np.all(self.get_common_obj(other, np.less, raw=True))
+
+    def __le__(self, other):
+        return np.all(self.get_common_obj(other, np.less_equal, raw=True))
+
+    def __eq__(self, other):
+        try:
+            return np.all(self.get_common_obj(other, np.equal, raw=True))
+        except ValueError:
+            return False
+
+    def __ne__(self, other):
+        try:
+            return np.all(self.get_common_obj(other, np.not_equal, raw=True))
+        except ValueError:
+            return True
+
+    def __ge__(self, other):
+        return np.all(self.get_common_obj(other, np.greater_equal, raw=True))
+
+    def __gt__(self, other):
+        return np.all(self.get_common_obj(other, np.greater, raw=True))
 
     # ++++ Unary operations ++++++
 
@@ -881,38 +907,6 @@ class ArrayData(object):
         self.data = self.data.astype(complex)
         return self
 
-    # ++++ In-place arithmetics ++
-
-    def __iadd__(self, other):
-        return self.get_common_obj(other, np.add, in_place=True)
-
-    def __isub__(self, other):
-        return self.get_common_obj(other, np.subtract, in_place=True)
-
-    def __imul__(self, other):
-        return self.get_common_obj(other, np.multiply, in_place=True)
-
-    def __itruediv__(self, other):
-        return self.get_common_obj(other, np.true_divide, in_place=True)
-
-    def __ifloordiv__(self, other):
-        return self.get_common_obj(other, np.floor_divide, in_place=True)
-
-    def __imod__(self, other):
-        return self.get_common_obj(other, np.mod, in_place=True)
-
-    def __ipow__(self, other):
-        return self.get_common_obj(other, np.power, in_place=True)
-
-    def __iand__(self, other):
-        return self.get_common_obj(other, np.bitwise_and, in_place=True)
-
-    def __ior__(self, other):
-        return self.get_common_obj(other, np.bitwise_or, in_place=True)
-
-    def __ixor__(self, other):
-        return self.get_common_obj(other, np.bitwise_xor, in_place=True)
-
     # ++++ Numpy universal functions
 
     def __array_ufunc__(self, ufunc, method, i, *inputs, **kwargs):
@@ -939,45 +933,99 @@ class ArrayData(object):
 
 
 ###############################################################################
+# SeriesData
+###############################################################################
 
 
 class SeriesData(object):
 
-    def __init__(self, dim=0, pkg_name="libics", cls_name="SeriesData"):
-        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
-        self.init(dim)
-
-    def init(self, dim):
+    def __init__(self):
         self._data = np.empty((0, 0))
-        self.quantity = dim * [types.Quantity()]
+        self.quantity = []
 
-    def add_dim(self, quantity=None, name="N/A", symbol=None, unit=None):
+    def set_quantity(self, dim, **kwargs):
         """
-        Appends a dimension to the object.
+        Sets the quantity object.
+
 
         Parameters
         ----------
-        quantity : types.Quantity or None
-            Quantity. If specified, overwrites name and unit.
-        name : str
-            Quantity name.
-        symbol : str or None
-            Quantity symbol.
-        unit : str or None
-            Quantity unit.
+        dim : `int`
+            Variable dimension to be set.
+        **kwargs
+            See :py:func:`assume_quantity`.
         """
-        if quantity is not None:
-            self.quantity.append(quantity)
-        else:
-            self.quantity.append(types.Quantity(
-                name=name, symbol=symbol, unit=unit
-            ))
+        _quantity = assume_quantity(**kwargs)
+        self.quantity[dim] = _quantity
 
-    def get_dim(self):
+    def add_dim(self, *args):
         """
-        Gets the data dimension (incl. actual data).
+        Appends dimension(s) to the object.
+
+        Parameters
+        ----------
+        *args : `dict` or `int`
+            Dictionaries in the order they should be added.
+            These dictionaries are used as ``kwargs`` for iteratively
+            setting dimensions.
+            An integer is equivalent to passing an this-integer-length
+            list of empty dictionaries.
+
+        Raises
+        ------
+        ValueError
+            If arguments are invalid.
         """
-        return len(self.quantity)
+        # Add nothing
+        if len(args) == 0:
+            return
+        # Add empty dimensions
+        if len(args) == 1 and isinstance(args[0], int):
+            return self.add_dim(args[0] * [{}])
+        # Invalid value handling
+        for arg in args:
+            if not isinstance(arg, dict):
+                raise ValueError("invalid args: {:s}".format(str(args)))
+        # Set dimensions
+        for i, arg in range(-len(args), 0):
+            self.set_quantity(i, **arg)
+
+    def rmv_dim(self, *dims, num=None):
+        """
+        Removes dimension(s) from the object.
+
+        Parameters
+        ----------
+        *dims : `int`
+            Dimensions to be removed.
+        num : `int`
+            Removes `num` last dimensions. Is only applied
+            if `dims` is not specified.
+        """
+        if len(dims) == 0 and isinstance(num, int):
+            dims = np.arange(-num, 0)
+        dims = np.sort(dims) % self.var_ndim
+        for dim in reversed(dims):
+            del self.quantity[dim]
+
+    # ++++++++++
+    # Properties
+    # ++++++++++
+
+    @property
+    def ndim(self):
+        return len(self._data)
+
+    @property
+    def total_ndim(self):
+        return self.ndim
+
+    @property
+    def shape(self):
+        return self._data.shape
+
+    def __len__(self):
+        return self._data.shape[-1]
 
     @property
     def data(self):
@@ -991,50 +1039,58 @@ class SeriesData(object):
             raise ValueError("invalid data shape ({:d}/{:d})"
                              .format(len(val), len(self.quantity)))
 
-    @property
-    def loc(self, key):
-        """
-        Get data by numpy index addressing [entry, variable].
-        """
+    def __getitem__(self, key):
         return self.data[key]
 
-    @loc.setter
-    def loc(self, key, val):
-        """
-        Set data by numpy index addressing [entry, variable].
-        """
+    def __setitem__(self, key, val):
         self.data[key] = val
 
-    def __getitem__(self, key):
-        """
-        Get data by variable index addressing [variable].
+    def __str__(self):
+        s = "Quantity:\n["
+        for i in range(self.ndim):
+            if i > 0:
+                s += " "
+            s += str(self.quantity[i])
+            if i < self.ndim - 1:
+                s += ",\n"
+        s += "]\n"
+        s += "Data:\n"
+        s += "{:s}".format(str(self.data))
+        return s
 
-        Examples
-        --------
-        >>> sd = SeriesData()
-        >>> sd.data = np.arange(30).reshape((3, 10))
-        >>> sd.add_dimension(name="x")      # index 0
-        >>> sd.add_dimension(name="y")      # index 1
-        >>> sd.add_dimension(name="val")    # index 2
-        >>> sd[1]
-        array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
-        >>> sd[0:2]
-        array([[ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9],
-               [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]])
-        >>> sd[0, 2]
-        array([[ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9],
-               [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]])
-        """
-        if isinstance(key, tuple) or isinstance(key, list):
-            return self.data[[key]]
-        else:
-            return self.data[key]
 
-    def __setitem__(self, key, val):
-        """
-        Set data by variable index addressing [variable].
-        """
-        if isinstance(key, tuple) or isinstance(key, list):
-            self.data[[key]] = val
-        else:
-            self.data[key] = val
+###############################################################################
+# Miscellaneous
+###############################################################################
+
+
+def assume_quantity(**kwargs):
+    """
+    Generates a quantity object from keyword arguments.
+
+    Parameters
+    ----------
+    quantity : `types.Quantity`
+        Directly specified quantity. Takes precedence
+        over other methods.
+    name, symbol, unit : `str`
+        Parameters used to construct `types.Quantity` instance.
+
+    Returns
+    -------
+    quantity : `types.Quantity`
+        Constructed object.
+    """
+    if "quantity" in kwargs:
+        _quantity = misc.assume_construct_obj(
+            kwargs["quantity"], types.Quantity
+        )
+    else:
+        _quantity = types.Quantity()
+        if "name" in kwargs:
+            _quantity.name = kwargs["name"]
+        if "symbol" in kwargs:
+            _quantity.symbol = kwargs["symbol"]
+        if "unit" in kwargs:
+            _quantity.unit = kwargs["unit"]
+    return _quantity
