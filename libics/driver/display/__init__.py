@@ -1,9 +1,141 @@
+from . import vialux
+
+
 import abc
 
 import numpy as np
 
 from libics.drv import drv
 from libics.util import misc
+
+
+
+
+
+
+
+@InheritMap(map_key=("libics", "BinVialuxCfg"))
+class BinVialuxCfg(BinCfgBase):
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVialuxCfg.
+
+    Parameters
+    ----------
+    """
+
+    def __init__(self,
+                 cls_name="BinVialuxCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VIALUX
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+
+    def get_hl_cfg(self):
+        return self
+
+
+
+
+
+
+
+
+
+
+class DRV_DSP:
+
+    class FORMAT_COLOR:
+
+        BW = 0
+        GS = 1
+        RGB = 2
+        RGBA = 3
+
+
+@InheritMap(map_key=("libics", "DspCfg"))
+class DspCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> DspCfg.
+
+    Parameters
+    ----------
+    pixel_hrzt_count, pixel_vert_count : int
+        Pixel count in respective direction.
+    pixel_hrzt_size, pixel_vert_size : float
+        Pixel size in meters in respective direction.
+    pixel_hrzt_offset, pixel_vert_offset : int
+        Offset of pixels to be captured.
+    format_color : DRV_DSP.FORMAT_COLOR
+        BW: black/white boolean image.
+        GS: greyscale image.
+        RGB: RGB color image.
+        RGBA: RGB image with alpha channel.
+    channel_bitdepth : int
+        Bits per color channel.
+    picture_time : float
+        Time in seconds (s) each single image is shown.
+    dark_time : float
+        Time in seconds (s) between images in a sequence.
+    sequence_repetitions : int
+        Number of sequences to be shown.
+        0 (zero) is interpreted as infinite, i.e.
+        continuos repetition.
+    temperature : float
+        Display temperature in Celsius (°C).
+    """
+
+    pixel_hrzt_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_hrzt_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_hrzt_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    pixel_vert_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
+    format_color = cfg.CfgItemDesc(group="format")
+    channel_bitdepth = cfg.CfgItemDesc(group="format", val_check=int)
+    picture_time = cfg.CfgItemDesc(group="dmd", val_check=(0, 9))
+    dark_time = cfg.CfgItemDesc(group="dmd", val_check=(0, None))
+    sequence_repetitions = cfg.CfgItemDesc(group="dmd", val_check=(0, None))
+    temperature = cfg.CfgItemDesc(group="dmd")
+
+    def __init__(
+        self,
+        pixel_hrzt_count=1024, pixel_hrzt_size=13.68e-6,
+        pixel_vert_count=768, pixel_vert_size=13.68e-6,
+        pixel_hrzt_offset=0, pixel_vert_offset=0,
+        format_color=DRV_DSP.FORMAT_COLOR.GS, channel_bitdepth=8,
+        picture_time=9.0, dark_time=0.0, sequence_repetitions=0,
+        temperature=25.0,
+        cls_name="DspCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.DSP
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.pixel_hrzt_count = pixel_hrzt_count
+        self.pixel_hrzt_size = pixel_hrzt_size
+        self.pixel_hrzt_offset = pixel_hrzt_offset
+        self.pixel_vert_count = pixel_vert_count
+        self.pixel_vert_size = pixel_vert_size
+        self.pixel_vert_offset = pixel_vert_offset
+        self.format_color = format_color
+        self.channel_bitdepth = channel_bitdepth
+        self.picture_time = picture_time
+        self.dark_time = dark_time
+        self.sequence_repetitions = sequence_repetitions
+        self.temperature = temperature
+
+    def get_hl_cfg(self):
+        return self
+
+
 
 
 ###############################################################################

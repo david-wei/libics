@@ -8,6 +8,128 @@ from libics.drv import drv
 from libics.util import misc
 
 
+
+
+
+
+class DRV_PIEZO:
+
+    class FEEDBACK_MODE:
+
+        OPEN_LOOP = 0
+        CLOSED_LOOP = 1
+
+
+@InheritMap(map_key=("libics", "PiezoCfg"))
+class PiezoCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> PiezoCfg.
+
+    Parameters
+    ----------
+    limit_min, limit_max : float
+        Voltage limit minimum and maximum in volts (V).
+    displacement : float
+        Displacement in meters per volt (m/V).
+    channel : int or str
+        Voltage channel.
+    feedback_mode : DRV_PIEZO.FEEDBACK_MODE
+        Feedback operation mode.
+    """
+
+    limit_min = cfg.CfgItemDesc(group="limit")
+    limit_max = cfg.CfgItemDesc(group="limit")
+    displacement = cfg.CfgItemDesc(group="property")
+    channel = cfg.CfgItemDesc()
+    feedback_mode = cfg.CfgItemDesc(group="property")
+
+    def __init__(
+        self,
+        limit_min=0.0, limit_max=75.0,
+        displacement=2.67e-7,
+        channel=None,
+        feedback_mode=DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP,
+        cls_name="PiezoCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.PIEZO
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.limit_min = limit_min
+        self.limit_max = limit_max
+        self.displacement = displacement
+        self.channel = channel
+        self.feedback_mode = feedback_mode
+
+    def get_hl_cfg(self):
+        return self
+
+
+class DRV_PICO:
+
+    class FEEDBACK_MODE:
+
+        OPEN_LOOP = 0
+        CLOSED_LOOP = 1
+
+
+@InheritMap(map_key=("libics", "PicoCfg"))
+class PicoCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> PicoCfg.
+
+    Parameters
+    ----------
+    channel : int or tuple(int)
+        If `int`, indicates pico motor channel.
+        If `tuple(int)`, represents slave device tree
+        (slave level 0, slave level 1, ..., motor channel).
+    acceleration : int
+        Picomotor acceleration in steps per square seconds (st/s²).
+    velocity : int
+        Picomotor velocity in steps per second (st/s).
+    feedback_mode : DRV_PIEZO.FEEDBACK_MODE
+        Feedback operation mode.
+    """
+
+    channel = cfg.CfgItemDesc()
+    acceleration = cfg.CfgItemDesc(group="motion")
+    velocity = cfg.CfgItemDesc(group="motion")
+    feedback_mode = cfg.CfgItemDesc(group="property")
+
+    def __init__(
+        self,
+        acceleration=100000, velocity=1750,
+        channel=1,
+        feedback_mode=DRV_PICO.FEEDBACK_MODE.OPEN_LOOP,
+        cls_name="PicoCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.PIEZO
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.channel = channel
+        self.acceleration = acceleration
+        self.velocity = velocity
+        self.feedback_mode = feedback_mode
+
+    def get_hl_cfg(self):
+        return self
+
+
+
 ###############################################################################
 
 

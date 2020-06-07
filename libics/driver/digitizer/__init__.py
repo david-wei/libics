@@ -9,6 +9,74 @@ from libics.data import arraydata
 from libics.drv import drv
 
 
+
+
+
+class DRV_SPAN:
+
+    class AVERAGE_MODE:
+
+        LIN = 0
+        EXP = 1
+
+
+@InheritMap(map_key=("libics", "SpAnCfg"))
+class SpAnCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> SpAnCfg.
+
+    Parameters
+    ----------
+    bandwidth : float
+        Spectral bandwidth in Hertz (Hz).
+    frequency_start, frequency_stop : float
+        Frequency range (start, stop) in Hertz (Hz).
+    average_mode : DRV_SPAN.AVERAGE_MODE
+        Averaging mode.
+    average_count : int
+        Number of averages.
+    voltage_max : float
+        Voltage input max range in decibel volts (dBV).
+    """
+
+    bandwidth = cfg.CfgItemDesc(group="frequency", val_check=(0, None))
+    frequency_start = cfg.CfgItemDesc(group="frequency")
+    frequency_stop = cfg.CfgItemDesc(group="frequency")
+    average_mode = cfg.CfgItemDesc(group="average")
+    average_count = cfg.CfgItemDesc(group="average", val_check=(0, None))
+    voltage_max = cfg.CfgItemDesc(group="amplitude")
+
+    def __init__(
+        self,
+        bandwidth=1e3,
+        frequency_start=0.0, frequency_stop=1e5,
+        average_mode=DRV_SPAN.AVERAGE_MODE.LIN, average_count=100,
+        voltage_max=-30.0,
+        cls_name="SpAnCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.SPAN
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.bandwidth = bandwidth
+        self.frequency_start = frequency_start
+        self.frequency_stop = frequency_stop
+        self.average_mode = average_mode
+        self.average_count = average_count
+        self.voltage_max = voltage_max
+
+    def get_hl_cfg(self):
+        return self
+
+
+
+
 ###############################################################################
 
 
@@ -251,3 +319,46 @@ class YokagawaAQ6315(SpAnDrvBase):
     def _read_frequency_stop(self):
         self._interface.send("STPWL?")
         return constants.speed_of_light / float(self._interface.recv())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@InheritMap(map_key=("libics", "OscCfg"))
+class OscCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> OscCfg.
+
+    Parameters
+    ----------
+    """
+
+    def __init__(
+        self,
+        cls_name="OscCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.OSC
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+
+    def get_hl_cfg(self):
+        return self

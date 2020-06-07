@@ -6,6 +6,48 @@ import numpy as np
 from libics.drv import drv
 
 
+
+
+
+@InheritMap(map_key=("libics", "LaserCfg"))
+class LaserCfg(DrvCfgBase):
+
+    """
+    DrvCfgBase -> LaserCfg.
+
+    Parameters
+    ----------
+    current : float
+        Current in Ampere (A).
+    temperature : float
+        Temperature in degrees (°C).
+    """
+
+    current = cfg.CfgItemDesc()
+    temperature = cfg.CfgItemDesc()
+
+    def __init__(
+        self, current=0.1, temperature=25.0,
+        cls_name="LaserCfg", ll_obj=None, **kwargs
+    ):
+        if "driver" not in kwargs.keys():
+            kwargs["driver"] = DRV_DRIVER.LASER
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            ll_obj_dict = dict(ll_obj.__dict__)
+            for key in list(ll_obj_dict.keys()):
+                if key.startswith("_"):
+                    del ll_obj_dict[key]
+            self.__dict__.update(ll_obj_dict)
+        self.current = current
+        self.temperature = temperature
+
+    def get_hl_cfg(self):
+        return self
+
+
+
+
 ###############################################################################
 
 
