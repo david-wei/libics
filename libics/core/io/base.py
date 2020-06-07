@@ -6,9 +6,9 @@ import pandas as pd
 from importlib import import_module
 
 
-from libics import env
-from libics.util import misc
-from libics.file import image
+from libics.core import env
+from libics.core.io import image
+from libics.core.util import misc
 
 
 ###############################################################################

@@ -46,7 +46,7 @@ class ArrayData(object):
     LINSPACE = "LINSPACE"
     VAR_MODES = {POINTS, RANGE, LINSPACE}
 
-    LOGGER = logging.get_loggger("libics.core.data.arrays.ArrayData")
+    LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
     def __init__(self):
         # Data

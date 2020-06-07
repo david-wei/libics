@@ -2,7 +2,7 @@ import collections
 import configparser
 import json
 
-from libics.file import io
+from libics.core import io
 
 
 ###############################################################################
