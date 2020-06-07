@@ -1,10 +1,10 @@
 import copy
-
 import numpy as np
 from scipy import interpolate
 
-from libics.data import arraydata, seriesdata, types
-from libics.util import InheritMap, misc
+from libics.core.types import Quantity
+from libics.core.data.arrays import ArrayData, SeriesData
+from libics.util import misc
 
 
 ###############################################################################
@@ -12,101 +12,104 @@ from libics.util import InheritMap, misc
 
 def cv_arraydata_to_seriesdata(ad):
     """
-    Converts a data.arraydata.ArrayData object to a data.seriesdata.SeriesData
-    object.
+    Converts an `ArrayData` object to a `SeriesData` object.
 
     Parameters
     ----------
-    ad : data.arraydata.ArrayData
+    ad : `data.arrays.ArrayData`
         Array data to be converted.
 
     Returns
     -------
-    sd : data.seriesdata.SeriesData
+    sd : `data.arrays.SeriesData`
         Converted series data.
     """
-    mesh = np.indices(ad.data.shape).astype(float)
-    dims = mesh.shape[0]
-    for i in range(dims):
-        mesh[i] = ad.scale.offset[i] + ad.scale.scale[i] * mesh[i]
-    sd = seriesdata.SeriesData()
-    for q in ad.scale.quantity:
-        sd.add_dim(quantity=q)
-    mesh = mesh.reshape((dims, -1))
-    data_mesh = np.append(
-        mesh,
-        np.expand_dims(ad.data.flatten(), axis=0),
-        axis=0
-    )
-    sd.data = data_mesh
+    # Load array data
+    data = [mg.ravel() for mg in ad.get_var_meshgrid()]
+    data += ad.data.ravel()
+    quantity = [q for q in ad.var_quantity]
+    quantity += ad.data_quantity
+    # Set up series data
+    sd = SeriesData()
+    quantity = [{"quantity": q} for q in quantity]
+    sd.add_dim(*quantity)
+    sd.data = data
     return sd
 
 
-def cv_seriesdata_to_arraydata(sd, sampling_shape=None,
-                               algorithm="cubic", fill=np.nan):
+def cv_seriesdata_to_arraydata(
+    sd, data_dim=-1, sampling_shape=None, algorithm="cubic", fill=np.nan
+):
     """
-    Converts a data.arraydata.ArrayData object to a data.seriesdata.SeriesData
-    object.
+    Converts a `ArrayData` object to a `SeriesData` object.
 
     Parameters
     ----------
-    sd : data.seriesdata.SeriesData
+    sd : `data.arrays.SeriesData`
         Series data to be converted.
-    sampling_shape : tuple(int)
+    data_dim : `int`
+        Series data dimension to be used as data quantity.
+    sampling_shape : `tuple(int)`
         Array shape of interpolated data.
-    algorithm : str
+    algorithm : `str`
         Interpolation algorithm.
-        "nearest":
+        `"nearest"`:
             Nearest point.
-        "linear":
+        `"linear"`:
             Linear interpolation.
-        "cubic":
+        `"cubic"`:
             Cubic interpolation (up to 2D).
-    fill : float
+            If above 2D, silently uses linear interpolation.
+    fill : `float`
         Fill value for linear and cubic interpolation if value
         is outside convex hull (i.e. needs extrapolation).
 
     Returns
     -------
-    ad : data.arraydata.ArrayData
+    ad : `data.arrays.ArrayData`
         Converted array data.
     """
+    # Load series data
+    var_dims = list(range(sd.ndim))
+    del var_dims[data_dim]
+    var_ndim = len(var_dims)
+    var_data = np.array([sd.data[d] for d in var_dims])
+    var_quantity = [sd.quantity[d] for d in var_dims]
+    data = sd.data[data_dim]
+    data_quantity = sd.quantity[data_dim]
+    sd_mins, sd_maxs = sd.data.min(axis=-1), sd.data.max(axis=-1)
     # Settings
-    dims = sd.get_dim() - 1
-    if dims > 2 and algorithm == "cubic":
+    if var_ndim > 2 and algorithm == "cubic":
         algorithm = "linear"
-    mins, maxs = sd.data.min(axis=-1), sd.data.max(axis=-1)
     if sampling_shape is None:
         # TODO: proper sampling shape determination
-        sampling_shape = dims * [round(2 * sd.data[:-1].size**(1 / dims))]
+        sampling_shape = var_ndim * [
+            round(2 * sd.data[:-1].size**(1 / var_ndim))
+        ]
     elif isinstance(sampling_shape, int):
-        sampling_shape = dims * [sampling_shape]
-    # Set array scale
-    ad = arraydata.ArrayData()
-    for i, s in enumerate(sampling_shape):
-        offset = mins[i]
-        scale = (maxs[i] - mins[i]) / (s - 1)
-        quantity = copy.deepcopy(sd.quantity[i])
-        ad.add_dim(offset=offset, scale=scale, quantity=quantity)
-    ad.add_dim(quantity=copy.deepcopy(sd.quantity[-1]))
-    # Set sampling mesh
-    mesh = np.indices(sampling_shape).astype(float)
-    for i in range(dims):
-        mesh[i] = ad.scale.offset[i] + ad.scale.scale[i] * mesh[i]
-    mesh = mesh.reshape((dims, -1)).T
-    # Interpolation
+        sampling_shape = var_ndim * [sampling_shape]
+    # Set up array data
+    ad = ArrayData()
+    ad.set_data_quantity(data_quantity)
+    ad.add_dim(var_ndim)
+    for i, num in enumerate(sampling_shape):
+        d = var_dims[i]
+        ad.set_var_quantity(i, quantity=var_quantity[i])
+        ad.set_dim(i, low=sd_mins[d], high=sd_maxs[d])
+    # Interpolate data
+    mg = ad.get_var_meshgrid()
     data = interpolate.griddata(
-        sd.data[:-1].T, sd.data[-1], mesh, method=algorithm, fill_value=fill
+        var_data.T, data, mg.reshape((var_ndim, -1)).T,
+        method=algorithm, fill_value=fill
     )
-    ad.data = data.reshape(sampling_shape)
+    ad.data = data.reshape(ad.shape)
     return ad
 
 
 ###############################################################################
 
 
-@InheritMap(map_key=("libics", "Calibration"))
-class Calibration(seriesdata.SeriesData):
+class Calibration(SeriesData):
 
     """
     Container class for storing calibration data mapping one quantity to
@@ -154,11 +157,9 @@ class Calibration(seriesdata.SeriesData):
         key_data=None, val_data=None,
         key_quantity=None, val_quantity=None,
         mode=MODE.LINEAR, extrapolation=False,
-        pkg_name="libics", cls_name="Calibration"
     ):
-        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
-        self.add_dim()
-        self.add_dim()
+        super().__init__()
+        self.add_dim(2)
         self.data = [None, None]
         if sd is not None:
             key_data = np.copy(sd.data[sd_key_dim])
@@ -198,7 +199,7 @@ class Calibration(seriesdata.SeriesData):
 
     @key_quantity.setter
     def key_quantity(self, val):
-        self.quantity[0] = misc.assume_construct_obj(val, types.Quantity)
+        self.quantity[0] = misc.assume_construct_obj(val, Quantity)
 
     @property
     def val_quantity(self):
@@ -206,7 +207,7 @@ class Calibration(seriesdata.SeriesData):
 
     @val_quantity.setter
     def val_quantity(self, val):
-        self.quantity[1] = misc.assume_construct_obj(val, types.Quantity)
+        self.quantity[1] = misc.assume_construct_obj(val, Quantity)
 
     def _set_interpolation_mode(self):
         fill_value = self.extrapolation
@@ -223,9 +224,6 @@ class Calibration(seriesdata.SeriesData):
         self._set_interpolation_mode()
         return self.__interpolation(*args)
 
-    def _hdf_init_write(self):
-        del self.__interpolation
-
 
 def apply_calibration(sd, calibration, dim=0):
     """
@@ -233,23 +231,23 @@ def apply_calibration(sd, calibration, dim=0):
 
     Parameters
     ----------
-    sd : data.seriesdata.SeriesData
+    sd : `data.arrays.SeriesData`
         Series data the calibration is applied to.
-    calibration : Calibration
+    calibration : `Calibration`
         Calibration data.
-    dim : int
+    dim : `int`
         Series data dimension to which calibration is applied.
 
     Returns
     -------
-    sd : data.seriesdata.SeriesData
+    sd : `data.arrays.SeriesData`
         Series data with applied calibration.
 
     Notes
     -----
-    * Performs in-place calibration, i.e. sd is mutable.
+    * Performs in-place calibration, i.e. `sd` is mutable.
     * Does not check for quantity agreement. After applying calibration,
-      sd quantity is changed to the quantity stored in calibration.
+      `sd` quantity is changed to the quantity stored in calibration.
     """
     sd.data[dim] = calibration(sd.data[dim])
     sd.quantity[dim] = calibration.val_quantity
@@ -267,7 +265,7 @@ if __name__ == "__main__":
     num = 1001
     scale = (end - offset) / (num - 1)
     ar = np.cos(2 * np.pi * np.linspace(offset, end, num=num))
-    ad = arraydata.ArrayData()
+    ad = ArrayData()
     ad.add_dim(offset=offset, scale=scale, name="time", symbol="t", unit="s")
     ad.add_dim(name="amplitude", symbol="A", unit="V")
     ad.data = ar
