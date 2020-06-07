@@ -1,9 +1,8 @@
 import copy
 import numpy as np
-
 from scipy import interpolate
 
-from libics.env import logging
+from libics.core.env import logging
 from libics.core.data import types
 from libics.core.util import misc
 

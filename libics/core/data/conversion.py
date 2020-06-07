@@ -3,10 +3,13 @@ import numpy as np
 from scipy import interpolate
 
 from libics.core.types import Quantity
+from libics.core.util import misc
 from libics.core.data.arrays import ArrayData, SeriesData
-from libics.util import misc
+from libics.core.data.sequences import DataSequence
 
 
+###############################################################################
+# Arrays
 ###############################################################################
 
 
@@ -106,6 +109,60 @@ def cv_seriesdata_to_arraydata(
     return ad
 
 
+###############################################################################
+# Sequences
+###############################################################################
+
+
+def cv_list_to_datasequence(ls):
+    """
+    Converts a data list into a `DataSequence` object.
+
+    Parameters
+    ----------
+    ls : `list(dict)` or `list`
+        List of scalars or structured data types.
+        Preferentially, the list items should be dictionaries,
+        which determine the column name. If no dictionary is given,
+        the default column name `"data"` is used.
+
+    Returns
+    -------
+    ds : `sequences.DataSequence` or `list`
+        Converted DataSequence object.
+        If conversion is unsuccessful, returns input.
+    """
+    # Error handling
+    try:
+        iter(ls)
+        assert(len(ls) > 0)
+    except(TypeError, AssertionError):
+        return ls
+    # Create data frame
+    ls = [item if isinstance(item, dict) else {"data": item} for item in ls]
+    ds = DataSequence(ls)
+    return ds
+
+
+def cv_datasequence_to_list(ds):
+    """
+    Retrieves the data stored in the `DataSequence` object.
+
+    Parameters
+    ----------
+    ds : `data.sequences.DataSequence`
+        DataSequence object storing the requested data.
+
+    Returns
+    -------
+    ls : `list(dict)`
+        List of dictionaries mapping column name to value.
+    """
+    return ds.to_dict(orient="records")
+
+
+###############################################################################
+# Calibration
 ###############################################################################
 
 
