@@ -1,11 +1,9 @@
 import abc
-
 import numpy as np
 from scipy import optimize
 
-from libics.cfg import err as ERR
-from libics.data import arraydata, seriesdata
-from libics.util import misc
+from libics.core.data.arrays import ArrayData, SeriesData
+from libics.core.util import misc
 
 
 ###############################################################################
@@ -18,21 +16,21 @@ def split_fit_data(data, func_dim=-1):
 
     Parameters
     ----------
-    data : arraydata.ArrayData or seriesdata.SeriesData or np.ndarray
+    data : `data.arrays.ArrayData` or `data.arrays.SeriesData` or `np.ndarray`
         Data to be split.
-    func_dim : int
-        Only used for seriesdata.SeriesData.
+    func_dim : `int`
+        Only used for `SeriesData`.
         Dependent data dimension (index).
 
     Returns
     -------
-    var_data : np.ndarray
+    var_data : `np.ndarray`
         Independent data.
-    func_data : np.ndarray
+    func_data : `np.ndarray`
         Dependent data.
     """
     var_data, func_data = None, None
-    if isinstance(data, seriesdata.SeriesData):
+    if isinstance(data, SeriesData):
         func_data = data.data[func_dim]
         var_data = np.concatenate(
             (data.data[0:func_dim], data.data[func_dim + 1:])
@@ -40,10 +38,10 @@ def split_fit_data(data, func_dim=-1):
     else:
         if isinstance(data, np.ndarray):
             func_data = data
-        elif isinstance(data, arraydata.ArrayData):
+        elif isinstance(data, ArrayData):
             func_data = data.data
         var_data = np.indices(func_data.shape)
-        if isinstance(data, arraydata.ArrayData):
+        if isinstance(data, ArrayData):
             for i in range(len(var_data)):
                 scale = data.scale.scale[i]
                 offset = data.scale.offset[i]
@@ -262,16 +260,15 @@ class FitParamBase(abc.ABC):
 
         Raises
         ------
-        ERR.INVAL_STRUCT_NUMPY
+        ValueError
             If data dimensions are invalid.
         """
         var_data = np.array(var_data)
         var_data_ind = 1 if var_data.ndim > 1 else 0
         if func_data is not None:
             func_data = np.array(func_data)
-            ERR.assertion(ERR.INVAL_STRUCT_NUMPY,
-                          var_data.shape[var_data_ind:] == func_data.shape,
-                          description="invalid fit data dimensions")
+            if var_data.shape[var_data_ind:] != func_data.shape:
+                raise ValueError("invalid fit data dimensions")
             func_data = func_data.ravel()
         if var_data_ind == 0:
             self._shape = var_data.shape

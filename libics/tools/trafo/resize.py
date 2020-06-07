@@ -2,8 +2,6 @@
 import numpy as np
 import scipy.ndimage
 
-# Package Imports
-import libics.cfg.err as ERR
 
 ###############################################################################
 
@@ -79,7 +77,7 @@ def fit_to_aspect(np_array, aspect_ratio, crop, center,
     for ind, center_ind in enumerate(center):
         rel_dist[ind] = np.max((center_ind - crop[0, ind],
                                 crop[1, ind] - center_ind))
-    ERR.assertion(ERR.INVAL_NONNEG, np.all(rel_dist >= 0))
+    assert(np.all(rel_dist >= 0))
     # Resize
     rel_dist = rel_dist / rel_scale
     for ind, center_ind in enumerate(center):

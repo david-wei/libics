@@ -1,6 +1,6 @@
 import numpy as np
 
-from libics.util import misc
+from libics.core.util import misc
 
 
 ###############################################################################

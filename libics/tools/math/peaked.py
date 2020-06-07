@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import special, stats
 
-from libics.func import fit
+from libics.tools.math import fit
 
 
 ###############################################################################

@@ -1,15 +1,11 @@
 import numpy as np
 from scipy import ndimage, optimize
 
-from libics.file import hdf
-from libics.util import InheritMap
-
 
 ###############################################################################
 
 
-@InheritMap(map_key=("libics", "AffineTrafo"))
-class AffineTrafo(hdf.HDFBase):
+class AffineTrafo(object):
 
     """
     Defines an affine transformation in arbitrary dimensions.
@@ -27,10 +23,8 @@ class AffineTrafo(hdf.HDFBase):
     def __init__(
         self,
         matrix=np.diag([1, 1]).astype(float),
-        offset=np.array([0, 0], dtype=float),
-        pkg_name="libics", cls_name="AffineTrafo"
+        offset=np.array([0, 0], dtype=float)
     ):
-        super().__init__(pkg_name=pkg_name, cls_name=cls_name)
         self.matrix = matrix
         self.offset = offset
 
