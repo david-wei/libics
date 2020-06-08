@@ -1,48 +1,7 @@
 import serial
 
-from libics.driver.interface import ItfTerminal
-
-
-
-
-
-@InheritMap(map_key=("libics", "TxtSerialCfg"))
-class TxtSerialCfg(TxtCfgBase):
-
-    """
-    ProtocolCfgBase -> TxtCfgBase -> TxtSerialCfg.
-
-    Parameters
-    ----------
-    baudrate : int
-        Baud rate in bits per second.
-    bytesize : 5, 6, 7, 8
-        Number of data bits.
-    parity : "none", "even", "odd", "mark", "space"
-        Parity checking.
-    stopbits : 1, 1.5, 2
-        Number of stop bits.
-    """
-
-    def __init__(self, baudrate=115200, bytesize=8, parity="none",
-                 stopbits=1,
-                 cls_name="TxtSerialCfg", ll_obj=None, **kwargs):
-        if "interface" not in kwargs.keys():
-            kwargs["interface"] = ITF_TXT.SERIAL
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-        self.baudrate = baudrate
-        self.bytesize = bytesize
-        self.parity = parity
-        self.stopbits = stopbits
-
-    def get_hl_cfg(self):
-        return self
-
-
-
-
+from libics.driver.interface import STATUS
+from libics.driver.terminal import ItfTerminal
 
 
 ###############################################################################
@@ -77,9 +36,31 @@ class STOPBITS:
 
 class ItfSerial(ItfTerminal):
 
+    """
+    Parameters
+    ----------
+    baudrate : `int`
+        Baud rate in bits per second.
+    bytesize : `BYTESIZE`
+        Number of data bits.
+    parity : `PARITY`
+        Parity checking.
+    stopbits : `STOPBITS`
+        Number of stop bits.
+    """
+
+    BAUDRATE = 115200
+    BYTESIZE = BYTESIZE.EIGHTBITS
+    PARITY = PARITY.NONE
+    STOPBITS = STOPBITS.ONE
+
     def __init__(self):
         super().__init__()
         self._serial = None
+        self.baudrate = self.BAUDRATE
+        self.bytesize = self.BYTESIZE
+        self.parity = self.PARITY
+        self.stopbits = self.STOPBITS
 
     def setup(self):
         self._serial = serial.Serial(
@@ -87,31 +68,68 @@ class ItfSerial(ItfTerminal):
             baudrate=self.baudrate,
             bytesize=self.bytesize,
             parity=self.parity,
-            stopbits=self.cfg.stopbits,
+            stopbits=self.stopbits,
             timeout=self.recv_timeout,
             write_timeout=self.send_timeout
         )
 
     def shutdown(self):
         self.close()
+        self._serial = None
+        for dev in self.devices():
+            self.deregister(dev)
+
+    def is_setup(self):
+        return self._serial is not None
 
     def connect(self):
         if not self._serial.is_open:
             self._serial.open()
-        return self._serial.is_open
 
     def close(self):
-        if self._serial.is_open:
+        if self.is_connected():
             self._serial.close()
-        return not self._serial.is_open
+
+    def is_connected(self):
+        return self._serial.is_open
+
+    def discover(self):
+        self.LOGGER.warning(
+            "serial interface base class cannot discover devices"
+        )
+        return []
+
+    def status(self):
+        status = {STATUS.MSG: ""}
+        if self.is_setup():
+            if self.is_connected():
+                status[STATUS.OK] = ""
+            else:
+                status[STATUS.ERROR] = ""
+                status[STATUS.ERR_CONNECTION] = ""
+                status[STATUS.ERR_INSTANCE] = ""
+        else:
+            status[STATUS.OK] = ""
+        return status
+
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def send(self, s_data):
         s_data = str(s_data) + self.cfg.send_termchar
+        self.LOGGER.debug("SEND: {:s}".format(s_data))
         b_data = s_data.encode("ascii")
         self._serial.write(b_data)
         self._serial.flush()
 
     def recv(self):
         b_data = self._serial.readline()
-        s_data = b_data.decode("ascii").strip(self.cfg.recv_termchar)
+        s_data = b_data.decode("ascii")
+        self.LOGGER.debug("RECV: {:s}".format(s_data))
+        s_data = self._trim(s_data)
         return s_data
+
+    def flush_out(self):
+        self._serial.reset_output_buffer()
+
+    def flush_in(self):
+        self._serial.reset_input_buffer()

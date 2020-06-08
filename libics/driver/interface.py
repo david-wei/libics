@@ -1,211 +1,28 @@
 import abc
-
-
-
-
-
+import threading
 
 
 ###############################################################################
 
 
-class ITF_PROTOCOL:
+class TYPES:
 
-    """
-    Interface protocol types.
-
-    Attributes
-    ----------
-    TEXT:
-        Text-based protocol, e.g. used for RS-232.
-    BINARY:
-        Binary protocol, e.g. used in IPC for Vimba.
-    """
-
-    TEXT = 0
-    BINARY = 1
+    SERIAL = "SERIAL"
+    ETHERNET = "ETHERNET"
+    USB = "USB"
 
 
-@InheritMap(map_key=("libics", "ProtocolCfgBase"))
-class ProtocolCfgBase(cfg.CfgBase):
+class STATUS:
 
-    """
-    Interface configuration base class.
+    OK = "OK"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
 
-    Parameters
-    ----------
-    protocol : ITF_PROTOCOL (int)
-        Interface protocol type.
-    interface : ITF_TXT or ITF_BIN
-        Interface class.
+    MSG = "MSG"
 
-    Notes
-    -----
-    * If None parameters are passed, the respective attributes are interpreted
-      as unspecified.
-    * Derived classes should implement the get_hl_cfg method returning the
-      next higher level configuration class.
-    * Derived classes should pass initialization arguments to base class
-      constructors and check for base class objects.
-    """
-
-    def __init__(self, protocol=ITF_PROTOCOL.TEXT, interface=None,
-                 cls_name="ProtocolCfgBase", **kwargs):
-        super().__init__(cls_name=cls_name)
-        self.protocol = protocol
-        self.interface = interface
-        self._kwargs = kwargs
-
-    def get_hl_cfg(self):
-        """
-        Gets the higher level configuration object.
-
-        Returns
-        -------
-        obj : class derived from ProtocolCfgBase
-            Highest level object.
-
-        Raises
-        ------
-        KeyError:
-            If highest level object could not be constructed.
-        """
-        MAP = {
-            ITF_PROTOCOL.TEXT: TxtCfgBase,
-            ITF_PROTOCOL.BINARY: BinCfgBase
-        }
-        obj = MAP[self.protocol](ll_obj=self, **self._kwargs)
-        return obj.get_hl_cfg()
-
-
-###############################################################################
-
-
-class ITF_TXT:
-
-    """
-    Text-based interface protocols.
-
-    Attributes
-    ----------
-    SERIAL:
-        Serial interface.
-    ETHERNET:
-        Ethernet interface.
-    """
-
-    SERIAL = 11
-    ETHERNET = 12
-    USB = 13
-
-
-@InheritMap(map_key=("libics", "TxtCfgBase"))
-class TxtCfgBase(ProtocolCfgBase):
-
-    """
-    ProtocolCfgBase -> TxtCfgBase.
-
-    Parameters
-    ----------
-    address : str
-        Address of interface, e.g. IP.
-    buffer_size : int
-        Number of buffer bytes.
-    send_timeout : float
-        Send: timeout in seconds.
-    send_termchar : str
-        Send: command termination characters.
-    recv_timeout : float
-        Receive: timeout in seconds.
-    recv_termchar : str
-        Receive: command termination characters.
-    """
-
-    def __init__(self, address=None, buffer_size=None,
-                 send_timeout=None, send_termchar=None,
-                 recv_timeout=None, recv_termchar=None,
-                 cls_name="TxtCfgBase", ll_obj=None, **kwargs):
-        if "protocol" not in kwargs.keys():
-            kwargs["protocol"] = ITF_PROTOCOL.TEXT
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-        self.address = address
-        self.buffer_size = buffer_size
-        self.send_timeout = send_timeout
-        self.send_termchar = send_termchar
-        self.recv_timeout = recv_timeout
-        self.recv_termchar = recv_termchar
-
-    def get_hl_cfg(self):
-        MAP = {
-            ITF_TXT.SERIAL: TxtSerialCfg,
-            ITF_TXT.ETHERNET: TxtEthernetCfg,
-            ITF_TXT.USB: TxtUsbCfg,
-        }
-        obj = MAP[self.interface](ll_obj=self, **self._kwargs)
-        return obj.get_hl_cfg()
-
-
-# +++++++++++++++++++++++++++++
-
-
-class ITF_BIN:
-
-    """
-    Binary interface protocols.
-
-    Attributes
-    ----------
-    VIMBA:
-        AlliedVision Vimba.
-    VRMAGIC:
-        VRmagic USB.
-    VIALUX:
-        Vialux ALP4.x.
-    """
-
-    VIMBA = 101
-    VRMAGIC = 102
-    VIALUX = 111
-
-
-@InheritMap(map_key=("libics", "BinCfgBase"))
-class BinCfgBase(ProtocolCfgBase):
-
-    """
-    ProtocolCfgBase -> BinCfgBase.
-
-    Parameters
-    ----------
-    device : str
-        String identifier for device (cf. address).
-        None typically searches for interfaces and automatically
-        chooses one (depending on implementation).
-    """
-
-    def __init__(self, device=None,
-                 cls_name="BinCfgBase", ll_obj=None, **kwargs):
-        if "protocol" not in kwargs.keys():
-            kwargs["protocol"] = ITF_PROTOCOL.BINARY
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-        self.device = device
-
-    def get_hl_cfg(self):
-        MAP = {
-            ITF_BIN.VIMBA: BinVimbaCfg,
-            ITF_BIN.VRMAGIC: BinVRmagicCfg,
-            ITF_BIN.VIALUX: BinVialuxCfg
-        }
-        obj = MAP[self.interface](ll_obj=self, **self._kwargs)
-        return obj.get_hl_cfg()
-
-
-
-
-
+    ERR_INSTANCE = "ERR_INSTANCE"
+    ERR_CONNECTION = "ERR_CONNECTION"
+    ERR_INTERFACE = "ERR_INTERFACE"
 
 
 ###############################################################################
@@ -213,142 +30,148 @@ class BinCfgBase(ProtocolCfgBase):
 
 class ItfBase(abc.ABC):
 
-    DEVICES = set()
+    DEVICES = dict()
 
     def __init__(self):
-        pass
+        if self.__class__.__name__ not in self.DEVICES:
+            self.DEVICES[self.__class__.__name__] = set()
+        self._lock = threading.Lock()
 
-    @abc.abstractmethod
     def configure(self, **cfg):
         """
         Configures the interface.
+
+        Parameters
+        ----------
+        **cfg
+            Keyword arguments setting interface properties.
         """
-        pass
+        for k, v in cfg.items():
+            setattr(self, k, v)
 
     @abc.abstractmethod
     def setup(self):
         """
         Instantiates the interface.
         """
-        pass
 
     @abc.abstractmethod
     def shutdown(self):
         """
         Destroys the interface.
         """
-        pass
+
+    @abc.abstractmethod
+    def is_setup(self):
+        """
+        Checks whether interface is instantiated.
+        """
 
     @abc.abstractmethod
     def connect(self):
         """
         Opens the interface.
         """
-        pass
 
     @abc.abstractmethod
     def close(self):
         """
         Closes the interface.
         """
-        pass
+
+    @abc.abstractmethod
+    def is_connected(self):
+        """
+        Checks whether interface is connected.
+        """
 
     @abc.abstractmethod
     def discover(self):
         """
         Discovers devices using the interface.
+
+        Returns
+        -------
+        devs : `list`
+            List of devices available on the interface.
         """
-        pass
 
     @abc.abstractmethod
     def status(self):
         """
         Gets the status of the interface.
-        """
-        pass
 
-    @abc.abstractmethod
-    def recover(self):
+        Returns
+        -------
+        status : `dict(STATUS->str)`
+            Dictionary containing status information.
+            State flags: `OK, ERROR, CRITICAL -> ""`.
+            Message: `MSG -> str`.
+            Error type: `ERR_INSTANCE, ERR_CONNECTION, ERR_INTERFACE -> ""`.
+
+        Notes
+        -----
+        Handle the status return by checking the state flags. If the state
+        is `CRITICAL`, stop communicating with the interface, delete all
+        references and restart the interface from scratch.
+        Check the message (value of `MSG` key) for verbose status description).
+        For more detailed error handling (to determine which interface parts
+        might need to be reset), check the error type flag.
+        """
+
+    def recover(self, status=None):
         """
         Recovers the interface after an error.
-        """
-        pass
 
-    @abc.abstractmethod
+        Parameters
+        ----------
+        status : `STATUS`
+            Status of interface. If not given, diagnoses `self` using
+            the :py:meth:`status` method.
+        """
+        if status is None:
+            status = self.status()
+        if STATUS.OK in status:
+            return
+        is_setup, is_connected = self.is_setup(), self.is_connected()
+        if is_connected:
+            self.close()
+        if is_setup or (
+            STATUS.CRITICAL in status
+            or STATUS.ERR_INSTANCE in status
+            or STATUS.ERR_INTERFACE in status
+        ):
+            self.shutdown()
+            self.setup()
+        if is_connected:
+            self.connect()
+
     def lock(self):
         """
         Locks access to the interface.
         """
-        pass
+        self._lock.acquire()
 
-    @abc.abstractmethod
     def release(self):
         """
         Releases access lock to the interface.
         """
-        pass
+        self._lock.release()
 
+    def register(self, dev):
+        """
+        Registers a device using the interface.
+        """
+        self.DEVICES[self.__class__.__name__].add(dev)
 
-###############################################################################
+    def deregister(self, dev):
+        """
+        De-registers a device from the interface.
+        """
+        self.DEVICES[self.__class__.__name__].remove(dev)
 
-
-class ItfTerminal(ItfBase):
-
-    def __init__(self):
-        super().__init__()
-
-    @abc.abstractmethod
-    def send(self, msg):
+    def devices(self):
         """
-        Sends a message.
+        Gets all registered devices using the interface.
         """
-        pass
-
-    @abc.abstractmethod
-    def recv(self):
-        """
-        Receives a message.
-        """
-        pass
-
-    def query(self, msg):
-        """
-        Sends and receives a message.
-        """
-        self.send(msg)
-        return self.recv()
-
-    def validate(self, msg, val):
-        """
-        Sends a message and checks for validation response.
-        """
-        self.send(msg)
-        return self.recv() == val
-
-    @abc.abstractmethod
-    def _trim(self, msg):
-        """
-        Pre-processes a received message.
-        """
-        pass
-
-    @abc.abstractmethod
-    def flush_out(self):
-        """
-        Flushes the output buffer.
-        """
-        pass
-
-    @abc.abstractmethod
-    def flush_in(self):
-        """
-        Flushes the input buffer.
-        """
-        pass
-
-    @abc.abstractmethod
-    def ping(self):
-        """
-        Pings a device.
-        """
-        pass
+        return self.DEVICES[self.__class__.__name__]
