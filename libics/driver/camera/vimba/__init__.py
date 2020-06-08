@@ -535,7 +535,7 @@ def get_vimba_cameras(regex_id_filter=None):
 
 
 
-class VimbaItf(BinItfBase):
+class VimbaItf():
 
     def __init__(self, cfg):
         super().__init__(cfg)

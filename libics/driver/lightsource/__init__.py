@@ -3,14 +3,12 @@ import abc
 import numpy as np
 
 # Package Imports
-from libics.drv import drv
 
 
 
 
 
-@InheritMap(map_key=("libics", "LaserCfg"))
-class LaserCfg(DrvCfgBase):
+class LaserCfg():
 
     """
     DrvCfgBase -> LaserCfg.
@@ -22,9 +20,6 @@ class LaserCfg(DrvCfgBase):
     temperature : float
         Temperature in degrees (°C).
     """
-
-    current = cfg.CfgItemDesc()
-    temperature = cfg.CfgItemDesc()
 
     def __init__(
         self, current=0.1, temperature=25.0,
@@ -56,7 +51,7 @@ def get_laser_drv(cfg):
         return IpgYLR(cfg)
 
 
-class LaserDrvBase(drv.DrvBase):
+class LaserDrvBase():
 
     """
     Laser driver API.

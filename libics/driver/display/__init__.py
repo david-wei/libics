@@ -5,8 +5,7 @@ import abc
 
 import numpy as np
 
-from libics.drv import drv
-from libics.util import misc
+from libics.core.util import misc
 
 
 
@@ -14,8 +13,7 @@ from libics.util import misc
 
 
 
-@InheritMap(map_key=("libics", "BinVialuxCfg"))
-class BinVialuxCfg(BinCfgBase):
+class BinVialuxCfg():
 
     """
     ProtocolCfgBase -> BinCfgBase -> BinVialuxCfg.
@@ -54,8 +52,7 @@ class DRV_DSP:
         RGBA = 3
 
 
-@InheritMap(map_key=("libics", "DspCfg"))
-class DspCfg(DrvCfgBase):
+class DspCfg():
 
     """
     DrvCfgBase -> DspCfg.
@@ -86,19 +83,6 @@ class DspCfg(DrvCfgBase):
     temperature : float
         Display temperature in Celsius (°C).
     """
-
-    pixel_hrzt_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_hrzt_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_hrzt_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    format_color = cfg.CfgItemDesc(group="format")
-    channel_bitdepth = cfg.CfgItemDesc(group="format", val_check=int)
-    picture_time = cfg.CfgItemDesc(group="dmd", val_check=(0, 9))
-    dark_time = cfg.CfgItemDesc(group="dmd", val_check=(0, None))
-    sequence_repetitions = cfg.CfgItemDesc(group="dmd", val_check=(0, None))
-    temperature = cfg.CfgItemDesc(group="dmd")
 
     def __init__(
         self,
@@ -146,7 +130,7 @@ def get_dsp_drv(cfg):
         return TexasInstrumentsDLP7000(cfg)
 
 
-class DspDrvBase(drv.DrvBase):
+class DspDrvBase():
 
     def __init__(self, cfg):
         super().__init__(cfg=cfg)

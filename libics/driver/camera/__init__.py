@@ -10,9 +10,8 @@ import threading
 
 import numpy as np
 
-from libics.drv import drv
-import libics.drv.itf.api.vrmusbcamapi as vrm
-from libics import util
+import libics.driver.camera.vrmagic.vrmusbcamapi as vrm
+from libics.core import util
 
 
 
@@ -23,8 +22,7 @@ from libics import util
 
 
 
-@InheritMap(map_key=("libics", "BinVimbaCfg"))
-class BinVimbaCfg(BinCfgBase):
+class BinVimbaCfg():
 
     """
     ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
@@ -51,8 +49,7 @@ class BinVimbaCfg(BinCfgBase):
         return self
 
 
-@InheritMap(map_key=("libics", "BinVRmagicCfg"))
-class BinVRmagicCfg(BinCfgBase):
+class BinVRmagicCfg():
 
     """
     ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
@@ -107,8 +104,7 @@ class DRV_CAM:
         NIR_HQ = 2
 
 
-@InheritMap(map_key=("libics", "CamCfg"))
-class CamCfg(DrvCfgBase):
+class CamCfg():
 
     """
     DrvCfgBase -> CamCfg.
@@ -147,19 +143,6 @@ class CamCfg(DrvCfgBase):
     -----
     * Horizontal (hrzt) and vertical (vert) directions.
     """
-
-    pixel_hrzt_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_hrzt_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_hrzt_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_count = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_size = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    pixel_vert_offset = cfg.CfgItemDesc(group="format", val_check=(0, None))
-    format_color = cfg.CfgItemDesc(group="format")
-    channel_bitdepth = cfg.CfgItemDesc(group="format", val_check=int)
-    exposure_mode = cfg.CfgItemDesc(group="capture")
-    exposure_time = cfg.CfgItemDesc(group="capture", val_check=(0, None))
-    acquisition_frames = cfg.CfgItemDesc(group="capture", val_check=int)
-    sensitivity = cfg.CfgItemDesc(group="capture")
 
     def __init__(
         self,
@@ -209,7 +192,7 @@ def get_cam_drv(cfg):
         return VRmagicVRmCX(cfg)
 
 
-class CamDrvBase(drv.DrvBase):
+class CamDrvBase():
 
     def __init__(self, cfg):
         super().__init__(cfg=cfg)

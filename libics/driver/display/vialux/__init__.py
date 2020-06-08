@@ -1,7 +1,7 @@
 import os
 
-from libics import env
-from .api import alpV42 as alp42
+from libics.core import env
+from . import alpV42 as alp42
 
 
 ###############################################################################
@@ -38,7 +38,7 @@ def startup_alp42():
 ###############################################################################
 
 
-class VialuxItf(BinItfBase):
+class VialuxItf():
 
     def __init__(self, cfg):
         super().__init__(cfg)

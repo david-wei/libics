@@ -1,5 +1,7 @@
 import abc
 
+from libics.driver import interface
+
 
 ###############################################################################
 
@@ -52,12 +54,7 @@ class DevBase(abc.ABC):
         pass
 
 
-
-
-
-
-
-
+###############################################################################
 
 ###############################################################################
 ###############################################################################
@@ -245,8 +242,7 @@ class DRV_MODEL:
     IPG_YLR = 5101
 
 
-@InheritMap(map_key=("libics", "DrvCfgBase"))
-class DrvCfgBase(cfg.CfgBase):
+class DrvCfgBase():
 
     """
     DrvCfgBase.
@@ -262,10 +258,6 @@ class DrvCfgBase(cfg.CfgBase):
     model : DRV_MODEL
         Device model.
     """
-
-    driver = cfg.CfgItemDesc()
-    identifier = cfg.CfgItemDesc()
-    model = cfg.CfgItemDesc()
 
     def __init__(
         self,
@@ -312,7 +304,3 @@ class DrvCfgBase(cfg.CfgBase):
         for key, val in self.__dict__.items():
             if isinstance(val, cfg.CfgItem):
                 val.read()
-
-
-
-

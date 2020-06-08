@@ -4,8 +4,7 @@ import time
 import numpy as np
 
 # Package Imports
-from libics.drv import drv
-from libics.util import misc
+from libics.core.util import misc
 
 
 
@@ -20,8 +19,7 @@ class DRV_PIEZO:
         CLOSED_LOOP = 1
 
 
-@InheritMap(map_key=("libics", "PiezoCfg"))
-class PiezoCfg(DrvCfgBase):
+class PiezoCfg():
 
     """
     DrvCfgBase -> PiezoCfg.
@@ -37,12 +35,6 @@ class PiezoCfg(DrvCfgBase):
     feedback_mode : DRV_PIEZO.FEEDBACK_MODE
         Feedback operation mode.
     """
-
-    limit_min = cfg.CfgItemDesc(group="limit")
-    limit_max = cfg.CfgItemDesc(group="limit")
-    displacement = cfg.CfgItemDesc(group="property")
-    channel = cfg.CfgItemDesc()
-    feedback_mode = cfg.CfgItemDesc(group="property")
 
     def __init__(
         self,
@@ -79,8 +71,7 @@ class DRV_PICO:
         CLOSED_LOOP = 1
 
 
-@InheritMap(map_key=("libics", "PicoCfg"))
-class PicoCfg(DrvCfgBase):
+class PicoCfg():
 
     """
     DrvCfgBase -> PicoCfg.
@@ -98,12 +89,7 @@ class PicoCfg(DrvCfgBase):
     feedback_mode : DRV_PIEZO.FEEDBACK_MODE
         Feedback operation mode.
     """
-
-    channel = cfg.CfgItemDesc()
-    acceleration = cfg.CfgItemDesc(group="motion")
-    velocity = cfg.CfgItemDesc(group="motion")
-    feedback_mode = cfg.CfgItemDesc(group="property")
-
+    
     def __init__(
         self,
         acceleration=100000, velocity=1750,
@@ -138,7 +124,7 @@ def get_piezo_drv(cfg):
         return ThorlabsMDT69XA(cfg)
 
 
-class PiezoDrvBase(drv.DrvBase):
+class PiezoDrvBase():
 
     """
     Piezo driver API.
@@ -288,7 +274,7 @@ def get_pico_drv(cfg):
         return Newport8742(cfg)
 
 
-class PicoDrvBase(drv.DrvBase):
+class PicoDrvBase():
 
     """
     Picomotor driver API.

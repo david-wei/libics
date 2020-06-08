@@ -5,8 +5,7 @@ import re
 from scipy import constants
 
 # Package Imports
-from libics.data import arraydata
-from libics.drv import drv
+import libics.core.data.arrays as arraydata
 
 
 
@@ -20,8 +19,7 @@ class DRV_SPAN:
         EXP = 1
 
 
-@InheritMap(map_key=("libics", "SpAnCfg"))
-class SpAnCfg(DrvCfgBase):
+class SpAnCfg():
 
     """
     DrvCfgBase -> SpAnCfg.
@@ -39,13 +37,6 @@ class SpAnCfg(DrvCfgBase):
     voltage_max : float
         Voltage input max range in decibel volts (dBV).
     """
-
-    bandwidth = cfg.CfgItemDesc(group="frequency", val_check=(0, None))
-    frequency_start = cfg.CfgItemDesc(group="frequency")
-    frequency_stop = cfg.CfgItemDesc(group="frequency")
-    average_mode = cfg.CfgItemDesc(group="average")
-    average_count = cfg.CfgItemDesc(group="average", val_check=(0, None))
-    voltage_max = cfg.CfgItemDesc(group="amplitude")
 
     def __init__(
         self,
@@ -89,7 +80,7 @@ def get_span_drv(cfg):
         return SpAnDrvBase(cfg)
 
 
-class SpAnDrvBase(drv.DrvBase):
+class SpAnDrvBase():
 
     def __init__(self, cfg):
         assert(isinstance(cfg, drv.SpAnCfg))
@@ -195,8 +186,8 @@ class StanfordSR760(SpAnDrvBase):
     }
 
     AVERAGING_MODE = {
-        0: drv.DRV_SPAN.AVERAGE_MODE.LIN,
-        1: drv.DRV_SPAN.AVERAGE_MODE.EXP
+        0: 0,#drv.DRV_SPAN.AVERAGE_MODE.LIN,
+        1: 1#drv.DRV_SPAN.AVERAGE_MODE.EXP
     }
 
     def __init__(self, cfg):
@@ -336,8 +327,7 @@ class YokagawaAQ6315(SpAnDrvBase):
 
 
 
-@InheritMap(map_key=("libics", "OscCfg"))
-class OscCfg(DrvCfgBase):
+class OscCfg():
 
     """
     DrvCfgBase -> OscCfg.
