@@ -22,7 +22,7 @@ def get_class_from_fqname(fqname, cls_map=None):
     ----------
     fqname : `str`
         Fully qualified class name (i.e. Python-attribute-style string
-        specifying class), e.g. `libics.data.arraydata.ArrayData`.
+        specifying class), e.g. `libics.core.data.arrays.ArrayData`.
     cls_map : `dict(str->cls)`
         Dictionary mapping fully qualified name to a class.
         Is handled prioritized, so it can be used for legacy purposes,
@@ -523,13 +523,13 @@ def load(
     elif "hdf" in fmt:
         raise NotImplementedError("hdf format not yet implemented")
     elif "bmp" in fmt:
-        obj = image.load_bmp_to_arraydata(file_path, arraydata=obj_or_cls)
+        obj = image.load_bmp_to_arraydata(file_path, ad=obj_or_cls)
     elif "png" in fmt:
-        obj = image.load_png_to_arraydata(file_path, arraydata=obj_or_cls)
+        obj = image.load_png_to_arraydata(file_path, ad=obj_or_cls)
     elif "wct" in fmt:
-        obj = image.load_wct_to_arraydata(file_path, arraydata=obj_or_cls)
+        obj = image.load_wct_to_arraydata(file_path, ad=obj_or_cls)
     elif "sif" in fmt:
-        obj = image.load_sif_to_arraydata(file_path, arraydata=obj_or_cls)
+        obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls)
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
     return obj

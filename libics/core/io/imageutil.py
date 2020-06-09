@@ -19,7 +19,7 @@ def create_default_arraydata():
         Image default initialized ArrayData.
     """
     ad = ArrayData()
-    ad.add_dim([
+    ad.add_dim(
         {
             "offset": 0, "step": 1,
             "name": "position", "symbol": "x", "unit": "px"
@@ -28,7 +28,7 @@ def create_default_arraydata():
             "offset": 0, "step": 1,
             "name": "position", "symbol": "y", "unit": "px"
         },
-    ])
+    )
     ad.set_data_quantity(
         name="intensity", symbol="I", unit="ADC"
     )

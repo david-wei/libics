@@ -322,14 +322,19 @@ class ArrayData(object):
         # Add nothing
         if len(args) == 0:
             return
-        # Add empty dimensions
+        # Handle multiple dimensions
         if len(args) == 1 and isinstance(args[0], int):
-            return self.add_dim(args[0] * [{}])
-        # Invalid value handling
-        for arg in args:
-            if not isinstance(arg, dict):
-                raise ValueError("invalid args: {:s}".format(str(args)))
+            args = args[0] * [{}]
+        if not isinstance(args[0], dict):
+            for arg in args:
+                self.add_dim(arg)
+            return
+        # Handle single dimension
+        arg = args[0]
+        if not isinstance(arg, dict):
+            raise ValueError("invalid argument: {:s}".format(str(arg)))
         # Add dimensions
+        self.var_quantity.append(None)
         self.var_mode.append(None)
         self._points.append(None)
         self._offset.append(None)
@@ -338,9 +343,8 @@ class ArrayData(object):
         self._low.append(None)
         self._high.append(None)
         # Set dimensions
-        for i, arg in range(-len(args), 0):
-            self.set_var_quantity(i, **arg)
-            self.set_dim(i, **arg)
+        self.set_var_quantity(-1, **arg)
+        self.set_dim(-1, **arg)
 
     def rmv_dim(self, *dims, num=None):
         """
@@ -557,7 +561,7 @@ class ArrayData(object):
 
     @data.setter
     def data(self, val):
-        self._data = val
+        self._data = misc.assume_numpy_array(val)
         diff_ndim = self.ndim - self.var_ndim
         if diff_ndim > 0:
             self.add_dim(diff_ndim)
@@ -1052,16 +1056,21 @@ class SeriesData(object):
         # Add nothing
         if len(args) == 0:
             return
-        # Add empty dimensions
+        # Handle multiple dimensions
         if len(args) == 1 and isinstance(args[0], int):
-            return self.add_dim(args[0] * [{}])
-        # Invalid value handling
-        for arg in args:
-            if not isinstance(arg, dict):
-                raise ValueError("invalid args: {:s}".format(str(args)))
+            args = args[0] * [{}]
+        if not isinstance(args[0], dict):
+            for arg in args:
+                self.add_dim(arg)
+            return
+        # Handle single dimension
+        arg = args[0]
+        if not isinstance(arg, dict):
+            raise ValueError("invalid argument: {:s}".format(str(arg)))
+        # Add dimensions
+        self.quantity.append(None)
         # Set dimensions
-        for i, arg in range(-len(args), 0):
-            self.set_quantity(i, **arg)
+        self.set_quantity(-1, **arg)
 
     def rmv_dim(self, *dims, num=None):
         """
