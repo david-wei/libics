@@ -1,5 +1,8 @@
 import abc
 
+from libics.core.env import logging
+from libics.core.util.func import StoppableThread
+
 
 ###############################################################################
 
@@ -96,22 +99,34 @@ class STATUS:
 
 class DevBase(abc.ABC):
 
+    LOGGER = logging.get_logger("libics.driver.device.DevBase")
+
     def __init__(self):
-        pass
+        self.identifier = None
+        self.model = None
+        self.interface = None
+        self.properties = DevProperties()
+        self.properties.set_device(self)
+
+    @property
+    def i(self):
+        return self.interface
+
+    @property
+    def p(self):
+        return self.properties
 
     @abc.abstractmethod
     def setup(self):
         """
         Instantiates the device.
         """
-        pass
 
     @abc.abstractmethod
     def shutdown(self):
         """
         Destroys the device.
         """
-        pass
 
     @abc.abstractmethod
     def is_set_up(self):
@@ -124,14 +139,12 @@ class DevBase(abc.ABC):
         """
         Connects to the device.
         """
-        pass
 
     @abc.abstractmethod
     def close(self):
         """
         Closes connection to the device.
         """
-        pass
 
     @abc.abstractmethod
     def is_connected(self):
@@ -185,52 +198,6 @@ class DevBase(abc.ABC):
         if is_connected:
             self.connect()
 
-
-###############################################################################
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-
-
-
-
-
-
-
-
-
-class DrvBase(abc.ABC):
-
-    """
-    Driver base class.
-
-    Provides an API to communicate with the external interface. Communication
-    is serialized with a message queue that can be processed. Immediate
-    thread-safe communication is enabled by acquiring the `interface_access`
-    lock and calling the `read`/`write` methods directly.
-
-    The initialization functions (`setup`, `shutdown`, `connect`, `close`) have
-    to be implemented as well as the actual functional methods. Methods using
-    the message queue system have to implement I/O functions for each attribute
-    and should be named `_write_<attr_name>` and `_read_<attr_name>`. The
-    write function takes one value parameter and the read function returns a
-    corresponding value parameter. When implementing direct access methods,
-    guard the method with lock access.
-
-    Parameters
-    ----------
-    cfg : DrvBaseCfg
-        Driver configuration object.
-    """
-
-    def __init__(self, cfg=None):
-        self.cfg = cfg
-        self._interface = None
-        self.interface_access = threading.Lock()
-
     def __enter__(self):
         try:
             self.setup()
@@ -251,188 +218,217 @@ class DrvBase(abc.ABC):
         return self
 
     def __exit__(self, *args):
-        self.close()
-        self.shutdown()
-
-    def setup(self, cfg=None):
-        if cfg is not None:
-            self.cfg = cfg
-        self._interface = drv.itf.get_itf(self.cfg.interface)
-        self._interface.setup()
-
-    def shutdown(self):
-        self._interface.shutdown()
-
-    def connect(self):
-        self._interface.connect()
-
-    def close(self):
-        self._interface.close()
-
-    def write(self, msg):
-        func = getattr(self, "_write_" + msg.name)
-        self.interface_access.acquire()
-        try:
-            if msg.value is None:
-                func()
-            else:
-                func(msg.value)
-        except cfg.err.RUNTM_DRV as e:
-            print(e)
-        finally:
-            self.interface_access.release()
-
-    def read(self, msg):
-        func = getattr(self, "_read_" + msg.name)
-        self.interface_access.acquire()
-        ret = None
-        try:
-            ret = func()
-        except cfg.err.RUNTM_DRV as e:
-            print(e)
-        finally:
-            self.interface_access.release()
-        if ret is not None:
-            msg.callback(ret)
-
-    def process(self):
-        """
-        Processes the message queue in the configuration object.
-        """
-        msg = self.cfg._pop_msg()
-        while (msg is not None):
-            if (msg.msg_type == cfg.CFG_MSG_TYPE.WRITE or
-                    msg.msg_type == cfg.CFG_MSG_TYPE.VALIDATE):
-                self.write(msg)
-            if (msg.msg_type == cfg.CFG_MSG_TYPE.READ or
-                    msg.msg_type == cfg.CFG_MSG_TYPE.VALIDATE):
-                self.read(msg)
-            msg = self.cfg._pop_msg()
-
-    def write_all(self):
-        """
-        Writes all configuration items from interface.
-        Automatically processes the message queue.
-        """
-        self.cfg.write_all()
-        self.process()
-
-    def read_all(self):
-        """
-        Reads all configuration items from interface.
-        Automatically processes the message queue.
-        """
-        self.cfg.read_all()
-        self.process()
-
-    def get_drv(self, cfg=None):
-        if cfg is None:
-            cfg = self.cfg
-        return drv.get_drv(cfg)
+        if self.is_connected():
+            self.close()
+        if self.is_set_up():
+            self.shutdown()
 
 
 ###############################################################################
 
 
-class DRV_DRIVER:
-
-    CAM = 0         # Camera
-    PIEZO = 10      # Piezo controller
-    PICO = 11       # Pico motor controller
-    SPAN = 20       # Spectrum analyzer
-    OSC = 30        # Oscilloscope
-    DSP = 40        # Display
-    LASER = 50      # Laser
-
-
-class DRV_MODEL:
-
-    # Cam
-    ALLIEDVISION_MANTA_G145B_NIR = 101
-    VRMAGIC_VRMCX = 201
-
-    # Piezo
-    THORLABS_MDT69XA = 1101
-    THORLABS_MDT693A = THORLABS_MDT69XA
-    THORLABS_MDT694A = THORLABS_MDT69XA
-
-    # Pico
-    NEWPORT_8742 = 1201
-
-    # SpAn
-    STANFORD_SR760 = 2101
-    YOKAGAWA_AQ6315 = 2201
-    AGILENT_N9320X = 2301
-
-    # Osc
-    TEKTRONIX_TDS100X = 3101
-
-    # Dsp
-    TEXASINSTRUMENTS_DLP7000 = 4101
-
-    # Laser
-    IPG_YLR = 5101
-
-
-class DrvCfgBase():
+class DevProperties(object):
 
     """
-    DrvCfgBase.
+    Dynamical in-device properties.
 
-    Parameters
-    ----------
-    driver : DRV_DRIVER
-        Driver type.
-    interface : drv.itf.itf.ProtocolCfgBase
-        Connection interface configuration.
-    identifier : str
-        Unique identifier of device.
-    model : DRV_MODEL
-        Device model.
+    Provides a unified API to access device functions.
     """
 
-    def __init__(
-        self,
-        driver=DRV_DRIVER.CAM, interface=None, identifier="", model="",
-        cls_name="DrvCfgBase", **kwargs
-    ):
-        super().__init__(cls_name=cls_name)
-        self.driver = driver
-        self.identifier = identifier
-        self.model = model
-        self._kwargs = kwargs
-        if isinstance(interface, dict):
-            self.interface = (
-                drv.itf.itf.ProtocolCfgBase(**interface).get_hl_cfg()
-            )
+    READ = 0
+    WRITE = 1
+
+    def __init__(self):
+        self.dev = None
+        self.props = dict()
+        self.__thread = None
+
+    @property
+    def LOGGER(self):
+        return self.dev.LOGGER
+
+    def set_device(self, dev):
+        self.dev = dev
+
+    def set_properties(self, **props):
+        """
+        Updates properties.
+
+        Parameters
+        ----------
+        **props : `str->(callable, callable)`
+            Property name -> (read function, write function).
+            Read function call signature: `read()->object`.
+            Write function call signature: `write(object)`.
+            If `None` is given instead of a `callable`, no external device
+            communication is used and the locally saved value is used
+            (i.e. instead of read/write get/set is used).
+        """
+        for prop, funcs in props.items():
+            if funcs is None:
+                self.props[prop] = (
+                    lambda: getattr(self, prop),
+                    lambda val: setattr(self, prop, val)
+                )
+            elif len(funcs) == 2:
+                self.props[prop] = (
+                    funcs[0] if callable(funcs[0])
+                    else lambda: getattr(self, prop),
+                    funcs[1] if callable(funcs[0])
+                    else lambda val: setattr(self, prop, val)
+                )
+            else:
+                raise ValueError("invalid property function ({:s}->{:s})"
+                                 .format(prop, str(funcs)))
+
+    def rmv_properties(self, *props):
+        """
+        Removes properties.
+
+        Parameters
+        ----------
+        *props : `str`
+            Property name. If none are given, removes all.
+        """
+        if len(props) == 0:
+            self.LOGGER.info("removing all properties")
+            for prop in self.props:
+                delattr(self, prop)
+            self.props = dict()
         else:
-            self.interface = interface
+            for prop in props:
+                delattr(self, prop)
+                del self.props[prop]
 
-    def get_hl_cfg(self):
-        MAP = {
-            DRV_DRIVER.CAM: CamCfg,
-            DRV_DRIVER.PIEZO: PiezoCfg,
-            DRV_DRIVER.PICO: PicoCfg,
-            DRV_DRIVER.SPAN: SpAnCfg,
-            DRV_DRIVER.OSC: OscCfg,
-            DRV_DRIVER.DSP: DspCfg,
-            DRV_DRIVER.LASER: LaserCfg,
-        }
-        obj = MAP[self.driver.val](ll_obj=self, **self._kwargs)
-        return obj.get_hl_cfg()
+    def get(self, *props):
+        """
+        Gets locally saved property.
 
-    def write_all(self):
-        """
-        Set all configuration items by writing all values to interface.
-        """
-        for key, val in self.__dict__.items():
-            if isinstance(val, cfg.CfgItem):
-                val.write()
+        Parameters
+        ----------
+        *props : `str`
+            Property name.
 
-    def read_all(self):
+        Returns
+        -------
+        vals : `object` or `dict(str->object)`
+            Property value(s).
         """
-        Update all configuration items by reading all values from interface.
+        if len(props) == 1:
+            if props[0] in self.props:
+                return getattr(self, props[0])
+            else:
+                self.LOGGER.error("invalid property ({:s})".format(props[0]))
+                return None
+        else:
+            return [self.get(prop) for prop in props]
+
+    def set(self, **props):
         """
-        for key, val in self.__dict__.items():
-            if isinstance(val, cfg.CfgItem):
-                val.read()
+        Locally sets property. The value is NOT written to the device!
+
+        Parameters
+        ----------
+        **props : `str->object`
+            Property name -> value.
+        """
+        for prop, val in props.items():
+            if prop in self.props:
+                setattr(self, prop, val)
+            else:
+                self.LOGGER.error("invalid property ({:s})".format(prop))
+
+    def read(self, *props):
+        """
+        Reads property from device.
+
+        Parameters
+        ----------
+        *props : `str`
+            Property name.
+
+        Returns
+        -------
+        vals : `object` or `dict(str->object)`
+            Property value(s).
+        """
+        if len(props) == 1:
+            if props[0] in self.props:
+                val = self.props[props[0]][self.READ]()
+                setattr(self, props[0], val)
+                return val
+            else:
+                self.LOGGER.error("invalid property ({:s})".format(props[0]))
+                return None
+        else:
+            return [self.read(prop) for prop in props]
+
+    def write(self, **props):
+        """
+        Writes property to device.
+
+        Parameters
+        ----------
+        **props : `str->object`
+            Property name -> value.
+        """
+        for prop, val in props.items():
+            if prop in self.props:
+                if getattr(self, prop) != val:
+                    self.props[prop][self.WRITE](val)
+                    setattr(self, prop, val)
+            else:
+                self.LOGGER.error("invalid property ({:s})".format(prop))
+
+    def apply(self, **props):
+        """
+        Reads property from device.
+        If different, writes the given value to device.
+
+        Parameters
+        ----------
+        **props : `str->object`
+            Property name -> value.
+        """
+        for prop, val in props.items():
+            if prop in self.props:
+                ret_val = self.props[prop][self.READ]()
+                if ret_val != val:
+                    self.props[prop][self.WRITE](val)
+                    setattr(self, prop, val)
+            else:
+                self.LOGGER.error("invalid property ({:s})".format(prop))
+
+    def runp(self, func, *args, **kwargs):
+        """
+        Wrapper for a parallel thread running a worker function.
+
+        Can be used to asynchronously perform slow device I/O.
+
+        Parameters
+        ----------
+        func : `callable`
+            Worker function to be started in thread.
+        *args, **kwargs
+            (Keyword) arguments passed on to the worker function.
+
+        Raises
+        ------
+        RuntimeError
+            If a thread is already running.
+        """
+        if self.__thread is not None:
+            if self.__thread.is_alive():
+                raise RuntimeError("thread active")
+            else:
+                self.__thread = None
+        self.__thread = StoppableThread(target=func, args=args, kwargs=kwargs)
+        self.__thread.start()
+
+    def stopp(self):
+        """
+        Stops a previously run parallel thread.
+        """
+        if self.__thread is not None:
+            self.__thread.stop()
+        self.__thread = None

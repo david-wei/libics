@@ -26,6 +26,7 @@ class ItfBase(DevBase):
         if self.__class__.__name__ not in self.DEVICES:
             self.DEVICES[self.__class__.__name__] = set()
         self._lock = threading.Lock()
+        self.interface = self
 
     def configure(self, **cfg):
         """
@@ -46,8 +47,8 @@ class ItfBase(DevBase):
 
         Returns
         -------
-        devs : `list`
-            List of devices available on the interface.
+        devs : `list(str)`
+            List of device IDs available on the interface.
         """
 
     def lock(self):

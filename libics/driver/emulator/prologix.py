@@ -1,13 +1,13 @@
 import time
 
-from libics.driver.emulator import ItfEmulatorBase
+from libics.driver.emulator import ItfEmulator
 from libics.driver.terminal import gpib
 
 
 ###############################################################################
 
 
-class ItfEmulatorPrologixGpib(ItfEmulatorBase, gpib.ItfGpib):
+class PrologixGpib(ItfEmulator, gpib.ItfGpib):
 
     def __init__(self, cfg):
         super().__init__(cfg)

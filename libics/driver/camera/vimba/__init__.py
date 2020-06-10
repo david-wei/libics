@@ -819,3 +819,217 @@ class VimbaItf():
         data = self.get_buffer_byte_data(index=index)
         if callable(callback):
             callback(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class BinVimbaCfg():
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
+
+    Parameters
+    ----------
+    frame_count : int
+        Number of frames provided to the Vimba API.
+    frame_requeue : bool
+        Whether to automatically requeue frames to the Vimba API.
+    """
+
+    def __init__(self, frame_count=1, frame_requeue=True,
+                 cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VIMBA
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+        self.frame_count = frame_count
+        self.frame_requeue = frame_requeue
+
+    def get_hl_cfg(self):
+        return self
+
+
+class BinVRmagicCfg():
+
+    """
+    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
+    """
+
+    def __init__(self, cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
+        if "interface" not in kwargs.keys():
+            kwargs["interface"] = ITF_BIN.VRMAGIC
+        super().__init__(cls_name=cls_name, **kwargs)
+        if ll_obj is not None:
+            self.__dict__.update(ll_obj.__dict__)
+
+    def get_hl_cfg(self):
+        return self
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################
+
+
+class AlliedVisionMantaG145BNIR(CamDrvBase):
+
+    def __init__(self, cfg):
+        super().__init__(cfg)
+        self._callback = None
+
+    def run(self, callback=None):
+        self._callback = callback
+        callback = self._callback_delegate if callback is not None else None
+        self._interface.setup_frames(callback=callback)
+        self._interface.start_capture()
+        self._interface.start_acquisition()
+
+    def stop(self):
+        self._interface.end_acquisition()
+        self._interface.flush_capture_queue()
+        self._interface.end_capture()
+        self._interface.revoke_all_frames()
+
+    def grab(self):
+        _index = self._interface.next_index
+        if not self._interface.cfg.frame_requeue:
+            self._interface.queue_frame_capture(index=_index)
+        if self._interface.wait_frame_capture(index=_index) == 0:
+            return self._cv_buffer_to_numpy(
+                self._interface.grab_data(index=_index)
+            )
+
+    def get(self):
+        return self._cv_buffer_to_numpy(
+            self._interface.grab_data(index=self._interface.latest_index)
+        )
+
+    # ++++ Write/read methods +++++++++++
+
+    def _write_pixel_hrzt_count(self, value):
+        self._interface.cam.Width = value
+
+    def _read_pixel_hrzt_count(self):
+        return self._interface.cam.Width
+
+    def _read_pixel_hrzt_size(self):
+        return 6.45e-6
+
+    def _write_pixel_hrzt_offset(self, value):
+        self._interface.cam.OffsetX = value
+
+    def _read_pixel_hrzt_offset(self):
+        return self._interface.cam.OffsetX
+
+    def _write_pixel_vert_count(self, value):
+        self._interface.cam.Height = value
+
+    def _read_pixel_vert_count(self):
+        return self._interface.cam.Height
+
+    def _read_pixel_vert_size(self):
+        return 6.45e-6
+
+    def _write_pixel_vert_offset(self, value):
+        self._interface.cam.OffsetY = value
+
+    def _read_pixel_vert_offset(self):
+        return self._interface.cam.OffsetY
+
+    def _read_format_color(self):
+        return drv.DRV_CAM.FORMAT_COLOR.GS
+
+    def _write_channel_bitdepth(self, value):
+        MAP = {
+            8: "Mono8",
+            12: "Mono12"
+        }
+        self._interface.cam.PixelFormat = MAP[value]
+
+    def _read_channel_bitdepth(self):
+        MAP = {
+            "Mono8": 8,
+            "Mono12": 12,
+            "Mono12Packed": 12
+        }
+        return MAP[self._interface.cam.PixelFormat]
+
+    def _write_exposure_mode(self, value):
+        MAP = {
+            drv.DRV_CAM.EXPOSURE_MODE.MANUAL: "Off",
+            drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS: "Continuous",
+            drv.DRV_CAM.EXPOSURE_MODE.SINGLE: "Single"
+        }
+        self._interface.cam.ExposureAuto = MAP[value]
+
+    def _read_exposure_mode(self):
+        MAP = {
+            "Off": drv.DRV_CAM.EXPOSURE_MODE.MANUAL,
+            "Continuous": drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS,
+            "Single": drv.DRV_CAM.EXPOSURE_MODE.SINGLE
+        }
+        return MAP[self._interface.cam.ExposureAuto]
+
+    def _write_exposure_time(self, value):
+        self._interface.cam.ExposureTimeAbs = 1e6 * value
+
+    def _read_exposure_time(self):
+        return self._interface.cam.ExposureTimeAbs / 1e6
+
+    def _write_acquisition_frames(self, value):
+        if value == 0:
+            self._interface.cam.AcquisitionMode = "Continuous"
+        elif value == 1:
+            self._interface.cam.AcquisitionMode = "SingleFrame"
+        else:
+            self._interface.cam.AcquisitionMode = "MultiFrame"
+            self._interface.cam.AcquisitionFrameCount = value
+
+    def _read_acquisition_frames(self):
+        value = self._interface.cam.AcquisitionMode
+        MAP = {
+            "Continuous": 0,
+            "SingleFrame": 1,
+            "MultiFrame": self._interface.cam.AcquisitionFrameCount
+        }
+        return MAP[value]
+
+    def _write_sensitivity(self, value):
+        MAP = {
+            drv.DRV_CAM.SENSITIVITY.NORMAL: "Off",
+            drv.DRV_CAM.SENSITIVITY.NIR_FAST: "On_Fast",
+            drv.DRV_CAM.SENSITIVITY.NIR_HQ: "On_HighQuality",
+        }
+        self._interface.cam.NirMode = MAP[value]
+
+    def _read_sensitivity(self):
+        MAP = {
+            "Off": drv.DRV_CAM.SENSITIVITY.NORMAL,
+            "On_Fast": drv.DRV_CAM.SENSITIVITY.NIR_FAST,
+            "On_HighQuality": drv.DRV_CAM.SENSITIVITY.NIR_HQ
+        }
+        return MAP[self._interface.cam.NirMode]

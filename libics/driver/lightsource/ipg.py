@@ -1,0 +1,84 @@
+class IpgYLR(LaserDrvBase):
+
+    def __init__(self, cfg):
+        super().__init__(cfg)
+
+    def connect(self):
+        super().connect()
+
+    def run(self):
+        self.interface_access.acquire()
+        self._itf_send("EMON")
+        self._itf_recv_ack("EMON")
+        self.interface_access.release()
+
+    def stop(self):
+        self.interface_access.acquire()
+        self._itf_send("EMOFF")
+        self._itf_recv_ack("EMOFF")
+        self.interface_access.release()
+
+    def write_power(self, power):
+        raise NotImplementedError
+
+    def read_power(self):
+        self.interface_access.acquire()
+        self._interface.send("ROP")
+        recv = self._itf_recv_val("ROP")
+        try:
+            power = float(recv)
+        except ValueError:
+            power = recv
+        self.interface_access.release()
+        return power
+
+    def write_current(self, current):
+        self.interface_access.acquire()
+        self._write_current(current)
+        self.interface_access.release()
+
+    def read_current(self):
+        self.interface_access.acquire()
+        current = self._read_current()
+        self.interface_access.release()
+        return current
+
+    # ++++ Write/read methods +++++++++++
+
+    def _write_current(self, value):
+        self._interface.send("SDC {:f}".format(value))
+        if not np.close(value, float(self._itf_recv_val("SDC"))):
+            raise RuntimeError("writing current failed")
+
+    def _read_current(self):
+        self._interface.send("RCS")
+        return float(self._itf_recv_val("RCS"))
+
+    def _write_temperature(self, value):
+        raise NotImplementedError
+
+    def _read_temperature(self):
+        self._interface.send("RCT")
+        return float(self._itf_recv_val("RCT"))
+
+    # ++++ Helper methods +++++++++++++++
+
+    def _itf_send(self, msg):
+        self._interface.send(msg)
+
+    def _itf_recv(self):
+        return self._strip_recv(self._interface.recv())
+
+    def _itf_recv_ack(self, msg):
+        if msg != self._itf_recv():
+            raise RuntimeError("Command not acknowledged")
+
+    def _itf_recv_val(self, msg):
+        recv = self._itf_recv().split(":")
+        if len(recv) <= 1 or msg != self._strip_recv(recv[0]):
+            raise RuntimeError("Command not acknowledged")
+        return self._strip_recv(recv[-1])
+
+    @staticmethod
+    def _strip_recv(value):
+        return value.lstrip("\n\r*[ \x00").rstrip("\n\r] \x00")
