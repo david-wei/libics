@@ -1,6 +1,94 @@
 import abc
 
-from libics.driver import interface
+
+###############################################################################
+
+
+class STATUS:
+
+    """
+    Device status container class.
+
+    Parameters
+    ----------
+    state : `str`
+        State of device (`OK, ERROR, CRITICAL`).
+    err_type : `str`
+        Error type (`ERR_NONE, ERR_INSTANCE, ERR_CONNECTION, ERR_DEVICE`).
+    msg : `str`
+        Error message.
+    """
+
+    OK = "OK"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
+
+    ERR_NONE = "ERR_NONE"
+    ERR_INSTANCE = "ERR_INSTANCE"
+    ERR_CONNECTION = "ERR_CONNECTION"
+    ERR_DEVICE = "ERR_DEVICE"
+
+    def __init__(self, state="OK", err_type="ERR_NONE", msg=None):
+        self.state = None
+        self.err_type = None
+        self.msg = None
+        self.set_state(state)
+        self.set_err_type(err_type)
+        self.set_message(msg)
+
+    def is_ok(self):
+        return self.state == self.OK
+
+    def is_critical(self):
+        return self.state == self.CRITICAL
+
+    def has_err_type(self, *err_types):
+        return self.err_type in err_types
+
+    def get_state(self):
+        return self.state
+
+    def set_state(self, state):
+        if state in (self.OK, self.ERROR, self.CRITICAL):
+            self.state = state
+            if state == self.OK:
+                self.set_err_type(self.ERR_NONE)
+        else:
+            raise ValueError("invalid state ({:s})".format(str(state)))
+
+    def get_err_type(self):
+        return self.err_type
+
+    def set_err_type(self, err_type):
+        if self.is_ok():
+            if err_type != self.ERR_NONE:
+                raise ValueError("invalid err_type ({:s})".format(err_type))
+        else:
+            if err_type not in (
+                self.ERR_INSTANCE, self.ERR_CONNECTION, self.ERR_DEVICE
+            ):
+                raise ValueError("invalid err_type ({:s})".format(err_type))
+        self.err_type = err_type
+
+    def has_message(self):
+        return self.msg is not None
+
+    def get_message(self):
+        return "" if self.msg is None else self.msg
+
+    def set_message(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        s = self.get_state()
+        if not self.is_ok():
+            s += " ({:s})".format(self.get_err_type())
+        if self.has_message():
+            s += ": {:s}".format(self.get_message())
+        return s
+
+    def __repr__(self):
+        return "<device.STATUS> {:s}".format(str(self))
 
 
 ###############################################################################
@@ -26,32 +114,76 @@ class DevBase(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def is_set_up(self):
+        """
+        Checks whether device is instantiated.
+        """
+
+    @abc.abstractmethod
     def connect(self):
         """
-        Connects to an interface.
+        Connects to the device.
         """
         pass
 
     @abc.abstractmethod
     def close(self):
         """
-        Closes connection to the interface.
+        Closes connection to the device.
         """
         pass
+
+    @abc.abstractmethod
+    def is_connected(self):
+        """
+        Checks whether device is connected.
+        """
 
     @abc.abstractmethod
     def status(self):
         """
         Gets the status of the device.
-        """
-        pass
 
-    @abc.abstractmethod
-    def recover(self):
+        Returns
+        -------
+        status : `STATUS`
+            Device status information.
+
+        Notes
+        -----
+        Handle the status return by checking the state flags. If the state
+        is `CRITICAL`, stop communicating with the interface, delete all
+        references and restart the interface from scratch.
+        Check the message for verbose status description.
+        For more detailed error handling (to determine which interface parts
+        might need to be reset), check the error type.
+        """
+
+    def recover(self, status=None):
         """
         Recovers the device after an error.
+
+        Parameters
+        ----------
+        status : `driver.device.STATUS`
+            Status of interface. If not given, diagnoses `self` using
+            the :py:meth:`status` method.
         """
-        pass
+        if status is None:
+            status = self.status()
+        if status.is_ok():
+            return
+        is_set_up, is_connected = self.is_set_up(), self.is_connected()
+        if is_connected:
+            self.close()
+        if is_set_up and (
+            status.is_critical()
+            or status.has_err_type(STATUS.ERR_INSTANCE, STATUS.ERR_DEVICE)
+        ):
+            self.shutdown()
+            self.setup()
+        if is_connected:
+            self.connect()
 
 
 ###############################################################################

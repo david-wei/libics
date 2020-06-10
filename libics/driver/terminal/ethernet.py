@@ -3,7 +3,7 @@ import socket
 import time
 
 from libics.core.env import logging
-from libics.driver.interface import STATUS
+from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
 
 
@@ -86,18 +86,18 @@ class ItfEthernet(ItfTerminal):
         return []
 
     def status(self):
-        status = {STATUS.MSG: ""}
+        status = STATUS()
         if self.is_connected():
             try:
                 self._socket.setblocking(0)
                 self._socket.recv(self.buffer_size)
                 self._socket.setblocking(self.blocking)
-                status[STATUS.OK] = ""
+                status.set_state(STATUS.OK)
             except socket.timeout:
-                status[STATUS.ERROR] = ""
-                status[STATUS.ERR_CONNECTION] = ""
+                status.set_state(STATUS.ERROR)
+                status.set_err_type(STATUS.ERR_CONNECTION)
         else:
-            status[STATUS.OK] = ""
+            status.set_state(STATUS.OK)
         return status
 
     # ++++++++++++++++++++++++++++++++++++++++

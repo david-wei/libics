@@ -2,7 +2,7 @@ import usb.core
 import usb.util
 
 from libics.core.env import logging
-from libics.driver.interface import STATUS
+from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
 
 
@@ -95,8 +95,7 @@ class ItfUsb(ItfTerminal):
 
     def status(self):
         # TODO: add proper status diagnosis
-        status = {STATUS.MSG: ""}
-        status[STATUS.OK] = ""
+        status = STATUS()
         return status
 
     # ++++++++++++++++++++++++++++++++++++++++

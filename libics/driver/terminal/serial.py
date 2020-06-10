@@ -1,6 +1,6 @@
 import serial
 
-from libics.driver.interface import STATUS
+from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
 
 
@@ -100,16 +100,15 @@ class ItfSerial(ItfTerminal):
         return []
 
     def status(self):
-        status = {STATUS.MSG: ""}
+        status = STATUS()
         if self.is_setup():
             if self.is_connected():
-                status[STATUS.OK] = ""
+                status.set_state(STATUS.OK)
             else:
-                status[STATUS.ERROR] = ""
-                status[STATUS.ERR_CONNECTION] = ""
-                status[STATUS.ERR_INSTANCE] = ""
+                status.set_state(STATUS.ERROR)
+                status.set_err_type(STATUS.ERR_INSTANCE)
         else:
-            status[STATUS.OK] = ""
+            status.set_state(STATUS.OK)
         return status
 
     # ++++++++++++++++++++++++++++++++++++++++
