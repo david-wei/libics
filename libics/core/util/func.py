@@ -62,7 +62,11 @@ class StoppableThread(threading.Thread):
 
     Parameters
     ----------
-    stop_action : callable or None
+    target : `callable`
+        Callable object to be invoked by the :py:meth:`run` method.
+    args, kwargs
+        (Keyword) arguments for the target invocation.
+    stop_action : `callable` or `None`
         Function that is called upon `stop` method call.
         `None` is interpreted as a `pass` function.
 
@@ -71,8 +75,8 @@ class StoppableThread(threading.Thread):
     This thread cannot be restarted.
     """
 
-    def __init__(self, stop_action=None):
-        super().__init__()
+    def __init__(self, target=None, args=(), kwargs={}, stop_action=None):
+        super().__init__(*args, **kwargs)
         self.stop_event = threading.Event()
         self.stop_action = stop_action
 
@@ -96,13 +100,13 @@ class PeriodicTimer():
 
     Parameters
     ----------
-    period : float
+    period : `float`
         Timeout period in seconds.
-    worker_func : callable
+    worker_func : `callable`
         Function that is periodically called.
         Call signature: `worker_func(*args, **kwargs)` with
         `*args, **kwargs` static arguments.
-    repetitions : int or None
+    repetitions : `int` or `None`
         Number of timeouts after the thread returns.
         `None` allows for infinite repetitions.
 
