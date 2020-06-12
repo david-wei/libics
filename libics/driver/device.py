@@ -99,14 +99,43 @@ class STATUS:
 
 class DevBase(abc.ABC):
 
+    """
+    Configurations
+    --------------
+    identifier : `str`
+        Interface-unique identifier string.
+    model : `str`
+        Device model.
+    interface : `interface.ItfBase`
+        Interface used to communicate with device.
+
+    Notes
+    -----
+    When subclassing `DevBase`, make sure to use :py:attr:`properties` to
+    :py:meth:`DevProperties.set_properties`.
+    """
+
     LOGGER = logging.get_logger("libics.driver.device.DevBase")
 
     def __init__(self):
+        self.last_status = STATUS(state=STATUS.OK)
         self.identifier = None
         self.model = None
         self.interface = None
         self.properties = DevProperties()
         self.properties.set_device(self)
+
+    def configure(self, **cfg):
+        """
+        Configures the device.
+
+        Parameters
+        ----------
+        **cfg
+            Keyword arguments setting local object attributes.
+        """
+        for k, v in cfg.items():
+            setattr(self, k, v)
 
     @property
     def i(self):
@@ -115,6 +144,10 @@ class DevBase(abc.ABC):
     @property
     def p(self):
         return self.properties
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
     def setup(self):
@@ -152,7 +185,6 @@ class DevBase(abc.ABC):
         Checks whether device is connected.
         """
 
-    @abc.abstractmethod
     def status(self):
         """
         Gets the status of the device.
@@ -171,6 +203,7 @@ class DevBase(abc.ABC):
         For more detailed error handling (to determine which interface parts
         might need to be reset), check the error type.
         """
+        return self.last_status
 
     def recover(self, status=None):
         """
@@ -345,7 +378,7 @@ class DevProperties(object):
         Parameters
         ----------
         *props : `str`
-            Property name.
+            Property name. If no argument is given, reads all properties.
 
         Returns
         -------
@@ -360,8 +393,13 @@ class DevProperties(object):
             else:
                 self.LOGGER.error("invalid property ({:s})".format(props[0]))
                 return None
+        elif len(props) == 0:
+            return [self.read(prop) for prop in self.props]
         else:
             return [self.read(prop) for prop in props]
+
+    def read_all(self):
+        return self.read()
 
     def write(self, **props):
         """

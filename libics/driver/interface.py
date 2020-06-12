@@ -24,21 +24,39 @@ class ItfBase(DevBase):
 
     def __init__(self):
         if self.__class__.__name__ not in self.DEVICES:
-            self.DEVICES[self.__class__.__name__] = set()
+            self.DEVICES[self.__class__.__name__] = dict()
         self._lock = threading.Lock()
         self.interface = self
 
-    def configure(self, **cfg):
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def connect(self, id):
         """
-        Configures the interface.
+        Connects to the device.
 
         Parameters
         ----------
-        **cfg
-            Keyword arguments setting interface properties.
+        id : `str`
+            Interface-unique device ID to connect to.
         """
-        for k, v in cfg.items():
-            setattr(self, k, v)
+
+    @abc.abstractmethod
+    def close(self):
+        """
+        Closes connection to the device.
+
+        Parameters
+        ----------
+        id : `str`
+            Interface-unique device ID to disconnect from.
+        """
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Interface methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
     def discover(self):
@@ -63,17 +81,36 @@ class ItfBase(DevBase):
         """
         self._lock.release()
 
-    def register(self, dev):
+    def register(self, id, dev):
         """
         Registers a device using the interface.
-        """
-        self.DEVICES[self.__class__.__name__].add(dev)
 
-    def deregister(self, dev):
+        Parameters
+        ----------
+        id : `str`
+            Device ID to be registered.
+        dev : `object`
+            Associated device object to be registered.
         """
-        De-registers a device from the interface.
+        self.DEVICES[self.__class__.__name__][id] = dev
+
+    def deregister(self, id=None, dev=None):
         """
-        self.DEVICES[self.__class__.__name__].remove(dev)
+        De-registers a device from the interface either by ID or object.
+
+        Parameters
+        ----------
+        id : `str`
+            Device ID to be deregistered. Takes precedence over `dev`.
+        dev : `object`
+            Associated device object to be deregistered.
+        """
+        if id is None:
+            for k, v in self.DEVICES[self.__class__.__name__].items():
+                if dev == v:
+                    id = k
+                    break
+        del self.DEVICES[self.__class__.__name__][dev]
 
     def devices(self):
         """
