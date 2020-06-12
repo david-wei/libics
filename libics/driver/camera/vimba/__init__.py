@@ -1,1006 +1,361 @@
-import re
-import six
+import queue
 import time
 
-import numpy as np
+from libics.core.env import logging
+from libics.driver.device import STATUS
+from libics.driver.interface import ItfBase
+from libics.driver.camera import Camera
+from libics.driver.camera import EXPOSURE_MODE, FORMAT_COLOR, SENSITIVITY
+
+LOGGER = logging.get_logger("libics.driver.camera.vimba")
 
 try:
     import pymba
 except ImportError:
-    print("""\
-    Could not load AlliedVision Vimba API.
-        If you are using a Vimba camera, install the Vimba C API and the
-        Python wrapper `pymba`.
-    """)
+    LOGGER.info(
+        "Could not load AlliedVision Vimba API. "
+        + "If you are using a Vimba camera, install the Vimba C API and "
+        + "the Python wrapper `pymba`."
+    )
 
 
 ###############################################################################
-# Initialization
+# Interface
 ###############################################################################
 
 
-# Global variable for Vimba API object
-_Vimba = None
-_VimbaSystem = None
-_VimbaReferenceCount = 0        # Logs how many active objects depend on Vimba
-TIMEOUT_DISCOVERY_GIGE = 0.2
-
-
-def startup():
-    """
-    Initializes the Vimba C API.
-
-    The Vimba API requires a startup and a shutdown call. This function checks
-    whether startup has already been called.
-
-    Returns
-    -------
-    _Vimba : pymba.vimba.Vimba
-        Vimba API object.
-    """
-    global _Vimba, _VimbaSystem, _VimbaReferenceCount
-    _VimbaReferenceCount += 1
-    if _Vimba is None:
-        _Vimba = pymba.vimba.Vimba()
-        _Vimba.startup()
-        _VimbaSystem = _Vimba.getSystem()
-    return _Vimba
-
-
-def shutdown():
-    """
-    Closes the Vimba C API.
-
-    If using the Vimba API, this function must be called upon system return.
-
-    Returns
-    -------
-    success : bool
-        `True`: Vimba API was successfully closed.
-        `False`: Vimba API was closed already.
-    """
-    global _Vimba, _VimbaSystem, _VimbaReferenceCount
-    success = False
-    _VimbaReferenceCount -= 1
-    if _VimbaReferenceCount <= 0:
-        if _Vimba is not None:
-            _Vimba.shutdown()
-            _Vimba = None
-            _VimbaSystem = None
-        success = True
-    return success
-
-
-def getVimba():
-    """
-    Gets the Vimba API object.
-
-    Returns
-    -------
-    _Vimba : pymba.vimba.Vimba
-        Vimba API object.
-    """
-    global _Vimba
-    return _Vimba
-
-
-###############################################################################
-# Cameras
-###############################################################################
-
-
-class VimbaCamera(object):
-
-    """
-    Pure pythonic wrapper class for `pymba.vimbaCamera.VimbaCamera` with
-    reduced functionality.
-
-    Parameters
-    ----------
-    vimba_camera : pymba.vimba_camera.VimbaCamera
-        The actual Vimba camera object.
-
-    Raises
-    ------
-    TypeError
-        If parameters are invalid.
-    """
-
-    def __init__(self, vimba_camera):
-        if type(vimba_camera) != pymba.vimba_camera.VimbaCamera:
-            raise TypeError("invalid vimba_camera object")
-        self._camera = vimba_camera
-        self._is_open = False
-        self._is_capturing = False
-        self._is_acquiring = False
-        self._frame_buffer = []
-        self._frame_buffer_counter = 0
-        self._frame_callback = None
-        self._px_dtype = None
-        self._px_rgb_size = 0
-
-    def get_id(self):
-        """
-        Gets the camera ID string.
-
-        Returns
-        -------
-        cam_id : str
-            Camera ID string.
-        """
-        return self._camera.cameraIdString
-
-    def get_info(self):
-        """
-        Gets the camera information.
-
-        Returns
-        -------
-        info : tuple(str, str, str, str, int, str)
-            (`cameraIdString`, `cameraName`, `modelName`,
-            `serialString`, `permittedAccess`, `interfaceIdString`)
-        """
-        info = self._camera.getInfo()
-        if six.PY3:
-            info = (
-                info.cameraIdString.decode("ascii"),
-                info.cameraName.decode("ascii"),
-                info.modelName.decode("ascii"),
-                info.serialString.decode("ascii"),
-                info.permittedAccess,
-                info.interfaceIdString.decode("ascii")
-            )
-        else:
-            info = (
-                info.cameraIdString,
-                info.cameraName,
-                info.modelName,
-                info.serialString,
-                info.permittedAccess,
-                info.interfaceIdString
-            )
-        return info
-
-    @classmethod
-    def _access_mode(cls, mode_str):
-        if mode_str is None or mode_str == "none":
-            return 0
-        elif mode_str == "full":
-            return 1
-        elif mode_str == "read":
-            return 2
-        elif mode_str == "config":
-            return 3
-        elif mode_str == "lite":
-            return 4
-        else:
-            raise TypeError("invalid camera access mode")
-
-    def _set_px_format(self, px_format):
-        """
-        Sets the internal pixel format variables needed for numpy array
-        representation of images.
-
-        Parameters
-        ----------
-        px_format : str
-            "Mono8", "Mono12", "Mono12Packed"
-
-        Returns
-        -------
-        px_dtype_size : int
-            Bit size of subpixel data type (e.g. 8 for `uint8`).
-        px_rgb_size : int
-            Number of subpixels (e.g. 1 for monochromatic).
-        """
-        if px_format == "Mono8":
-            self._px_dtype = "uint8"
-            self._px_rgb_size = 1
-        elif px_format == "Mono12":
-            self._px_dtype = "uint16"
-            self._px_rgb_size = 1
-        elif px_format == "Mono12Packed":
-            # FIXME: handling packed 12bit data
-            pass
-        return self._px_dtype, self._px_rgb_size
-
-    def open_cam(self, mode="full"):
-        """
-        Initializes the camera, `close` the camera after use.
-
-        Parameters
-        ----------
-        mode : str
-            "none", "full", "read", "config", "lite".
-
-        Raises
-        ------
-        TypeError
-            If parameters are invalid.
-        """
-        self._camera.openCamera(
-            cameraAccessMode=VimbaCamera._access_mode(mode)
-        )
-        self._is_open = True
-
-    def close_cam(self):
-        """
-        Closes the camera.
-        """
-        self._camera.closeCamera()
-        self._is_open = False
-
-    # ++++ Configuration +++++++++++++++++++++
-
-    def set_acquisition(self, mode=None, multi_count=None):
-        """
-        Sets the acquisition mode, i.e. how many frames are recorded.
-
-        Parameters
-        ----------
-        mode : str, optional
-            "Continuous", "SingleFrame", "MultiFrame".
-        multi_count : positive int
-            Number of frames to be acquired in multiframe mode.
-            Has no effect in the other modes.
-
-        Raises
-        ------
-        TypeError
-            If parameters are invalid.
-        """
-        if (mode is not None and (mode == "Continuous" or mode == "SingleFrame"
-                                  or mode == "MultiFrame")):
-            self._camera.AcquisitionMode = mode
-        if multi_count is not None and multi_count > 0:
-            self._camera.AcquisitionFrameCount = multi_count
-
-    def get_acquisition(self):
-        """
-        Gets the acquisition properties.
-
-        Returns
-        -------
-        mode : str
-            Acquisition mode.
-        multi_count : int
-            Multi-frame mode frame count.
-        """
-        return self._camera.AcquisitionMode, self._camera.AcquisitionFrameCount
-
-    def get_max_size(self):
-        """
-        Gets the maximum image size.
-
-        Returns
-        -------
-        px_max_x, px_max_y : int
-            Maximal pixel count in x and y direction.
-        """
-        return self._camera.WidthMax, self._camera.HeightMax
-
-    def set_format(self, width=None, height=None,
-                   width_offset=None, height_offset=None,
-                   px_format=None):
-        """
-        Sets the current image pixel size.
-
-        Parameters
-        ----------
-        width, height, width_offset, height_offset : int or None
-            Pixel counts. `None` does not set the variable.
-            `width` and `height` may be `"max"` with which the
-            camera's maximum image size is used and offsets are
-            set to zero.
-        px_format : str or None
-            "Mono8", "Mono12", "Mono12Packed"
-        """
-        max_x, max_y = self.get_max_size()
-        if width == "max":
-            width = max_x
-            width_offset = 0
-        if height == "max":
-            height = max_y
-            height_offset = 0
-        if width is not None and width <= max_x:
-            self._camera.Width = width
-        if height is not None and height < max_y:
-            self._camera.Height = height
-        width, height, _, __, ___ = self.get_format()
-        if width_offset is not None:
-            width_offset = max(min(max_x - width, width_offset), 0)
-            self._camera.OffsetX = width_offset
-        if height_offset is not None:
-            height_offset = max(min(max_y - height, height_offset), 0)
-            self._camera.OffsetY = height_offset
-        if (px_format is not None and
-                (px_format == "Mono8" or px_format == "Mono12"
-                 or px_format == "Mono12Packed")):
-            self._camera.PixelFormat = px_format
-
-    def get_format(self):
-        """
-        Gets the current image format.
-
-        Returns
-        -------
-        width, height, width_offset, height_offset : int
-            Pixel counts.
-        px_format : str
-            "Mono8", "Mono12", "Mono12Packed"
-        """
-        return (
-            self._camera.Width, self._camera.Height,
-            self._camera.OffsetX, self._camera.OffsetY,
-            self._camera.PixelFormat
-        )
-
-    def set_exposure(self, auto=None, time=None, nir_mode=None):
-        """
-        Sets auto-exposure, manual exposure time and NIR exposure mode.
-
-        The `None` parameter does not set the value.
-
-        Parameters
-        ----------
-        auto : str or None
-            "Off", "Single", "Continuous"
-        time : int or None
-            Exposure time in µs.
-        nir_mode : str or None
-            "Off", "On_HighQuality", "On_Fast"
-        """
-        if auto is not None and (auto == "Off" or auto == "Single"
-                                 or auto == "Continuous"):
-            self._camera.ExposureAuto = auto
-        if time is not None and time > 0:
-            self._camera.ExposureTimeAbs = time
-        if nir_mode is not None and (nir_mode == "Off" or nir_mode == "On_Fast"
-                                     or nir_mode == "On_HighQuality"):
-            self._camera.NirMode = nir_mode
-
-    def get_exposure(self):
-        """
-        Gets auto-exposure settings and manual exposure time in µs.
-        """
-        return (self._camera.ExposureAuto, self._camera.ExposureTimeAbs,
-                self._camera.NirMode)
-
-    # ++++ Image Capturing +++++++++++++++++++
-
-    def set_frame_buffers(self, count=1):
-        """
-        Sets up frame buffers, into which the Vimba API may load received
-        images. Automatically announces and revokes frames.
-
-        Parameters
-        ----------
-        count : positive int
-            Number of buffered frames.
-
-        Raises
-        ------
-        ValueError
-            If `count` value is invalid.
-        """
-        if count < 1:
-            raise ValueError("invalid frame buffer count")
-        rel_buffer_size = count - len(self._frame_buffer)
-        # Drop frame buffers
-        if rel_buffer_size < 0:
-            for _ in range(-rel_buffer_size):
-                self._frame_buffer[-1].revokeFrame()
-                self._frame_buffer.pop()
-        # Add frame buffers
-        elif rel_buffer_size > 0:
-            for _ in range(rel_buffer_size):
-                self._frame_buffer.append(self._camera.getFrame())
-                self._frame_buffer[-1].announceFrame()
-
-    def start_capture(self, frame_callback=None):
-        """
-        Starts capture. On frame ready the `frame_callback` function
-        is called.
-        """
-        if callable(frame_callback):
-            self._frame_callback = frame_callback
-        else:
-            self._frame_callback = None
-        self._camera.startCapture()
-        self._frame_buffer_counter = 0
-        for frame in self._frame_buffer:
-            frame.queueFrameCapture(frameCallback=self.get_image_callback)
-        self._set_px_format(self._camera.PixelFormat)
-        self._is_capturing = True
-
-    def end_capture(self):
-        self._camera.endCapture()
-        self._camera.revokeAllFrames()
-        self._frame_buffer = []
-        self._is_capturing = False
-
-    def start_acquisition(self):
-        self._camera.runFeatureCommand("AcquisitionStart")
-        self._is_acquiring = True
-
-    def end_acquisition(self):
-        self._camera.runFeatureCommand("AcquisitionStop")
-        self._is_acquiring = False
-
-    def get_image(self, index=None):
-        """
-        Gets an image stored in the frame buffer.
-
-        Parameters
-        ----------
-        index : int or None
-            Index of frame buffer list. `None` uses the frame which
-            is subsequent to the internal frame buffer index.
-
-        Returns
-        -------
-        image : numpy.ndarray or None
-            Image with shape (height, width, rgb_size) and data type
-            as defined by `PixelFormat`.
-            `None` if no frame was captured.
-
-        Notes
-        -----
-        Due to the internal frame buffer counter, subsequent images can be
-        obtained by repeatedly calling `get_image()`.
-        """
-        # Choose frame buffer to be read
-        if index is None:
-            index = self._frame_buffer_counter + 1
-        index = index % len(self._frame_buffer)
-        frame = self._frame_buffer[index]
-        # Wait for Vimba API response
-        if frame.waitFrameCapture() == 0:
-            # Load into numpy array
-            image = np.ndarray(
-                buffer=frame.getBufferByteData(),
-                dtype=self._px_dtype,
-                shape=(frame.height, frame.width, self._px_rgb_size)
-            )
-            self._frame_buffer_counter = index
-            # Queue frame buffer to allow loading of next image
-            frame.queueFrameCapture()
-            return image
-        else:
-            return None
-
-    def get_image_callback(self, frame):
-        image = np.ndarray(
-            buffer=frame.getBufferByteData(),
-            dtype=self._px_dtype,
-            shape=(frame.height, frame.width, self._px_rgb_size)
-        )
-        frame.queueFrameCapture(frameCallback=self.get_image_callback)
-        self._frame_callback(image)
-
-
-###############################################################################
-
-
-def get_vimba_cameras(regex_id_filter=None):
-    """
-    Gets all discovered Vimba cameras.
-
-    Parameters
-    ----------
-    regex_id_filter : str (regex) or None, optional
-        `str`: Gets camera only if its ID matches the given regular expression.
-        `None`: Gets all discovered cameras.
-
-    Returns
-    -------
-    cameras : list(Camera)
-        Discovered (and filtered) cameras. Note that these
-        cameras are unopened.
-    """
-    global _Vimba, _VimbaSystem
-    # Issue command to discover all GigE cameras
-    if _VimbaSystem.GeVTLIsPresent:
-        _VimbaSystem.runFeatureCommand("GeVDiscoveryAllOnce")
-        time.sleep(TIMEOUT_DISCOVERY_GIGE)
-    # Get all cameras
-    camera_ids = _Vimba.getCameraIds()
-    cameras = []
-    if regex_id_filter is None:
-        cameras = [VimbaCamera(_Vimba.getCamera(cam_id))
-                   for cam_id in camera_ids]
-    else:
-        for cam_id in camera_ids:
-            if re.match(regex_id_filter, cam_id) is not None:
-                cameras.append(VimbaCamera(_Vimba.getCamera(cam_id)))
-    return cameras
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class VimbaItf():
-
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self._camera = None
-        self._frames = {}
-        self._requeue = {}
-        self._callback = {}
-        self.__index_counter = -1
-        self.__latest_index = -1
-        self.__queue_order = collections.deque([-1], maxlen=1)
-        self.__frame_buffer = {}
+class ItfVimba(ItfBase):
+
+    # Vimba API hooks
+    _vimba_itf = None
+    _vimba_system = None
+    # Referemces to Vimba API
+    _vimba_itf_refs = 0
+    # Vimba device references
+    _vimba_dev_refs = {}
+    # Vimba device handles
+    _vimba_dev_handles = {}
+
+    def __init__(self):
+        super().__init__()
+        self._is_set_up = False
+        self._dev_id = None
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def setup(self):
-        vimba.startup()
-        if self.cfg.device is None:
-            cams = vimba.get_vimba_cameras()
-            if len(cams) == 0:
-                raise NameError("No Vimba camera found")
-            elif len(cams) > 1:
-                print("Warning: multiple Vimba cameras found")
-            self._camera = cams[0]._camera
-        else:
-            self._camera = vimba.getVimba().getCamera(self.cfg.device)
+        if self.is_set_up():
+            return
+        if self._vimba_itf_refs == 0:
+            self._vimba_itf = pymba.vimba.Vimba()
+            self._vimba_itf.startup()
+            self._vimba_system = self._vimba_itf.getSystem()
+        self._vimba_itf_refs += 1
 
     def shutdown(self):
-        vimba.shutdown()
+        if self.is_set_up():
+            self._vimba_itf_refs -= 1
+            if self._vimba_itf_refs == 0:
+                self._vimba_itf.shutdown()
+                self._vimba_itf = None
+                self._vimba_system = None
 
-    def connect(self):
-        self._camera.openCamera()
+    def is_set_up(self):
+        return self._is_set_up
+
+    def connect(self, id):
+        """
+        Raises
+        ------
+        RuntimeError
+            If `id` is not available.
+        """
+        # Check if requested device ID is discovered
+        if id not in self._vimba_dev_keys:
+            self.discover()
+            if id not in self._vimba_dev_keys:
+                raise RuntimeError("device ID unavailable ({:s})".format(id))
+        # Set device ID of this interface instance
+        self._dev_id = id
+        # Check if another interface instance has already opened
+        if not self.is_connected():
+            dev_handle = self._vimba_itf.getCamera(self._dev_id)
+            self._vimba_dev_handles[self._dev_id] = dev_handle
+        self._vimba_dev_refs[self._dev_id] += 1
 
     def close(self):
-        self._camera.closeCamera()
+        self._vimba_dev_refs[self._dev_id] -= 1
+        if self._vimba_dev_refs[self._dev_id] == 0:
+            del self._vimba_dev_handles[self._dev_id]
 
-    @property
-    def latest_index(self):
+    def is_connected(self):
         """
-        Gets the last updated index.
+        Raises
+        ------
+        RuntimeError
+            If internal device reference error occured.
         """
-        return self.__latest_index
-
-    @property
-    def next_index(self):
-        """
-        Gets the frame index next to be filled.
-        """
+        if self._dev_id is None:
+            return False
         try:
-            return self.__queue_order[0]
-        except IndexError:
-            return self.__index_counter
-
-    @property
-    def cam(self):
-        """
-        Convenience access to pymba camera object.
-        """
-        return self._camera
-
-    def setup_frames(self, callback=None):
-        """
-        Adds and announces frames according to the configuration object.
-
-        Parameters
-        ----------
-        callback : callable or None
-            Function that is called when the frame is ready.
-            Must take the raw image data (buffer protocol) as
-            parameter.
-            If `callable` is not callable, no callback function
-            will be called.
-        """
-        for _ in range(self.cfg.frame_count):
-            self.add_frame(requeue=self.cfg.frame_requeue, callback=callback)
-        self.announce_frame()
-
-    # ++++ Wrapper methods ++++++++++++++
-
-    def add_frame(self, requeue=True, callback=None):
-        """
-        Creates a new Vimba API frame.
-
-        Parameters
-        ----------
-        requeue : bool
-            Whether to automatically requeue the frame after its data
-            has been retrieved.
-        callback : callable or None
-            Function that is called when the frame is ready.
-            Must take the raw image data (buffer protocol) as
-            parameter.
-            If `callable` is not callable, no callback function
-            will be called.
-        """
-        self.__index_counter += 1
-        self.__queue_order = collections.deque(maxlen=len(self._frames))
-        self._frames[self.__index_counter] = self._camera.getFrame()
-        self._requeue[self.__index_counter] = requeue
-        self._callback[self.__index_counter] = lambda frame: (
-            self._on_frame_ready(self.__index_counter, callback, frame)
-        )
-
-    def revoke_all_frames(self):
-        """
-        Revokes all frames from the Vimba API.
-        """
-        self._camera.revokeAllFrames()
-        self._frames = {}
-        self._requeue = {}
-        self._callback = {}
-        self.__queue_order = collections.deque([-1], maxlen=1)
-
-    def start_capture(self):
-        """
-        Prepares the Vimba API for incoming frames.
-        """
-        self._camera.startCapture()
-        for key, val in self._requeue.items():
-            if val:
-                self.queue_frame_capture(index=key)
-
-    def end_capture(self):
-        """
-        Stops the Vimba API from being able to receive frames.
-        """
-        self._camera.endCapture()
-
-    def start_acquisition(self):
-        """
-        Starts frame acquisition.
-        """
-        self._camera.runFeatureCommand("AcquisitionStart")
-
-    def end_acquisition(self):
-        """
-        Ends frame acquisition.
-        """
-        self._camera.runFeatureCommand("AcquisitionStop")
-
-    def flush_capture_queue(self):
-        """
-        Flushes the capture queue.
-        """
-        self._camera.flushCaptureQueue()
-
-    def announce_frame(self, index=None):
-        """
-        Announces a frame to the Vimba API that may be queued for frame
-        capturing later.
-
-        Vimba C API: Runs VmbFrameAnnounce.
-        """
-        err = None
-        if index is None:
-            err = self._do_for_all_frames(self.announce_frame)
-        else:
-            err = self._frames[index].announceFrame()
-        return err
-
-    def revoke_frame(self, index=None):
-        """
-        Revokes a frame from the Vimba API.
-        """
-        err = None
-        if index is None:
-            err = self._do_for_all_frames(self.revoke_frame)
-        else:
-            err = self._frames[index].revokeFrame()
-            del self._frames[index]
-            del self._requeue[index]
-            del self._callback[index]
-            _queue = np.array(self.__queue_order)
-            _queue = _queue[_queue != index]
-            self.__queue_order = collections.deque(
-                _queue, maxlen=len(self._frames)
+            # If not discovered
+            if self._dev_id not in self._vimba_dev_refs:
+                assert(self._dev_id not in self._vimba_dev_handles)
+                return False
+            # If discovered but not connected
+            elif self._vimba_dev_refs[self._dev_id] == 0:
+                assert(self._dev_id not in self._vimba_dev_handles)
+                return False
+            # If discovered and connected
+            elif self._vimba_dev_refs[self._dev_id] > 0:
+                assert(self._dev_id in self._vimba_dev_handles)
+                return True
+            # Handle error
+            else:
+                assert(False)
+        except AssertionError:
+            err_msg = "device reference count error"
+            self.last_status = STATUS(
+                state=STATUS.CRITICAL, err_type=STATUS.ERR_INSTANCE,
+                msg=err_msg
             )
-        return err
+            raise RuntimeError(err_msg)
 
-    def queue_frame_capture(self, index=None):
-        """
-        Queues a frame that may be filled during frame capturing.
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Interface methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-        Vimba C API: Runs VmbCaptureFrameQueue.
-        """
-        err = None
-        if index is None:
-            err = self._do_for_all_frames(self.queue_frame_capture)
-        else:
-            err = self._frames[index].queueFrameCapture(
-                frameCallback=self._callback[index]
-            )
-            self.__queue_order.append(index)
-        return err
-
-    def wait_frame_capture(self, index=None, timeout=2.0):
-        """
-        Waits for a queued frame to be filled (or dequeued).
-
-        Vimba C API: Runs VmbCaptureFrameWait.
-
-        Parameters
-        ----------
-        timeout : float
-            Waiting timeout in seconds (s).
-        """
-        err = None
-        if index is None:
-            err = self._do_for_all_frames(
-                self.wait_frame_capture, timeout=timeout
-            )
-        else:
-            err = self._frames[index].waitFrameCapture(
-                timeout=int(1000 * timeout)
-            )
-        return err
-
-    def get_buffer_byte_data(self, index=None):
-        """
-        Calls the Vimba API to obtain the data of a frame.
-
-        Returns
-        -------
-        data : PyObject (Py_buffer)
-            Raw image data.
-        """
-        data = None
-        if index is None:
-            data = self._do_for_all_frames(self.get_buffer_byte_data)
-        else:
-            data = self._frames[index].getBufferByteData()
-            self.__frame_buffer[index] = data
-            self.__latest_index = index
-            if self._requeue[index]:
-                self.queue_frame_capture(index=index)
-        return data
-
-    def grab_data(self, index=None):
-        """
-        Gets the most recently loaded frame buffer data.
-
-        Returns
-        -------
-        data : PyObject (Py_buffer)
-            Raw image data.
-        """
-        if index is None:
-            return self._do_for_all_frames(self.grab_data)
-        else:
-            return self.__frame_buffer[index]
-
-    # ++++ Helper methods +++++++++++++++
-
-    def _do_for_all_frames(self, func, *args, **kwargs):
-        """
-        Applies a given function to all frames.
-
-        Parameters
-        ----------
-        func : callable
-            Function to be called.
-            Must contain keyword argument `index`.
-        *args, **kwargs
-            Parameters to be passed to `func`.
-        """
-        ret = {}
-        for key in self._frames.keys():
-            ret[key] = func(*args, index=key, **kwargs)
-        return ret
-
-    def _on_frame_ready(self, index, callback, frame):
-        """
-        Callback function when the Vimba API has a frame ready.
-
-        Parameters
-        ----------
-        index : int
-            Internal index of frame.
-        callback : callable or None
-            Callback function. Only called if callable.
-        frame : pymba.vimbaframe.VimbaFrame
-            Pymba-wrapped Vimba API frame.
-        """
-        data = self.get_buffer_byte_data(index=index)
-        if callable(callback):
-            callback(data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class BinVimbaCfg():
-
-    """
-    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
-
-    Parameters
-    ----------
-    frame_count : int
-        Number of frames provided to the Vimba API.
-    frame_requeue : bool
-        Whether to automatically requeue frames to the Vimba API.
-    """
-
-    def __init__(self, frame_count=1, frame_requeue=True,
-                 cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
-        if "interface" not in kwargs.keys():
-            kwargs["interface"] = ITF_BIN.VIMBA
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-        self.frame_count = frame_count
-        self.frame_requeue = frame_requeue
-
-    def get_hl_cfg(self):
-        return self
-
-
-class BinVRmagicCfg():
-
-    """
-    ProtocolCfgBase -> BinCfgBase -> BinVimbaCfg.
-    """
-
-    def __init__(self, cls_name="BinVimbaCfg", ll_obj=None, **kwargs):
-        if "interface" not in kwargs.keys():
-            kwargs["interface"] = ITF_BIN.VRMAGIC
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-
-    def get_hl_cfg(self):
-        return self
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @classmethod
+    def discover(cls):
+        TIMEOUT_DISCOVERY_GIGE = 0.2
+        if cls._vimba_system.GeVTLIsPresent:
+            cls._vimba_system.runFeatureCommand("GeVDiscoveryAllOnce")
+            time.sleep(TIMEOUT_DISCOVERY_GIGE)
+        dev_ids = cls._vimba_itf.getCameraIds()
+        # Check for devices which have become unavailable
+        for id in list(cls._vimba_dev_refs):
+            if id not in dev_ids:
+                del cls._vimba_dev_refs[id]
+                if id in cls._vimba_dev_handles:
+                    cls.LOGGER.critical(
+                        "device lost connection ({:s})".format(id)
+                    )
+                    del cls._vimba_dev_handles[id]
+                    # TODO: notify affected devices
+        # Check for devices which have been added
+        for id in dev_ids:
+            if id not in cls._vimba_dev_refs:
+                cls._vimba_dev_refs[id] = 0
+        return dev_ids
 
 
 ###############################################################################
+# Device
+###############################################################################
 
 
-class AlliedVisionMantaG145BNIR(CamDrvBase):
+class AlliedVisionManta(Camera):
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self._callback = None
+    def __init__(self):
+        super().__init__()
+        self._dev_frame = None
 
-    def run(self, callback=None):
-        self._callback = callback
-        callback = self._callback_delegate if callback is not None else None
-        self._interface.setup_frames(callback=callback)
-        self._interface.start_capture()
-        self._interface.start_acquisition()
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-    def stop(self):
-        self._interface.end_acquisition()
-        self._interface.flush_capture_queue()
-        self._interface.end_capture()
-        self._interface.revoke_all_frames()
+    def setup(self):
+        if not isinstance(self.interface, ItfVimba):
+            self.interface = ItfVimba()
+        self.interface.setup()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name", "sensitivity"
+        ))
 
-    def grab(self):
-        _index = self._interface.next_index
-        if not self._interface.cfg.frame_requeue:
-            self._interface.queue_frame_capture(index=_index)
-        if self._interface.wait_frame_capture(index=_index) == 0:
-            return self._cv_buffer_to_numpy(
-                self._interface.grab_data(index=_index)
+    def shutdown(self):
+        self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
+
+    def connect(self):
+        self.interface.connect(self.identifier)
+        self.interface.register(self.identifier, self)
+        self.vimba_dev_handle.openCamera(cameraAccessMode=0)
+        self.p.read_all()
+
+    def close(self):
+        self.vimba_dev_handle.closeCamera()
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
+
+    def is_connected(self):
+        return self.interface.is_connected()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Camera methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def _start_acquisition(self):
+        self._dev_frame = self.vimba_dev_handle.getFrame()
+        self._dev_frame.announceFrame()
+        self.vimba_dev_handle.startCapture()
+        self._dev_frame.queueFrameCapture()
+        self.vimba_dev_handle.runFeatureCommand("AcquisitionStart")
+
+    def _end_acquisition(self):
+        self.vimba_dev_handle.runFeatureCommand("AcquisitionStop")
+        self.vimba_dev_handle.flushCaptureQueue()
+        self.vimba_dev_handle.endCapture()
+        self._dev_frame.revokeFrame()
+        self._dev_frame = None
+
+    def next(self):
+        TIMEOUT_FRAME = int(self.p.exposure_time * 1200)   # milliseconds
+        if self._dev_frame.waitFrameCapture(timeout=TIMEOUT_FRAME) == 0:
+            np_image = self._cv_buffer_to_numpy(
+                self._dev_frame.getBufferByteData()
             )
+            self._dev_frame.queueFrameCapture()
+            # Save to buffer
+            if self._frame_queue.full():
+                try:
+                    self._frame_queue.get_nowait()
+                except queue.Empty:
+                    pass
+            self._frame_queue.put(np_image)
+            return np_image
+        else:
+            return self.next()
 
-    def get(self):
-        return self._cv_buffer_to_numpy(
-            self._interface.grab_data(index=self._interface.latest_index)
-        )
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-    # ++++ Write/read methods +++++++++++
+    @property
+    def vimba_dev_handle(self):
+        return self.interface._vimba_dev_handles[self.identifier]
 
-    def _write_pixel_hrzt_count(self, value):
-        self._interface.cam.Width = value
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-    def _read_pixel_hrzt_count(self):
-        return self._interface.cam.Width
+    def read_pixel_hrzt_count(self):
+        value = self.vimba_dev_handle.Width
+        self.p.pixel_hrzt_count = value
+        return value
 
-    def _read_pixel_hrzt_size(self):
-        return 6.45e-6
+    def write_pixel_hrzt_count(self, value):
+        self.vimba_dev_handle.Width = value
+        self.p.pixel_hrzt_count = value
 
-    def _write_pixel_hrzt_offset(self, value):
-        self._interface.cam.OffsetX = value
+    def read_pixel_hrzt_size(self):
+        value = 6.45e-6
+        self.p.pixel_hrzt_size = value
+        return value
 
-    def _read_pixel_hrzt_offset(self):
-        return self._interface.cam.OffsetX
+    def write_pixel_hrzt_size(self, value):
+        if value != self.p.pixel_hrzt_size:
+            self.LOGGER.warning("cannot write pixel_hrzt_size")
 
-    def _write_pixel_vert_count(self, value):
-        self._interface.cam.Height = value
+    def read_pixel_hrzt_offset(self):
+        value = self.vimba_dev_handle.OffsetX
+        self.p.pixel_hrzt_offset = value
+        return value
 
-    def _read_pixel_vert_count(self):
-        return self._interface.cam.Height
+    def write_pixel_hrzt_offset(self, value):
+        self.vimba_dev_handle.OffsetX = value
+        self.p.pixel_hrzt_offset = value
 
-    def _read_pixel_vert_size(self):
-        return 6.45e-6
+    def read_pixel_vert_count(self):
+        value = self.vimba_dev_handle.Height
+        self.p.pixel_vert_count = value
+        return value
 
-    def _write_pixel_vert_offset(self, value):
-        self._interface.cam.OffsetY = value
+    def write_pixel_vert_count(self, value):
+        self.vimba_dev_handle.Height = value
+        self.p.pixel_vert_count = value
 
-    def _read_pixel_vert_offset(self):
-        return self._interface.cam.OffsetY
+    def read_pixel_vert_size(self):
+        value = 6.45e-6
+        self.p.pixel_vert_size = value
+        return value
 
-    def _read_format_color(self):
-        return drv.DRV_CAM.FORMAT_COLOR.GS
+    def write_pixel_vert_size(self, value):
+        if value != self.p.pixel_vert_size:
+            self.LOGGER.warning("cannot write pixel_vert_size")
 
-    def _write_channel_bitdepth(self, value):
+    def read_pixel_vert_offset(self):
+        value = self.vimba_dev_handle.OffsetY
+        self.p.pixel_vert_offset = value
+        return value
+
+    def write_pixel_vert_offset(self, value):
+        self.vimba_dev_handle.OffsetY = value
+        self.p.pixel_vert_offset = value
+
+    def read_format_color(self):
+        value = FORMAT_COLOR.GS
+        self.format_color = value
+        return value
+
+    def write_format_color(self, value):
+        if value != self.p.format_color:
+            self.LOGGER.warning("cannot write format_color")
+
+    def read_channel_bitdepth(self):
+        MAP = {"Mono8": 8, "Mono12": 12, "Mono12Packed": 12}
+        value = MAP[self.vimba_dev_handle.PixelFormat]
+        self.channel_bitdepth = value
+        return value
+
+    def write_channel_bitdepth(self, value):
+        MAP = {8: "Mono8", 12: "Mono12"}
+        self.vimba_dev_handle.PixelFormat = MAP[value]
+        self.p.channel_bitdepth = value
+
+    def read_exposure_mode(self):
         MAP = {
-            8: "Mono8",
-            12: "Mono12"
+            "Off": EXPOSURE_MODE.MANUAL,
+            "Continuous": EXPOSURE_MODE.CONTINUOS,
+            "Single": EXPOSURE_MODE.SINGLE
         }
-        self._interface.cam.PixelFormat = MAP[value]
+        value = MAP[self.vimba_dev_handle.ExposureAuto]
+        self.p.exposure_mode = value
+        return value
 
-    def _read_channel_bitdepth(self):
+    def write_exposure_mode(self, value):
         MAP = {
-            "Mono8": 8,
-            "Mono12": 12,
-            "Mono12Packed": 12
+            EXPOSURE_MODE.MANUAL: "Off",
+            EXPOSURE_MODE.CONTINUOS: "Continuous",
+            EXPOSURE_MODE.SINGLE: "Single"
         }
-        return MAP[self._interface.cam.PixelFormat]
+        self.vimba_dev_handle.ExposureAuto = MAP[value]
+        self.p.exposure_mode = value
 
-    def _write_exposure_mode(self, value):
+    def read_exposure_time(self):
+        value = self.vimba_dev_handle.ExposureTimeAbs / 1e6
+        self.p.exposure_time = value
+        return value
+
+    def write_exposure_time(self, value):
+        self.vimba_dev_handle.ExposureTimeAbs = value * 1e6
+        self.p.exposure_time = value
+
+    def read_acquisition_frames(self):
+        value = self.vimba_dev_handle.AcquisitionMode
         MAP = {
-            drv.DRV_CAM.EXPOSURE_MODE.MANUAL: "Off",
-            drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS: "Continuous",
-            drv.DRV_CAM.EXPOSURE_MODE.SINGLE: "Single"
+            "Continuous": 0,
+            "SingleFrame": 1,
+            "MultiFrame": self._interface.cam.AcquisitionFrameCount
         }
-        self._interface.cam.ExposureAuto = MAP[value]
+        value = MAP[value]
+        self.p.acquisition_frames = value
+        return value
 
-    def _read_exposure_mode(self):
-        MAP = {
-            "Off": drv.DRV_CAM.EXPOSURE_MODE.MANUAL,
-            "Continuous": drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS,
-            "Single": drv.DRV_CAM.EXPOSURE_MODE.SINGLE
-        }
-        return MAP[self._interface.cam.ExposureAuto]
-
-    def _write_exposure_time(self, value):
-        self._interface.cam.ExposureTimeAbs = 1e6 * value
-
-    def _read_exposure_time(self):
-        return self._interface.cam.ExposureTimeAbs / 1e6
-
-    def _write_acquisition_frames(self, value):
+    def write_acquisition_frames(self, value):
         if value == 0:
             self._interface.cam.AcquisitionMode = "Continuous"
         elif value == 1:
@@ -1008,28 +363,32 @@ class AlliedVisionMantaG145BNIR(CamDrvBase):
         else:
             self._interface.cam.AcquisitionMode = "MultiFrame"
             self._interface.cam.AcquisitionFrameCount = value
+        self.p.acquisition_frames = value
 
-    def _read_acquisition_frames(self):
-        value = self._interface.cam.AcquisitionMode
-        MAP = {
-            "Continuous": 0,
-            "SingleFrame": 1,
-            "MultiFrame": self._interface.cam.AcquisitionFrameCount
-        }
-        return MAP[value]
+    def read_device_name(self):
+        name = self.vimba_dev_handle.getInfo().cameraName.decode("ascii")
+        self.p.device_name = name
+        return name
 
-    def _write_sensitivity(self, value):
-        MAP = {
-            drv.DRV_CAM.SENSITIVITY.NORMAL: "Off",
-            drv.DRV_CAM.SENSITIVITY.NIR_FAST: "On_Fast",
-            drv.DRV_CAM.SENSITIVITY.NIR_HQ: "On_HighQuality",
-        }
-        self._interface.cam.NirMode = MAP[value]
+    def write_device_name(self, value):
+        if value != self.p.device_name:
+            self.LOGGER.warning("cannot write device_name")
 
-    def _read_sensitivity(self):
+    def read_sensitivity(self):
         MAP = {
-            "Off": drv.DRV_CAM.SENSITIVITY.NORMAL,
-            "On_Fast": drv.DRV_CAM.SENSITIVITY.NIR_FAST,
-            "On_HighQuality": drv.DRV_CAM.SENSITIVITY.NIR_HQ
+            "Off": SENSITIVITY.NORMAL,
+            "On_Fast": SENSITIVITY.NIR_FAST,
+            "On_HighQuality": SENSITIVITY.NIR_HQ
         }
-        return MAP[self._interface.cam.NirMode]
+        value = MAP[self.vimba_dev_handle.NirMode]
+        self.p.sensitivity = value
+        return value
+
+    def write_sensitivity(self, value):
+        MAP = {
+            SENSITIVITY.NORMAL: "Off",
+            SENSITIVITY.NIR_FAST: "On_Fast",
+            SENSITIVITY.NIR_HQ: "On_HighQuality",
+        }
+        self.vimba_dev_handle.NirMode = MAP[value]
+        self.p.sensitivity = value

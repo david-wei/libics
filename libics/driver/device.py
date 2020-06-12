@@ -145,6 +145,29 @@ class DevBase(abc.ABC):
     def p(self):
         return self.properties
 
+    def _get_default_properties_dict(
+        self, *props, read_prefix="read_", write_prefix="write_"
+    ):
+        """
+        Parameters
+        ----------
+        *props : `str`
+            Property names.
+        read_prefix, write_prefix : `str`
+            Read/write method name prefix.
+
+        Returns
+        -------
+        props : `dict(str->(callable, callable))`
+            Default property function dictionary:
+            `prop -> (read_prefix+prop, write_prefix+prop)`.
+        """
+        return {
+            prop: (getattr(self, read_prefix + prop),
+                   getattr(self, write_prefix + prop))
+            for prop in props
+        }
+
     # ++++++++++++++++++++++++++++++++++++++++
     # Device methods
     # ++++++++++++++++++++++++++++++++++++++++

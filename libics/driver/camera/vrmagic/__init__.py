@@ -2,6 +2,7 @@ from . import vrmusbcamapi as vrm
 
 import ctypes as ct
 import numpy as np
+import queue
 
 from libics.core.env import logging
 from libics.driver.device import STATUS
@@ -50,9 +51,6 @@ class ItfVRmagic(ItfBase):
         RuntimeError
             If `id` is not available.
         """
-        self._dev_handle = vrm.VRmUsbCamDevice()
-        vrm.VRmUsbCamOpenDevice(self._dev_key, ct.byref(self._dev_handle))
-
         # Check if requested device ID is discovered
         if id not in self._vrm_dev_keys:
             self.discover()
@@ -69,7 +67,7 @@ class ItfVRmagic(ItfBase):
                 else:
                     vrm.VRmUsbCamFreeDeviceKey(dev_key)
             dev_handle = vrm.VRmUsbCamDevice()
-            vrm.VRmUsbCamOpen(
+            vrm.VRmUsbCamOpenDevice(
                 self._vrm_dev_keys[self._dev_id], ct.byref(dev_handle)
             )
             self._vrm_dev_handles[self._dev_id] = dev_handle
@@ -90,6 +88,8 @@ class ItfVRmagic(ItfBase):
         RuntimeError
             If internal device reference error occured.
         """
+        if self._dev_id is None:
+            return False
         try:
             # If not discovered
             if self._dev_id not in self._vrm_dev_refs:
@@ -241,7 +241,26 @@ class VRmagicVRmCX(Camera):
             .reshape(height, pitch)
         )
         vrm.VRmUsbCamUnlockNextImage(self.vrm_dev_handle, ct.byref(vrm_image))
+        # Save to buffer
+        if self._frame_queue.full():
+            try:
+                self._frame_queue.get_nowait()
+            except queue.Empty:
+                pass
+        self._frame_queue.put(np_image)
         return np_image
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @property
+    def vrm_dev_handle(self):
+        return self.interface._vrm_dev_handles[self.identifier]
+
+    @property
+    def vrm_dev_key_contents(self):
+        return self.interface._vrm_dev_keys[self.identifier].contents
 
     # ++++++++++++++++++++++++++++++++++++++++
     # Properties methods
@@ -263,9 +282,9 @@ class VRmagicVRmCX(Camera):
 
     def read_pixel_hrzt_size(self):
         MAP = {
-            "VRmC-12/BW": 6.0,
-            "VRmC-9/BW": 5.2,
-            "VRmC-9+/BW": 5.2,
+            "VRmC-12/BW": 6.0e-6,
+            "VRmC-9/BW": 5.2e-6,
+            "VRmC-9+/BW": 5.2e-6,
         }
         value = MAP[self.p.device_name]
         self.p.pixel_hrzt_size = value
@@ -300,9 +319,9 @@ class VRmagicVRmCX(Camera):
 
     def read_pixel_vert_size(self):
         MAP = {
-            "VRmC-12/BW": 6.0,
-            "VRmC-9/BW": 5.2,
-            "VRmC-9+/BW": 5.2,
+            "VRmC-12/BW": 6.0e-6,
+            "VRmC-9/BW": 5.2e-6,
+            "VRmC-9+/BW": 5.2e-6,
         }
         value = MAP[self.p.device_name]
         self.p.pixel_vert_size = value
@@ -395,15 +414,3 @@ class VRmagicVRmCX(Camera):
     def write_device_name(self, value):
         if value != self.p.device_name:
             self.LOGGER.warning("cannot write device_name")
-
-    # ++++++++++++++++++++++++++++++++++++++++
-    # Helper methods
-    # ++++++++++++++++++++++++++++++++++++++++
-
-    @property
-    def vrm_dev_handle(self):
-        return self.interface._vrm_dev_handles[self.identifier]
-
-    @property
-    def vrm_dev_key_contents(self):
-        return self.interface._vrm_dev_keys[self.identifier].contents

@@ -26,6 +26,13 @@ class EXPOSURE_MODE:
     SINGLE = "SINGLE"
 
 
+class SENSITIVITY:
+
+    NORMAL = "NORMAL"
+    NIR_FAST = "NIR_FAST"
+    NIR_HQ = "NIR_HQ"
+
+
 ###############################################################################
 
 
@@ -85,29 +92,6 @@ class Camera(DevBase):
         super().configure(**cfg)
         if "frame_queue_size" in cfg:
             self._frame_queue = queue.Queue(maxsize=cfg["frame_queue_size"])
-
-    def _get_default_properties_dict(
-        self, *props, read_prefix="read_", write_prefix="write_"
-    ):
-        """
-        Parameters
-        ----------
-        *props : `str`
-            Property names.
-        read_prefix, write_prefix : `str`
-            Read/write method name prefix.
-
-        Returns
-        -------
-        props : `dict(str->(callable, callable))`
-            Default property function dictionary:
-            `prop -> (read_prefix+prop, write_prefix+prop)`.
-        """
-        return {
-            prop: (getattr(self, read_prefix + prop),
-                   getattr(self, write_prefix + prop))
-            for prop in props
-        }
 
     # ++++++++++++++++++++++++++++++++++++++++
     # Camera methods
@@ -298,6 +282,84 @@ class Camera(DevBase):
         return prev_exposure_time
 
     # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @property
+    def _numpy_dtype(self):
+        if self.p.channel_bitdepth == 1:
+            return "bool"
+        elif self.p.channel_bitdepth <= 8:
+            return "uint8"
+        elif self.p.channel_bitdepth <= 16:
+            return "uint16"
+        elif self.p.channel_bitdepth <= 32:
+            return "uint32"
+
+    @property
+    def _numpy_shape(self):
+        if self.p.format_color in (FORMAT_COLOR.BW, FORMAT_COLOR.GS):
+            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count)
+        elif self.p.format_color == FORMAT_COLOR.RGB:
+            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count, 3)
+        elif self.p.format_color == FORMAT_COLOR.RGBA:
+            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count, 4)
+
+    def _cv_buffer_to_numpy(self, buffer):
+        return np.ndarray(
+            buffer=buffer,
+            dtype=self._numpy_dtype,
+            shape=self._numpy_shape
+        )
+
+    def _run_frame_grab(self):
+        IN_THREAD = (
+            self._frame_grab_thread is not None
+            and self._frame_grab_thread.is_alive()
+        )
+        TIMEOUT_STOP = self.p.exposure_time / 3   # seconds
+        self._start_acquisition()
+        # Continuos acquisition
+        if self.p.acquisition_frames == 0:
+            while True:
+                self.next()
+                if IN_THREAD:
+                    if self._frame_grab_thread.stop_event.wait(
+                        timeout=TIMEOUT_STOP
+                    ):
+                        break
+        # Manual acquisition
+        else:
+            for frame_no in range(self.p.acquisition_frames):
+                self.next()
+                if IN_THREAD:
+                    if self._frame_grab_thread.stop_event.wait(
+                        timeout=TIMEOUT_STOP
+                    ):
+                        break
+        self._end_acquisition()
+
+    def _run_frame_transfer(self, callback=None):
+        TIMEOUT_FRAME = 1e-1   # seconds
+        TIMEOUT_STOP = 1e-3    # seconds
+        while True:
+            try:
+                frame = self._frame_queue.get(
+                    block=True, timeout=TIMEOUT_FRAME
+                )
+                self._last_frame_lock.acquire()
+                self._last_frame = np.copy(frame)
+                self._last_frame_lock.release()
+                callback(frame)
+            except queue.Empty:
+                pass
+            if self._frame_transfer_thread.stop_event.wait(
+                timeout=TIMEOUT_STOP
+            ):
+                break
+        self._is_running.release()
+
+    # ++++++++++++++++++++++++++++++++++++++++
     # Properties methods
     # ++++++++++++++++++++++++++++++++++++++++
 
@@ -388,81 +450,3 @@ class Camera(DevBase):
     @abc.abstractmethod
     def write_acquisition_frames(self, value):
         pass
-
-    # ++++++++++++++++++++++++++++++++++++++++
-    # Helper methods
-    # ++++++++++++++++++++++++++++++++++++++++
-
-    @property
-    def _numpy_dtype(self):
-        if self.p.channel_bitdepth == 1:
-            return "bool"
-        elif self.p.channel_bitdepth <= 8:
-            return "uint8"
-        elif self.p.channel_bitdepth <= 16:
-            return "uint16"
-        elif self.p.channel_bitdepth <= 32:
-            return "uint32"
-
-    @property
-    def _numpy_shape(self):
-        if self.p.format_color in (FORMAT_COLOR.BW, FORMAT_COLOR.GS):
-            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count)
-        elif self.p.format_color == FORMAT_COLOR.RGB:
-            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count, 3)
-        elif self.p.format_color == FORMAT_COLOR.RGBA:
-            return (self.p.pixel_vert_count, self.p.pixel_hrzt_count, 4)
-
-    def _cv_buffer_to_numpy(self, buffer):
-        return np.ndarray(
-            buffer=buffer,
-            dtype=self._numpy_dtype,
-            shape=self._numpy_shape
-        )
-
-    def _run_frame_grab(self):
-        IN_THREAD = (
-            self._frame_grab_thread is not None
-            and self._frame_grab_thread.is_alive()
-        )
-        TIMEOUT_STOP = self.p.exposure_time / 3   # seconds
-        self._start_acquisition()
-        # Continuos acquisition
-        if self.p.acquisition_frames == 0:
-            while True:
-                self.next()
-                if IN_THREAD:
-                    if self._frame_grab_thread.stop_event.wait(
-                        timeout=TIMEOUT_STOP
-                    ):
-                        break
-        # Manual acquisition
-        else:
-            for frame_no in range(self.p.acquisition_frames):
-                self.next()
-                if IN_THREAD:
-                    if self._frame_grab_thread.stop_event.wait(
-                        timeout=TIMEOUT_STOP
-                    ):
-                        break
-        self._end_acquisition()
-
-    def _run_frame_transfer(self, callback=None):
-        TIMEOUT_FRAME = 1e-1   # seconds
-        TIMEOUT_STOP = 1e-3    # seconds
-        while True:
-            try:
-                frame = self._frame_queue.get(
-                    block=True, timeout=TIMEOUT_FRAME
-                )
-                self._last_frame_lock.acquire()
-                self._last_frame = np.copy(frame)
-                self._last_frame_lock.release()
-                callback(frame)
-            except queue.Empty:
-                pass
-            if self._frame_transfer_thread.stop_event.wait(
-                timeout=TIMEOUT_STOP
-            ):
-                break
-        self._is_running.release()
