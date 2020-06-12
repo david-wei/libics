@@ -1,202 +1,409 @@
+from . import vrmusbcamapi as vrm
 
-class VRmagicItf():
+import ctypes as ct
+import numpy as np
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self._dev_key = None
-        self._dev_handle = None
-        self._buffer_bool = vrm.VRmBOOL()
-        self._buffer_double = vrm.c_double()
-        self._buffer_int = ctypes.c_int()
-        self._buffer_float = ctypes.c_float()
-        self._buffer_e = vrm.VRmPropId()
-        self._buffer_str = ctypes.c_char_p()
-        self._buffer_frames_dropped = vrm.VRmBOOL()
-        self._buffer_img_ready = vrm.VRmBOOL()
-        self._buffer_img_data = vrm.POINTER(vrm.VRmImage)()
-
-    def setup(self):
-        # Initialize VRmagic API
-        vrm.VRmUsbCamUpdateDeviceKeyList()
-        dev_count = vrm.VRmDWORD()
-        vrm.VRmUsbCamGetDeviceKeyListSize(ctypes.byref(dev_count))
-        dev_count = int(dev_count.value)
-        # Get VRmagic device key
-        dev_keys = [vrm.POINTER(vrm.VRmDeviceKey)() for _ in range(dev_count)]
-        [vrm.VRmUsbCamGetDeviceKeyListEntry(i, ctypes.byref(dev_key))
-         for i, dev_key in enumerate(dev_keys)]
-        if self.cfg.device is None:
-            if dev_count == 0:
-                raise NameError("No VRmagic camera found")
-            elif dev_count > 1:
-                print("Warning: multiple VRmagic cameras found")
-            self._dev_key = dev_keys[0]
-            for k in dev_keys[1:]:
-                vrm.VRmUsbCamFreeDeviceKey(k)
-        else:
-            for k in dev_keys:
-                if k.contents.m_serial == self.cfg.device:
-                    self._dev_key = k
-                else:
-                    vrm.VRmUsbCamFreeDeviceKey(k)
-        if self._dev_key is None:
-            raise NameError("No suitable VRmagic camera found")
-
-    def shutdown(self):
-        vrm.VRmUsbCamFreeDeviceKey(self._dev_key)
-        self._dev_key = None
-
-    def connect(self):
-        self._dev_handle = vrm.VRmUsbCamDevice()
-        vrm.VRmUsbCamOpenDevice(self._dev_key, ctypes.byref(self._dev_handle))
-
-    def close(self):
-        vrm.VRmUsbCamCloseDevice(self._dev_handle)
-        self._dev_handle = None
-
+from libics.core.env import logging
+from libics.driver.device import STATUS
+from libics.driver.interface import ItfBase
+from libics.driver.camera import Camera, EXPOSURE_MODE, FORMAT_COLOR
 
 
 ###############################################################################
+# Interface
+###############################################################################
 
 
-class VRmagicVRmCX(CamDrvBase):
+class ItfVRmagic(ItfBase):
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self._frame_buffer = None
-        self._frame_buffer_lock = threading.Lock()
-        self._callback = None
-        self._thread_continuos_acquisition = None
-        self._exposure_mode = drv.DRV_CAM.EXPOSURE_MODE.MANUAL
+    # vrm device reference counter
+    _vrm_dev_refs = {}      # dev_id (str) -> refs (int)
+    # vrm device key
+    _vrm_dev_keys = {}      # dev_id (str) -> vrm_dev_key (ct)
+    # vrm device handle
+    _vrm_dev_handles = {}   # dev_id (str) -> vrm_dev_handle (ct)
 
-    def run(self, callback=None):
-        self._callback = callback
-        vrm.VRmUsbCamStart(self._interface._dev_handle)
-        if self._exposure_mode == drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS:
-            self._thread_continuos_acquisition = util.thread.StoppableThread()
-            self._thread_continuos_acquisition.run = self._acquisition_loop
-            self._thread_continuos_acquisition.start()
+    LOGGER = logging.get_logger("libics.driver.camera.vrmagic.VRmagicItf")
 
-    def stop(self):
-        if self._thread_continuos_acquisition is not None:
-            self._thread_continuos_acquisition.stop()
-        self._thread_continuos_acquisition = None
-        self._callback = None
-        vrm.VRmUsbCamStop(self._interface._dev_handle)
+    def __init__(self):
+        super().__init__()
+        self._is_set_up = False
+        self._dev_id = None
 
-    def grab(self):
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
+        self._is_set_up = True
+
+    def shutdown(self):
+        self._is_set_up = False
+
+    def is_set_up(self):
+        return self._is_set_up
+
+    def connect(self, id):
+        """
+        Raises
+        ------
+        RuntimeError
+            If `id` is not available.
+        """
+        self._dev_handle = vrm.VRmUsbCamDevice()
+        vrm.VRmUsbCamOpenDevice(self._dev_key, ct.byref(self._dev_handle))
+
+        # Check if requested device ID is discovered
+        if id not in self._vrm_dev_keys:
+            self.discover()
+            if id not in self._vrm_dev_keys:
+                raise RuntimeError("device ID unavailable ({:s})".format(id))
+        # Set device ID of this interface instance
+        self._dev_id = id
+        # Check if another interface instance has already opened
+        if not self.is_connected():
+            dev_keys = self._get_vrm_dev_key_list()
+            for dev_key in dev_keys:
+                if dev_key.m_serial == self._dev_id:
+                    self._vrm_dev_keys[self._dev_id] = dev_key
+                else:
+                    vrm.VRmUsbCamFreeDeviceKey(dev_key)
+            dev_handle = vrm.VRmUsbCamDevice()
+            vrm.VRmUsbCamOpen(
+                self._vrm_dev_keys[self._dev_id], ct.byref(dev_handle)
+            )
+            self._vrm_dev_handles[self._dev_id] = dev_handle
+        self._vrm_dev_refs[self._dev_id] += 1
+
+    def close(self):
+        self._vrm_dev_refs[self._dev_id] -= 1
+        if self._vrm_dev_refs[self._dev_id] == 0:
+            vrm.VRmUsbCamCloseDevice(self._vrm_dev_handles[self._dev_id])
+            del self._vrm_dev_handles[self._dev_id]
+            vrm.VRmUsbCamFreeDeviceKey(self._vrm_dev_keys[self._dev_id])
+            del self._vrm_dev_keys[self._dev_id]
+
+    def is_connected(self):
+        """
+        Raises
+        ------
+        RuntimeError
+            If internal device reference error occured.
+        """
+        try:
+            # If not discovered
+            if self._dev_id not in self._vrm_dev_refs:
+                assert(
+                    (self._dev_id not in self._vrm_dev_keys)
+                    and (self._dev_id not in self._vrm_dev_handles)
+                )
+                return False
+            # If discovered but not connected
+            elif self._vrm_dev_refs[self._dev_id] == 0:
+                assert(
+                    (self._dev_id not in self._vrm_dev_keys)
+                    and (self._dev_id not in self._vrm_dev_handles)
+                )
+                return False
+            # If discovered and connected
+            elif self._vrm_dev_refs[self._dev_id] > 0:
+                assert(
+                    (self._dev_id in self._vrm_dev_keys)
+                    and (self._dev_id in self._vrm_dev_handles)
+                    and (self._vrm_dev_keys[self._dev_id].m_busy)
+                )
+                return True
+            # Handle error
+            else:
+                assert(False)
+        except AssertionError:
+            err_msg = "device reference count error"
+            self.last_status = STATUS(
+                state=STATUS.CRITICAL, err_type=STATUS.ERR_INSTANCE,
+                msg=err_msg
+            )
+            raise RuntimeError(err_msg)
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Interface methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _get_vrm_dev_key_list():
+        """
+        Uses the vrmusbcam2 API to get the vrm device key list.
+
+        Make sure to free the device keys using `vrm.VRmUsbCamFreeDeviceKey`
+        immediately after usage!
+
+        Returns
+        -------
+        dev_keys : `list(vrm.VRmDeviceKey)`
+            List of vrm device keys.
+        """
+        # Update available devices
+        vrm.VRmUsbCamUpdateDeviceKeyList()
+        dev_count = vrm.VRmDWORD()
+        vrm.VRmUsbCamGetDeviceKeyListSize(ct.byref(dev_count))
+        dev_count = int(dev_count.value)
+        dev_keys = [vrm.POINTER(vrm.VRmDeviceKey)() for _ in range(dev_count)]
+        # Get device keys and extract device IDs
+        dev_keys = [vrm.VRmUsbCamGetDeviceKeyListEntry(i, ct.byref(dev_key))
+                    for i, dev_key in enumerate(dev_keys)]
+        return dev_keys
+
+    @classmethod
+    def discover(cls):
+        dev_keys = cls._get_vrm_dev_key_list()
+        dev_ids = [dev_key.m_serial for dev_key in dev_keys]
+        for dev_key in dev_keys:
+            vrm.VRmUsbCamFreeDeviceKey(dev_key)
+        del dev_keys
+        # Check for devices which have become unavailable
+        for id in list(cls._vrm_dev_refs):
+            if id not in dev_ids:
+                del cls._vrm_dev_refs[id]
+                if id in cls._vrm_dev_keys:
+                    cls.LOGGER.critical(
+                        "device lost connection ({:s})".format(id)
+                    )
+                    del cls._vrm_dev_keys[id]
+                    del cls._vrm_dev_handles[id]
+                    # TODO: notify affected devices
+        # Check for devices which have been added
+        for id in dev_ids:
+            if id not in cls._vrm_dev_refs:
+                cls._vrm_dev_refs[id] = 0
+        return dev_ids
+
+
+###############################################################################
+# Device
+###############################################################################
+
+
+class VRmagicVRmCX(Camera):
+
+    def __init__(self):
+        super().__init__()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
+        if not isinstance(self.interface, ItfVRmagic):
+            self.interface = ItfVRmagic()
+        self.interface.setup()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name"
+        ))
+
+    def shutdown(self):
+        self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
+
+    def connect(self):
+        self.interface.connect(self.identifier)
+        self.interface.register(self.identifier, self)
+        self.p.read_all()
+
+    def close(self):
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
+
+    def is_connected(self):
+        return self.interface.is_connected()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Camera methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def _start_acquisition(self):
+        vrm.VRmUsbCamStart(self.vrm_dev_handle)
+
+    def _end_acquisition(self):
+        vrm.VRmUsbCamStop(self.vrm_dev_handle)
+
+    def next(self):
+        vrm_image = vrm.POINTER(vrm.VRmImage)()
+        vrm_frames_dropped = vrm.VRmBOOL()
         vrm.VRmUsbCamLockNextImage(
-            self._interface._dev_handle,
-            ct.byref(self._interface._buffer_img_data),
-            ct.byref(self._interface._buffer_frames_dropped)
+            self.vrm_dev_handle,
+            ct.byref(vrm_image), ct.byref(vrm_frames_dropped)
         )
-        h = self._interface._buffer_img_data.contents.m_image_format.m_height
-        p = self._interface._buffer_img_data.contents.m_pitch
-        im = np.array(
-            self._interface._buffer_img_data.contents.mp_buffer[0:h*p]
-        ).reshape(h, p)
-        vrm.VRmUsbCamUnlockNextImage(
-            self._interface._dev_handle,
-            ct.byref(self._interface._buffer_img_data)
+        height = vrm_image.contents.m_image_format.m_height
+        pitch = vrm_image.contents.m_pitch
+        np_image = (
+            np.array(vrm_image.contents.mp_buffer[0:height*pitch])
+            .reshape(height, pitch)
         )
-        return im
+        vrm.VRmUsbCamUnlockNextImage(self.vrm_dev_handle, ct.byref(vrm_image))
+        return np_image
 
-    def get(self):
-        self._frame_buffer_lock.acquire()
-        im = np.copy(self._frame_buffer)
-        self._frame_buffer_lock.release()
-        return im
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-    def _acquisition_loop(self):
-        while not (
-            self._thread_continuos_acquisition.stop_event
-            .wait(timeout=self.cfg.exposure_time.val / 3)
-        ):
-            self._frame_buffer_lock.acquire()
-            im = self.grab()
-            self._frame_buffer = im
-            if self._callback is not None:
-                self._callback(np.copy(im))
-            self._frame_buffer_lock.release()
-
-    # ++++ Write/read methods +++++++++++
-
-    def _read_dev_name(self):
-        name = self._interface._dev_key.contents.mp_product_str.data
-        return name.decode("utf-8")
-
-    def _read_pixel_hrzt_count(self):
-        name = self._read_dev_name()
+    def read_pixel_hrzt_count(self):
         MAP = {
             "VRmC-12/BW": 754,
             "VRmC-9/BW": 1288,
             "VRmC-9+/BW": 1288,
         }
-        return MAP[name]
+        value = MAP[self.p.device_name]
+        self.p.pixel_hrzt_count = value
+        return value
 
-    def _read_pixel_hrzt_size(self):
-        name = self._read_dev_name()
+    def write_pixel_hrzt_count(self, value):
+        if value != self.p.pixel_hrzt_count:
+            self.LOGGER.warning("cannot write pixel_hrzt_count")
+
+    def read_pixel_hrzt_size(self):
         MAP = {
             "VRmC-12/BW": 6.0,
             "VRmC-9/BW": 5.2,
             "VRmC-9+/BW": 5.2,
         }
-        return MAP[name]
+        value = MAP[self.p.device_name]
+        self.p.pixel_hrzt_size = value
+        return value
 
-    def _read_pixel_hrzt_offset(self):
-        return 0
+    def write_pixel_hrzt_size(self, value):
+        if value != self.p.pixel_hrzt_size:
+            self.LOGGER.warning("cannot write pixel_hrzt_size")
 
-    def _read_pixel_vert_count(self):
-        name = self._read_dev_name()
+    def read_pixel_hrzt_offset(self):
+        value = 0
+        self.p.pixel_hrzt_offset = value
+        return value
+
+    def write_pixel_hrzt_offset(self, value):
+        if value != self.p.pixel_hrzt_offset:
+            self.LOGGER.warning("cannot write pixel_hrzt_offset")
+
+    def read_pixel_vert_count(self):
         MAP = {
             "VRmC-12/BW": 482,
             "VRmC-9/BW": 1032,
             "VRmC-9+/BW": 1032,
         }
-        return MAP[name]
+        value = MAP[self.p.device_name]
+        self.p.pixel_vert_count = value
+        return value
 
-    def _read_pixel_vert_size(self):
-        name = self._read_dev_name()
+    def write_pixel_vert_count(self, value):
+        if value != self.p.pixel_vert_count:
+            self.LOGGER.warning("cannot write pixel_hrzt_count")
+
+    def read_pixel_vert_size(self):
         MAP = {
             "VRmC-12/BW": 6.0,
             "VRmC-9/BW": 5.2,
             "VRmC-9+/BW": 5.2,
         }
-        return MAP[name]
+        value = MAP[self.p.device_name]
+        self.p.pixel_vert_size = value
+        return value
 
-    def _read_pixel_vert_offset(self):
-        return 0
+    def write_pixel_vert_size(self, value):
+        if value != self.p.pixel_vert_size:
+            self.LOGGER.warning("cannot write pixel_vert_size")
 
-    def _read_format_color(self):
-        return drv.DRV_CAM.FORMAT_COLOR.GS
+    def read_pixel_vert_offset(self):
+        value = 0
+        self.p.pixel_vert_offset = value
+        return value
 
-    def _read_channel_bitdepth(self):
-        return 8
+    def write_pixel_vert_offset(self, value):
+        if value != self.p.pixel_vert_offset:
+            self.LOGGER.warning("cannot write pixel_vert_offset")
 
-    def _write_exposure_mode(self, value):
-        if value not in [
-            drv.DRV_CAM.EXPOSURE_MODE.MANUAL,
-            drv.DRV_CAM.EXPOSURE_MODE.CONTINUOS,
-        ]:
-            raise KeyError("invalid exposure mode")
-        self._exposure_mode = value
+    def read_format_color(self):
+        value = FORMAT_COLOR.GS
+        self.format_color = value
+        return value
 
-    def _read_exposure_mode(self):
-        return self._exposure_mode
+    def write_format_color(self, value):
+        if value != self.p.format_color:
+            self.LOGGER.warning("cannot write format_color")
 
-    def _write_exposure_time(self, value):
-        ct_val = ct.c_float(value * 1e3)
-        vrm.VRmUsbCamSetPropertyValueF(
-            self._interface._dev_handle,
-            vrm.VRM_PROPID_CAM_EXPOSURE_TIME_F,
+    def read_channel_bitdepth(self):
+        value = 8
+        self.channel_bitdepth = value
+        return value
+
+    def write_channel_bitdepth(self, value):
+        if value != self.p.channel_bitdepth:
+            self.LOGGER.warning("cannot write channel_bitdepth")
+
+    def read_exposure_mode(self):
+        ct_val = ct.c_bool()
+        vrm.VRmUsbCamGetPropertyValueB(
+            self.vrm_dev_handle,
+            vrm.VRM_PROPID_CAM_AUTO_EXPOSURE_B,
             ct.byref(ct_val)
         )
+        MAP = {True: EXPOSURE_MODE.CONTINUOS, False: EXPOSURE_MODE.MANUAL}
+        value = MAP[ct_val.value]
+        self.p.exposure_mode = value
+        return value
 
-    def _read_exposure_time(self):
+    def write_exposure_mode(self, value):
+        MAP = {EXPOSURE_MODE.MANUAL: False, EXPOSURE_MODE.CONTINUOS: True}
+        ct_val = ct.c_bool(MAP[value])
+        vrm.VRmUsbCamSetPropertyValueB(
+            self.vrm_dev_handle,
+            vrm.VRM_PROPID_CAM_AUTO_EXPOSURE_B,
+            ct.byref(ct_val)
+        )
+        self.p.exposure_mode = value
+
+    def read_exposure_time(self):
         ct_val = ct.c_float()
         vrm.VRmUsbCamGetPropertyValueF(
-            self._interface._dev_handle,
+            self.vrm_dev_handle,
             vrm.VRM_PROPID_CAM_EXPOSURE_TIME_F,
             ct.byref(ct_val)
         )
-        return ct_val.value / 1e3
+        value = ct_val.value / 1e3
+        self.p.exposure_time = value
+        return value
+
+    def write_exposure_time(self, value):
+        ct_val = ct.c_float(value * 1e3)
+        vrm.VRmUsbCamSetPropertyValueF(
+            self.vrm_dev_handle,
+            vrm.VRM_PROPID_CAM_EXPOSURE_TIME_F,
+            ct.byref(ct_val)
+        )
+        self.p.exposure_time = value
+
+    def read_acquisition_frames(self):
+        return self.p.acquisition_frames
+
+    def write_acquisition_frames(self, value):
+        self.p.acquisition_frames = value
+
+    def read_device_name(self):
+        name = self.vrm_dev_key_contents.mp_product_str.data.decode("utf-8")
+        self.p.device_name = name
+        return name
+
+    def write_device_name(self, value):
+        if value != self.p.device_name:
+            self.LOGGER.warning("cannot write device_name")
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @property
+    def vrm_dev_handle(self):
+        return self.interface._vrm_dev_handles[self.identifier]
+
+    @property
+    def vrm_dev_key_contents(self):
+        return self.interface._vrm_dev_keys[self.identifier].contents
