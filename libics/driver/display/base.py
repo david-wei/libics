@@ -1,179 +1,216 @@
+import abc
+import threading
 
-class DRV_DSP:
-
-    class FORMAT_COLOR:
-
-        BW = 0
-        GS = 1
-        RGB = 2
-        RGBA = 3
-
-
-class DspCfg():
-
-    """
-    DrvCfgBase -> DspCfg.
-
-    Parameters
-    ----------
-    pixel_hrzt_count, pixel_vert_count : int
-        Pixel count in respective direction.
-    pixel_hrzt_size, pixel_vert_size : float
-        Pixel size in meters in respective direction.
-    pixel_hrzt_offset, pixel_vert_offset : int
-        Offset of pixels to be captured.
-    format_color : DRV_DSP.FORMAT_COLOR
-        BW: black/white boolean image.
-        GS: greyscale image.
-        RGB: RGB color image.
-        RGBA: RGB image with alpha channel.
-    channel_bitdepth : int
-        Bits per color channel.
-    picture_time : float
-        Time in seconds (s) each single image is shown.
-    dark_time : float
-        Time in seconds (s) between images in a sequence.
-    sequence_repetitions : int
-        Number of sequences to be shown.
-        0 (zero) is interpreted as infinite, i.e.
-        continuos repetition.
-    temperature : float
-        Display temperature in Celsius (°C).
-    """
-
-    def __init__(
-        self,
-        pixel_hrzt_count=1024, pixel_hrzt_size=13.68e-6,
-        pixel_vert_count=768, pixel_vert_size=13.68e-6,
-        pixel_hrzt_offset=0, pixel_vert_offset=0,
-        format_color=DRV_DSP.FORMAT_COLOR.GS, channel_bitdepth=8,
-        picture_time=9.0, dark_time=0.0, sequence_repetitions=0,
-        temperature=25.0,
-        cls_name="DspCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.DSP
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
-        self.pixel_hrzt_count = pixel_hrzt_count
-        self.pixel_hrzt_size = pixel_hrzt_size
-        self.pixel_hrzt_offset = pixel_hrzt_offset
-        self.pixel_vert_count = pixel_vert_count
-        self.pixel_vert_size = pixel_vert_size
-        self.pixel_vert_offset = pixel_vert_offset
-        self.format_color = format_color
-        self.channel_bitdepth = channel_bitdepth
-        self.picture_time = picture_time
-        self.dark_time = dark_time
-        self.sequence_repetitions = sequence_repetitions
-        self.temperature = temperature
-
-    def get_hl_cfg(self):
-        return self
-
-
+from libics.core.util.func import StoppableThread
+from libics.driver.device import DevBase
 
 
 ###############################################################################
 
 
-def get_dsp_drv(cfg):
-    if cfg.model == drv.DRV_MODEL.TEXASINSTRUMENTS_DLP7000:
-        return TexasInstrumentsDLP7000(cfg)
+class FORMAT_COLOR:
+
+    BW = "BW"
+    GS = "GS"
+    RGB = "RGB"
+    RGBA = "RGBA"
 
 
-class DspDrvBase():
+###############################################################################
 
-    def __init__(self, cfg):
-        super().__init__(cfg=cfg)
 
-    @abc.abstractmethod
-    def run(self, images):
+class Display(DevBase):
+
+    """
+    Properties
+    ----------
+    pixel_hrzt_count, pixel_vert_count : `int`
+        Pixel count in respective direction.
+    pixel_hrzt_size, pixel_vert_size : `float`
+        Pixel size in meters in respective direction.
+    pixel_hrzt_offset, pixel_vert_offset : `int`
+        Offset of pixels to be captured.
+    format_color : `FORMAT_COLOR`
+        BW: black/white boolean image.
+        GS: greyscale image.
+        RGB: RGB color image.
+        RGBA: RGB image with alpha channel.
+    channel_bitdepth : `int`
+        Bits per color channel.
+    picture_time : `float`
+        Time in seconds (s) each single image is shown.
+    dark_time : `float`
+        Time in seconds (s) between images in a sequence.
+    sequence_repetitions : `int`
+        Number of sequences to be shown.
+        0 (zero) is interpreted as infinite, i.e.
+        continuos repetition.
+    """
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "pixel_hrzt_count", "pixel_vert_count",
+            "pixel_hrzt_size", "pixel_vert_size",
+            "pixel_hrzt_offset", "pixel_vert_offset",
+            "format_color", "channel_bitdepth",
+            "picture_time", "dark_time", "sequence_repetitions"
+        ))
+        self._is_running = threading.Lock()
+        self._images = []
+        self._display_thread = None
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Display methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def run(self, images=None, blocking=False):
         """
         Show an image sequence on display.
-        """
 
-    @abc.abstractmethod
-    def stop(self, images):
+        Parameters
+        ----------
+        images : `np.ndarray(2)` or `list(np.ndarray(2))`
+            Image sequence to be displayed.
+            If `None`, uses the previously set images.
+        blocking : `bool`
+            Flag whether to start displaying in the calling thread.
+        """
+        if self.is_running():
+            self.stop()
+        if images is not None:
+            self._images = images
+        if blocking:
+            self._start_displaying()
+        else:
+            self._display_thread = StoppableThread(
+                target=self._start_displaying
+            )
+            self._display_thread.start()
+
+    def stop(self):
         """
         Stops displaying the image sequence.
         """
+        if self.is_running():
+            if self._display_thread is not None:
+                self._display_thread.stop()
+            self._end_displaying()
+        self._display_thread = None
 
-    # ++++ Write/read methods +++++++++++
+    @abc.abstractmethod
+    def _start_displaying(self):
+        """
+        Issues the device to start displaying.
 
-    def _write_pixel_hrzt_count(self, value):
+        Notes
+        -----
+        Lock :py:attr:`_is_running`!
+        """
+
+    @abc.abstractmethod
+    def _end_displaying(self):
+        """
+        Issues the device to end displaying.
+
+        Notes
+        -----
+        Unlock :py:attr:`_is_running`!
+        """
+
+    def is_running(self):
+        """
+        Checks whether camera is capturing.
+        """
+        return self._is_running.locked()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_pixel_hrzt_count(self):
         pass
 
-    def _read_pixel_hrzt_count(self):
-        return self.cfg.pixel_hrzt_count.val
-
-    def _write_pixel_hrzt_size(self, value):
+    @abc.abstractmethod
+    def write_pixel_hrzt_count(self, value):
         pass
 
-    def _read_pixel_hrzt_size(self):
-        return self.cfg.pixel_hrzt_size.val
-
-    def _write_pixel_hrzt_offset(self, value):
+    @abc.abstractmethod
+    def read_pixel_hrzt_size(self):
         pass
 
-    def _read_pixel_hrzt_offset(self):
-        return self.cfg.pixel_hrzt_offset.val
-
-    def _write_pixel_vert_count(self, value):
+    @abc.abstractmethod
+    def write_pixel_hrzt_size(self, value):
         pass
 
-    def _read_pixel_vert_count(self):
-        return self.cfg.pixel_vert_count.val
-
-    def _write_pixel_vert_size(self, value):
+    @abc.abstractmethod
+    def read_pixel_hrzt_offset(self):
         pass
 
-    def _read_pixel_vert_size(self):
-        return self.cfg.pixel_vert_size.val
-
-    def _write_pixel_vert_offset(self, value):
+    @abc.abstractmethod
+    def write_pixel_hrzt_offset(self, value):
         pass
 
-    def _read_pixel_vert_offset(self):
-        return self.cfg.pixel_vert_offset.val
-
-    def _write_format_color(self, value):
+    @abc.abstractmethod
+    def read_pixel_vert_count(self):
         pass
 
-    def _read_format_color(self):
-        return self.cfg.format_color.val
-
-    def _write_channel_bitdepth(self, value):
+    @abc.abstractmethod
+    def write_pixel_vert_count(self, value):
         pass
 
-    def _read_channel_bitdepth(self):
-        return self.cfg.channel_bitdepth.val
-
-    def _write_picture_time(self, value):
+    @abc.abstractmethod
+    def read_pixel_vert_size(self):
         pass
 
-    def _read_picture_time(self):
+    @abc.abstractmethod
+    def write_pixel_vert_size(self, value):
         pass
 
-    def _write_dark_time(self, value):
+    @abc.abstractmethod
+    def read_pixel_vert_offset(self):
         pass
 
-    def _read_dark_time(self):
+    @abc.abstractmethod
+    def write_pixel_vert_offset(self, value):
         pass
 
-    def _write_sequence_repetitions(self, value):
+    @abc.abstractmethod
+    def read_format_color(self):
         pass
 
-    def _read_sequence_repetitions(self):
+    @abc.abstractmethod
+    def write_format_color(self, value):
         pass
 
-    def _write_temperature(self, value):
+    @abc.abstractmethod
+    def read_channel_bitdepth(self):
         pass
 
-    def _read_temperature(self, value):
+    @abc.abstractmethod
+    def write_channel_bitdepth(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_picture_time(self):
+        pass
+
+    @abc.abstractmethod
+    def write_picture_time(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_dark_time(self):
+        pass
+
+    @abc.abstractmethod
+    def write_dark_time(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_sequence_repetitions(self):
+        pass
+
+    @abc.abstractmethod
+    def write_sequence_repetitions(self, value):
         pass

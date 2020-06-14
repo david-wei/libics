@@ -1,406 +1,521 @@
-import os
-
-from libics.core import env
 from . import alpV42 as alp42
 
+import ctypes as ct
+import os
 
-###############################################################################
-# Initialization
-###############################################################################
-
-
-# Global variable for Vialux ALP4.2 API object
-_ALP42 = None
-
-
-def startup_alp42():
-    """
-    Initializes the Vialux ALP4.2 C API.
-
-    The Vialux ALP4.2 API requires a startup and a shutdown call.
-    This function checks whether startup has already been called.
-
-    Returns
-    -------
-    _ALP42 : alpV42.PY_ALP_API
-        Vialux ALP4.2 API object.
-    """
-    global _ALP42
-    if _ALP42 is None:
-        _ALP42 = alp42.PY_ALP_API(
-            dllPath=os.path.join(env.DIR_ITFAPI, "alpV42.dll")
-        )
-    return _ALP42
-
-
+from libics.core.env import logging
+from libics.core.util import misc
+from libics.driver.device import DevProperties, STATUS
+from libics.driver.interface import ItfBase
+from libics.driver.display import Display, FORMAT_COLOR
 
 
 ###############################################################################
+# Interface
+###############################################################################
 
 
-class VialuxItf():
+class ItfAlp(ItfBase):
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self._dmd = None
-        self._alp = None
-        self._seq = None
-        self._seq_repetitions = None
-        self.API = None
+    # ALP API hooks
+    _alp_itf = None
+    # References to ALP API
+    _alp_itf_refs = 0
+    # ALP device references
+    _alp_dev_refs = {}
+
+    LOGGER = logging.get_logger("libics.driver.display.vialux.ItfAlp")
+
+    def __init__(self):
+        super().__init__()
+        self._is_set_up = False
+        self._dev_id = None
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def setup(self):
-        self._alp = vialux.startup_alp42()
-        self.API = vialux.alp42
-        if self.cfg.device is None:
-            self.cfg.device = 0
-        elif isinstance(self.cfg.device, str):
-            self.cfg.device = int(float(self.cfg.device))
-        _, self._dmd = self._alp.AlpDevAlloc(self.cfg.device)
+        if not self.is_set_up():
+            file_dir = os.path.dirname(os.path.realpath(__file__))
+            self._alp_itf = alp42.PY_ALP_API(
+                dllPath=os.path.join(file_dir, "alpV42.dll")
+            )
+        self._alp_itf_refs += 1
 
     def shutdown(self):
-        self._alp.AlpDevHalt(self._dmd)
-        self._alp.AlpDevFree(self._dmd)
-        self._dmd = None
-        self._alp = None
-        self.API = None
+        if self.is_set_up():
+            self._alp_itf_refs -= 1
 
-    def connect(self):
-        pass
+    def is_set_up(self):
+        return self._alp_itf_refs > 0
+
+    def connect(self, id):
+        """
+        Raises
+        ------
+        RuntimeError
+            If `id` is not available.
+        """
+        if self.is_connected():
+            if self._dev_id == id:
+                return
+            else:
+                self.close()
+        # Check if requested device ID is discovered
+        if id not in self._alp_dev_refs:
+            self.discover()
+            if id not in self._alp_dev_refs:
+                raise RuntimeError("device ID unavailable ({:s})".format(id))
+        # Set device ID of this interface instance
+        self._dev_id = id
+        # Check if another interface instance has already opened
+        if not self.is_connected():
+            ret, _ = self._alp_itf.AlpDevAlloc(int(self._dev_id))
+            if ret != alp42.ALP_ERRORS["ALP_OK"]:
+                err_msg = "ALP error: {:s}".format(alp42.ErrorsFlipped[ret])
+                self.last_error = STATUS(
+                    state=STATUS.ERROR, err_type=STATUS.ERR_DEVICE, msg=err_msg
+                )
+                raise RuntimeError(err_msg)
+        self._alp_dev_refs[self._dev_id] += 1
 
     def close(self):
-        pass
+        self._alp_dev_refs[self._dev_id] -= 1
+        if self._alp_dev_refs[self._dev_id] == 0:
+            self._alp_itf.AlpDevHalt(self._dev_id)
+            self._alp_itf.AlpDevFree(self._dev_id)
 
-    def init(self, bitdepth, sequence_length):
+    def is_connected(self):
         """
-        Initializes a sequence by allocating memory for image display.
-
-        Parameters
-        ----------
-        bitdepth : int
-            Channel bitdepth of image.
-        sequence_length : int or list
-            Number of images in sequence or sequence itself.
+        Raises
+        ------
+        RuntimeError
+            If internal device reference error occured.
         """
-        bitdepth = 1    # only 1 possible for current implementation
-        if hasattr(sequence_length, "__len__"):
-            sequence_length = len(sequence_length)
-        _, self._seq = self._alp.AlpSeqAlloc(
-            self._dmd, bitplanes=bitdepth, picnum=sequence_length
-        )
-
-    def run(self, sequence, bitdepth, repetitions):
-        """
-        Loads the sequence memory and starts displaying the images.
-
-        Parameters
-        ----------
-        sequence : list(np.ndarray(2))
-            List of images.
-        bitdepth : int
-            Channel bitdepth of image.
-        repetitions : int
-            Number of repetitions of the sequence.
-            0 (zero) is interpreted as continuos display.
-
-        Notes
-        -----
-        As convenience function, one can directly run a sequence
-        without init, but no sequence control modifications can
-        be made.
-        """
-        if self._seq is None:
-            self.init(bitdepth, len(sequence))
-        self._seq_repetitions = repetitions
-        for i, image in enumerate(sequence):
-            image = image.T.copy()
-            image = ctypes.create_string_buffer(image.flatten().tostring())
-            self._alp.AlpSeqPut(
-                self._dmd, self._seq, image, picoffset=i, picload=1
+        if self._dev_id is None:
+            return False
+        try:
+            # If not discovered
+            if self._dev_id not in self._alp_dev_refs:
+                return False
+            # If discovered but not connected
+            elif self._alp_dev_refs[self._dev_id] == 0:
+                return False
+            # If discovered and connected
+            elif self._alp_dev_refs[self._dev_id] > 0:
+                return True
+            # Handle error
+            else:
+                assert(False)
+        except AssertionError:
+            err_msg = "device reference count error"
+            self.last_status = STATUS(
+                state=STATUS.CRITICAL, err_type=STATUS.ERR_INSTANCE,
+                msg=err_msg
             )
-        if self._seq_repetitions == 0:
-            self._alp.AlpProjStartCont(self._dmd, self._seq)
-        else:
-            self._alp.AlpProjStart(self._dmd, self._seq)
+            raise RuntimeError(err_msg)
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Interface methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @classmethod
+    def discover(cls):
+        dev_ids = []
+        while True:
+            ret, dev_id = cls._alp_itf.AlpDevAlloc()
+            if ret == alp42.ALP_ERRORS["ALP_NOT_ONLINE"]:
+                break
+            dev_ids.append(str(dev_id))
+            if ret == alp42.ALP_ERRORS["ALP_OK"]:
+                cls._alp_itf.AlpDevFree(dev_id)
+        # Check for devices which have become unavailable
+        for id in list(cls._alp_dev_refs):
+            if id not in dev_ids:
+                del cls._alp_dev_refs[id]
+                if id in cls._alp_dev_handles:
+                    cls.LOGGER.critical(
+                        "device lost connection ({:s})".format(id)
+                    )
+                    del cls._alp_dev_handles[id]
+                    # TODO: notify affected devices
+        # Check for devices which have been added
+        for id in dev_ids:
+            if id not in cls._alp_dev_refs:
+                cls._alp_dev_refs[id] = 0
+        return dev_ids
+
+
+###############################################################################
+# Device
+###############################################################################
+
+
+class VialuxDLP(Display):
+
+    def __init__(self):
+        super().__init__()
+        self._alp_seq_handle = None
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name", "temperature"
+        ))
+        self.seq_properties = DevProperties()
+        self.seq_properties.set_device(self)
+        self.seq_properties.set_properties(self._get_default_properties_dict(
+            "picture_time", "dark_time", "sequence_repetitions"
+        ))
+
+    @property
+    def p_seq(self):
+        return self.seq_properties
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
+        if not isinstance(self.interface, ItfAlp):
+            self.interface = ItfAlp()
+        self.interface.setup()
+
+    def shutdown(self):
+        self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
+
+    def connect(self):
+        self.interface.connect(self.identifier)
+        self.interface.register(self.identifier, self)
+        self.p.read_all()
+
+    def close(self):
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
+
+    def is_connected(self):
+        return self.interface.is_connected()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Display methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def run(self, images=None):
+        super().run(images=images, blocking=True)
 
     def stop(self):
-        """
-        Stops any playing sequence.
-        """
-        self._alp.AlpProjHalt(self._dmd)
-        if self._seq is not None:
-            self._alp.AlpSeqFree(self._dmd, self._seq)
-        self._alp.AlpDevHalt(self._dmd)
-        _, self._dmd = self._alp.AlpDevAlloc(self.cfg.device)
-        self._seq = None
-        self._seq_repetitions = None
+        self._end_displaying()
 
-    # ++++ Wrapper methods ++++++++++++++
-
-    def dev_inq(self, key):
-        """Device inquiry."""
-        return self._alp.AlpDevInquire(self._dmd, key)[1]
-
-    def dev_ctrl(self, key, val):
-        """Device control."""
-        return self._alp.AlpDevControl(self._dmd, key, val)
-
-    def seq_inq(self, key):
-        """Sequence inquiry."""
-        if self._seq is None:
-            raise err.RUNTM_DRV_DSP(
-                err.RUNTM_DRV_DSP.str("no sequence allocated")
+    def _start_displaying(self):
+        # Set up sequence
+        seq_length = len(self._images)
+        ret, self._alp_seq_handle = self._alp_itf.AlpSeqAlloc(
+            self._alp_dev_handle, bitplanes=self.p.channel_bitdepth,
+            picnum=seq_length
+        )
+        if ret != alp42.ALP_ERRORS["ALP_OK"]:
+            err_msg = "ALP error: {:s}".format(alp42.ErrorsFlipped[ret])
+            self.last_status = STATUS(
+                state=STATUS.CRITICAL, err_type=STATUS.ERR_DEVICE, msg=err_msg
+            )
+            raise RuntimeError(err_msg)
+        for i, im in enumerate(self._images):
+            im = im.T.copy()
+            im = ct.create_string_buffer(im.flatten().tostring())
+            self._alp_itf.AlpSeqPut(
+                self._alp_dev_handle, self._alp_seq_handle, im,
+                picoffset=i, picload=1
+            )
+        self.p_seq.apply()
+        # Start projection
+        if self.p.sequence_repetitions == 0:
+            self._alp_itf.AlpProjStartCont(
+                self._alp_dev_handle, self._alp_seq_handle
             )
         else:
-            return self._alp.AlpSeqInquire(self._dmd, self._seq, key)[1]
+            self._alp_itf.AlpProjStart(
+                self._alp_dev_handle, self._alp_seq_handle
+            )
 
-    def seq_ctrl(self, key, val):
-        """Sequence control."""
-        if self._seq is not None:
-            return self._alp.AlpSeqControl(self._dmd, self._seq, key, val)
+    def _end_displaying(self):
+        # Stop projection
+        self._alp_itf.AlpProjHalt(self._alp_dev_handle)
+        # Free sequence
+        if self._alp_seq_handle is not None:
+            self._alp.AlpSeqFree(self._alp_dev_handle, self._alp_seq_handle)
+        self._alp_seq_handle = None
 
-    def seq_time(self, **kwargs):
-        """
-        Set sequence timing.
+    def is_running(self):
+        raise NotImplementedError
 
-        Parameters
-        ----------
-        illuminatetime : int
-            Illuminate time in microseconds (µs).
-        picturetime : int
-            Picture time in microseconds (µs).
-        """
-        self._alp.AlpSeqTiming(self._dmd, self._seq, **kwargs)
-
-    def seq_wait(self):
+    def join_sequence(self):
         """
         Waits for a sequence to finish and returns.
 
+        If continuous projection is set, immediately stops projection.
+        """
+        if self.is_running():
+            if self.p.sequence_repetitions == 0:
+                self.stop()
+            else:
+                self._alp_itf.AlpProjWait(self._alp_dev_handle)
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @property
+    def _alp_itf(self):
+        return self.interface._alp_itf
+
+    @property
+    def _alp_dev_handle(self):
+        return int(self._dev_id)
+
+    def _seq_is_set_up(self):
+        return self._alp_seq_handle is not None
+
+    def _cv_image_bw(self, image):
+        """
+        Converts an image to 8-bit black/white.
+
+        Parameters
+        ----------
+        image : `np.ndarray(2)`
+            Image to be converted into B/W.
+
         Returns
         -------
-        wait_success : bool or None
-            True: Sequence has finished.
-            False: Sequence in continuos mode, cannot finish.
-            None: No sequence is running.
+        image : `np.ndarray(2, uint8)`
+            Converted image.
         """
-        if self._seq_repetitions is None:
-            return None
-        elif self._seq_repetitions == 0:
-            return False
-        else:
-            self._alp.AlpProjHalt(self._dmd)
-            return True
-
-
-class BinVialuxCfg():
-
-    """
-    ProtocolCfgBase -> BinCfgBase -> BinVialuxCfg.
-
-    Parameters
-    ----------
-    """
-
-    def __init__(self,
-                 cls_name="BinVialuxCfg", ll_obj=None, **kwargs):
-        if "interface" not in kwargs.keys():
-            kwargs["interface"] = ITF_BIN.VIALUX
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            self.__dict__.update(ll_obj.__dict__)
-
-    def get_hl_cfg(self):
-        return self
-
-
-
-
-
-
-
-
-
-
-
-###############################################################################
-
-
-class TexasInstrumentsDLP7000(DspDrvBase):
-
-    def __init__(self, cfg):
-        super().__init__(cfg)
-
-    def init(self, images):
-        """
-        Allocates memory in the DMD.
-
-        Parameters
-        ----------
-        images : list(np.ndarray(2, float)) or np.ndarray(2, float)
-            (List of) images to be displayed. Greyscales are
-            normalized to [0, 1] where values outside the bounds
-            are changed to the respective bound value.
-        """
-        if not isinstance(images, list):
-            images = [images]
-        self.__images = [self._cv_image(image) for image in images]
-        self._interface.init(self.cfg.channel_bitdepth.val, len(self.__images))
-
-    def run(self, images=None):
-        """
-        Displays the given images on the DMD. Note that the images are expected
-        to be normalized to the interval [0, 1] corresponding to static on/off
-        states. Intermediate values request time modulation with picture times
-        as set by the configuration.
-
-        Parameters
-        ----------
-        images : list(np.ndarray(2, float)) or np.ndarray(2, float) or None
-            (List of) images to be displayed. Greyscales are
-            normalized to [0, 1] where values outside the bounds
-            are changed to the respective bound value.
-            None: Uses images set by the init method.
-
-        Notes
-        -----
-        TODO: Implement grayscale images. Currently only boolean bitdepth (1)
-              is used.
-        """
-        if images is not None:
-            if not isinstance(images, list):
-                images = [images]
-            self.__images = [self._cv_image(image) for image in images]
-        self._interface.run(
-            self.__images, self.cfg.channel_bitdepth.val,
-            self.cfg.sequence_repetitions.val
-        )
-
-    def stop(self):
-        self._interface.stop()
-
-    # ++++ Write/read methods +++++++++++
-
-    def _read_pixel_hrzt_count(self):
-        return 1024
-
-    def _read_pixel_hrzt_size(self):
-        return 13.68e-6
-
-    def _read_pixel_hrzt_offset(self):
-        return 0
-
-    def _read_pixel_vert_count(self):
-        return 768
-
-    def _read_pixel_vert_size(self):
-        return 13.68e-6
-
-    def _read_pixel_vert_offset(self):
-        return 0
-
-    def _read_format_color(self):
-        return drv.DRV_DSP.FORMAT_COLOR.GS
-
-    def _write_picture_time(self, value):
-        picture_time = value
-        illuminate_time = self.cfg.picture_time.val - self.cfg.dark_time.val
-        self._interface.seq_time(
-            picturetime=int(round(picture_time * 1e6)),
-            illuminatetime=int(round(illuminate_time * 1e6))
-        )
-
-    def _read_picture_time(self):
-        return 1e-6 * self._interface.seq_inq(
-            self._interface.API.ALP_PARMS_SEQ_INQUIRE["ALP_PICTURE_TIME"]
-        )
-
-    def _write_dark_time(self, value):
-        if value == 0:
-            self._interface.seq_ctrl(
-                self._interface.API.ALP_PARMS_SEQ_CONTROL_TYPE["ALP_BIN_MODE"],
-                self._interface.API
-                .ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_UNINTERRUPTED"]
-            )
-        else:
-            self._interface.seq_ctrl(
-                self._interface.API.ALP_PARMS_SEQ_CONTROL_TYPE["ALP_BIN_MODE"],
-                self._interface.API
-                .ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_NORMAL"]
-            )
-        picture_time = self.cfg.picture_time.val
-        illuminate_time = picture_time - value
-        self._interface.seq_time(
-            picturetime=int(round(picture_time * 1e6)),
-            illuminatetime=int(round(illuminate_time * 1e6))
-        )
-
-    def _read_dark_time(self):
-        uninterrupted = (
-            self._interface.seq_inq(
-                self._interface.API.ALP_PARMS_SEQ_INQUIRE["ALP_BIN_MODE"]
-            ) == self._interface
-            .API.ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_UNINTERRUPTED"]
-        )
-        if uninterrupted:
-            return 0
-        else:
-            picture_time = 1e-6 * self._interface.seq_inq(
-                self._interface.API.ALP_PARMS_SEQ_INQUIRE["ALP_PICTURE_TIME"]
-            )
-            illuminate_time = 1e-6 * self._interface.seq_inq(
-                self._interface.API
-                .ALP_PARMS_SEQ_INQUIRE["ALP_ILLUMINATE_TIME"]
-            )
-            return picture_time - illuminate_time
-
-    def _write_sequence_repetitions(self, value):
-        if value > 0:
-            self._interface.seq_ctrl(
-                self._interface.API
-                .ALP_PARMS_SEQ_CONTROL_TYPE["ALP_SEQ_REPEAT"],
-                max(1, min(1048576, int(round(value))))
-            )
-
-    def _read_sequence_repetitions(self):
-        sequence_repetitions = self.cfg.sequence_repetitions.val
-        if sequence_repetitions > 0:
-            sequence_repetitions = self._interface.seq_inq(
-                self._interface.API.ALP_PARMS_SEQ_INQUIRE["ALP_SEQ_REPEAT"]
-            )
-        return sequence_repetitions
-
-    def _read_temperature(self):
-        return 256.0 * self._interface.dev_inq(
-            self._interface.API
-            .ALP_PARMS_DEV_INQUIRE["ALP_DDC_FPGA_TEMPERATURE"]
-        )
-
-    # ++++ Helper methods +++++++++++++++
-
-    def _cv_image(self, image):
-        # Convert image to 2D greyscale array
-        image = np.array(image, dtype=float)
-        if len(image.shape) == 3:
-            image = np.mean(image, axis=-1)
-            image = np.squeeze(image, axis=-1)
         # Check correct size
-        target_shape = (
-            self.cfg.pixel_hrzt_count.val, self.cfg.pixel_vert_count.val
-        )
+        target_shape = (self.p.pixel_hrzt_count, self.p.pixel_vert_count)
         image = misc.resize_numpy_array(
             image, target_shape, fill_value=0, mode_keep="front"
         )
         # Apply channel bitdepth
-        image[image > 1] = 1
+        image[image >= 1] = 1
         image[image < 0] = 0
-        bitdepth = self.cfg.channel_bitdepth.val
-        bitdepth = 1    # only 1bit currently supported
-        image *= (2**bitdepth - 1)
         image *= 255    # only 1bit encoded in 8bit supported
-        dtype = None
-        if bitdepth <= 8:
-            dtype = "uint8"
-        elif bitdepth > 8 and bitdepth <= 16:
-            dtype = "uint16"
+        return image.astype("uint8")
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def read_pixel_hrzt_count(self):
+        _, value = self._alp_itf.AlpDevInquire(
+            self._alp_dev_handle,
+            alp42.ALP_PARMS_DEV_INQUIRE["ALP_DEV_DISPLAY_WIDTH"]
+        )
+        self.p.pixel_hrzt_count = value
+        return value
+
+    def write_pixel_hrzt_count(self, value):
+        if value != self.p.pixel_hrzt_count:
+            self.LOGGER.warning("cannot write pixel_hrzt_count")
+
+    def read_pixel_hrzt_size(self):
+        value = self.read_device_name()
+        MAP = {
+            "XGA": 13.7e-6, "SXGA_PLUS": 13.7e-6, "1080P_095A": 10.8e-6,
+            "XGA_07A": 13.7e-6, "XGA_055A": 10.8e-6, "XGA_055X": 10.8e-6,
+            "WUXGA_096A": 10.8e-6,
+        }
+        value = MAP[value]
+        self.p.pixel_hrzt_size = value
+        return value
+
+    def write_pixel_hrzt_size(self, value):
+        if value != self.p.pixel_hrzt_size:
+            self.LOGGER.warning("cannot write pixel_hrzt_size")
+
+    def read_pixel_hrzt_offset(self):
+        value = 0
+        self.p.pixel_hrzt_offset = 0
+        return value
+
+    def write_pixel_hrzt_offset(self, value):
+        if value != self.p.pixel_hrzt_offset:
+            self.LOGGER.warning("cannot write pixel_hrzt_offset")
+
+    def read_pixel_vert_count(self):
+        _, value = self._alp_itf.AlpDevInquire(
+            self._alp_dev_handle,
+            alp42.ALP_PARMS_DEV_INQUIRE["ALP_DEV_DISPLAY_HEIGHT"]
+        )
+        self.p.pixel_vert_count = value
+        return value
+
+    def write_pixel_vert_count(self, value):
+        if value != self.p.pixel_vert_count:
+            self.LOGGER.warning("cannot write pixel_vert_count")
+
+    def read_pixel_vert_size(self):
+        value = self.read_device_name()
+        MAP = {
+            "XGA": 13.7e-6, "SXGA_PLUS": 13.7e-6, "1080P_095A": 10.8e-6,
+            "XGA_07A": 13.7e-6, "XGA_055A": 10.8e-6, "XGA_055X": 10.8e-6,
+            "WUXGA_096A": 10.8e-6,
+        }
+        value = MAP[value]
+        self.p.pixel_vert_size = value
+        return value
+
+    def write_pixel_vert_size(self, value):
+        if value != self.p.pixel_vert_size:
+            self.LOGGER.warning("cannot write pixel_vert_size")
+
+    def read_pixel_vert_offset(self):
+        value = 0
+        self.p.pixel_vert_offset = 0
+        return value
+
+    def write_pixel_vert_offset(self, value):
+        if value != self.p.pixel_vert_offset:
+            self.LOGGER.warning("cannot write pixel_vert_offset")
+
+    def read_format_color(self):
+        if self.p.format_color is None:
+            self.p.format_color = FORMAT_COLOR.BW
+        return self.p.format_color
+
+    def write_format_color(self, value):
+        # TODO: add support for FORMAT_COLOR.GS
+        if value != FORMAT_COLOR.GS:
+            raise NotImplementedError
+        self.p.format_color = value
+
+    def read_channel_bitdepth(self):
+        if self.p.channel_bitdepth is None:
+            self.p.channel_bitdepth = 1
+        return self.p.channel_bitdepth
+
+    def write_channel_bitdepth(self, value):
+        # TODO: add support for >1
+        if value != 1:
+            raise NotImplementedError
+        self.p.channel_bitdepth = value
+
+    def read_picture_time(self):
+        if self._seq_is_set_up():
+            _, value = self._alp_itf.AlpSeqInquire(
+                self._alp_dev_handle, self._alp_seq_handle,
+                alp42.ALP_PARMS_SEQ_INQUIRE["ALP_PICTURE_TIME"]
+            )
+            value = value * 1e-6
+            self.p.picture_time = value
         else:
-            dtype = "uint32"
-        return image.round().astype(dtype)
+            value = self.p.picture_time
+        return value
+
+    def _write_picture_time(self, value):
+        if self._seq_is_set_up():
+            picture_time = int(round(1e6 * value))
+            illuminate_time = int(round(1e6 * (value - self.p.dark_time)))
+            self._alp_itf.AlpSeqTiming(
+                self._alp_dev_handle, self._alp_seq_handle,
+                illuminatetime=illuminate_time, picturetime=picture_time
+            )
+        self.p.picture_time = value
+
+    def read_dark_time(self):
+        if self._seq_is_set_up():
+            _, m = self._alp_itf.AlpSeqInquire(
+                self._alp_dev_handle, self._alp_seq_handle,
+                alp42.ALP_PARMS_SEQ_INQUIRE["ALP_BIN_MODE"]
+            )
+            if m == alp42.ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_UNINTERRUPTED"]:
+                value = 0
+            else:
+                picture_time = self.read_picture_time()
+                _, value = self._alp_itf.AlpSeqInquire(
+                    self._alp_dev_handle, self._alp_seq_handle,
+                    alp42.ALP_PARMS_SEQ_INQUIRE["ALP_ILLUMINATE_TIME"]
+                )
+                illuminate_time = 1e-6 * value
+                value = picture_time - illuminate_time
+        else:
+            value = self.p.dark_time
+        self.p.dark_time = value
+        return value
+
+    def write_dark_time(self, value):
+        if self._seq_is_set_up():
+            if value == 0:
+                self._alp_itf.AlpSeqControl(
+                    self._alp_dev_handle, self._alp_seq_handle,
+                    alp42.ALP_PARMS_SEQ_CONTROL_TYPE["ALP_BIN_MODE"],
+                    alp42.ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_UNINTERRUPTED"]
+                )
+            else:
+                self._alp_itf.AlpSeqControl(
+                    self._alp_dev_handle, self._alp_seq_handle,
+                    alp42.ALP_PARMS_SEQ_CONTROL_TYPE["ALP_BIN_MODE"],
+                    alp42.ALP_PARMS_SEQ_CONTROL_VALUE["ALP_BIN_NORMAL"]
+                )
+            picture_time = int(round(1e6 * self.p.picture_time))
+            illuminate_time = int(round(1e6 * (self.p.picture_time - value)))
+            self._alp_itf.AlpSeqTiming(
+                self._alp_dev_handle, self._alp_seq_handle,
+                illuminatetime=illuminate_time, picturetime=picture_time
+            )
+        self.p.picture_time = value
+
+    def read_sequence_repetitions(self):
+        if self.p.sequence_repetitions == 0:
+            return 0
+        elif self._seq_is_set_up():
+            _, value = self._alp_itf.AlpSeqInquire(
+                self._alp_dev_handle, self._alp_seq_handle,
+                alp42.ALP_PARMS_SEQ_INQUIRE["ALP_SEQ_REPEAT"]
+            )
+            self.p.sequence_repetitions = value
+            return value
+        else:
+            return self.p.sequence_repetitions
+
+    def write_sequence_repetitions(self, value):
+        if self._seq_is_set_up() and value > 0:
+            self._alp_itf.AlpSeqControl(
+                self._alp_dev_handle, self._alp_seq_handle,
+                alp42.ALP_PARMS_SEQ_CONTROL_TYPE["ALP_SEQ_REPEAT"],
+                max(1, min(1048576, int(round(value))))
+            )
+        self.p.sequence_repetitions = value
+
+    def read_device_name(self):
+        _, value = self._alp_itf.AlpDevInquire(
+            self._alp_dev_handle,
+            alp42.ALP_PARMS_DEV_INQUIRE["ALP_DEV_DMDTYPE"]
+        )
+        CTRL_VAL = alp42.ALP_PARMS_DEV_CONTROL_VALUE
+        MAP = {
+            CTRL_VAL["ALP_DMD_TYPE_XGA"]: "XGA",
+            CTRL_VAL["ALP_DMD_TYPE_SXGA_PLUS"]: "SXGA_PLUS",
+            CTRL_VAL["ALP_DMD_TYPE_1080P_095A"]: "1080P_095A",
+            CTRL_VAL["ALP_DMD_TYPE_XGA_07A"]: "XGA_07A",
+            CTRL_VAL["ALP_DMD_TYPE_XGA_055A"]: "XGA_055A",
+            CTRL_VAL["ALP_DMD_TYPE_XGA_055X"]: "XGA_055X",
+            CTRL_VAL["ALP_DMD_TYPE_WUXGA_096A"]: "WUXGA_096A",
+        }
+        value = MAP[value]
+        self.p.device_name = value
+        return value
+
+    def write_device_name(self, value):
+        self.LOGGER.warning("cannot write device_name")
+
+    def read_temperature(self):
+        _, value = self._alp_itf.AlpDevInquire(
+            self._alp_dev_handle,
+            alp42.ALP_PARMS_DEV_INQUIRE["ALP_DDC_FPGA_TEMPERATURE"]
+        )
+        value = 256.0 * value
+        self.p.temperature = value
+        return value
+
+    def write_temperature(self):
+        self.LOGGER.warning("cannot write temperature")
