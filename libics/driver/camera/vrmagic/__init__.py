@@ -1,4 +1,4 @@
-from . import vrmusbcamapi as vrm
+from . import vrmusbcam2 as vrm
 
 import ctypes as ct
 import numpy as np
@@ -24,7 +24,7 @@ class ItfVRmagic(ItfBase):
     # vrm device handle
     _vrm_dev_handles = {}   # dev_id (str) -> vrm_dev_handle (ct)
 
-    LOGGER = logging.get_logger("libics.driver.camera.vrmagic.VRmagicItf")
+    LOGGER = logging.get_logger("libics.driver.camera.vrmagic.ItfVRmagic")
 
     def __init__(self):
         super().__init__()
@@ -51,6 +51,11 @@ class ItfVRmagic(ItfBase):
         RuntimeError
             If `id` is not available.
         """
+        if self.is_connected():
+            if self._dev_id == id:
+                return
+            else:
+                self.close()
         # Check if requested device ID is discovered
         if id not in self._vrm_dev_keys:
             self.discover()
@@ -186,6 +191,9 @@ class VRmagicVRmCX(Camera):
 
     def __init__(self):
         super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name"
+        ))
 
     # ++++++++++++++++++++++++++++++++++++++++
     # Device methods
@@ -195,9 +203,6 @@ class VRmagicVRmCX(Camera):
         if not isinstance(self.interface, ItfVRmagic):
             self.interface = ItfVRmagic()
         self.interface.setup()
-        self.properties.set_properties(self._get_default_properties_dict(
-            "device_name"
-        ))
 
     def shutdown(self):
         self.interface.shutdown()

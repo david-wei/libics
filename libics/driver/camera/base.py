@@ -342,6 +342,7 @@ class Camera(DevBase):
     def _run_frame_transfer(self, callback=None):
         TIMEOUT_FRAME = 1e-1   # seconds
         TIMEOUT_STOP = 1e-3    # seconds
+        self._is_running.acquire()
         while True:
             try:
                 frame = self._frame_queue.get(

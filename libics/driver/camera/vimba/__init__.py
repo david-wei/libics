@@ -38,7 +38,6 @@ class ItfVimba(ItfBase):
 
     def __init__(self):
         super().__init__()
-        self._is_set_up = False
         self._dev_id = None
 
     # ++++++++++++++++++++++++++++++++++++++++
@@ -46,9 +45,7 @@ class ItfVimba(ItfBase):
     # ++++++++++++++++++++++++++++++++++++++++
 
     def setup(self):
-        if self.is_set_up():
-            return
-        if self._vimba_itf_refs == 0:
+        if not self.is_set_up():
             self._vimba_itf = pymba.vimba.Vimba()
             self._vimba_itf.startup()
             self._vimba_system = self._vimba_itf.getSystem()
@@ -63,7 +60,7 @@ class ItfVimba(ItfBase):
                 self._vimba_system = None
 
     def is_set_up(self):
-        return self._is_set_up
+        return self._vimba_itf_refs > 0
 
     def connect(self, id):
         """
@@ -72,10 +69,15 @@ class ItfVimba(ItfBase):
         RuntimeError
             If `id` is not available.
         """
+        if self.is_connected():
+            if self._dev_id == id:
+                return
+            else:
+                self.close()
         # Check if requested device ID is discovered
-        if id not in self._vimba_dev_keys:
+        if id not in self._vimba_dev_refs:
             self.discover()
-            if id not in self._vimba_dev_keys:
+            if id not in self._vimba_dev_refs:
                 raise RuntimeError("device ID unavailable ({:s})".format(id))
         # Set device ID of this interface instance
         self._dev_id = id
@@ -160,6 +162,9 @@ class AlliedVisionManta(Camera):
 
     def __init__(self):
         super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name", "sensitivity"
+        ))
         self._dev_frame = None
 
     # ++++++++++++++++++++++++++++++++++++++++
@@ -170,9 +175,6 @@ class AlliedVisionManta(Camera):
         if not isinstance(self.interface, ItfVimba):
             self.interface = ItfVimba()
         self.interface.setup()
-        self.properties.set_properties(self._get_default_properties_dict(
-            "device_name", "sensitivity"
-        ))
 
     def shutdown(self):
         self.interface.shutdown()

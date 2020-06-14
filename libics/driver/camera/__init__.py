@@ -30,7 +30,7 @@ def get_manufacturer(model):
 
 DRIVER = {
     # ALLIEDVISION
-    ALLIEDVISION_MANTA_G145B_NIR: vimba.AlliedVisionMantaG145BNIR,
+    ALLIEDVISION_MANTA_G145B_NIR: vimba.AlliedVisionManta,
     # VRMAGIC
     VRMAGIC_VRMCX: vrmagic.VRmagicVRmCX,
 }
