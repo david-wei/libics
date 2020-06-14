@@ -1,158 +1,252 @@
+import abc
+
+from libics.driver.device import DevBase
 
 
-class DRV_SPAN:
-
-    class AVERAGE_MODE:
-
-        LIN = 0
-        EXP = 1
+###############################################################################
 
 
-class SpAnCfg():
+class AVERAGE_MODE:
+
+    LINEAR = "LINEAR"
+    EXPONENTIAL = "EXPONENTIAL"
+
+
+class INPUT_COUPLING:
+
+    AC = "AC"
+    DC = "DC"
+
+
+class FFT_WINDOW:
+
+    UNIFORM = "UNIFORM"
+    FLATTOP = "FLATTOP"
+    HANNING = "HANNING"
+    BLACKMAN_HARRIS = "BLACKMAN_HARRIS"
+
+
+###############################################################################
+
+
+class DevSpectrum(DevBase):
 
     """
-    DrvCfgBase -> SpAnCfg.
-
-    Parameters
+    Properties
     ----------
-    bandwidth : float
-        Spectral bandwidth in Hertz (Hz).
-    frequency_start, frequency_stop : float
+    frequency_range : `(float, float)`
         Frequency range (start, stop) in Hertz (Hz).
-    average_mode : DRV_SPAN.AVERAGE_MODE
+    frequency_bins : `int`
+        Number of frequency bins.
+    average_mode : `AVERAGE_MODE`
         Averaging mode.
-    average_count : int
+    average_count : `int`
         Number of averages.
-    voltage_max : float
-        Voltage input max range in decibel volts (dBV).
     """
 
-    def __init__(
-        self,
-        bandwidth=1e3,
-        frequency_start=0.0, frequency_stop=1e5,
-        average_mode=DRV_SPAN.AVERAGE_MODE.LIN, average_count=100,
-        voltage_max=-30.0,
-        cls_name="SpAnCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.SPAN
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
-        self.bandwidth = bandwidth
-        self.frequency_start = frequency_start
-        self.frequency_stop = frequency_stop
-        self.average_mode = average_mode
-        self.average_count = average_count
-        self.voltage_max = voltage_max
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "bandwidth", "frequency_range", "average_mode", "average_count"
+        ))
 
-    def get_hl_cfg(self):
-        return self
-
-
-
-
-###############################################################################
-
-
-def get_span_drv(cfg):
-    if cfg.model == drv.DRV_MODEL.STANFORD_SR760:
-        return StanfordSR760(cfg)
-    elif cfg.model == drv.DRV_MODEL.YOKAGAWA_AQ6315:
-        return YokagawaAQ6315(cfg)
-    else:
-        return SpAnDrvBase(cfg)
-
-
-class SpAnDrvBase():
-
-    def __init__(self, cfg):
-        assert(isinstance(cfg, drv.SpAnCfg))
-        super().__init__(cfg=cfg)
+    # ++++++++++++++++++++++++++++++++++++++++
+    # DevSpectrum methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
-    def read_powerspectraldensity(self, read_meta=True):
-        """read_meta flag determines whether to perform a read call for the
-        metadata accompanying the spectral data (e.g. frequency)"""
+    def run(self):
+        """
+        Start measurement.
+        """
+
+    @abc.abstractmethod
+    def stop(self):
+        """
+        Stop measurement.
+        """
+
+    @abc.abstractmethod
+    def is_running(self):
+        """
+        Checks whether measurement is on-going.
+        """
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_frequency_range(self):
         pass
 
     @abc.abstractmethod
-    def read_spectraldensity(self, read_meta=True):
-        """read_meta flag determines whether to perform a read call for the
-        metadata accompanying the spectral data (e.g. frequency)"""
+    def write_frequency_range(self, value):
         pass
 
-    # ++++ Write/read methods +++++++++++
-
-    def _write_bandwidth(self, value):
+    @abc.abstractmethod
+    def read_frequency_bins(self):
         pass
 
-    def _read_bandwidth(self):
+    @abc.abstractmethod
+    def write_frequency_bins(self, value):
         pass
 
-    def _write_frequency_start(self, value):
+    @abc.abstractmethod
+    def read_average_mode(self):
         pass
 
-    def _read_frequency_start(self):
+    @abc.abstractmethod
+    def write_average_mode(self, value):
         pass
 
-    def _write_frequency_stop(self, value):
+    @abc.abstractmethod
+    def read_average_count(self):
         pass
 
-    def _read_frequency_stop(self):
-        pass
-
-    def _write_average_mode(self, value):
-        pass
-
-    def _read_average_mode(self):
-        pass
-
-    def _write_average_count(self, value):
-        pass
-
-    def _read_average_count(self):
-        pass
-
-    def _write_voltage_max(self, value):
-        pass
-
-    def _read_voltage_max(self):
+    @abc.abstractmethod
+    def write_average_count(self, value):
         pass
 
 
-###############################################################################
-
-
-
-
-class OscCfg():
+class SpectrumAnalyzer(DevSpectrum):
 
     """
-    DrvCfgBase -> OscCfg.
-
-    Parameters
+    Properties
     ----------
+    power_max : `float`
+        Maximum input power in Watt (W).
     """
 
-    def __init__(
-        self,
-        cls_name="OscCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.OSC
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "power_max"
+        ))
 
-    def get_hl_cfg(self):
-        return self
+    # ++++++++++++++++++++++++++++++++++++++++
+    # SpectrumAnalyzer methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_power_spectrum(self):
+        """
+        Reads the power spectrum per frequency bin.
+
+        Returns
+        -------
+        ad : `data.arrays.ArrayData`
+            Power spectrum.
+            Dimensions: [frequency (Hz)]->power spectrum (W).
+        """
+
+    @abc.abstractmethod
+    def read_power_spectral_density(self):
+        """
+        Reads the frequency-normalized power spectral density.
+
+        Returns
+        -------
+        ad : `data.arrays.ArrayData`
+            Power spectral density.
+            Dimensions: [frequency (Hz)]->PSD (W/Hz).
+        """
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_power_max(self):
+        pass
+
+    @abc.abstractmethod
+    def write_power_max(self, value):
+        pass
+
+
+class FftAnalyzer(DevBase):
+
+    """
+    Properties
+    ----------
+    input_coupling : `INPUT_COUPLING`
+        Input port coupling (AC/DC).
+    voltage_max : `float` or `None`
+        Maximum input voltage in Watt (V).
+        If `None`, sets value automatically.
+    fft_window : `FFT_WINDOW`
+        FFT windowing function.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "voltage_max", "fft_window"
+        ))
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # FftAnalyzer methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_voltage_spectrum(self):
+        """
+        Reads the voltage spectrum per frequency bin.
+
+        Returns
+        -------
+        ad : `data.arrays.ArrayData`
+            Voltage spectrum.
+            Dimensions: [frequency (Hz)]->voltage spectrum (V).
+        """
+
+    @abc.abstractmethod
+    def read_voltage_spectral_density(self):
+        """
+        Reads the frequency-normalized voltage spectral density.
+
+        Returns
+        -------
+        ad : `data.arrays.ArrayData`
+            Voltage spectral density.
+            Dimensions: [frequency (Hz)]->voltage PSD (V/√Hz).
+        """
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_input_coupling(self):
+        pass
+
+    @abc.abstractmethod
+    def write_input_coupling(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_voltage_max(self):
+        pass
+
+    @abc.abstractmethod
+    def write_voltage_max(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_fft_window(self):
+        pass
+
+    @abc.abstractmethod
+    def write_fft_window(self, value):
+        pass
+
+
+###############################################################################
+
+
+class Oscilloscope(DevBase):
+
+    def __init__(self):
+        super().__init__()
+        raise NotImplementedError
