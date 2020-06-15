@@ -1,65 +1,123 @@
+import time
 
-class Newport8742(PicoDrvBase):
+from libics.core.env import logging
+from libics.core.util import misc
+from libics.driver.piezo import Picomotor
+from libics.driver.device import STATUS
+from libics.driver.terminal import ItfTerminal
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        Newport8742._assert_channel(cfg.channel.val)
-        self._write_channel(cfg.channel.val)
 
-    def connect(self):
-        super().connect()
-        self._assert_identifier()
+###############################################################################
+# Device
+###############################################################################
 
-    def read_position(self):
-        self.interface_access.acquire()
-        self._itf_send("PR?", use_channel=True)
-        position = int(self._itf_recv())
-        self.interface_access.release()
-        return position
+class Newport8742(Picomotor):
 
-    def abort_motion(self):
-        self.interface_access.acquire()
-        self._itf_send("AB", use_channel=True)
-        self.interface_access.release()
+    """
+    Configuration
+    -------------
+    subaddress : `str`
+        Device address (0-255) in 8742-internal LAN.
 
-    def zero_position(self):
-        self.interface_access.acquire()
-        self._itf_send("DH", use_channel=True)
-        self.interface_access.release()
+    Properties
+    ----------
+    device_name : `str`
+        Manufacturer device ID.
+    """
 
-    def move_relative(self, steps):
+    LOGGER = logging.get_logger("libics.driver.piezo.newport.Newport8742")
+
+    def __init__(self):
+        super().__init__()
+        self.channel = 1
+        self.subaddress = None
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name"
+        ))
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
         """
         Raises
         ------
-        ValueError
-            If timeout.
+        RuntimeError
+            If interface is not set.
         """
-        self.interface_access.acquire()
+        if not isinstance(self.interface, ItfTerminal):
+            err_msg = "invalid interface"
+            self.last_status = STATUS(
+                state=STATUS.ERROR, err_type=STATUS.ERR_CONNECTION, msg=err_msg
+            )
+            raise RuntimeError(err_msg)
+        self.interface.setup()
+
+    def shutdown(self):
+        if self.is_set_up():
+            self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
+
+    def connect(self):
+        self.interface.connect()
+        self.interface.register(self.identifier, self)
+        self._turn_off_echo_mode()
+        self.p.read_all()
+
+    def close(self):
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
+
+    def is_connected(self):
+        return self.interface.is_connected()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Picomotor methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def abort_motion(self):
+        self._itf_send("AB", use_channel=True)
+
+    def home_position(self):
+        self._itf_send("DH", use_channel=True)
+
+    def move_relative(self, steps):
         self._itf_send("PR{:.0f}".format(steps), use_channel=True)
         _repetitions = 30
-        _wait = max(0.1, steps / self.cfg.velocity.val)
+        _wait = max(0.1, steps / self.p.velocity)
         for _i in range(_repetitions):
             time.sleep(_wait)
             self._itf_send("MD?", use_channel=True)
             if int(self._itf_recv()) == 1:
                 break
             if _i >= _repetitions - 1:
-                raise RuntimeError("Scan timeout")
-        self.interface_access.release()
+                err_msg = "move_relative timeout"
+                self.last_status = STATUS(
+                    state=STATUS.ERROR, err_type=STATUS.ERR_DEVICE, msg=err_msg
+                )
+                raise RuntimeError(err_msg)
 
-    def scan_slave_devices(self):
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Newport8742 methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def discover_subaddresses(self):
         """
+        Scans for slave devices in device-internal LAN.
+
         Returns
         -------
-        addr : list(int)
-            Available slave device addresses.
+        subaddresses : `list(str)`
+            Available slave device subaddresses.
 
         Raises
         ------
         ValueError
             If scan timed out or slave devices have address conflicts.
         """
-        self.interface_access.acquire()
         self._itf_send("SC", use_channel=False)
         _repetitions = 30
         for _i in range(_repetitions):
@@ -71,91 +129,75 @@ class Newport8742(PicoDrvBase):
                 raise RuntimeError("Scan timeout")
         self._itf_send("SC?", use_channel=False)
         bf = list(reversed(misc.cv_bitfield(int(self._itf_recv()))))
-        self.interface_access.release()
         if bf[0]:
             raise RuntimeError("Address conflict")
-        addr = []
+        subaddresses = []
         for i in bf[1:]:
             if i:
-                addr.append(i)
-        return addr
+                subaddresses.append(i)
+        return subaddresses
 
     def read_error(self):
-        self.interface_access.acquire()
-        self._itf_send("TB?", use_channel=False)
-        _recv = self._itf_recv()
-        self.interface_access.release()
-        return _recv
+        value = self._itf_query("TB?", use_channel=False)
+        return value
 
-    # ++++ Write/read methods +++++++++++
-
-    def _write_channel(self, value):
-        self.__channel = Newport8742._assert_channel(value)
-
-    def _read_channel(self):
-        return self.__channel
-
-    def _write_acceleration(self, value):
-        self._itf_send("AC{:.0f}".format(value), use_channel=True)
-        time.sleep(0.01)
-
-    def _read_acceleration(self):
-        self._itf_send("AC?", use_channel=True)
-        return int(self._itf_recv())
-
-    def _write_velocity(self, value):
-        self._itf_send("VA{:.0f}".format(value), use_channel=True)
-        time.sleep(0.01)
-
-    def _read_velocity(self):
-        self._itf_send("VA?", use_channel=True)
-        return int(self._itf_recv())
-
-    def _write_feedback_mode(self, value):
-        Newport8742._assert_feedback_mode(value)
-
-    def _read_feedback_mode(self):
-        return drv.DRV_PICO.FEEDBACK_MODE.OPEN_LOOP
-
-    # ++++ Helper methods +++++++++++++++
-
-    def _assert_identifier(self):
-        self.interface_access.acquire()
-        self._itf_send("*IDN?", use_channel=False)
-        _id = misc.extract(self._itf_recv(), r"New_Focus 8742 v.* (\d+)")
-        self.interface_access.release()
-        if _id != self.cfg.identifier:
-            raise ValueError("Wrong device ID ({:s})".format(_id))
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def _itf_send(self, msg, use_channel=False):
         prefix = ""
-        if len(self.__channel) == 2:
-            prefix = prefix + "{:.0f}>".format(self.__channel[0])
+        if self.subaddress is not None:
+            prefix = prefix + "{:s}>".format(self.subaddress)
         if use_channel:
-            prefix = prefix + "{:.0f}".format(self.__channel[-1])
-        self._interface.send(prefix + msg)
+            prefix = prefix + "{:d}".format(self.channel)
+        self.interface.send(prefix + msg)
 
     def _itf_recv(self):
         msg = self._interface.recv()
         msg = msg.split(">")[-1]
-        return self._strip_recv(msg)
+        return msg
 
-    @staticmethod
-    def _assert_channel(value):
-        value = misc.assume_iter(value)
-        if not (
-            (len(value) == 1 or len(value) == 2)
-            and np.all([isinstance(item, int) for item in value])
-        ):
-            raise ValueError("invalid channel: {:s}".format(str(value)))
+    def _itf_query(self, msg, use_channel=False):
+        self._itf_send(msg, use_channel=use_channel)
+        return self._itf_recv()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def read_position(self):
+        value = float(self._itf_query("PR?", use_channel=True))
+        self.p.position = value
         return value
 
-    @staticmethod
-    def _assert_feedback_mode(value):
-        if value != drv.DRV_PICO.FEEDBACK_MODE.OPEN_LOOP:
-            raise ValueError("invalid feedback mode: {:s}".format(str(value)))
+    def write_position(self, value):
+        self.LOGGER.warning("cannot write position")
+
+    def read_acceleration(self):
+        value = float(self._itf_query("AC?", use_channel=True))
+        self.p.acceleration = value
         return value
 
-    @staticmethod
-    def _strip_recv(value):
-        return value.lstrip("\n\r*[ \x00").rstrip("\n\r] \x00")
+    def write_acceleration(self, value):
+        self._itf_send("AC{:.0f}".format(value), use_channel=True)
+        self.p.acceleration = value
+
+    def read_velocity(self):
+        value = float(self._itf_query("VA?", use_channel=True))
+        self.p.velocity = value
+        return value
+
+    def write_velocity(self, value):
+        self._itf_send("VA{:.0f}".format(value), use_channel=True)
+        self.p.velocity = value
+
+    def read_device_name(self):
+        value = self._itf_query("*IDN?", use_channel=False)
+        value = misc.extract(value, r"New_Focus 8742 v.* (\d+)")
+        self.p.device_name = value
+        return value
+
+    def write_device_name(self, value):
+        if value != self.p.device_name:
+            self.LOGGER.warning("cannot write device_name")

@@ -1,88 +1,105 @@
+import time
+
+from libics.core.env import logging
+from libics.driver.piezo import PiezoActuator
+from libics.driver.device import STATUS
+from libics.driver.terminal import ItfTerminal
 
 
-class ThorlabsMDT69XA(PiezoDrvBase):
+###############################################################################
+# Device
+###############################################################################
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        ThorlabsMDT69XA._assert_channel(cfg.channel.val)
-        self.__channel = cfg.channel.val
+
+class ThorlabsMDT69X(PiezoActuator):
+
+    LOGGER = logging.get_logger("libics.driver.piezo.thorlabs.ThorlabsMDT69X")
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
+        """
+        Raises
+        ------
+        RuntimeError
+            If interface is not set.
+        """
+        if not isinstance(self.interface, ItfTerminal):
+            err_msg = "invalid interface"
+            self.last_status = STATUS(
+                state=STATUS.ERROR, err_type=STATUS.ERR_CONNECTION, msg=err_msg
+            )
+            raise RuntimeError(err_msg)
+        self.interface.setup()
+
+    def shutdown(self):
+        if self.is_set_up():
+            self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
 
     def connect(self):
-        super().connect()
+        self.interface.connect()
+        self.interface.register(self.identifier, self)
         self._turn_off_echo_mode()
+        self.p.read_all()
 
-    def write_voltage(self, voltage):
-        self.interface_access.acquire()
-        self._interface.send(
-            "{:s}V{:.3f}".format(str(self.cfg.channel), voltage)
-        )
-        time.sleep(0.05)
-        self.interface_access.release()
+    def close(self):
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
 
-    def read_voltage(self):
-        self.interface_access.acquire()
-        self._interface.send("{:s}R?".format(str(self.cfg.channel)))
-        voltage = float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
-        self.interface_access.release()
-        return voltage
+    def is_connected(self):
+        return self.interface.is_connected()
 
-    # ++++ Write/read methods +++++++++++
-
-    def _write_limit_min(self, value):
-        self._interface.send(
-            "{:s}L{:.3f}".format(str(self.cfg.channel), value)
-        )
-        time.sleep(0.05)
-
-    def _read_limit_min(self):
-        self._interface.send("{:s}L?".format(str(self.cfg.channel)))
-        return float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
-
-    def _write_limit_max(self, value):
-        self._interface.send(
-            "{:s}H{:.3f}".format(str(self.cfg.channel), value)
-        )
-        time.sleep(0.05)
-
-    def _read_limit_max(self):
-        self._interface.send("{:s}H?".format(str(self.cfg.channel)))
-        return float(ThorlabsMDT69XA._strip_recv(self._interface.recv()))
-
-    def _write_channel(self, value):
-        self.__channel = ThorlabsMDT69XA._assert_channel(value)
-
-    def _read_channel(self):
-        return self.__channel
-
-    def _write_feedback_mode(self, value):
-        ThorlabsMDT69XA._assert_feedback_mode(value)
-
-    def _read_feedback_mode(self):
-        return drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP
-
-    # ++++ Helper methods +++++++++++++++
-
-    @staticmethod
-    def _assert_channel(value):
-        if value not in ["x", "y", "z", "X", "Y", "Z"]:
-            raise ValueError("invalid channel: {:s}".format(str(value)))
-        return value
-
-    @staticmethod
-    def _assert_feedback_mode(value):
-        if value != drv.DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP:
-            raise ValueError("invalid feedback mode: {:s}".format(str(value)))
-        return value
-
-    @staticmethod
-    def _strip_recv(value):
-        return value.lstrip("\n\r*[ \x00").rstrip("\n\r] \x00")
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Helper methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def _turn_off_echo_mode(self):
-        self._interface.send("E")
+        self.interface.send("E")
         time.sleep(0.5)
-        s_recv = self._interface.recv().lstrip("\n\r*[e ").rstrip("\n\r] ")
+        s_recv = self.interface.recv().lstrip("\n\r*[e ").rstrip("\n\r] ")
         if s_recv == "Echo On":
-            self._interface.send("E")
+            self.interface.send("E")
             time.sleep(0.5)
-            self._interface.recv()
+            self.interface.recv()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def read_voltage(self):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        value = float(self.interface.query("{:s}R?".format(MAP[self.channel])))
+        self.p.voltage = value
+        return value
+
+    def write_voltage(self, value):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        self.interface.send("{:s}V{:.3f}".format(MAP[self.channel], value))
+        self.p.voltage = value
+
+    def read_voltage_min(self):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        value = float(self.interface.query("{:s}L?".format(MAP[self.channel])))
+        self.p.voltage_min = value
+        return value
+
+    def write_voltage_min(self, value):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        self.interface.send("{:s}L{:.3f}".format(MAP[self.channel], value))
+        self.p.voltage_min = value
+
+    def read_voltage_max(self):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        value = float(self.interface.query("{:s}H?".format(MAP[self.channel])))
+        self.p.voltage_max = value
+        return value
+
+    def write_voltage_max(self, value):
+        MAP = {0: "X", 1: "Y", 2: "Z"}
+        self.interface.send("{:s}H{:.3f}".format(MAP[self.channel], value))
+        self.p.voltage_max = value

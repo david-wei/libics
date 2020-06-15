@@ -1,205 +1,137 @@
+import abc
 
-
-
-class DRV_PIEZO:
-
-    class FEEDBACK_MODE:
-
-        OPEN_LOOP = 0
-        CLOSED_LOOP = 1
-
-
-class PiezoCfg():
-
-    """
-    DrvCfgBase -> PiezoCfg.
-
-    Parameters
-    ----------
-    limit_min, limit_max : float
-        Voltage limit minimum and maximum in volts (V).
-    displacement : float
-        Displacement in meters per volt (m/V).
-    channel : int or str
-        Voltage channel.
-    feedback_mode : DRV_PIEZO.FEEDBACK_MODE
-        Feedback operation mode.
-    """
-
-    def __init__(
-        self,
-        limit_min=0.0, limit_max=75.0,
-        displacement=2.67e-7,
-        channel=None,
-        feedback_mode=DRV_PIEZO.FEEDBACK_MODE.OPEN_LOOP,
-        cls_name="PiezoCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.PIEZO
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
-        self.limit_min = limit_min
-        self.limit_max = limit_max
-        self.displacement = displacement
-        self.channel = channel
-        self.feedback_mode = feedback_mode
-
-    def get_hl_cfg(self):
-        return self
-
-
-class DRV_PICO:
-
-    class FEEDBACK_MODE:
-
-        OPEN_LOOP = 0
-        CLOSED_LOOP = 1
-
-
-class PicoCfg():
-
-    """
-    DrvCfgBase -> PicoCfg.
-
-    Parameters
-    ----------
-    channel : int or tuple(int)
-        If `int`, indicates pico motor channel.
-        If `tuple(int)`, represents slave device tree
-        (slave level 0, slave level 1, ..., motor channel).
-    acceleration : int
-        Picomotor acceleration in steps per square seconds (st/s²).
-    velocity : int
-        Picomotor velocity in steps per second (st/s).
-    feedback_mode : DRV_PIEZO.FEEDBACK_MODE
-        Feedback operation mode.
-    """
-    
-    def __init__(
-        self,
-        acceleration=100000, velocity=1750,
-        channel=1,
-        feedback_mode=DRV_PICO.FEEDBACK_MODE.OPEN_LOOP,
-        cls_name="PicoCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.PIEZO
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
-        self.channel = channel
-        self.acceleration = acceleration
-        self.velocity = velocity
-        self.feedback_mode = feedback_mode
-
-    def get_hl_cfg(self):
-        return self
-
+from libics.driver.device import DevBase
 
 
 ###############################################################################
 
 
-def get_piezo_drv(cfg):
-    if cfg.model == drv.DRV_MODEL.THORLABS_MDT69XA:
-        return ThorlabsMDT69XA(cfg)
-
-
-class PiezoDrvBase():
+class PiezoActuator(DevBase):
 
     """
-    Piezo driver API.
+    Configuration
+    -------------
+    channel : `int`
+        Voltage channel.
+    deformation_coeff : `float`
+        Displacement-voltage ratio in meters per volt (m/V).
+
+    Properties
+    ----------
+    voltage : `float`
+        Voltage in volts (V).
+    voltage_min, voltage_max : `float`
+        Voltage limit minimum and maximum in volts (V).
     """
 
-    def __init__(self, cfg):
-        assert(isinstance(cfg, drv.PiezoCfg))
-        super().__init__(cfg=cfg)
+    def __init__(self):
+        super().__init__()
+        self.channel = None
+        self.deformation_coeff = None
+        self.properties.set_properties(self._get_default_properties_dict(
+            "voltage", "voltage_min", "voltage_max"
+        ))
 
-    @abc.abstractmethod
-    def write_voltage(self, voltage):
-        pass
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
     def read_voltage(self):
         pass
 
-    # ++++ Write/read methods +++++++++++
-
-    def _write_limit_min(self, value):
+    @abc.abstractmethod
+    def write_voltage(self, value):
         pass
 
-    def _read_limit_min(self):
+    @abc.abstractmethod
+    def read_voltage_min(self):
         pass
 
-    def _write_limit_max(self, value):
+    @abc.abstractmethod
+    def write_voltage_min(self, value):
         pass
 
-    def _read_limit_max(self):
+    @abc.abstractmethod
+    def read_voltage_max(self):
         pass
 
-    def _write_displacement(self, value):
-        pass
-
-    def _read_displacement(self):
-        pass
-
-    def _write_channel(self, value):
-        pass
-
-    def _read_channel(self):
-        pass
-
-    def _write_feedback_mode(self, value):
-        pass
-
-    def _read_feedback_mode(self):
+    @abc.abstractmethod
+    def write_voltage_max(self, value):
         pass
 
 
+###############################################################################
 
 
-
-
-def get_pico_drv(cfg):
-    if cfg.model == drv.DRV_MODEL.NEWPORT_8742:
-        return Newport8742(cfg)
-
-
-class PicoDrvBase():
+class Picomotor(DevBase):
 
     """
-    Picomotor driver API.
+    Configuration
+    -------------
+    channel : `int`
+        Motor axis.
+    step_size : `float`
+        Displacement per step in meters (m).
+
+    Parameters
+    ----------
+    position : `int`
+        Picomotor position in steps w.r.t. home (st).
+    acceleration : `float`
+        Picomotor acceleration in steps per square seconds (st/s²).
+    velocity : `float`
+        Picomotor velocity in steps per second (st/s).
     """
 
-    def __init__(self, cfg):
-        assert(isinstance(cfg, drv.PicoCfg))
-        super().__init__(cfg=cfg)
+    def __init__(self):
+        super().__init__()
+        self.channel = None
+        self.step_size = None
+        self.properties.set_properties(self._get_default_properties_dict(
+            "position", "acceleration", "velocity"
+        ))
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Picomotor methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
     def abort_motion(self):
         pass
 
     @abc.abstractmethod
-    def zero_position(self):
+    def home_position(self):
         pass
 
     @abc.abstractmethod
     def move_relative(self, steps):
         pass
 
-    # ++++ Write/read methods +++++++++++
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
-    def _write_feedback_mode(self, value):
+    @abc.abstractmethod
+    def read_position(self):
         pass
 
-    def _read_feedback_mode(self):
+    @abc.abstractmethod
+    def write_position(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_acceleration(self):
+        pass
+
+    @abc.abstractmethod
+    def write_acceleration(self, value):
+        pass
+
+    @abc.abstractmethod
+    def read_velocity(self):
+        pass
+
+    @abc.abstractmethod
+    def write_velocity(self, value):
         pass
