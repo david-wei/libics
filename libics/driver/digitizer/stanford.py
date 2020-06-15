@@ -77,7 +77,7 @@ class StanfordSR760(FftAnalyzer):
         return self.interface.is_set_up()
 
     def connect(self):
-        self.interface.connect()
+        self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
         self.p.read_all()
 

@@ -62,7 +62,7 @@ class Newport8742(Picomotor):
         return self.interface.is_set_up()
 
     def connect(self):
-        self.interface.connect()
+        self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
         self._turn_off_echo_mode()
         self.p.read_all()
