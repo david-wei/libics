@@ -1,84 +1,131 @@
-class IpgYLR(LaserDrvBase):
+from libics.core.env import logging
+from libics.driver.lightsource import LightSource
+from libics.driver.device import STATUS
+from libics.driver.terminal import ItfTerminal
 
-    def __init__(self, cfg):
-        super().__init__(cfg)
+
+###############################################################################
+# Device
+###############################################################################
+
+
+class IpgYLR(LightSource):
+
+    """
+    Properties
+    ----------
+    current : `float`
+        Relative light source current with respect to the maximal current.
+    device_name : `str`
+        Manufacturer device ID.
+    """
+
+    LOGGER = logging.get_logger("libics.driver.lightsource.ipg.IpgYLR")
+
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "device_name"
+        ))
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Device methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    def setup(self):
+        """
+        Raises
+        ------
+        RuntimeError
+            If interface is not set.
+        """
+        if not isinstance(self.interface, ItfTerminal):
+            err_msg = "invalid interface"
+            self.last_status = STATUS(
+                state=STATUS.ERROR, err_type=STATUS.ERR_CONNECTION, msg=err_msg
+            )
+            raise RuntimeError(err_msg)
+        self.interface.setup()
+
+    def shutdown(self):
+        if self.is_set_up():
+            self.interface.shutdown()
+
+    def is_set_up(self):
+        return self.interface.is_set_up()
 
     def connect(self):
-        super().connect()
+        self.interface.connect()
+        self.interface.register(self.identifier, self)
+        self.p.read_all()
+
+    def close(self):
+        self.interface.deregister(id=self.identifier)
+        self.interface.close()
+
+    def is_connected(self):
+        return self.interface.is_connected()
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # LightSource methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def run(self):
-        self.interface_access.acquire()
-        self._itf_send("EMON")
-        self._itf_recv_ack("EMON")
-        self.interface_access.release()
+        self.interface.send("EMON")
 
     def stop(self):
-        self.interface_access.acquire()
-        self._itf_send("EMOFF")
-        self._itf_recv_ack("EMOFF")
-        self.interface_access.release()
+        self.interface.send("EMOFF")
 
-    def write_power(self, power):
-        raise NotImplementedError
+    def is_running(self):
+        return self.read_power() != -1
 
-    def read_power(self):
-        self.interface_access.acquire()
-        self._interface.send("ROP")
-        recv = self._itf_recv_val("ROP")
-        try:
-            power = float(recv)
-        except ValueError:
-            power = recv
-        self.interface_access.release()
-        return power
-
-    def write_current(self, current):
-        self.interface_access.acquire()
-        self._write_current(current)
-        self.interface_access.release()
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     def read_current(self):
-        self.interface_access.acquire()
-        current = self._read_current()
-        self.interface_access.release()
-        return current
+        value = float(self.interface.query("RCS").split(":")[-1].strip(" "))
+        self.p.current = value
+        return value
 
-    # ++++ Write/read methods +++++++++++
+    def write_current(self, value):
+        self.interface.query("SDC {:.2f}".format(value))
+        self.p.current = value
 
-    def _write_current(self, value):
-        self._interface.send("SDC {:f}".format(value))
-        if not np.close(value, float(self._itf_recv_val("SDC"))):
-            raise RuntimeError("writing current failed")
+    def read_power(self):
+        value = self.interface.query("ROP").split(":")[-1].strip(" ")
+        if value.upper() == "OFF":
+            value = -1
+        elif value.upper() == "LOW":
+            value = 0
+        self.p.power = value
+        return value
 
-    def _read_current(self):
-        self._interface.send("RCS")
-        return float(self._itf_recv_val("RCS"))
+    def write_power(self, value):
+        self.LOGGER.warning("cannot write power")
 
-    def _write_temperature(self, value):
-        raise NotImplementedError
+    def read_temperature(self):
+        value = float(self.interface.query("RCT").split(":")[-1].strip(" "))
+        self.p.temperature = value
+        return value
 
-    def _read_temperature(self):
-        self._interface.send("RCT")
-        return float(self._itf_recv_val("RCT"))
+    def write_temperature(self, value):
+        self.LOGGER.warning("cannot write temperature")
 
-    # ++++ Helper methods +++++++++++++++
+    def read_emission_time(self):
+        value = float(self.interface.query("RET").split(":")[-1].strip(" "))
+        value *= 60
+        self.p.emission_time = value
+        return value
 
-    def _itf_send(self, msg):
-        self._interface.send(msg)
+    def write_emission_time(self, value):
+        self.LOGGER.warning("cannot write emission_time")
 
-    def _itf_recv(self):
-        return self._strip_recv(self._interface.recv())
+    def read_device_name(self):
+        value = self.interface.query("RSN").split(":")[-1].strip(" ")
+        self.p.device_name = value
+        return value
 
-    def _itf_recv_ack(self, msg):
-        if msg != self._itf_recv():
-            raise RuntimeError("Command not acknowledged")
-
-    def _itf_recv_val(self, msg):
-        recv = self._itf_recv().split(":")
-        if len(recv) <= 1 or msg != self._strip_recv(recv[0]):
-            raise RuntimeError("Command not acknowledged")
-        return self._strip_recv(recv[-1])
-
-    @staticmethod
-    def _strip_recv(value):
-        return value.lstrip("\n\r*[ \x00").rstrip("\n\r] \x00")
+    def write_device_name(self, value):
+        if value != self.p.device_name:
+            self.LOGGER.warning("cannot write device_name")

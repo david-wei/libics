@@ -1,66 +1,92 @@
-class LaserCfg():
+import abc
+import time
 
-    """
-    DrvCfgBase -> LaserCfg.
-
-    Parameters
-    ----------
-    current : float
-        Current in Ampere (A).
-    temperature : float
-        Temperature in degrees (°C).
-    """
-
-    def __init__(
-        self, current=0.1, temperature=25.0,
-        cls_name="LaserCfg", ll_obj=None, **kwargs
-    ):
-        if "driver" not in kwargs.keys():
-            kwargs["driver"] = DRV_DRIVER.LASER
-        super().__init__(cls_name=cls_name, **kwargs)
-        if ll_obj is not None:
-            ll_obj_dict = dict(ll_obj.__dict__)
-            for key in list(ll_obj_dict.keys()):
-                if key.startswith("_"):
-                    del ll_obj_dict[key]
-            self.__dict__.update(ll_obj_dict)
-        self.current = current
-        self.temperature = temperature
-
-    def get_hl_cfg(self):
-        return self
-
-
+from libics.driver.device import DevBase
 
 
 ###############################################################################
 
 
-def get_laser_drv(cfg):
-    if cfg.model == drv.DRV_MODEL.IPG_YLR:
-        return IpgYLR(cfg)
-
-
-class LaserDrvBase():
+class LightSource(DevBase):
 
     """
-    Laser driver API.
+    Properties
+    ----------
+    current : `float`
+        Light source current in Ampere (A).
+    power : `float`
+        Optical power in Watt (W).
+    temperature : `float`
+        Light source temperature in Celsius (°C).
+    emission_time : `float`
+        Emission ("ON") time in seconds (s).
     """
 
-    def __init__(self, cfg):
-        assert(isinstance(cfg, drv.LaserCfg))
-        super().__init__(cfg=cfg)
+    def __init__(self):
+        super().__init__()
+        self.properties.set_properties(self._get_default_properties_dict(
+            "current", "power", "temperature", "emission_time"
+        ))
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # LightSource methods
+    # ++++++++++++++++++++++++++++++++++++++++
 
     @abc.abstractmethod
     def run(self):
-        pass
+        """
+        Starts light emission.
+        """
 
     @abc.abstractmethod
     def stop(self):
+        """
+        Stops light emission.
+        """
+
+    @abc.abstractmethod
+    def is_running(self):
+        """
+        Checks if emission is active.
+        """
+
+    def ramp(self, prop, target_value, steps=16, duration=1.0):
+        """
+        Linearly ramps a property in discrete steps.
+
+        Parameters
+        ----------
+        prop : `str`
+            Property name to be ramped.
+        target_value : `float`
+            Ramp target property value.
+        steps : `int`
+            Number of discrete steps in ramp.
+        duration : `float`
+            Total ramp duration in seconds (s).
+        """
+        step_time = duration / steps
+        _value = self.p.read(prop)
+        step_value = (target_value - _value) / steps
+        _time = time.time()
+        for i in range(steps):
+            _value += step_value
+            _time += step_time
+            self.p.write(**{prop: _value})
+            _duration = _time - time.time()
+            if _duration > 0:
+                time.sleep(_duration)
+
+    # ++++++++++++++++++++++++++++++++++++++++
+    # Properties methods
+    # ++++++++++++++++++++++++++++++++++++++++
+
+    @abc.abstractmethod
+    def read_current(self):
         pass
 
     @abc.abstractmethod
-    def write_power(self, power):
+    def write_current(self, value):
         pass
 
     @abc.abstractmethod
@@ -68,23 +94,21 @@ class LaserDrvBase():
         pass
 
     @abc.abstractmethod
-    def write_current(self, current):
+    def write_power(self, value):
         pass
 
     @abc.abstractmethod
-    def read_current(self):
+    def read_temperature(self):
         pass
 
-    # ++++ Write/read methods +++++++++++
-
-    def _write_current(self, value):
+    @abc.abstractmethod
+    def write_temperature(self, value):
         pass
 
-    def _read_current(self):
+    @abc.abstractmethod
+    def read_emission_time(self):
         pass
 
-    def _write_temperature(self, value):
-        pass
-
-    def _read_temperature(self):
+    @abc.abstractmethod
+    def write_emission_time(self, value):
         pass
