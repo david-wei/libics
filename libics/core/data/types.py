@@ -617,3 +617,32 @@ class ValCheckDesc:
         raise ValueError(
             "invalid {:s} value ({:s})".format(self.name, str(value))
         )
+
+
+###############################################################################
+# Structures
+###############################################################################
+
+
+class Result(dict):
+
+    """
+    Container class wrapping a dictionary and allowing access by attribute.
+
+    Typical use case as a more complex results container.
+    """
+
+    def __init__(self, **kwargs):
+        self.update(kwargs)
+
+    def set_result(self, **kwargs):
+        self.update(kwargs)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __getattr__(self, name):
+        if name not in self:
+            raise AttributeError("'{:s}' object has no attribute '{:s}'"
+                                 .format(self.__class__.__name__, name))
+        return self[name]
