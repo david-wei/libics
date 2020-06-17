@@ -1,5 +1,8 @@
 import pandas as pd
 
+from libics.core.data.types import Quantity
+from libics.core.util import misc
+
 
 ###############################################################################
 
@@ -25,7 +28,30 @@ class DataSequence(pd.DataFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._quantity = {}
 
     @property
     def _constructor(self):
         return DataSequence
+
+    def set_quantity(self, **kwargs):
+        for k, v in kwargs.items():
+            self._quantity[k] = misc.assume_construct_obj(v, Quantity)
+
+    def get_quantity(self):
+        return self._quantity
+
+    @property
+    def quantity(self):
+        q = self._quantity.copy()
+        for col in self.columns:
+            if col not in q:
+                q[col] = Quantity(name=col)
+        return q
+
+    @staticmethod
+    def append(*args, **kwargs):
+        """
+        Wrapper for :py:meth:`pandas.append`.
+        """
+        return pd.append(*args, **kwargs)
