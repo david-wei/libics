@@ -301,7 +301,7 @@ class ArrayData(object):
                 self._low[dim] = _op(self._low[dim], other)
                 self._high[dim] = _op(self._high[dim], other)
 
-    def add_dim(self, *args):
+    def add_dim(self, *args, **kwargs):
         """
         Appends variable dimension(s) to the object.
 
@@ -313,15 +313,22 @@ class ArrayData(object):
             setting dimensions.
             An integer is equivalent to passing an this-integer-length
             list of empty dictionaries.
+        **kwargs
+            Keyword dictionary is interpreted as if a single dictionary
+            with the `kwargs` as items was passed.
+            If any `*args` are given, `**kwargs` are ignored.
 
         Raises
         ------
         ValueError
             If arguments are invalid.
         """
-        # Add nothing
+        # Handle kwargs
         if len(args) == 0:
-            return
+            if len(kwargs) == 0:
+                return
+            else:
+                args = [kwargs]
         # Handle multiple dimensions
         if len(args) == 1 and isinstance(args[0], int):
             args = args[0] * [{}]
