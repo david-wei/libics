@@ -3,6 +3,7 @@ import datetime
 import json
 import numpy as np
 import pandas as pd
+import scipy.io
 from importlib import import_module
 
 
@@ -489,7 +490,8 @@ def load(
     dec : `ObjDecoder`
         Deserialization class.
     fmt : `str`
-        File format: `"json"`, `"bson"`, `"hdf"`.
+        Supported file formats: `"json"`, `"bson"`, `"hdf"`,
+        `"bmp"`, `"png"`, `"wct"`, `"sif"`, `"mat"`.
     req_version : `None`, `float` or `(float, float)`
         Required `libics` version. Tuples specify minimum and maximum
         versions, a single float a minimum version.
@@ -530,6 +532,8 @@ def load(
         obj = image.load_wct_to_arraydata(file_path, ad=obj_or_cls)
     elif "sif" in fmt:
         obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls)
+    elif "mat" in fmt:
+        obj = scipy.io.loadmat(file_path)
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
     return obj
