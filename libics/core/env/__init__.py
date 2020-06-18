@@ -48,12 +48,23 @@ DIR_USER = (os.environ["USERPROFILE"] if sys.platform == "win32"
             else os.path.expanduser("~"))
 DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
 DIR_DOC_LIBICS = ASSUME_DIR(DIR_DOCUMENTS, "libics")
-DIR_DOC_DATA = ASSUME_DIR(DIR_DOC_LIBICS, "data")
+
+
+def WRITE_DIRS(dirs):
+    json.dump(
+        DIRS, open(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics"), "w"),
+        indent=4
+    )
+
+
 DIRS = {}
 if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
     DIRS = json.load(
         open(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics"), "r")
     )
+else:
+    WRITE_DIRS(DIRS)
+
 
 ###############################################################################
 # Files

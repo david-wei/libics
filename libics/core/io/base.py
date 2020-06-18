@@ -441,6 +441,24 @@ def get_file_format(file_path, fmt=None):
     return fmt
 
 
+_SAVER_FUNC = {}
+
+
+def _register_save_fmt(fmt, func):
+    """
+    Registers `func` as saver function for `fmt` files in :py:func:`save`.
+
+    Parameters
+    ----------
+    fmt : `str`
+        File format.
+    func : `callable`
+        Saver function.
+        Call signature: `func(file_path)->obj`.
+    """
+    _SAVER_FUNC[fmt] = func
+
+
 def save(
     file_path, obj, enc=ObjEncoder, fmt=None, **kwargs
 ):
@@ -462,6 +480,11 @@ def save(
     """
     fmt = get_file_format(file_path, fmt=fmt)
     ser = enc.encode(obj)
+    # Registered fmt
+    for k, v in _SAVER_FUNC.items():
+        if k in fmt:
+            return v(file_path)
+    # Default fmt
     if "json" in fmt:
         with open(file_path, "w") as f:
             json.dump(ser, f, **kwargs)
@@ -473,6 +496,24 @@ def save(
         raise NotImplementedError("hdf format not yet implemented")
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
+
+
+_LOADER_FUNC = {}
+
+
+def _register_load_fmt(fmt, func):
+    """
+    Registers `func` as loader function for `fmt` files in :py:func:`load`.
+
+    Parameters
+    ----------
+    fmt : `str`
+        File format.
+    func : `callable`
+        Loader function.
+        Call signature: `func(file_path)->obj`.
+    """
+    _LOADER_FUNC[fmt] = func
 
 
 def load(
@@ -510,6 +551,11 @@ def load(
     obj = obj_or_cls
     if isinstance(obj_or_cls, type):
         obj = obj_or_cls()
+    # Registered fmt
+    for k, v in _LOADER_FUNC.items():
+        if k in fmt:
+            return v(file_path)
+    # Default fmt
     if "json" in fmt:
         with open(file_path, "r") as f:
             ser = json.load(f)
