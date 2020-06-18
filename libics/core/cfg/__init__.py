@@ -3,6 +3,7 @@ import configparser
 import json
 
 from libics.core import io
+from libics.core.env import logging
 
 
 ###############################################################################
@@ -66,6 +67,8 @@ class CfgBase(io.FileBase):
     `CfgBase`.
     """
 
+    LOGGER = logging.get_logger("libics.core.cfg.CfgBase")
+
     def __init__(self, **kwargs):
         super().__init__()
         for k, v in kwargs.items():
@@ -105,7 +108,7 @@ class CfgBase(io.FileBase):
             d = self.attributes()
         for k, v in d.items():
             if isinstance(v, CfgBase):
-                d[k] = v._to_dict()
+                d[k] = v._to_dict(serialize_all=serialize_all)
         return d
 
     def _from_dict(self, d):
@@ -124,6 +127,58 @@ class CfgBase(io.FileBase):
                 getattr(self, k)._from_dict(v)
             else:
                 setattr(self, k, v)
+
+    def __str__(self):
+        d = self._to_dict(serialize_all=False)
+        if len(d) == 0:
+            d = self._to_dict(serialize_all=True)
+        s = str(d)
+        return s
+
+    def __repr__(self):
+        d = self._to_dict(serialize_all=False)
+        if len(d) == 0:
+            d = self._to_dict(serialize_all=True)
+        s = repr(d)
+        return s
+
+    def map_recursive(self, item_func=None, cfg_func=None, use_all=False):
+        """
+        Applies a function recursively on all configuration items.
+
+        Parameters
+        ----------
+        item_func : `callable`
+            Function which is recursively called on configuration items
+            Sets its value to the function return value.
+            Call signature: `func(key, old_val)->new_val`.
+        cfg_func : `callable`
+            Function which is called on attributes which themselves are
+            `CfgBase` objects.
+            If the return value is `False`, recursively
+            calls the `map_recursive` method on the attribute.
+            If the return value is `True`, continues without further
+            handling of the attribute.
+            Call signature: `func(key, sub_cfg)->bool`.
+        use_all : `bool`
+            Flag whether to map all attributes or only the
+            ones stated in `SER_KEYS`.
+        """
+        if use_all:
+            d = {k: v for k, v in self.__dict__.items()}
+        else:
+            d = self.attributes()
+        for k, v in d.items():
+            if isinstance(v, CfgBase):
+                call_item_func = True
+                if cfg_func is not None:
+                    ret = cfg_func(k, getattr(self, k))
+                    if ret is True:
+                        call_item_func = False
+                if call_item_func:
+                    getattr(self, k).map_recursive(item_func, use_all=use_all)
+            elif item_func is not None:
+                setattr(self, k, item_func(k, v))
 
     def save_cfg(self, file_path, fmt=None, serialize_all=False, **kwargs):
         """
@@ -174,7 +229,10 @@ class CfgBase(io.FileBase):
         else:
             raise ValueError("invalid format ({:s})".format(fmt))
 
-    def load_cfg(self, file_path, fmt=None, **kwargs):
+    def load_cfg(
+        self, file_path, fmt=None,
+        preserve_case=True, **kwargs
+    ):
         """
         Loads a configuration text file to object.
 
@@ -189,7 +247,10 @@ class CfgBase(io.FileBase):
             File format: `"json"`, `"ini"`, `"yml"`.
         **kwargs
             Keyword arguments passed to the parsers. Notable arguments include:
-            `"ini"`: `interpolation`, `strict`.
+            `"ini"`:
+                `interpolation`: `None` to raw parse `%`.
+                `strict`: `False` to allow non-safe files.
+                `preserve_case`: `False` to lowercase option names.
         """
         fmt = io.get_file_format(file_path, fmt=fmt)
         if "json" in fmt:
@@ -197,6 +258,8 @@ class CfgBase(io.FileBase):
                 d = json.load(f, **kwargs)
         elif "ini" in fmt:
             cp = configparser.ConfigParser(**kwargs)
+            if preserve_case is True:
+                cp.optionxform = str
             with open(file_path, "r") as f:
                 cp.read_file(f)
             d = {s: dict(cp.items(s)) for s in cp.sections()}
@@ -211,3 +274,26 @@ class CfgBase(io.FileBase):
         else:
             raise ValueError("invalid format ({:s})".format(fmt))
         self._from_dict(d)
+
+    def get_items(self, use_all=False):
+        """
+        Gets configuration attributes.
+
+        Returns
+        -------
+        sub_cfgs : `dict(str)`
+            Keys of attributes which are configurations themselves.
+        item_cfgs : `dict(str)`
+            Configuration item keys.
+        """
+        if use_all:
+            d = {k: v for k, v in self.__dict__.items()}
+        else:
+            d = self.attributes()
+        sub_cfgs, item_cfgs = [], []
+        for k, v in d.items():
+            if isinstance(v, CfgBase):
+                sub_cfgs.append(k)
+            else:
+                item_cfgs.append(k)
+        return sub_cfgs, item_cfgs
