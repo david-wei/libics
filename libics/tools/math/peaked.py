@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import special, stats
+from scipy import ndimage, special, stats
 
 from libics.tools.math import fit
 
@@ -87,6 +87,93 @@ def gaussian_1d(x,
     """
     exponent = -((x - center) / width)**2 / 2.0
     return amplitude * np.exp(exponent) + offset
+
+
+class FitGaussian1d(fit.FitParamBase):
+
+    def __init__(self, fit_offset=True, **kwargs):
+        super().__init__(
+            gaussian_1d, 4 if fit_offset else 3, **kwargs
+        )
+
+    def find_init_param(self, var_data, func_data):
+        """
+        Algorithm: filter -> centering (max/mean) -> windowing -> statistics.
+
+        Notes
+        -----
+        Currently only works for positive data.
+        """
+        # Algorithm start
+        x = var_data.astype(
+            float if np.issubdtype(var_data.dtype, np.integer)
+            else var_data.dtype
+        )
+        f = func_data.astype(
+            float if np.issubdtype(func_data.dtype, np.integer)
+            else func_data.dtype
+        )
+        f_min = np.min(f)
+        # 1D density as probability distribution
+        _pdf = ndimage.uniform_filter1d(f - f_min, 2)
+        _pdf[_pdf < 0] = 0
+        _pdf /= np.sum(_pdf)
+        # Initial parameters
+        x0 = self._get_center(x, f)
+        # Avoid standard deviation bias
+        idx0 = np.argmin(np.abs(x - x0))
+        idx_slice = None
+        if len(x) - idx0 > idx0:
+            idx_slice = slice(None, 2 * idx0 + 1)
+        else:
+            idx_slice = slice(2 * idx0 - len(x), None)
+        w = np.sqrt(np.sum((x[idx_slice] - x0)**2 * _pdf[idx_slice]))
+        a = np.max(f)
+        c = f_min
+        # Algorithm end
+        fit_offset = False if len(self.param) == 3 else True
+        if fit_offset:
+            self.param = [a, x0, w, c]
+        else:
+            self.param = [a, x0, w]
+
+    @staticmethod
+    def _get_center(x, f, max_weight=0.3, use_unbiased_pdf=True):
+        """
+        Finds the center using max and mean.
+
+        Assumes that data is positive.
+
+        Parameters
+        ----------
+        x, f : `np.ndarray(1)`
+            Variable and function data.
+        max_weight : `float`
+            Center is calculated as weighted average between
+            data maximum and mean. `max_weight` selects the
+            relative weight of the maximum.
+        use_unbiased_pdf : `bool`
+            Flag whether to use symmetric statistics around maximum.
+        """
+        # Direct maximum
+        idx_max = np.argmax(f)
+        x_max = x[idx_max]
+        # Statistical mean
+        pdf = np.copy(f)
+        if use_unbiased_pdf:
+            idx_slice = None
+            if len(x) - idx_max > idx_max:
+                idx_slice = slice(None, 2 * idx_max + 1)
+            else:
+                idx_slice = slice(2 * idx_max - len(x), None)
+            pdf = pdf[idx_slice]
+            x = np.copy(x)[idx_slice]
+        pdf[pdf < 0] = 0
+        pdf = pdf / np.sum(pdf)
+        x_stat = np.sum(x * pdf)
+        # Average
+        x0 = (1 - max_weight) * x_stat + max_weight * x_max
+        return x0
 
 
 def gaussian_nd(x,
@@ -204,7 +291,7 @@ class FitGaussian2dTilt(fit.FitParamBase):
             gaussian_2d_tilt, 7 if fit_offset else 6, **kwargs
         )
 
-    def find_init_param(self, var_data, func_data):
+    def _find_init_param_linear(self, var_data, func_data):
         """
         Algorithm: linear min/max approximation.
         """
@@ -218,6 +305,46 @@ class FitGaussian2dTilt(fit.FitParamBase):
         self.param[5] = 0.0
         if fit_offset:
             self.param[6] = offset
+
+    def _find_init_param_fit1d(self, var_data, func_data):
+        """
+        Algorithm: 1D profile fits.
+        """
+        # Perform 1D profile fits
+        xx, fx = fit.split_fit_data(np.sum(func_data, axis=1))
+        xy, fy = fit.split_fit_data(np.sum(func_data, axis=0))
+        fit_1d = FitGaussian1d(fit_offset=True)
+        fit_1d.find_init_param(xx[0], fx)
+        fit_1d.find_fit(xx[0], fx)
+        px = np.copy(fit_1d.param)
+        fit_1d.find_init_param(xy[0], fy)
+        fit_1d.find_fit(xy[0], fy)
+        py = np.copy(fit_1d.param)
+        # Use 1D fit parameters for 2D fit initial parameters
+        ax, x0, wx, _ = px
+        ay, y0, wy, _ = py
+        a = np.mean([ax / wy, ay / wx]) / np.sqrt(2 * np.pi)
+        phi = 0
+        c = 0
+        fit_offset = False if len(self.param) == 6 else True
+        if fit_offset:
+            self.param = [a, x0, y0, wx, wy, phi, c]
+        else:
+            self.param = [a, x0, y0, wx, wy, phi]
+
+    def find_init_param(self, var_data, func_data, algorithm="linear"):
+        """
+        Parameters
+        ----------
+        algorithm : `str`
+            `"linear", "fit1d"`.
+        """
+        if algorithm == "linear":
+            self._find_init_param_linear(var_data, func_data)
+        elif algorithm == "fit1d":
+            self._find_init_param_fit1d(var_data, func_data)
+        else:
+            raise ValueError("invalid algorithm ({:s})".format(algorithm))
 
 
 ###############################################################################

@@ -240,7 +240,7 @@ class FitParamBase(abc.ABC):
         p = args if len(args) > 0 else self.param
         return self.func(var, *p, **kwargs)
 
-    def _ravel_data(self, var_data, func_data=None):
+    def _ravel_data(self, var_data, func_data=None, _check_shape=True):
         """
         Serializes array-like (nD) data into series-like (1D) data.
 
@@ -250,6 +250,9 @@ class FitParamBase(abc.ABC):
             Array-like independent data.
         func_data : np.ndarray
             Array-like dependent data.
+        _check_shape : `bool`
+            Flag whether to check `var_data` and `func_data`
+            shape overlap.
 
         Returns
         -------
@@ -267,8 +270,14 @@ class FitParamBase(abc.ABC):
         var_data_ind = 1 if var_data.ndim > 1 else 0
         if func_data is not None:
             func_data = np.array(func_data)
-            if var_data.shape[var_data_ind:] != func_data.shape:
-                raise ValueError("invalid fit data dimensions")
+            if (
+                _check_shape and
+                var_data.shape[var_data_ind:] != func_data.shape
+            ):
+                raise ValueError(
+                    "invalid fit data dimensions: {:s}, {:s}"
+                    .format(var_data.shape, func_data.shape)
+                )
             func_data = func_data.ravel()
         if var_data_ind == 0:
             self._shape = var_data.shape
