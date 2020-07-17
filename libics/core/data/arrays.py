@@ -390,7 +390,7 @@ class ArrayData(object):
             return self._points[dim]
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = self.shape[dim] * _step
+            _range = (self.shape[dim] - 0.9) * _step
             if self._offset[dim] is not None:
                 _offset = self._offset[dim]
             else:
