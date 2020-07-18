@@ -31,26 +31,10 @@ class DataSequence(pd.DataFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._quantity = {}
 
     @property
     def _constructor(self):
         return DataSequence
-
-    def set_quantity(self, **kwargs):
-        for k, v in kwargs.items():
-            self._quantity[k] = misc.assume_construct_obj(v, Quantity)
-
-    def get_quantity(self):
-        return self._quantity
-
-    @property
-    def quantity(self):
-        q = self._quantity.copy()
-        for col in self.columns:
-            if col not in q:
-                q[col] = Quantity(name=col)
-        return q
 
     def rename_column(self, old_name, new_name):
         """
@@ -101,6 +85,22 @@ class DataSequence(pd.DataFrame):
             if ret_name in col_names:
                 col_names.remove(ret_name)
             self.drop_column(*col_names)
+
+    def sort_rows(self, col_name, ascending=True, **kwargs):
+        """
+        Sorts the rows by numerical values in a column.
+
+        Parameters
+        ----------
+        col_name : `str`
+            Column name of values to be sorted by.
+        ascending : `bool`
+            Flag whether to sort ascending (or descending).
+        """
+        self.sort_values(col_name, ascending=ascending, inplace=True, **kwargs)
+
+    def reset_index(self, **kwargs):
+        super().reset_index(drop=True, inplace=True, **kwargs)
 
     def average(self, key_columns, col_name, add_std=False, add_num=True):
         """
@@ -181,12 +181,10 @@ class DataSequence(pd.DataFrame):
     @staticmethod
     def _calc_mean(objs, *args, **kwargs):
         # Assumes that all objects have the same type
+        objs0 = objs.iloc[0] if isinstance(objs, pd.DataFrame) else objs[0]
         obj = None
-        if (
-            isinstance(objs.iloc[0], ArrayData)
-            or isinstance(objs.iloc[0], SeriesData)
-        ):
-            obj = copy.deepcopy(objs.iloc[0])
+        if isinstance(objs0, ArrayData) or isinstance(objs0, SeriesData):
+            obj = copy.deepcopy(objs0)
             objs = [_obj.data for _obj in objs]
         if obj is None:
             obj = np.mean(objs, *args, **kwargs)
@@ -197,12 +195,10 @@ class DataSequence(pd.DataFrame):
     @staticmethod
     def _calc_std(objs, *args, **kwargs):
         # Assumes that all objects have the same type
+        objs0 = objs.iloc[0] if isinstance(objs, pd.DataFrame) else objs[0]
         obj = None
-        if (
-            isinstance(objs.iloc[0], ArrayData)
-            or isinstance(objs.iloc[0], SeriesData)
-        ):
-            obj = copy.deepcopy(objs.iloc[0])
+        if isinstance(objs0, ArrayData) or isinstance(objs0, SeriesData):
+            obj = copy.deepcopy(objs0)
             objs = [_obj.data for _obj in objs]
         if obj is None:
             obj = np.std(objs, *args, **kwargs)
