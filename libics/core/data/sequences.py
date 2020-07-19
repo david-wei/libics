@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 
 from libics.core.data.arrays import ArrayData, SeriesData
-from libics.core.data.types import Quantity
-from libics.core.util import misc
 
 
 ###############################################################################

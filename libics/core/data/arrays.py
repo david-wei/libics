@@ -611,6 +611,12 @@ class ArrayData(object):
     # Conversion
     # ++++++++++
 
+    def copy(self):
+        """
+        Returns a deep copy of the object.
+        """
+        return copy.deepcopy(self)
+
     def cv_index_to_quantity(self, ind, dim):
         """
         Converts a variable array index to the corresponding variable
