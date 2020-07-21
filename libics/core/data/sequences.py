@@ -179,7 +179,10 @@ class DataSequence(pd.DataFrame):
     @staticmethod
     def _calc_mean(objs, *args, **kwargs):
         # Assumes that all objects have the same type
-        objs0 = objs.iloc[0] if isinstance(objs, pd.DataFrame) else objs[0]
+        objs0 = (
+            objs.iloc[0] if isinstance(objs, (pd.DataFrame, pd.Series))
+            else objs[0]
+        )
         obj = None
         if isinstance(objs0, ArrayData) or isinstance(objs0, SeriesData):
             obj = copy.deepcopy(objs0)
@@ -193,7 +196,10 @@ class DataSequence(pd.DataFrame):
     @staticmethod
     def _calc_std(objs, *args, **kwargs):
         # Assumes that all objects have the same type
-        objs0 = objs.iloc[0] if isinstance(objs, pd.DataFrame) else objs[0]
+        objs0 = (
+            objs.iloc[0] if isinstance(objs, (pd.DataFrame, pd.Series))
+            else objs[0]
+        )
         obj = None
         if isinstance(objs0, ArrayData) or isinstance(objs0, SeriesData):
             obj = copy.deepcopy(objs0)
