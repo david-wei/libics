@@ -571,6 +571,8 @@ def load(
         )
     elif "hdf" in fmt:
         raise NotImplementedError("hdf format not yet implemented")
+    elif "tif" in fmt or "tiff" in fmt:
+        obj = image.load_tif_to_arraydata(file_path, ad=obj_or_cls)
     elif "bmp" in fmt:
         obj = image.load_bmp_to_arraydata(file_path, ad=obj_or_cls)
     elif "png" in fmt:

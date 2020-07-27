@@ -22,6 +22,57 @@ except ImportError:
 
 
 ###############################################################################
+# Tagged Image File Format (tif)
+###############################################################################
+
+
+def load_tif_to_arraydata(file_path, ad=None):
+    """
+    Reads a tagged image file format (tif) file and loads the data as
+    grayscale image into a `data.arrays.ArrayData` structure.
+
+    Parameters
+    ----------
+    file_path : `str`
+        Path to the tif image file.
+    ad : `data.arrays.ArrayData` or `None`
+        Sets the array data to the loaded bitmap values.
+        If `None`, creates a new ArrayData object using the
+        default values as defined in `cfg.default`.
+
+    Returns
+    -------
+    ad : `data.arrays.ArrayData`
+        Image grayscales as ArrayData.
+
+    Raises
+    ------
+    FileNotFoundError
+        If `file_path` does not exist.
+    AttributeError
+        If given file is not a bitmap file.
+    """
+    # Check file (path)
+    if file_path[-4:] in [".tif", "tiff"]:
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(file_path)
+    else:
+        if os.path.exists(file_path + ".tif"):
+            file_path = file_path + ".tif"
+        elif os.path.exists(file_path + ".tiff"):
+            file_path = file_path + ".tiff"
+        else:
+            raise FileNotFoundError(file_path)
+    # Setup arraydata
+    if ad is None:
+        ad = imageutil.create_default_arraydata()
+    # Load bitmap
+    image = np.array(PIL.Image.open(file_path).convert("I"))
+    ad.data = image.T
+    return ad
+
+
+###############################################################################
 # Bitmap (bmp)
 ###############################################################################
 
@@ -60,7 +111,7 @@ def load_bmp_to_arraydata(file_path, ad=None):
     if ad is None:
         ad = imageutil.create_default_arraydata()
     # Load bitmap
-    image = np.array(PIL.Image.open(file_path).convert("L"))
+    image = np.array(PIL.Image.open(file_path).convert("I"))
     ad.data = image.T
     return ad
 
@@ -104,7 +155,7 @@ def load_png_to_arraydata(file_path, ad=None):
     if ad is None:
         ad = imageutil.create_default_arraydata()
     # Load bitmap
-    image = np.array(PIL.Image.open(file_path).convert("L"))
+    image = np.array(PIL.Image.open(file_path).convert("I"))
     ad.data = image.T
     return ad
 
