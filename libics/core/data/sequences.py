@@ -51,7 +51,7 @@ class DataSequence(pd.DataFrame):
         """
         Wrapper to :py:meth:`pd.DataFrame.drop(col=col_names)`.
         """
-        return self.drop(col=list(col_names), inplace=inplace)
+        return self.drop(columns=list(col_names), inplace=inplace)
 
     def apply_func(self, func, col_names, ret_name=True, drop_cols=False):
         """

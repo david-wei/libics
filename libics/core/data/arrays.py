@@ -332,7 +332,7 @@ class ArrayData(object):
         # Handle multiple dimensions
         if len(args) == 1 and isinstance(args[0], int):
             args = args[0] * [{}]
-        if not isinstance(args[0], dict):
+        if len(args) > 1 and isinstance(args[0], dict):
             for arg in args:
                 self.add_dim(arg)
             return
