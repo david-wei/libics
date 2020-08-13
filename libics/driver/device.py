@@ -336,6 +336,8 @@ class DevProperties(object):
             else:
                 raise ValueError("invalid property function ({:s}->{:s})"
                                  .format(prop, str(funcs)))
+            if not hasattr(self, prop):
+                setattr(self, prop, None)
 
     def rmv_properties(self, *props):
         """

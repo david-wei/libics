@@ -110,7 +110,7 @@ class ItfBase(DevBase):
                 if dev == v:
                     id = k
                     break
-        del self.DEVICES[self.__class__.__name__][dev]
+        del self.DEVICES[self.__class__.__name__][id]
 
     def devices(self):
         """
