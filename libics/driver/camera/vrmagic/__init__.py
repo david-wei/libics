@@ -57,17 +57,19 @@ class ItfVRmagic(ItfBase):
             else:
                 self.close()
         # Check if requested device ID is discovered
-        if id not in self._vrm_dev_keys:
+        if id not in self._vrm_dev_refs:
             self.discover()
-            if id not in self._vrm_dev_keys:
-                raise RuntimeError("device ID unavailable ({:s})".format(id))
+            if id not in self._vrm_dev_refs:
+                raise RuntimeError(
+                    "device ID unavailable ({:s})".format(str(id))
+                )
         # Set device ID of this interface instance
         self._dev_id = id
         # Check if another interface instance has already opened
         if not self.is_connected():
             dev_keys = self._get_vrm_dev_key_list()
             for dev_key in dev_keys:
-                if dev_key.m_serial == self._dev_id:
+                if dev_key.contents.m_serial == self._dev_id:
                     self._vrm_dev_keys[self._dev_id] = dev_key
                 else:
                     vrm.VRmUsbCamFreeDeviceKey(dev_key)
@@ -115,7 +117,6 @@ class ItfVRmagic(ItfBase):
                 assert(
                     (self._dev_id in self._vrm_dev_keys)
                     and (self._dev_id in self._vrm_dev_handles)
-                    and (self._vrm_dev_keys[self._dev_id].m_busy)
                 )
                 return True
             # Handle error
@@ -153,14 +154,16 @@ class ItfVRmagic(ItfBase):
         dev_count = int(dev_count.value)
         dev_keys = [vrm.POINTER(vrm.VRmDeviceKey)() for _ in range(dev_count)]
         # Get device keys and extract device IDs
-        dev_keys = [vrm.VRmUsbCamGetDeviceKeyListEntry(i, ct.byref(dev_key))
-                    for i, dev_key in enumerate(dev_keys)]
+        [
+            vrm.VRmUsbCamGetDeviceKeyListEntry(i, ct.byref(dev_key))
+            for i, dev_key in enumerate(dev_keys)
+        ]
         return dev_keys
 
     @classmethod
     def discover(cls):
         dev_keys = cls._get_vrm_dev_key_list()
-        dev_ids = [dev_key.m_serial for dev_key in dev_keys]
+        dev_ids = [dev_key.contents.m_serial for dev_key in dev_keys]
         for dev_key in dev_keys:
             vrm.VRmUsbCamFreeDeviceKey(dev_key)
         del dev_keys
@@ -191,7 +194,7 @@ class VRmagicVRmCX(Camera):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "device_name"
         ))
 
@@ -205,19 +208,26 @@ class VRmagicVRmCX(Camera):
         self.interface.setup()
 
     def shutdown(self):
+        if self.is_connected():
+            self.close()
         self.interface.shutdown()
 
     def is_set_up(self):
         return self.interface.is_set_up()
 
     def connect(self):
+        if not self.is_set_up():
+            raise RuntimeError("device not set up")
         self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
+        self.read_device_name()
+        self.read_acquisition_frames()
         self.p.read_all()
 
     def close(self):
-        self.interface.deregister(id=self.identifier)
-        self.interface.close()
+        if self.is_connected():
+            self.interface.deregister(id=self.identifier)
+            self.interface.close()
 
     def is_connected(self):
         return self.interface.is_connected()
@@ -406,6 +416,8 @@ class VRmagicVRmCX(Camera):
         self.p.exposure_time = value
 
     def read_acquisition_frames(self):
+        if self.p.acquisition_frames is None:
+            self.p.acquisition_frames = 0
         return self.p.acquisition_frames
 
     def write_acquisition_frames(self, value):
