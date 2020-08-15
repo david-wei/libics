@@ -70,7 +70,7 @@ class Quantity(object):
         if self.symbol is not None:
             s += " " + self.symbol
         if self.unit is not None:
-            s += " [" + self.unit + "]"
+            s += " (" + self.unit + ")"
         return s
 
     def __repr__(self):
@@ -83,7 +83,7 @@ class Quantity(object):
         if symbol and self.symbol is not None:
             s += " $" + self.symbol + "$"
         if unit and self.unit is not None:
-            s += r" [$\mathregular{" + self.unit + r"}$]"
+            s += r" ($\mathregular{" + self.unit + r"}$)"
         return s
 
     # +++++++++++++++++

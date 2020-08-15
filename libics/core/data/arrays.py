@@ -136,7 +136,7 @@ class ArrayData(object):
             self._low[dim] = None
             self._high[dim] = None
         # Mode: range
-        if ("offset" in kwargs or "center" in kwargs) and "step" in kwargs:
+        elif ("offset" in kwargs or "center" in kwargs) and "step" in kwargs:
             self.var_mode[dim] = self.RANGE
             self._points[dim] = None
             if "offset" in kwargs:
@@ -149,7 +149,7 @@ class ArrayData(object):
             self._low[dim] = None
             self._high[dim] = None
         # Mode: linspace
-        if "low" in kwargs and "high" in kwargs:
+        elif "low" in kwargs and "high" in kwargs:
             self.var_mode[dim] = self.LINSPACE
             self._points[dim] = None
             self._offset[dim] = None
