@@ -1,6 +1,7 @@
 import inspect
 import json
 import os
+import shutil
 import sys
 
 from . import logging
@@ -19,15 +20,18 @@ def ASSUME_DIR(*args):
     return dir_path
 
 
-def ASSUME_FILE(*args):
+def ASSUME_FILE(*args, copy_file=None):
     file_path = os.path.join(*args)
     dir_path = os.path.dirname(file_path)
     ASSUME_DIR(dir_path)
     if os.path.exists(file_path):
         if not os.path.isfile(file_path):
-            raise FileExistsError
+            raise FileExistsError("file path leads to directory")
     else:
-        open(file_path, "w").close()
+        if copy_file is None:
+            open(file_path, "w").close()
+        else:
+            shutil.copyfile(copy_file, file_path)
     return file_path
 
 
@@ -73,6 +77,7 @@ DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
 )))
 DIR_PKGROOT = os.path.dirname(DIR_SRCROOT)
+DIR_ASSETSROOT = os.path.join(DIR_PKGROOT, "assets")
 
 # User environment
 DIR_USER = (os.environ["USERPROFILE"] if sys.platform == "win32"
@@ -102,9 +107,12 @@ CONFIG = READ_JSON(FILE_CONFIG)
 
 DIR_MPL = ""
 FILE_MPL_STYLE = ""
+FILE_MPL_STYLE_ASSET = os.path.join(DIR_ASSETSROOT, "env", "libics.mplstyle")
 try:
     import matplotlib as mpl
     DIR_MPL = mpl.get_configdir()
-    FILE_MPL_STYLE = ASSUME_FILE(DIR_MPL, "libics.mplstyle")
+    FILE_MPL_STYLE = ASSUME_FILE(
+        DIR_MPL, "libics.mplstyle", copy_file=FILE_MPL_STYLE_ASSET
+    )
 except ImportError:
     pass
