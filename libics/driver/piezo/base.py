@@ -28,7 +28,7 @@ class PiezoActuator(DevBase):
         super().__init__()
         self.channel = None
         self.deformation_coeff = None
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "voltage", "voltage_min", "voltage_max"
         ))
 
@@ -88,7 +88,7 @@ class Picomotor(DevBase):
         super().__init__()
         self.channel = None
         self.step_size = None
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "position", "acceleration", "velocity"
         ))
 

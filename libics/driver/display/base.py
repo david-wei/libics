@@ -48,7 +48,7 @@ class Display(DevBase):
     """
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "pixel_hrzt_count", "pixel_vert_count",
             "pixel_hrzt_size", "pixel_vert_size",
             "pixel_hrzt_offset", "pixel_vert_offset",

@@ -46,7 +46,7 @@ class DevSpectrum(DevBase):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "bandwidth", "frequency_range", "average_mode", "average_count"
         ))
 
@@ -120,7 +120,7 @@ class SpectrumAnalyzer(DevSpectrum):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "power_max"
         ))
 
@@ -181,7 +181,7 @@ class FftAnalyzer(DevBase):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "voltage_max", "fft_window"
         ))
 

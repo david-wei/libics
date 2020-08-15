@@ -45,6 +45,8 @@ class PrologixGpib(ItfEmulator, ItfGpib):
         return self.interface.is_set_up() and self._is_set_up
 
     def connect(self, id):
+        if not self.is_set_up():
+            raise RuntimeError("device not set up")
         self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
         # Disable in-device cfg saving

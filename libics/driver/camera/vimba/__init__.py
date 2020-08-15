@@ -162,7 +162,7 @@ class AlliedVisionManta(Camera):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "device_name", "sensitivity"
         ))
         self._dev_frame = None
@@ -177,15 +177,20 @@ class AlliedVisionManta(Camera):
         self.interface.setup()
 
     def shutdown(self):
+        if self.is_connected():
+            self.close()
         self.interface.shutdown()
 
     def is_set_up(self):
         return self.interface.is_set_up()
 
     def connect(self):
+        if not self.is_set_up():
+            raise RuntimeError("device not set up")
         self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
         self.vimba_dev_handle.openCamera(cameraAccessMode=0)
+        self.read_device_name()
         self.p.read_all()
 
     def close(self):

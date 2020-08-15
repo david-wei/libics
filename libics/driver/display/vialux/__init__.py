@@ -157,12 +157,12 @@ class VialuxDLP(Display):
     def __init__(self):
         super().__init__()
         self._alp_seq_handle = None
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "device_name", "temperature"
         ))
         self.seq_properties = DevProperties()
         self.seq_properties.set_device(self)
-        self.seq_properties.set_properties(self._get_default_properties_dict(
+        self.seq_properties.set_properties(**self._get_default_properties_dict(
             "picture_time", "dark_time", "sequence_repetitions"
         ))
 
@@ -180,14 +180,19 @@ class VialuxDLP(Display):
         self.interface.setup()
 
     def shutdown(self):
+        if self.is_connected():
+            self.close()
         self.interface.shutdown()
 
     def is_set_up(self):
         return self.interface.is_set_up()
 
     def connect(self):
+        if not self.is_set_up():
+            raise RuntimeError("device not set up")
         self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
+        self.read_device_name()
         self.p.read_all()
 
     def close(self):

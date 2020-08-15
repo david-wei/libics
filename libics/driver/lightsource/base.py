@@ -24,7 +24,7 @@ class LightSource(DevBase):
 
     def __init__(self):
         super().__init__()
-        self.properties.set_properties(self._get_default_properties_dict(
+        self.properties.set_properties(**self._get_default_properties_dict(
             "current", "power", "temperature", "emission_time"
         ))
 

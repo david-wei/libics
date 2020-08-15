@@ -35,6 +35,8 @@ class ThorlabsMDT69X(PiezoActuator):
         self.interface.setup()
 
     def shutdown(self):
+        if self.is_connected():
+            self.close()
         if self.is_set_up():
             self.interface.shutdown()
 
@@ -42,6 +44,8 @@ class ThorlabsMDT69X(PiezoActuator):
         return self.interface.is_set_up()
 
     def connect(self):
+        if not self.is_set_up():
+            raise RuntimeError("device not set up")
         self.interface.connect(self.identifier)
         self.interface.register(self.identifier, self)
         self._turn_off_echo_mode()
