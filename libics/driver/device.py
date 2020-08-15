@@ -1,6 +1,6 @@
 import abc
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.core.util.func import StoppableThread
 
 

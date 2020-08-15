@@ -1,6 +1,6 @@
 import time
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.piezo import PiezoActuator
 from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal

@@ -19,6 +19,32 @@ def ASSUME_DIR(*args):
     return dir_path
 
 
+def ASSUME_FILE(*args):
+    file_path = os.path.join(*args)
+    dir_path = os.path.dirname(file_path)
+    ASSUME_DIR(dir_path)
+    if os.path.exists(file_path):
+        if not os.path.isfile(file_path):
+            raise FileExistsError
+    else:
+        open(file_path, "w").close()
+    return file_path
+
+
+def READ_JSON(file_path, obj=None):
+    if obj is None:
+        obj = {}
+    if os.path.getsize(file_path) > 0:
+        with open(file_path, "r") as f:
+            obj.update(json.load(f))
+    return obj
+
+
+def WRITE_JSON(file_path, obj):
+    with open(file_path, "w") as f:
+        json.dump(obj, f, indent=4)
+
+
 ###############################################################################
 # Package metadata
 ###############################################################################
@@ -39,36 +65,46 @@ LIBICS_VERSION = (
 ###############################################################################
 
 
+# Current working directory
 DIR_CWD = os.getcwd()
+
+# LibICS source code
 DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
 )))
 DIR_PKGROOT = os.path.dirname(DIR_SRCROOT)
+
+# User environment
 DIR_USER = (os.environ["USERPROFILE"] if sys.platform == "win32"
             else os.path.expanduser("~"))
+DIR_HOME = os.path.expanduser("~")
 DIR_DOCUMENTS = os.path.join(DIR_USER, "Documents")
-DIR_DOC_LIBICS = ASSUME_DIR(DIR_DOCUMENTS, "libics")
-
-
-def WRITE_DIRS(dirs):
-    json.dump(
-        DIRS, open(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics"), "w"),
-        indent=4
-    )
-
-
-DIRS = {}
-if os.path.exists(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics")):
-    DIRS = json.load(
-        open(os.path.join(DIR_DOC_LIBICS, "dirs.env.libics"), "r")
-    )
-else:
-    WRITE_DIRS(DIRS)
+DIR_DESKTOP = os.path.join(DIR_USER, "Desktop")
+DIR_DOWNLOAD = os.path.join(DIR_USER, "Download")
 
 
 ###############################################################################
-# Files
+# LibICS directory environment
 ###############################################################################
 
 
-FILE_MPLRC = os.path.join(DIR_DOC_LIBICS, "mplrc.env.libics")
+DIR_LIBICS = ASSUME_DIR(DIR_HOME, ".libics")
+FILE_DIRS = ASSUME_FILE(DIR_LIBICS, "env.dirs.json")
+DIRS = READ_JSON(FILE_DIRS)
+FILE_CONFIG = ASSUME_FILE(DIR_LIBICS, "env.config.json")
+CONFIG = READ_JSON(FILE_CONFIG)
+
+
+###############################################################################
+# External libraries
+###############################################################################
+
+
+DIR_MPL = ""
+FILE_MPL_STYLE = ""
+try:
+    import matplotlib as mpl
+    DIR_MPL = mpl.get_configdir()
+    FILE_MPL_STYLE = ASSUME_FILE(DIR_MPL, "libics.mplstyle")
+except ImportError:
+    pass

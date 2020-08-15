@@ -1,6 +1,6 @@
 import time
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.core.util import misc
 from libics.driver.piezo import Picomotor
 from libics.driver.device import STATUS

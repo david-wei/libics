@@ -4,7 +4,7 @@ import numpy as np
 import os
 import PIL
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.core.io import imageutil
 from libics.core.util import misc
 

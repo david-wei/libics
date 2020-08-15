@@ -1,4 +1,4 @@
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.lightsource import LightSource
 from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal

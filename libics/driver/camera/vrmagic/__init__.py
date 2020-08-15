@@ -4,7 +4,7 @@ import ctypes as ct
 import numpy as np
 import queue
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.device import STATUS
 from libics.driver.interface import ItfBase
 from libics.driver.camera import Camera, EXPOSURE_MODE, FORMAT_COLOR

@@ -3,7 +3,7 @@ from . import alpV42 as alp42
 import ctypes as ct
 import os
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.core.util import misc
 from libics.driver.device import DevProperties, STATUS
 from libics.driver.interface import ItfBase

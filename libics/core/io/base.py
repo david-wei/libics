@@ -7,7 +7,7 @@ import scipy.io
 from importlib import import_module
 
 
-from libics.core import env
+from libics import env
 from libics.core.data.types import Result
 from libics.core.io import image
 from libics.core.util import misc

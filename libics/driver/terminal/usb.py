@@ -1,7 +1,7 @@
 import usb.core
 import usb.util
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
 

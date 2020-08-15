@@ -2,8 +2,8 @@ import collections
 import configparser
 import json
 
+from libics.env import logging
 from libics.core import io
-from libics.core.env import logging
 
 
 ###############################################################################

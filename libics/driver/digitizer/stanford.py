@@ -1,7 +1,7 @@
 import numpy as np
 import re
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.core.data.arrays import ArrayData
 from libics.driver.digitizer import FftAnalyzer
 from libics.driver.digitizer import AVERAGE_MODE, INPUT_COUPLING, FFT_WINDOW

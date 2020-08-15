@@ -1,4 +1,4 @@
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.terminal import ItfTerminal
 
 

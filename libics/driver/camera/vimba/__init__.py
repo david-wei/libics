@@ -1,7 +1,7 @@
 import queue
 import time
 
-from libics.core.env import logging
+from libics.env import logging
 from libics.driver.device import STATUS
 from libics.driver.interface import ItfBase
 from libics.driver.camera import Camera
