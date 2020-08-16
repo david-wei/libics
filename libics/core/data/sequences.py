@@ -75,7 +75,7 @@ class DataSequence(pd.DataFrame):
             col_names = [col_names]
         if ret_name is True:
             ret_name = col_names[0]
-        args = self[col_names]
+        args = self[list(col_names)]
         ret = [func(*arg) for _, arg in args.iterrows()]
         if ret_name is not False:
             self[ret_name] = ret
