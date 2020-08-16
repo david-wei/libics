@@ -201,7 +201,7 @@ def tick_params(
 def plot(
     *data, x=None, y=None, xerr=None, yerr=None,
     marker=None,
-    xlabel=True, ylabel=True, label=None,
+    xlabel=True, ylabel=True, label=None, title=None,
     ax=None, **kwargs
 ):
     """
@@ -224,6 +224,9 @@ def plot(
     marker : `str` or `object`
         Matplotlib markers.
         Additionally supports `"O"` (larger circle with darker edge color).
+    xlabel, ylabel, label, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
     ax : `matplotlib.axes.Axes`
         Matplotlib axes.
     **kwargs
@@ -233,7 +236,7 @@ def plot(
     # Interpret arguments
     p = _get_xy_from_data(*data, xlabel=xlabel, ylabel=ylabel)
     x, y, xlabel, ylabel = p["x"], p["y"], p["xlabel"], p["ylabel"]
-    xerr, yerr = _get_1d_array(xerr, yerr)
+    xerr, yerr = _get_array(xerr, yerr)
     # Process marker style
     if "color" not in kwargs:
         kwargs["color"] = ax._get_lines.get_next_color()
@@ -250,6 +253,150 @@ def plot(
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
     if isinstance(ylabel, str):
         ax.set_ylabel(misc.capitalize_first_char(ylabel))
+    if isinstance(title, str):
+        ax.set_title(title)
+    return art
+
+
+def pcolormesh(
+    *data, x=None, y=None, c=None,
+    xlabel=True, ylabel=True, title=None,
+    colorbar=None, cb_orientation="vertical", clabel=True,
+    aspect=None, ax=None, **kwargs
+):
+    """
+    Generates a 2D color plot.
+
+    Uses the pcolormesh function.
+    See matplotlib API:
+    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.pcolormesh.html>`
+
+    Parameters
+    ----------
+    *data : `array-like, ArrayData, SeriesData`
+        Plots data depending on passed data.
+        Supports var data of `ArrayData` or `SeriesData`.
+    x, y : `array-like, ArrayData, SeriesData`
+        Explicitly given var plot data for each axis.
+        Overwrites `*data`.
+    c : `array-like, ArrayData`
+        Explicitly given color plot data.
+        Overwrites `*data`.
+    colorbar : `bool` or `matplotlib.axes.Axes`
+        Flag whether to show color bar.
+        If `bool`, specifies the parent axes.
+        If `Axes`, specifies the color bar axes.
+    cb_orientation : `str`
+        `"horizontal", "vertical"`.
+    xlabel, ylabel, clabel, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
+    aspect : `float`
+        Axes data scale aspect ratio.
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Interpret arguments
+    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    x, y, c = p["x"], p["y"], p["c"]
+    xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
+    # Perform pcolormesh
+    art = ax.pcolormesh(x, y, c, **kwargs)
+    # Set labels
+    if isinstance(xlabel, str):
+        ax.set_xlabel(misc.capitalize_first_char(xlabel))
+    if isinstance(ylabel, str):
+        ax.set_ylabel(misc.capitalize_first_char(ylabel))
+    if isinstance(title, str):
+        ax.set_title(title)
+    # Aspect
+    if aspect is not None:
+        ax.set_aspect(aspect)
+    # Color bar
+    if colorbar is not None and colorbar is not False:
+        fig = ax.get_figure()
+        if colorbar is True:
+            cb = fig.colorbar(art, ax=ax, orientation=cb_orientation)
+        else:
+            cb = fig.colorbar(
+                art, ax=ax, cax=colorbar, orientation=cb_orientation
+            )
+        if isinstance(clabel, str):
+            cb.set_label(clabel)
+    return art
+
+
+def contourf(
+    *data, x=None, y=None, c=None,
+    xlabel=True, ylabel=True, title=None,
+    colorbar=None, cb_orientation="vertical", clabel=True,
+    aspect=None, ax=None, **kwargs
+):
+    """
+    Generates a 2D color contour plot.
+
+    Uses the contourf function.
+    See matplotlib API:
+    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.contourf.html>`
+
+    Parameters
+    ----------
+    *data : `array-like, ArrayData, SeriesData`
+        Plots data depending on passed data.
+        Supports var data of `ArrayData` or `SeriesData`.
+    x, y : `array-like, ArrayData, SeriesData`
+        Explicitly given var plot data for each axis.
+        Overwrites `*data`.
+    c : `array-like, ArrayData`
+        Explicitly given color plot data.
+        Overwrites `*data`.
+    colorbar : `bool` or `matplotlib.axes.Axes`
+        Flag whether to show color bar.
+        If `bool`, specifies the parent axes.
+        If `Axes`, specifies the color bar axes.
+    cb_orientation : `str`
+        `"horizontal", "vertical"`.
+    xlabel, ylabel, clabel, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
+    aspect : `float`
+        Axes data scale aspect ratio.
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Interpret arguments
+    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    x, y, c = p["x"], p["y"], p["c"]
+    xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
+    # Perform pcolormesh
+    art = ax.contourf(x, y, c, **kwargs)
+    # Set labels
+    if isinstance(xlabel, str):
+        ax.set_xlabel(misc.capitalize_first_char(xlabel))
+    if isinstance(ylabel, str):
+        ax.set_ylabel(misc.capitalize_first_char(ylabel))
+    if isinstance(title, str):
+        ax.set_title(title)
+    # Aspect
+    if aspect is not None:
+        ax.set_aspect(aspect)
+    # Color bar
+    if colorbar is not None and colorbar is not False:
+        fig = ax.get_figure()
+        if colorbar is True:
+            cb = fig.colorbar(art, ax=ax, orientation=cb_orientation)
+        else:
+            cb = fig.colorbar(
+                art, ax=ax, cax=colorbar, orientation=cb_orientation
+            )
+        if isinstance(clabel, str):
+            cb.set_label(clabel)
     return art
 
 
@@ -332,12 +479,97 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
     return data_dict
 
 
-def _get_1d_array(*data):
+def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
+    """
+    Parameters
+    ----------
+    *data
+        Input argument to 1D plot functions.
+    xlabel, ylabel, clabel : `str` or `bool`
+        If `True`, uses interpreted labels.
+        If `False`, does not use labels.
+        If `str`, uses string as label.
+
+    Returns
+    -------
+    data_dict : `dict`
+        Interpreted data with keys:
+        `"x", "y", "c", "xlabel", "ylabel", "clabel"`.
+    """
+    data_dict = {
+        "x": None, "y": None, "c": None,
+        "xlabel": xlabel, "ylabel": ylabel, "clabel": clabel
+    }
+    # No interpretable data passed
+    if len(data) == 0:
+        pass
+    # Single parameter
+    elif len(data) == 1:
+        # (AD)
+        if isinstance(data[0], ArrayData):
+            data_dict["x"], data_dict["y"] = data[0].get_var_meshgrid()
+            data_dict["c"] = data[0].data
+            data_dict["xlabel"] = data[0].var_quantity[0].mathstr()
+            data_dict["ylabel"] = data[0].var_quantity[1].mathstr()
+            data_dict["clabel"] = data[0].data_quantity.mathstr()
+        # (AR)
+        else:
+            _data0 = np.array(data[0])
+            data_dict["x"] = np.arange(_data0.shape[0])
+            data_dict["y"] = np.arange(_data0.shape[1])
+            data_dict["c"] = _data0
+    # Three parameters
+    elif len(data) == 3:
+        # (AD, ...)
+        if isinstance(data[0], ArrayData):
+            data_dict["x"] = data[0].data
+            data_dict["xlabel"] = data[0].data_quantity.mathstr()
+        # (SD, ...)
+        elif isinstance(data[0], SeriesData):
+            data_dict["x"] = data[0].data[0]
+            data_dict["xlabel"] = data[0].quantity[0].mathstr()
+        # (AR, ...):
+        else:
+            data_dict["x"] = data[0]
+        # (..., AD, ...)
+        if isinstance(data[1], ArrayData):
+            data_dict["y"] = data[1].data
+            data_dict["ylabel"] = data[1].data_quantity.mathstr()
+        # (..., SD, ...)
+        elif isinstance(data[1], SeriesData):
+            data_dict["y"] = data[1].data[0]
+            data_dict["ylabel"] = data[1].quantity[0].mathstr()
+        # (..., AR, ...):
+        else:
+            data_dict["y"] = data[1]
+        # (..., AD)
+        if isinstance(data[2], ArrayData):
+            data_dict["c"] = data[2].data
+            data_dict["clabel"] = data[2].data_quantity.mathstr()
+        # (..., AR)
+        else:
+            data_dict["c"] = data[2]
+    # Invalid arguments
+    else:
+        raise TypeError("wrong number of arguments ({:d})".format(len(data)))
+    if xlabel is not True:
+        data_dict["xlabel"] = xlabel
+    if ylabel is not True:
+        data_dict["ylabel"] = ylabel
+    if clabel is not True:
+        data_dict["clabel"] = clabel
+    return data_dict
+
+
+def _get_array(*data, nd=None):
     """
     Parameters
     ----------
     *data : `ArrayData, SeriesData, np.ndarray, list, tuple, None`
-        1D array data in arbitrary format.
+        Array data in arbitrary format.
+    nd : `int`
+        Number of dimensions to pick if `SeriesData`.
+        If `None`, retrieves 1D array. Otherwise shape is `(nd, shape[1])`.
 
     Returns
     -------
@@ -350,11 +582,14 @@ def _get_1d_array(*data):
         if isinstance(data[0], ArrayData):
             return data[0].data
         elif isinstance(data[0], SeriesData):
-            return data[0].data[0]
+            if nd is None:
+                return data[0].data[0]
+            else:
+                return data[0].data[:nd]
         else:
             return data[0]
     else:
-        return [_get_1d_array(_d) for _d in data]
+        return [_get_array(_d, nd=nd) for _d in data]
 
 
 def _process_marker_param(
