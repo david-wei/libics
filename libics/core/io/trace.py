@@ -25,7 +25,6 @@ def load_csv_span_agilent_to_arraydata(file_path):
         Power spectral density data set containing metadata
         `"data"` : `data.arrays.ArrayData`
             Power spectral density.
-        Further attributes: `"
 
     Raises
     ------

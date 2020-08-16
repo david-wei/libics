@@ -70,8 +70,8 @@ def get_logger(name, level=WARNING):
         Default log level.
         Use one of `DEBUG, INFO, WARNING, ERROR, CRITICAL`.
 
-    Example
-    -------
+    Examples
+    --------
     >>> logger = get_logger("libics.core.my_module", level=logging.INFO)
     >>> logger.error("some error occured")
     2020-02-02 20:20,002 [libics.core.my_module] ERROR: some error occured

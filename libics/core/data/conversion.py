@@ -2,8 +2,8 @@ import copy
 import numpy as np
 from scipy import interpolate
 
-from libics.core.types import Quantity
 from libics.core.util import misc
+from libics.core.data.types import Quantity
 from libics.core.data.arrays import ArrayData, SeriesData
 from libics.core.data.sequences import DataSequence
 

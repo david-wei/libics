@@ -260,8 +260,8 @@ def tensorsolve_numpy_array(
         Tensorial indices corresponding to
         :math:`\\sum_{b} A_{ab} x_b = y_{res}`.
     algorithm : `None` or `str`
-        `None` or `"lu_fac": LU factorization.
-        `"lst_sq": least squares optimization.
+        `None` or `"lu_fac"`: LU factorization.
+        `"lst_sq"`: least squares optimization.
 
     Returns
     -------
@@ -645,6 +645,7 @@ class DiagonalizableLS(LinearSystem):
     * Given the matrix :math:`M`, this class allows for (1.) the calculation
       of the eigensystem :math:`(\mu_p, m_p)`, (2.) solving for :math:`x`,
       and (3.) calculating the result :math:`y`.
+
     1. Run :py:meth:`calc_eigensystem` to calculate eigenvalues and
        left/right eigenvectors.
 

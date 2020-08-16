@@ -3,7 +3,7 @@ import time
 from libics.driver.emulator import ItfEmulator
 from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
-from libics.driver.terminal.gpib import ItfGpib, GPIB_MODE
+from libics.driver.terminal.gpib import ItfGpib, MODE
 
 
 ###############################################################################
@@ -86,7 +86,7 @@ class PrologixGpib(ItfEmulator, ItfGpib):
         return self.interface.send(msg)
 
     def recv(self):
-        if self.mode == GPIB_MODE.CONTROLLER:
+        if self.mode == MODE.CONTROLLER:
             self.send("++read")
         return self.interface.recv()
 

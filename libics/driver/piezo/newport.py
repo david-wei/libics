@@ -14,13 +14,16 @@ from libics.driver.terminal import ItfTerminal
 class Newport8742(Picomotor):
 
     """
-    Configuration
-    -------------
+    Attributes
+    ----------
+
+    **Configuration**
+
     subaddress : `str`
         Device address (0-255) in 8742-internal LAN.
 
-    Properties
-    ----------
+    **Properties**
+
     device_name : `str`
         Manufacturer device ID.
     """

@@ -100,8 +100,11 @@ class STATUS:
 class DevBase(abc.ABC):
 
     """
-    Configurations
-    --------------
+    Attributes
+    ----------
+
+    **Configurations**
+
     identifier : `str`
         Interface-unique identifier string.
     model : `str`

@@ -165,20 +165,20 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
 
     Parameters
     ----------
-    obj : object or dict
+    obj : `object` or `dict`
         Object or keyword argument dictionary.
-    cls_ : class
+    cls_ : `class`
         Class of instance to be constructed.
-    raise_exception : Exception or None
+    raise_exception : `Exception` or `None`
         Specifies the behaviour if object construction fails.
-        None:
+        `None`:
             Returns the input object.
-        Exception:
+        `Exception`:
             Raises the given exception.
 
     Returns
     -------
-    obj : cls_
+    obj : `cls_`
         Instance of given class or object itself.
 
     Raises
@@ -310,28 +310,28 @@ def map_dicts(
 
     Parameters
     ----------
-    func : callable
+    func : `callable`
         Function to be mapped.
-    *arg_dicts : dict
+    *arg_dicts : `dict`
         Dictionaries whose values are mapped as arguments.
-    kwarg_dicts : dict(dict)
+    kwarg_dicts : `dict(dict)`
         Dictionaries whose values are mapped as keyword arguments.
         The keys of kwarg_dicts correspond to the keywords.
-    pre_args, post_args : tuple
+    pre_args, post_args : `tuple`
         Arguments passed to func (before, after) dict
-        values, i.e. func(*pre_args, *dict_vals, *post_args).
+        values, i.e. `func(*pre_args, *dict_vals, *post_args)`.
     **kwargs
-        Keyword arguments passed to func.
+        Keyword arguments passed to `func`.
 
     Returns
     -------
-    d : dict
+    d : `dict`
         Mapped dictionary.
 
     Examples
     --------
-    map_dicts(func, d1, d2) performs new_dict[key] = func(d1, d2) for all
-    keys common to both d1 and d2.
+    `map_dicts(func, d1, d2)` performs `new_dict[key] = func(d1, d2)` for all
+    keys common to both `d1` and `d2`.
     """
     d = {}
     all_dicts = list(arg_dicts) + list(kwarg_dicts.values())

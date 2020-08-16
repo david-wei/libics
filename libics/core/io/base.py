@@ -594,6 +594,7 @@ class FileBase(object):
     Base class for object serialization and file storage.
 
     Usage:
+
     * To enable I/O functionality for custom classes, subclass this
       base class.
     * By default the serialization algorithm calls :py:meth:`attributes`,

@@ -39,13 +39,16 @@ class SENSITIVITY:
 class Camera(DevBase):
 
     """
-    Configurations
-    --------------
+    Attributes
+    ----------
+
+    **Configurations**
+
     frame_queue_size : `int`
         Maximum size of fast frame queue.
 
-    Properties
-    ----------
+    **Properties**
+
     pixel_hrzt_count, pixel_vert_count : `int`
         Pixel count in respective direction.
     pixel_hrzt_size, pixel_vert_size : `float`

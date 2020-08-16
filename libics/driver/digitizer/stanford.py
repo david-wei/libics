@@ -28,8 +28,11 @@ class SPECTRUM_UNIT:
 class StanfordSR760(FftAnalyzer):
 
     """
-    Properties
+    Attributes
     ----------
+
+    **Properties**
+
     spectrum_unit : `SPECTRUM_UNIT`
         In-device unit used to measure spectrum.
     device_name : `str`

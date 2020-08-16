@@ -1,0 +1,697 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.trafo &#8212; libics 0.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.trafo">
+<span id="libics-trafo"></span><h1>libics.trafo<a class="headerlink" href="#module-libics.trafo" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-libics.trafo.data">
+<span id="data"></span><h2>data<a class="headerlink" href="#module-libics.trafo.data" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.trafo.data.Calibration">
+<em class="property">class </em><code class="sig-prename descclassname">libics.trafo.data.</code><code class="sig-name descname">Calibration</code><span class="sig-paren">(</span><em class="sig-param">sd=None</em>, <em class="sig-param">sd_key_dim=0</em>, <em class="sig-param">sd_val_dim=-1</em>, <em class="sig-param">key_data=None</em>, <em class="sig-param">val_data=None</em>, <em class="sig-param">key_quantity=None</em>, <em class="sig-param">val_quantity=None</em>, <em class="sig-param">mode='linear'</em>, <em class="sig-param">extrapolation=False</em>, <em class="sig-param">pkg_name='libics'</em>, <em class="sig-param">cls_name='Calibration'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.data.Calibration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libics.data.html#libics.data.seriesdata.SeriesData" title="libics.data.seriesdata.SeriesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.data.seriesdata.SeriesData</span></code></a></p>
+<p>Container class for storing calibration data mapping one quantity to
+another. Naming convention: key –map–&gt; val.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData or None</span></dt><dd><p>Uses series data to construct the calibration object.
+If specified, overwrites any key_data, val_data,
+key_quantity, val_quantity parameters.</p>
+</dd>
+<dt><strong>sd_key_dim, sd_val_dim</strong><span class="classifier">int</span></dt><dd><p>(key, val) dimensions of series data that should
+be used as calibration.</p>
+</dd>
+<dt><strong>key_data, val_data</strong><span class="classifier">np.ndarray(1)</span></dt><dd><p>Data array for (key, val) data values.</p>
+</dd>
+<dt><strong>key_quantity, val_quantity</strong><span class="classifier">data.types.Quantity</span></dt><dd><p>Quantity of (key, val).</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">Calibration.MODE</span></dt><dd><p>NEAREST: Nearest neighbour.
+LINEAR: first order spline.
+QUADRATIC: second order spline.
+CUBIC: third order spline.
+PREVIOUS: previous value.
+NEXT: next value.</p>
+</dd>
+<dt><strong>extrapolation</strong><span class="classifier">bool or float or (float, float)</span></dt><dd><p>True: Performs proper extrapolation.
+False: Uses boundary values.
+float: Uses given number as constant extrapolation.
+(float, float): Used as (left, right) extrapolation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong></dt><dd></dd>
+<dt><strong>key_data</strong></dt><dd></dd>
+<dt><strong>key_quantity</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">loc</span></code></dt><dd><p>Get data by numpy index addressing [entry, variable].</p>
+</dd>
+<dt><strong>val_data</strong></dt><dd></dd>
+<dt><strong>val_quantity</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, \*args)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_dim</span></code>(self[, quantity, name, symbol, unit])</p></td>
+<td><p>Appends a dimension to the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dim</span></code>(self)</p></td>
+<td><p>Gets the data dimension (incl.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 44%" />
+<col style="width: 56%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>MODE</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>init</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.trafo.data.Calibration.MODE">
+<em class="property">class </em><code class="sig-name descname">MODE</code><a class="headerlink" href="#libics.trafo.data.Calibration.MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.CUBIC">
+<code class="sig-name descname">CUBIC</code><em class="property"> = 'cubic'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.CUBIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.LINEAR">
+<code class="sig-name descname">LINEAR</code><em class="property"> = 'linear'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.NEAREST">
+<code class="sig-name descname">NEAREST</code><em class="property"> = 'const'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.NEAREST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.NEXT">
+<code class="sig-name descname">NEXT</code><em class="property"> = 'next'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.NEXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.PREVIOUS">
+<code class="sig-name descname">PREVIOUS</code><em class="property"> = 'previous'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.PREVIOUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.trafo.data.Calibration.MODE.QUADRATIC">
+<code class="sig-name descname">QUADRATIC</code><em class="property"> = 'quadratic'</em><a class="headerlink" href="#libics.trafo.data.Calibration.MODE.QUADRATIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.data.Calibration.key_data">
+<em class="property">property </em><code class="sig-name descname">key_data</code><a class="headerlink" href="#libics.trafo.data.Calibration.key_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.data.Calibration.key_quantity">
+<em class="property">property </em><code class="sig-name descname">key_quantity</code><a class="headerlink" href="#libics.trafo.data.Calibration.key_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.data.Calibration.val_data">
+<em class="property">property </em><code class="sig-name descname">val_data</code><a class="headerlink" href="#libics.trafo.data.Calibration.val_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.data.Calibration.val_quantity">
+<em class="property">property </em><code class="sig-name descname">val_quantity</code><a class="headerlink" href="#libics.trafo.data.Calibration.val_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.data.apply_calibration">
+<code class="sig-prename descclassname">libics.trafo.data.</code><code class="sig-name descname">apply_calibration</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">calibration</em>, <em class="sig-param">dim=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.data.apply_calibration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a calibration to a data.seriesdata.SeriesData object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData</span></dt><dd><p>Series data the calibration is applied to.</p>
+</dd>
+<dt><strong>calibration</strong><span class="classifier">Calibration</span></dt><dd><p>Calibration data.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier">int</span></dt><dd><p>Series data dimension to which calibration is applied.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData</span></dt><dd><p>Series data with applied calibration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Performs in-place calibration, i.e. sd is mutable.</p></li>
+<li><p>Does not check for quantity agreement. After applying calibration,
+sd quantity is changed to the quantity stored in calibration.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.data.cv_arraydata_to_seriesdata">
+<code class="sig-prename descclassname">libics.trafo.data.</code><code class="sig-name descname">cv_arraydata_to_seriesdata</code><span class="sig-paren">(</span><em class="sig-param">ad</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.data.cv_arraydata_to_seriesdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a data.arraydata.ArrayData object to a data.seriesdata.SeriesData
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ad</strong><span class="classifier">data.arraydata.ArrayData</span></dt><dd><p>Array data to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData</span></dt><dd><p>Converted series data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.data.cv_seriesdata_to_arraydata">
+<code class="sig-prename descclassname">libics.trafo.data.</code><code class="sig-name descname">cv_seriesdata_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">sampling_shape=None</em>, <em class="sig-param">algorithm='cubic'</em>, <em class="sig-param">fill=nan</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.data.cv_seriesdata_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a data.arraydata.ArrayData object to a data.seriesdata.SeriesData
+object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData</span></dt><dd><p>Series data to be converted.</p>
+</dd>
+<dt><strong>sampling_shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Array shape of interpolated data.</p>
+</dd>
+<dt><strong>algorithm</strong><span class="classifier">str</span></dt><dd><p>Interpolation algorithm.
+“nearest”:</p>
+<blockquote>
+<div><p>Nearest point.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>“linear”:</dt><dd><p>Linear interpolation.</p>
+</dd>
+<dt>“cubic”:</dt><dd><p>Cubic interpolation (up to 2D).</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>fill</strong><span class="classifier">float</span></dt><dd><p>Fill value for linear and cubic interpolation if value
+is outside convex hull (i.e. needs extrapolation).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>ad</strong><span class="classifier">data.arraydata.ArrayData</span></dt><dd><p>Converted array data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.trafo.fourier">
+<span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.trafo.fourier" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.trafo.fourier.fft_arraydata">
+<code class="sig-prename descclassname">libics.trafo.fourier.</code><code class="sig-name descname">fft_arraydata</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.fourier.fft_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Fast Fourier Transform of a <cite>data.matrixdata.MatrixData</cite>
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">data.arraydata.ArrayData</span></dt><dd><p>The array data to be Fourier transformed.</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">None or str</span></dt><dd><p>None: Saves full complex values of Fourier transform.
+“abs”: Saves spectrum (modulus of Fourier transform).
+“phase”: Saves phase of Fourier transform.
+“re”: Saves real part of Fourier transform.
+“im”: Saves imaginary part of Fourier transform.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">data.arraydata.ArrayData</span></dt><dd><p>Fourier transformed data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>FFT is implemented as asymmetric transform with respect to frequency and
+not angular frequency (i.e. 2πft, not ωt).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="fourierutil">
+<h2>fourierutil<a class="headerlink" href="#fourierutil" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-libics.trafo.fourierutil"></span><dl class="function">
+<dt id="libics.trafo.fourierutil.ft_arrayscale">
+<code class="sig-prename descclassname">libics.trafo.fourierutil.</code><code class="sig-name descname">ft_arrayscale</code><span class="sig-paren">(</span><em class="sig-param">scale</em>, <em class="sig-param">shape</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.fourierutil.ft_arrayscale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the Fourier transformed coordinates of a
+<cite>data.arraydata.ArrayScale</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scale</strong><span class="classifier">data.arraydata.ArrayScale</span></dt><dd><p>Array scale before Fourier transformation.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Shape of data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>scale</strong><span class="classifier">data.arraydata.ArrayScale</span></dt><dd><p>Array scale after Fourier transformation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.trafo.linear">
+<span id="linear"></span><h2>linear<a class="headerlink" href="#module-libics.trafo.linear" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.trafo.linear.AffineTrafo">
+<em class="property">class </em><code class="sig-prename descclassname">libics.trafo.linear.</code><code class="sig-name descname">AffineTrafo</code><span class="sig-paren">(</span><em class="sig-param">matrix=array([[1., 0.],        [0., 1.]]), offset=array([0., 0.]), pkg_name='libics', cls_name='AffineTrafo'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.linear.AffineTrafo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libics.file.html#libics.file.hdf.HDFBase" title="libics.file.hdf.HDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.file.hdf.HDFBase</span></code></a></p>
+<p>Defines an affine transformation in arbitrary dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>matrix</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Transformation matrix.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier">np.ndarray(1, float)</span></dt><dd><p>Transformation offset.</p>
+</dd>
+<dt><strong># TODO: transformation of array data.</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, image, shape[, order, direction])</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.trafo.linear.AffineTrafo.cv_to_origin" title="libics.trafo.linear.AffineTrafo.cv_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code></a>(self, image, shape[, order])</p></td>
+<td><p>Convert an image in target coordinates to origin coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.trafo.linear.AffineTrafo.cv_to_target" title="libics.trafo.linear.AffineTrafo.cv_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_target</span></code></a>(self, image, shape[, order])</p></td>
+<td><p>Convert an image in origin coordinates to target coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.trafo.linear.AffineTrafo.fit_affine_transform" title="libics.trafo.linear.AffineTrafo.fit_affine_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_affine_transform</span></code></a>(self, origin_coords, …)</p></td>
+<td><p>Fits the affine transform matrix and offset vector.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.trafo.linear.AffineTrafo.cv_to_origin">
+<code class="sig-name descname">cv_to_origin</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">image</em>, <em class="sig-param">shape</em>, <em class="sig-param">order=3</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.linear.AffineTrafo.cv_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an image in target coordinates to origin coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trafo_image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in origin coordinates.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.linear.AffineTrafo.cv_to_target">
+<code class="sig-name descname">cv_to_target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">image</em>, <em class="sig-param">shape</em>, <em class="sig-param">order=3</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.linear.AffineTrafo.cv_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an image in origin coordinates to target coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trafo_image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in target coordinates.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.trafo.linear.AffineTrafo.fit_affine_transform">
+<code class="sig-name descname">fit_affine_transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">origin_coords</em>, <em class="sig-param">target_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.linear.AffineTrafo.fit_affine_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the affine transform matrix and offset vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>origin_coords, target_coords</strong><span class="classifier">list(np.ndarray(1, float))</span></dt><dd><p>List of (origin, target) coordinates in corresponding order.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>success</strong><span class="classifier">bool</span></dt><dd><p>Whether transformation fit succeeded.
+Matrix and offset attributes are only written
+in the case of success.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Following H. Späth, Math. Com. 9 (1), 27-34.
+Variable naming convention:
+* q: origin coordinates.
+* p: target coordinates.
+* m: transform matrix.
+* b: transform offset.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.trafo.resize">
+<span id="resize"></span><h2>resize<a class="headerlink" href="#module-libics.trafo.resize" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.trafo.resize.find_centroid">
+<code class="sig-prename descclassname">libics.trafo.resize.</code><code class="sig-name descname">find_centroid</code><span class="sig-paren">(</span><em class="sig-param">np_array</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.resize.find_centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the centroid of a multi-dimensional numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>np_array</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Numpy array for which the centroid is calculated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>centroid_coord</strong><span class="classifier">tuple(int)</span></dt><dd><p>Index coordinates of the centroid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.resize.fit_to_aspect">
+<code class="sig-prename descclassname">libics.trafo.resize.</code><code class="sig-name descname">fit_to_aspect</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">aspect_ratio</em>, <em class="sig-param">crop</em>, <em class="sig-param">center</em>, <em class="sig-param">fit_mode='enlarge'</em>, <em class="sig-param">center_mode='center'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.resize.fit_to_aspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes a crop position to follow an aspect ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>np_array</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Image data.</p>
+</dd>
+<dt><strong>aspect_ratio</strong><span class="classifier">tuple(float)</span></dt><dd><p>Cropped pixel ratios between image dimensions.</p>
+</dd>
+<dt><strong>crop</strong><span class="classifier">tuple(tuple(int))</span></dt><dd><p>Target crop coordinates with format
+<cite>((ind_min_x, ind_min_y), (ind_max_x, ind_max_y))</cite>.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier">tuple(int)</span></dt><dd><p>Center index coordinates.</p>
+</dd>
+<dt><strong>fit_mode</strong><span class="classifier">“enlarge”, “reduce”</span></dt><dd><p>Whether the crop should be enlarged or reduced
+with respect to the target crop.</p>
+</dd>
+<dt><strong>center_mode</strong><span class="classifier">“center”, “off”</span></dt><dd><p>Whether the given <cite>center</cite> coordinates should be in
+the center of the fitted crop image.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>crop</strong><span class="classifier">tuple(tuple(int))</span></dt><dd><p>Fitted crop coordinates with format
+<cite>((ind_min_x, ind_min_y), (ind_max_x, ind_max_y))</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.resize.resize_on_condition">
+<code class="sig-prename descclassname">libics.trafo.resize.</code><code class="sig-name descname">resize_on_condition</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">cond='cut_all'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.resize.resize_on_condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the rectangle that contains/avoids all occurences of a given value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>np_array</strong><span class="classifier">np.ndarray</span></dt><dd><p>Array to be resized.</p>
+</dd>
+<dt><strong>cond</strong><span class="classifier">callable or str</span></dt><dd><dl>
+<dt>Callable:</dt><dd><p>Condition function that returns False if the
+respective hypersurface should be cut.
+Call signature:</p>
+<blockquote>
+<div><p>cond(np.array(np_array.ndim - 1)) -&gt; bool.</p>
+</div></blockquote>
+</dd>
+<dt>“cut_all”, “cut_any”:</dt><dd><p>Remove boundary hypersurfaces (only, partially)
+containing kwargs[“val”].</p>
+</dd>
+<dt>“keep_all”, “keep_any”:</dt><dd><p>Remove boundary hypersurfaces not (only, partially)
+containing kwargs[“val”].</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>val</strong></dt><dd><p>See cond -&gt; “cut”, “keep”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>crop</strong><span class="classifier">np.array(2, int)</span></dt><dd><p>Crop coordinates with format
+<cite>((ind_min_x, ind_min_y, …), (ind_max_x, ind_max_y, …))</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.resize.resize_on_filter_maximum">
+<code class="sig-prename descclassname">libics.trafo.resize.</code><code class="sig-name descname">resize_on_filter_maximum</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">min_mass=None</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">aspect_ratio=None</em>, <em class="sig-param">zero=True</em>, <em class="sig-param">factor=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.resize.resize_on_filter_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs maximum filters to obtain the area around a peak.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>np_array</strong><span class="classifier">np.ndarray</span></dt><dd><p>Non-negative array to be resized.</p>
+</dd>
+<dt><strong>min_mass</strong><span class="classifier">float</span></dt><dd><p>Required relative mass within resized area.</p>
+</dd>
+<dt><strong>min_val</strong><span class="classifier">float</span></dt><dd><p>Required relative value within resized area.</p>
+</dd>
+<dt><strong>aspect_ratio</strong><span class="classifier">float or None</span></dt><dd><p>Resizing aspect ratio (y_shape / x_shape).
+None keeps the aspect ratio of the array</p>
+</dd>
+<dt><strong>zero</strong><span class="classifier">bool</span></dt><dd><p>Whether to shift the array minimum to zero.</p>
+</dd>
+<dt><strong>factor</strong><span class="classifier">int</span></dt><dd><p>Initial base size factor used for filtering.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>crop</strong><span class="classifier">tuple(tuple(int))</span></dt><dd><p>Crop coordinates with format
+<cite>((ind_min_x, ind_min_y), (ind_max_x, ind_max_y))</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.resize.resize_on_mass">
+<code class="sig-prename descclassname">libics.trafo.resize.</code><code class="sig-name descname">resize_on_mass</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">center='auto'</em>, <em class="sig-param">total_mass=0.9</em>, <em class="sig-param">aspect_ratio='auto'</em>, <em class="sig-param">aspect_mode='enlarge'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.resize.resize_on_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the crop coordinates of a given numpy array for which each axis’
+sum exceeds the given relative <cite>total_mass</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>np_array</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Numpy array to be resized.</p>
+</dd>
+<dt><strong>center</strong><span class="classifier">tuple(int) or “auto”</span></dt><dd><p>Center coordinates of image. If <cite>“auto”</cite>, the centroid
+is used.</p>
+</dd>
+<dt><strong>total_mass</strong><span class="classifier">float</span></dt><dd><p>Relative mass to be present in the cropped array.</p>
+</dd>
+<dt><strong>aspect_ratio</strong><span class="classifier">tuple(float) or “auto”</span></dt><dd><p>Aspect ratio (e.g. 16:9) of cropped image (aspect ratio
+is not guaranteed). If <cite>“auto”</cite>, no aspect ratio is set.</p>
+</dd>
+<dt><strong>aspect_mode</strong><span class="classifier">“enlarge” or “reduce”</span></dt><dd><p>If <cite>“enlarge”</cite>, the aspect ratio resizing enlarges the
+total mass crop. If <cite>“reduce”</cite>, it reduces the total mass
+crop.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>crop</strong><span class="classifier">tuple(tuple(int))</span></dt><dd><p>Crop coordinates with format
+<cite>((ind_min_x, ind_min_y), (ind_max_x, ind_max_y))</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.trafo.sigproc">
+<span id="sigproc"></span><h2>sigproc<a class="headerlink" href="#module-libics.trafo.sigproc" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.trafo.sigproc.convolve_1d_direct">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">convolve_1d_direct</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.convolve_1d_direct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.convolve_1d_fft">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">convolve_1d_fft</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.convolve_1d_fft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.convolve_2d_direct">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">convolve_2d_direct</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.convolve_2d_direct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.convolve_2d_fft">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">convolve_2d_fft</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.convolve_2d_fft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.correlate_1d_direct">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">correlate_1d_direct</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.correlate_1d_direct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.correlate_1d_fft">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">correlate_1d_fft</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.correlate_1d_fft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.correlate_2d_direct">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">correlate_2d_direct</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.correlate_2d_direct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.trafo.sigproc.correlate_2d_fft">
+<code class="sig-prename descclassname">libics.trafo.sigproc.</code><code class="sig-name descname">correlate_2d_fft</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kernel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.trafo.sigproc.correlate_2d_fft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.trafo</a><ul>
+<li><a class="reference internal" href="#module-libics.trafo.data">data</a></li>
+<li><a class="reference internal" href="#module-libics.trafo.fourier">fourier</a></li>
+<li><a class="reference internal" href="#fourierutil">fourierutil</a></li>
+<li><a class="reference internal" href="#module-libics.trafo.linear">linear</a></li>
+<li><a class="reference internal" href="#module-libics.trafo.resize">resize</a></li>
+<li><a class="reference internal" href="#module-libics.trafo.sigproc">sigproc</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.trafo.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 0.0dev documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.tools.plot &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.tools.trafo" href="libics.tools.trafo.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="libics.tools.trafo.html" title="libics.tools.trafo"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.tools.html" accesskey="U">libics.tools</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.tools.plot">
+<span id="libics-tools-plot"></span><h1>libics.tools.plot<a class="headerlink" href="#module-libics.tools.plot" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-libics.tools.plot.base"></span><dl class="function">
+<dt id="libics.tools.plot.base.plot">
+<code class="sig-prename descclassname">libics.tools.plot.base.</code><code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">*data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">xerr=None</em>, <em class="sig-param">yerr=None</em>, <em class="sig-param">marker=None</em>, <em class="sig-param">xlabel=True</em>, <em class="sig-param">ylabel=True</em>, <em class="sig-param">label=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a 1D plot.</p>
+<p>Supports scatter plots, line plots and 2D error bars.
+See matplotlib API:</p>
+<ul class="simple">
+<li><p><cite>&lt;https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot&gt;</cite></p></li>
+<li><p><cite>&lt;https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar&gt;</cite></p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*data</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Plots data depending on passed data.
+Supports var data of <cite>ArrayData</cite> or <cite>SeriesData</cite>.</p>
+</dd>
+<dt><strong>x, y, xerr, yerr</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Explicitly given plot data (or error) for each axis.
+Overwrites <cite>*data</cite>.</p>
+</dd>
+<dt><strong>marker</strong><span class="classifier"><cite>str</cite> or <cite>object</cite></span></dt><dd><p>Matplotlib markers.
+Additionally supports <cite>“O”</cite> (larger circle with darker edge color).</p>
+</dd>
+<dt><strong>ax</strong><span class="classifier"><cite>matplotlib.axes.Axes</cite></span></dt><dd><p>Matplotlib axes.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the plot function.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.base.style_axes">
+<code class="sig-prename descclassname">libics.tools.plot.base.</code><code class="sig-name descname">style_axes</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">xmin=None</em>, <em class="sig-param">xmax=None</em>, <em class="sig-param">ymin=None</em>, <em class="sig-param">ymax=None</em>, <em class="sig-param">xlabel=None</em>, <em class="sig-param">ylabel=None</em>, <em class="sig-param">title=None</em>, <em class="sig-param">aspect=None</em>, <em class="sig-param">grid=None</em>, <em class="sig-param">legend=None</em>, <em class="sig-param">minorticks=None</em>, <em class="sig-param">**ticks</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.style_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Styles axes properties.</p>
+<p>See matplotlib API: <cite>&lt;https://matplotlib.org/api/axes_api.html&gt;</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ax</strong><span class="classifier"><cite>matplotlib.axes.Axes</cite></span></dt><dd><p>Matplotlib axes.</p>
+</dd>
+<dt><strong>xmin, xmax, ymin, ymax</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Axes limits.</p>
+</dd>
+<dt><strong>xlabel, ylabel, title</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Axes labels.</p>
+</dd>
+<dt><strong>aspect</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Axes data scale aspect ratio.</p>
+</dd>
+<dt><strong>grid</strong><span class="classifier"><cite>bool</cite> or <cite>str</cite></span></dt><dd><p><cite>True, False, “major”, “minor”, “both”</cite>.</p>
+</dd>
+<dt><strong>legend</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Parameter passed to legend call.</p>
+</dd>
+<dt><strong>minorticks</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to show minor ticks.</p>
+</dd>
+<dt><strong>**ticks</strong></dt><dd><p>See <a class="reference internal" href="#libics.tools.plot.base.tick_params" title="libics.tools.plot.base.tick_params"><code class="xref py py-func docutils literal notranslate"><span class="pre">tick_params()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.base.style_figure">
+<code class="sig-prename descclassname">libics.tools.plot.base.</code><code class="sig-name descname">style_figure</code><span class="sig-paren">(</span><em class="sig-param">fig=None</em>, <em class="sig-param">ax_style=None</em>, <em class="sig-param">figsize=None</em>, <em class="sig-param">figsize_unit='in'</em>, <em class="sig-param">dpi=None</em>, <em class="sig-param">tight_layout=None</em>, <em class="sig-param">edgecolor=None</em>, <em class="sig-param">facecolor=None</em>, <em class="sig-param">title=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.style_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Styles figure and contained axes properties.</p>
+<p>See matplotlib API:
+<cite>https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>fig</strong><span class="classifier"><cite>matplotlib.figure.Figure</cite></span></dt><dd><p>Matplotlib figure.</p>
+</dd>
+<dt><strong>ax_style</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Keyword arguments for <a class="reference internal" href="#libics.tools.plot.base.style_axes" title="libics.tools.plot.base.style_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">style_axes()</span></code></a>.
+Is applied to all axes contained in the figure.</p>
+</dd>
+<dt><strong>figsize_unit</strong><span class="classifier"><cite>str</cite></span></dt><dd><p><cite>“in”, “mm”</cite>. Unit used to interpret the <cite>figsize</cite> argument.</p>
+</dd>
+<dt><strong>dpi</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Figure resolution in dots per inch (dpi).</p>
+</dd>
+<dt><strong>tight_layout</strong><span class="classifier"><cite>bool</cite> or <cite>dict</cite></span></dt><dd><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.figure.Figure.set_tight_layout()</span></code>.</p>
+</dd>
+<dt><strong>edgecolor, facecolor</strong><span class="classifier"><cite>color</cite></span></dt><dd><p>Edge, face color of the figure rectangle.</p>
+</dd>
+<dt><strong>title</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Figure suptitle.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.base.tick_params">
+<code class="sig-prename descclassname">libics.tools.plot.base.</code><code class="sig-name descname">tick_params</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">axis='both'</em>, <em class="sig-param">capstyle=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.tick_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Styles tick properties.</p>
+<p>See matplotlib API:
+<cite>&lt;https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.tick_params&gt;</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ax</strong><span class="classifier"><cite>matplotlib.axes.Axes</cite></span></dt><dd><p>Matplotlib axes.</p>
+</dd>
+<dt><strong>axis</strong><span class="classifier"><cite>str</cite></span></dt><dd><p><cite>“both”, “x”, “y”</cite>.</p>
+</dd>
+<dt><strong>capstyle</strong><span class="classifier"><cite>str</cite></span></dt><dd><p><cite>“projecting”, “round”, “butt”</cite>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.tick_params()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.base.use_style">
+<code class="sig-prename descclassname">libics.tools.plot.base.</code><code class="sig-name descname">use_style</code><span class="sig-paren">(</span><em class="sig-param">name='libics'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.use_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a matplotlib plot style.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Matplotlib style file name.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="module-libics.tools.plot.colors">
+<span id="colors"></span><h2>colors<a class="headerlink" href="#module-libics.tools.plot.colors" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.tools.plot.colors.change_brightness_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">change_brightness_rgb</code><span class="sig-paren">(</span><em class="sig-param">rgb</em>, <em class="sig-param">scale</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.change_brightness_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the brightness of a RGB color in HLS space.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.darken_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">darken_rgb</code><span class="sig-paren">(</span><em class="sig-param">*rgbs</em>, <em class="sig-param">scale=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.darken_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.hex_to_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">hex_to_rgb</code><span class="sig-paren">(</span><em class="sig-param">hex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.hex_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.hls_to_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">hls_to_rgb</code><span class="sig-paren">(</span><em class="sig-param">hls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.hls_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.hsv_to_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">hsv_to_rgb</code><span class="sig-paren">(</span><em class="sig-param">hsv</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.hsv_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.interpolate_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">interpolate_rgb</code><span class="sig-paren">(</span><em class="sig-param">rgb1</em>, <em class="sig-param">rgb2</em>, <em class="sig-param">scale=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.interpolate_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolates linearly between two RGB colors in HLS space.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>rgb1, rgb2</strong></dt><dd><p>RGB colors.</p>
+</dd>
+<dt><strong>scale</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Relative interpolation position between the two colors,
+where <cite>(0, 1)</cite> corresponds to <cite>(rgb1, rgb2)</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.lighten_rgb">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">lighten_rgb</code><span class="sig-paren">(</span><em class="sig-param">*rgbs</em>, <em class="sig-param">scale=2</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.lighten_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.normalize">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes an array linearly onto the [0, 1] interval.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Array-like to be normalized.</p>
+</dd>
+<dt><strong>vmin, vmax</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Normalization interval on the current scale.
+If <cite>None</cite>, uses the array minimum and maximum, respectively.
+If <cite>vmin</cite> equals <cite>vmax</cite>, a zero-array is returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>norm</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Normalized array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.rgb_to_hls">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">rgb_to_hls</code><span class="sig-paren">(</span><em class="sig-param">rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.rgb_to_hls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.tools.plot.colors.rgb_to_hsv">
+<code class="sig-prename descclassname">libics.tools.plot.colors.</code><code class="sig-name descname">rgb_to_hsv</code><span class="sig-paren">(</span><em class="sig-param">rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.rgb_to_hsv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-libics.tools.plot.default">
+<span id="default"></span><h2>default<a class="headerlink" href="#module-libics.tools.plot.default" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.tools.plot</a><ul>
+<li><a class="reference internal" href="#module-libics.tools.plot.colors">colors</a></li>
+<li><a class="reference internal" href="#module-libics.tools.plot.default">default</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="libics.tools.trafo.html"
+                        title="next chapter">libics.tools.trafo</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.tools.plot.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="libics.tools.trafo.html" title="libics.tools.trafo"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.tools.html" >libics.tools</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

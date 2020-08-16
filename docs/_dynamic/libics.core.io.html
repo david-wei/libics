@@ -1,0 +1,774 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.core.io &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.core.io">
+<span id="libics-core-io"></span><h1>libics.core.io<a class="headerlink" href="#module-libics.core.io" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-libics.core.io.base"></span><dl class="class">
+<dt id="libics.core.io.base.FileBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">FileBase</code><a class="headerlink" href="#libics.core.io.base.FileBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for object serialization and file storage.</p>
+<p>Usage:</p>
+<ul class="simple">
+<li><p>To enable I/O functionality for custom classes, subclass this
+base class.</p></li>
+<li><p>By default the serialization algorithm calls <a class="reference internal" href="#libics.core.io.base.FileBase.attributes" title="libics.core.io.base.FileBase.attributes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">attributes()</span></code></a>,
+which returns a name-&gt;value dictionary of the attributes to be
+serialized. These attributes are given in the class variable <cite>SER_KEYS</cite>,
+which is a set containing the respective attribute names.</p></li>
+<li><p>The subclass should add the required attribute names to this set, i.e.
+setting <cite>SER_KEYS = FileBase.SER_KEYS | {“ATTR0”, “ATTR1”, …}</cite>.</p></li>
+<li><p>Alternatively, the <a class="reference internal" href="#libics.core.io.base.FileBase.attributes" title="libics.core.io.base.FileBase.attributes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">attributes()</span></code></a> method itself can be
+overwritten to obtain more customizability.</p></li>
+</ul>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.io.base.FileBase.attributes" title="libics.core.io.base.FileBase.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a>(self)</p></td>
+<td><p>Default saved attributes getter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.io.base.FileBase.load" title="libics.core.io.base.FileBase.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <a class="reference internal" href="#libics.core.io.base.load" title="libics.core.io.base.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.io.base.FileBase.save" title="libics.core.io.base.FileBase.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <a class="reference internal" href="#libics.core.io.base.save" title="libics.core.io.base.save"><code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code></a> function.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.io.base.FileBase.SER_KEYS">
+<code class="sig-name descname">SER_KEYS</code><em class="property"> = {}</em><a class="headerlink" href="#libics.core.io.base.FileBase.SER_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.FileBase.attributes">
+<code class="sig-name descname">attributes</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.FileBase.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default saved attributes getter.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>attrs</strong><span class="classifier"><cite>dict(str-&gt;object)</cite></span></dt><dd><p>Saved attributes dictionary mapping the attribute name
+to the attribute value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.FileBase.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.FileBase.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <a class="reference internal" href="#libics.core.io.base.load" title="libics.core.io.base.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a> function.</p>
+<p>Loads into current object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.FileBase.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.FileBase.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <a class="reference internal" href="#libics.core.io.base.save" title="libics.core.io.base.save"><code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code></a> function.</p>
+<p>Saves current object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.io.base.ID_NOT_SPECIAL">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">ID_NOT_SPECIAL</code><a class="headerlink" href="#libics.core.io.base.ID_NOT_SPECIAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.io.base.ObjDecoder">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">ObjDecoder</code><a class="headerlink" href="#libics.core.io.base.ObjDecoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Deserializes a file or dictionary to an object.</p>
+<p>For deserialization from file (with metadata), use <a class="reference internal" href="#libics.core.io.base.ObjDecoder.decode" title="libics.core.io.base.ObjDecoder.decode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decode()</span></code></a>.
+For legacy fully qualified name to class map (<a class="reference internal" href="#libics.core.io.base.ObjDecoder.CLS_MAP" title="libics.core.io.base.ObjDecoder.CLS_MAP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CLS_MAP</span></code></a>),
+inherit from this class and populate the attribute according to
+<a class="reference internal" href="#libics.core.io.base.get_class_from_fqname" title="libics.core.io.base.get_class_from_fqname"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_class_from_fqname()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeyError</dt><dd><p>If deserialization failed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>CLS_MAP</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.io.base.ObjDecoder.decode" title="libics.core.io.base.ObjDecoder.decode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode</span></code></a>(ser[, obj, req_version, raise_err])</p></td>
+<td><p>Decodes a dictionary into a deserialized object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.io.base.ObjDecoder.deserialize" title="libics.core.io.base.ObjDecoder.deserialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize</span></code></a>(ser[, obj, raise_err])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.io.base.ObjDecoder.CLS_MAP">
+<code class="sig-name descname">CLS_MAP</code><em class="property"> = None</em><a class="headerlink" href="#libics.core.io.base.ObjDecoder.CLS_MAP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.ObjDecoder.decode">
+<em class="property">classmethod </em><code class="sig-name descname">decode</code><span class="sig-paren">(</span><em class="sig-param">ser</em>, <em class="sig-param">obj=None</em>, <em class="sig-param">req_version=None</em>, <em class="sig-param">raise_err=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.ObjDecoder.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes a dictionary into a deserialized object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ser</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>File-serialized object.</p>
+</dd>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>If specified, and if the top-level object is a custom class,
+it is deserialized into this given object.</p>
+</dd>
+<dt><strong>req_version</strong><span class="classifier"><cite>None</cite>, <cite>float</cite> or <cite>(float, float)</cite></span></dt><dd><p>Required <cite>libics</cite> version. Tuples specify minimum and maximum
+versions, a single float a minimum version.
+Raises a <cite>RuntimeError</cite> if this condition is not fulfilled.</p>
+</dd>
+<dt><strong>raise_err</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to raise an error on deserialization failure
+or to proceed silently.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Deserialized object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If the required version is not fulfilled.</p>
+</dd>
+<dt>KeyError</dt><dd><p>If the serialized object is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.ObjDecoder.deserialize">
+<em class="property">classmethod </em><code class="sig-name descname">deserialize</code><span class="sig-paren">(</span><em class="sig-param">ser</em>, <em class="sig-param">obj=None</em>, <em class="sig-param">raise_err=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.ObjDecoder.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ser</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Dictionary representing serialized object.</p>
+</dd>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>If specified, and if the top-level object is a custom class,
+it is deserialized into this given object.</p>
+</dd>
+<dt><strong>raise_err</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to raise an error on deserialization failure
+or to proceed silently.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Deserialized object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeyError</dt><dd><p>If deserialization failed and <cite>raise_err</cite> flag is set.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.io.base.ObjEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">ObjEncoder</code><a class="headerlink" href="#libics.core.io.base.ObjEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Serializes an object to a file or dictionary.</p>
+<p>For serialization to file (with metadata), use <a class="reference internal" href="#libics.core.io.base.ObjEncoder.encode" title="libics.core.io.base.ObjEncoder.encode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">encode()</span></code></a>.
+For legacy class to fully qualified name map (<a class="reference internal" href="#libics.core.io.base.ObjEncoder.CLS_MAP" title="libics.core.io.base.ObjEncoder.CLS_MAP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CLS_MAP</span></code></a>),
+inherit from this class and populate the attribute according to
+<a class="reference internal" href="#libics.core.io.base.get_fqname_from_class" title="libics.core.io.base.get_fqname_from_class"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_fqname_from_class()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>NotImplementedError</dt><dd><p>If class of object to be serialized is not supported.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>CLS_MAP</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.io.base.ObjEncoder.encode" title="libics.core.io.base.ObjEncoder.encode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">encode</span></code></a>(obj)</p></td>
+<td><p>Encodes an object into a serializable format.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 43%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>serialize</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.io.base.ObjEncoder.CLS_MAP">
+<code class="sig-name descname">CLS_MAP</code><em class="property"> = None</em><a class="headerlink" href="#libics.core.io.base.ObjEncoder.CLS_MAP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.ObjEncoder.encode">
+<em class="property">classmethod </em><code class="sig-name descname">encode</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.ObjEncoder.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes an object into a serializable format.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Object to be deserialized.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ser</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Object serialized into a dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.io.base.ObjEncoder.serialize">
+<em class="property">classmethod </em><code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.ObjEncoder.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.filter_primitive">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">filter_primitive</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.filter_primitive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters primitive types requiring special handling (i.a. <cite>np.generic</cite>)
+into Python built-in types.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Object to be filtered.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Converted object if applicable, otherwise returns identity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.get_class_from_fqname">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">get_class_from_fqname</code><span class="sig-paren">(</span><em class="sig-param">fqname</em>, <em class="sig-param">cls_map=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.get_class_from_fqname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the class specified by the given fully qualified class name.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>fqname</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Fully qualified class name (i.e. Python-attribute-style string
+specifying class), e.g. <cite>libics.core.data.arrays.ArrayData</cite>.</p>
+</dd>
+<dt><strong>cls_map</strong><span class="classifier"><cite>dict(str-&gt;cls)</cite></span></dt><dd><p>Dictionary mapping fully qualified name to a class.
+Is handled prioritized, so it can be used for legacy purposes,
+where dependencies have changed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>_cls</strong><span class="classifier"><cite>class</cite></span></dt><dd><p>Requested class object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.get_file_format">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">get_file_format</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">fmt=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.get_file_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deduces the file format (or returns the format if given).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeyError</dt><dd><p>If format deduction error occured.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.get_fqname_from_class">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">get_fqname_from_class</code><span class="sig-paren">(</span><em class="sig-param">_cls</em>, <em class="sig-param">cls_map=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.get_fqname_from_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the fully qualified class name from the given class.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>_cls</strong><span class="classifier"><cite>class</cite></span></dt><dd><p>Class object.</p>
+</dd>
+<dt><strong>cls_map</strong><span class="classifier"><cite>dict(cls-&gt;str)</cite></span></dt><dd><p>Dictionary mapping class to a fully qualified name.
+Is handled prioritized, so it can be used for legacy purposes,
+where dependencies have changed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>fqname</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Requested fully qualified class name.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>See: <a class="reference external" href="https://stackoverflow.com/questions/2020014">https://stackoverflow.com/questions/2020014</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.load">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">obj_or_cls=None</em>, <em class="sig-param">dec=&lt;class 'libics.core.io.base.ObjDecoder'&gt;</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">req_version=None</em>, <em class="sig-param">raise_err=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads and deserializes an object from file.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Saved file path.</p>
+</dd>
+<dt><strong>obj_or_cls</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Object or class to be deserialized to.</p>
+</dd>
+<dt><strong>dec</strong><span class="classifier"><cite>ObjDecoder</cite></span></dt><dd><p>Deserialization class.</p>
+</dd>
+<dt><strong>fmt</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Supported file formats: <cite>“json”</cite>, <cite>“bson”</cite>, <cite>“hdf”</cite>,
+<cite>“bmp”</cite>, <cite>“png”</cite>, <cite>“wct”</cite>, <cite>“sif”</cite>, <cite>“mat”</cite>.</p>
+</dd>
+<dt><strong>req_version</strong><span class="classifier"><cite>None</cite>, <cite>float</cite> or <cite>(float, float)</cite></span></dt><dd><p>Required <cite>libics</cite> version. Tuples specify minimum and maximum
+versions, a single float a minimum version.
+Raises a <cite>RuntimeError</cite> if this condition is not fulfilled.</p>
+</dd>
+<dt><strong>raise_err</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to raise an error on deserialization failure
+or to proceed silently.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Deserialized object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.save">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">obj</em>, <em class="sig-param">enc=&lt;class 'libics.core.io.base.ObjEncoder'&gt;</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes and saves an object to file.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Saved file path.</p>
+</dd>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite></span></dt><dd><p>Object to be serialized and saved.</p>
+</dd>
+<dt><strong>enc</strong><span class="classifier"><cite>ObjEncoder</cite></span></dt><dd><p>Serialization class.</p>
+</dd>
+<dt><strong>fmt</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>File format: <cite>“json”</cite>, <cite>“bson”</cite>, <cite>“hdf”</cite>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the respective write functions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.base.type_is_primitive">
+<code class="sig-prename descclassname">libics.core.io.base.</code><code class="sig-name descname">type_is_primitive</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.type_is_primitive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the given object is of primitive type.</p>
+<p class="rubric">Notes</p>
+<p><cite>complex</cite> is not considered a primitive, but a special type.</p>
+</dd></dl>
+
+<div class="section" id="module-libics.core.io.image">
+<span id="image"></span><h2>image<a class="headerlink" href="#module-libics.core.io.image" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.core.io.image.load_bmp_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.image.</code><code class="sig-name descname">load_bmp_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">ad=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.load_bmp_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a bitmap (bmp) file and loads the data as grayscale image into a
+<cite>data.arrays.ArrayData</cite> structure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the bitmap image file.</p>
+</dd>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite> or <cite>None</cite></span></dt><dd><p>Sets the array data to the loaded bitmap values.
+If <cite>None</cite>, creates a new ArrayData object using the
+default values as defined in <cite>cfg.default</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Image grayscales as ArrayData.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If given file is not a bitmap file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.image.load_png_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.image.</code><code class="sig-name descname">load_png_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">ad=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.load_png_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a portable network graphic (png) file and loads the data as
+grayscale image into a <cite>data.arrays.ArrayData</cite> structure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the bitmap image file.</p>
+</dd>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite> or <cite>None</cite></span></dt><dd><p>Sets the array data to the loaded bitmap values.
+If <cite>None</cite>, creates a new ArrayData object using the
+default values as defined in <cite>cfg.default</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Image grayscales as ArrayData.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If given file is not a bitmap file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.image.load_sif_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.image.</code><code class="sig-name descname">load_sif_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">ad=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.load_sif_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a bitmap (bmp) file and loads the data as grayscale image into a
+<cite>data.arraydata.ArrayData</cite> structure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the bitmap image file.</p>
+</dd>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite> or <cite>None</cite></span></dt><dd><p>Sets the array data to the loaded bitmap values.
+If <cite>None</cite>, creates a new ArrayData object using the
+default values as defined in <cite>cfg.default</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ads</strong><span class="classifier"><cite>list(data.arrays.ArrayData)</cite></span></dt><dd><p>Image grayscales as list of ArrayData objects.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If given file is not a bitmap file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.image.load_tif_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.image.</code><code class="sig-name descname">load_tif_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">ad=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.load_tif_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a tagged image file format (tif) file and loads the data as
+grayscale image into a <cite>data.arrays.ArrayData</cite> structure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the tif image file.</p>
+</dd>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite> or <cite>None</cite></span></dt><dd><p>Sets the array data to the loaded bitmap values.
+If <cite>None</cite>, creates a new ArrayData object using the
+default values as defined in <cite>cfg.default</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Image grayscales as ArrayData.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If given file is not a bitmap file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.image.load_wct_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.image.</code><code class="sig-name descname">load_wct_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">ad=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.load_wct_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a WinCamD text (wct) file and loads the data as grayscale image into
+a <cite>data.arrays.ArrayData</cite> structure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the WinCamD text file.</p>
+</dd>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite> or <cite>None</cite></span></dt><dd><p>Sets the array data to the loaded WinCamD values.
+If <cite>None</cite>, creates a new ArrayData object using the
+default values as defined in <cite>cfg.default</cite>.
+When available, the wct header data overwrites
+the current metadata.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Image grayscales as ArrayData.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If the wct file is corrupt.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.core.io.trace">
+<span id="trace"></span><h2>trace<a class="headerlink" href="#module-libics.core.io.trace" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="libics.core.io.trace.load_csv_span_agilent_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.trace.</code><code class="sig-name descname">load_csv_span_agilent_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.trace.load_csv_span_agilent_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads an Agilent spectrum analyzer text (csv) file into an ArrayData.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the Agilent spectrum analyzer text file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ds</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Power spectral density data set containing metadata
+<cite>“data”</cite> : <cite>data.arrays.ArrayData</cite></p>
+<blockquote>
+<div><p>Power spectral density.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.io.trace.load_txt_span_numpy_to_arraydata">
+<code class="sig-prename descclassname">libics.core.io.trace.</code><code class="sig-name descname">load_txt_span_numpy_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">spectral_quantity=None</em>, <em class="sig-param">weight_quantity=None</em>, <em class="sig-param">normalization=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.trace.load_txt_span_numpy_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a numpy spectrum text (txt) file into an <cite>ArrayData</cite>.</p>
+<p>Assumes a 2D array with spectral data in the first dimension and
+the spectral weight in the second dimension.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Path to the numpy text file.</p>
+</dd>
+<dt><strong>spectral_quantity</strong><span class="classifier"><cite>data.types.Quantity</cite></span></dt><dd><p>Quantity description for spectral data (usually
+frequency or wavelength).</p>
+</dd>
+<dt><strong>weight_quantity</strong><span class="classifier"><cite>data.types.Quantity</cite></span></dt><dd><p>Quantity description for spectral weight (usually
+relative or power density).</p>
+</dd>
+<dt><strong>normalization</strong><span class="classifier"><cite>None</cite> or <cite>str</cite> or <cite>float</cite></span></dt><dd><dl class="simple">
+<dt><cite>None</cite>:</dt><dd><p>No normalization performed.</p>
+</dd>
+<dt><cite>“max”</cite>:</dt><dd><p>Normalizes to the weights’ maximum.</p>
+</dd>
+<dt><cite>“sum”</cite>:</dt><dd><p>Normalizes to the weights’ sum.</p>
+</dd>
+<dt><cite>“weighted_sum”</cite>:</dt><dd><p>Normalizes to the weighted sum, i.e.
+weighs the sum by the spectral bin size.</p>
+</dd>
+<dt><cite>float</cite>:</dt><dd><p>Normalizes such that the maximum has the
+given value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Spectral density.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If <cite>file_path</cite> does not exist.</p>
+</dd>
+<dt>ValueError</dt><dd><p>If quantities are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.core.io</a><ul>
+<li><a class="reference internal" href="#module-libics.core.io.image">image</a></li>
+<li><a class="reference internal" href="#module-libics.core.io.trace">trace</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.core.io.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

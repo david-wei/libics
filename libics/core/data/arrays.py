@@ -18,15 +18,18 @@ class ArrayData(object):
     Stores a multidimensional array and its scaling information (linear
     scaling and physical quantity).
 
-    Usage
-    -----
+    Usage of this class is described below.
+
     Object creation:
+
     1. Instantiate an `ArrayData` object.
     2. Optional: Define the dimensions of the data using :py:meth:`add_dim`
        by specifying the metadata and scaling behaviour.
     3. Set the data using the :py:attr:`data` attribute. Default dimensions
        are added or removed if they are not commensurate.
+
     Object modification:
+
     * Metadata can be also added after data assignment. This is done using the
       :py:meth:`set_dim` method.
     * The numeric metadata mode (i.e. the scaling behaviour) can be modified
@@ -35,7 +38,9 @@ class ArrayData(object):
       operations using :py:meth:`comp_dim`.
     * The object supports common unary and binary operations, as well as
       vectorized `numpy` ufuncs.
+
     Object properties:
+
     * Numeric metadata can be extracted (depending on the metadata mode).
     * Upon calling the object with some given variables, an interpolated
       result is returned.
@@ -671,6 +676,8 @@ class ArrayData(object):
 
     def __call__(self, var, mode="nearest", extrapolation=False):
         """
+        Acts as a function and interpolates for the given `var`.
+
         Parameters
         ----------
         var : `list(float)` or `list(np.ndarray(float))`
@@ -702,9 +709,10 @@ class ArrayData(object):
         ValueError
             See parameter `extrapolation`.
 
-        See Also
-        --------
-        :py:func:`scipy.interpolate.interpn`
+        Notes
+        -----
+        * See also scipy.interpolate.interpn:
+          <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn>`
         """
         # Convert to seriesdata-structure-like
         shape = None

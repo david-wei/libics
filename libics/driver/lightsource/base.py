@@ -10,8 +10,11 @@ from libics.driver.device import DevBase
 class LightSource(DevBase):
 
     """
-    Properties
+    Attributes
     ----------
+
+    **Properties**
+
     current : `float`
         Light source current in Ampere (A).
     power : `float`

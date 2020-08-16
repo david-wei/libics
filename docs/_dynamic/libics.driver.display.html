@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.driver.display &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.driver.html" accesskey="U">libics.driver</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.driver.display">
+<span id="libics-driver-display"></span><h1>libics.driver.display<a class="headerlink" href="#module-libics.driver.display" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="libics.driver.display.get_driver">
+<code class="sig-prename descclassname">libics.driver.display.</code><code class="sig-name descname">get_driver</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.get_driver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.driver.display.get_manufacturer">
+<code class="sig-prename descclassname">libics.driver.display.</code><code class="sig-name descname">get_manufacturer</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.get_manufacturer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-libics.driver.display.base"></span><dl class="class">
+<dt id="libics.driver.display.base.Display">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.display.base.</code><code class="sig-name descname">Display</code><a class="headerlink" href="#libics.driver.display.base.Display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.device.DevBase</span></code></p>
+<dl class="field-list">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl>
+<dt><strong>**Properties**</strong></dt><dd></dd>
+<dt><strong>pixel_hrzt_count, pixel_vert_count</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Pixel count in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_size, pixel_vert_size</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Pixel size in meters in respective direction.</p>
+</dd>
+<dt><strong>pixel_hrzt_offset, pixel_vert_offset</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Offset of pixels to be captured.</p>
+</dd>
+<dt><strong>format_color</strong><span class="classifier"><cite>FORMAT_COLOR</cite></span></dt><dd><p>BW: black/white boolean image.
+GS: greyscale image.
+RGB: RGB color image.
+RGBA: RGB image with alpha channel.</p>
+</dd>
+<dt><strong>channel_bitdepth</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Bits per color channel.</p>
+</dd>
+<dt><strong>picture_time</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Time in seconds (s) each single image is shown.</p>
+</dd>
+<dt><strong>dark_time</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Time in seconds (s) between images in a sequence.</p>
+</dd>
+<dt><strong>sequence_repetitions</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of sequences to be shown.
+0 (zero) is interpreted as infinite, i.e.
+continuos repetition.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self, \*\*cfg)</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(self)</p></td>
+<td><p>Connects to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code>(self)</p></td>
+<td><p>Checks whether device is connected.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.base.Display.is_running" title="libics.driver.display.base.Display.is_running"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_running</span></code></a>(self)</p></td>
+<td><p>Checks whether camera is capturing.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.base.Display.run" title="libics.driver.display.base.Display.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self[, images, blocking])</p></td>
+<td><p>Show an image sequence on display.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>(self)</p></td>
+<td><p>Instantiates the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.base.Display.stop" title="libics.driver.display.base.Display.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops displaying the image sequence.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 25%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>read_channel_bitdepth</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_dark_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_format_color</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_picture_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_hrzt_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_hrzt_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_hrzt_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_vert_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_vert_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_vert_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_sequence_repetitions</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_channel_bitdepth</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_dark_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_format_color</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_picture_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_hrzt_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_hrzt_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_hrzt_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_vert_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_vert_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_vert_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_sequence_repetitions</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.driver.display.base.Display.is_running">
+<code class="sig-name descname">is_running</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.is_running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether camera is capturing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_channel_bitdepth">
+<em class="property">abstract </em><code class="sig-name descname">read_channel_bitdepth</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_dark_time">
+<em class="property">abstract </em><code class="sig-name descname">read_dark_time</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_dark_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_format_color">
+<em class="property">abstract </em><code class="sig-name descname">read_format_color</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_format_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_picture_time">
+<em class="property">abstract </em><code class="sig-name descname">read_picture_time</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_picture_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_hrzt_count">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_hrzt_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_hrzt_offset">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_hrzt_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_hrzt_size">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_hrzt_size</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_vert_count">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_vert_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_vert_offset">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_vert_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_pixel_vert_size">
+<em class="property">abstract </em><code class="sig-name descname">read_pixel_vert_size</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.read_sequence_repetitions">
+<em class="property">abstract </em><code class="sig-name descname">read_sequence_repetitions</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.read_sequence_repetitions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images=None</em>, <em class="sig-param">blocking=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show an image sequence on display.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>images</strong><span class="classifier"><cite>np.ndarray(2)</cite> or <cite>list(np.ndarray(2))</cite></span></dt><dd><p>Image sequence to be displayed.
+If <cite>None</cite>, uses the previously set images.</p>
+</dd>
+<dt><strong>blocking</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to start displaying in the calling thread.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops displaying the image sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_channel_bitdepth">
+<em class="property">abstract </em><code class="sig-name descname">write_channel_bitdepth</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_dark_time">
+<em class="property">abstract </em><code class="sig-name descname">write_dark_time</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_dark_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_format_color">
+<em class="property">abstract </em><code class="sig-name descname">write_format_color</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_format_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_picture_time">
+<em class="property">abstract </em><code class="sig-name descname">write_picture_time</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_picture_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_hrzt_count">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_hrzt_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_hrzt_offset">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_hrzt_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_hrzt_size">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_hrzt_size</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_vert_count">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_vert_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_vert_offset">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_vert_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_pixel_vert_size">
+<em class="property">abstract </em><code class="sig-name descname">write_pixel_vert_size</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.base.Display.write_sequence_repetitions">
+<em class="property">abstract </em><code class="sig-name descname">write_sequence_repetitions</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.base.Display.write_sequence_repetitions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.driver.display.base.FORMAT_COLOR">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.display.base.</code><code class="sig-name descname">FORMAT_COLOR</code><a class="headerlink" href="#libics.driver.display.base.FORMAT_COLOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.driver.display.base.FORMAT_COLOR.BW">
+<code class="sig-name descname">BW</code><em class="property"> = 'BW'</em><a class="headerlink" href="#libics.driver.display.base.FORMAT_COLOR.BW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.driver.display.base.FORMAT_COLOR.GS">
+<code class="sig-name descname">GS</code><em class="property"> = 'GS'</em><a class="headerlink" href="#libics.driver.display.base.FORMAT_COLOR.GS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.driver.display.base.FORMAT_COLOR.RGB">
+<code class="sig-name descname">RGB</code><em class="property"> = 'RGB'</em><a class="headerlink" href="#libics.driver.display.base.FORMAT_COLOR.RGB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.driver.display.base.FORMAT_COLOR.RGBA">
+<code class="sig-name descname">RGBA</code><em class="property"> = 'RGBA'</em><a class="headerlink" href="#libics.driver.display.base.FORMAT_COLOR.RGBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="digital-micromirror-devices">
+<h2>Digital Micromirror Devices<a class="headerlink" href="#digital-micromirror-devices" title="Permalink to this headline">¶</a></h2>
+<p><strong>vialux</strong></p>
+<span class="target" id="module-libics.driver.display.vialux"></span><dl class="class">
+<dt id="libics.driver.display.vialux.ItfAlp">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.display.vialux.</code><code class="sig-name descname">ItfAlp</code><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.interface.ItfBase</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong></dt><dd></dd>
+<dt><strong>p</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.close" title="libics.driver.display.vialux.ItfAlp.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self, \*\*cfg)</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.connect" title="libics.driver.display.vialux.ItfAlp.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(self, id)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deregister</span></code>(self[, id, dev])</p></td>
+<td><p>De-registers a device from the interface either by ID or object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span></code>(self)</p></td>
+<td><p>Gets all registered devices using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.discover" title="libics.driver.display.vialux.ItfAlp.discover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">discover</span></code></a>()</p></td>
+<td><p>Discovers devices using the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.is_connected" title="libics.driver.display.vialux.ItfAlp.is_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code></a>(self)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.is_set_up" title="libics.driver.display.vialux.ItfAlp.is_set_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code></a>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lock</span></code>(self)</p></td>
+<td><p>Locks access to the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code>(self, id, dev)</p></td>
+<td><p>Registers a device using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">release</span></code>(self)</p></td>
+<td><p>Releases access lock to the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.setup" title="libics.driver.display.vialux.ItfAlp.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>(self)</p></td>
+<td><p>Instantiates the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.ItfAlp.shutdown" title="libics.driver.display.vialux.ItfAlp.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.driver.display.vialux.ItfAlp.LOGGER">
+<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.driver.display.vialux.ItfAlp (WARNING)&gt;</em><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes connection to the device.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Interface-unique device ID to disconnect from.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">id</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.connect" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>id</cite> is not available.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.discover">
+<em class="property">classmethod </em><code class="sig-name descname">discover</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discovers devices using the interface.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>devs</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>List of device IDs available on the interface.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.is_connected">
+<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If internal device reference error occured.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.is_set_up">
+<code class="sig-name descname">is_set_up</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.is_set_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether device is instantiated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.ItfAlp.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.ItfAlp.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroys the device.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.driver.display.vialux.VialuxDLP">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.display.vialux.</code><code class="sig-name descname">VialuxDLP</code><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.driver.display.base.Display" title="libics.driver.display.base.Display"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.display.base.Display</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong></dt><dd></dd>
+<dt><strong>p</strong></dt><dd></dd>
+<dt><strong>p_seq</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.close" title="libics.driver.display.vialux.VialuxDLP.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self, \*\*cfg)</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.connect" title="libics.driver.display.vialux.VialuxDLP.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(self)</p></td>
+<td><p>Connects to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.is_connected" title="libics.driver.display.vialux.VialuxDLP.is_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code></a>(self)</p></td>
+<td><p>Checks whether device is connected.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.is_running" title="libics.driver.display.vialux.VialuxDLP.is_running"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_running</span></code></a>(self)</p></td>
+<td><p>Checks whether camera is capturing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.is_set_up" title="libics.driver.display.vialux.VialuxDLP.is_set_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code></a>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.join_sequence" title="libics.driver.display.vialux.VialuxDLP.join_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">join_sequence</span></code></a>(self)</p></td>
+<td><p>Waits for a sequence to finish and returns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.run" title="libics.driver.display.vialux.VialuxDLP.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self[, images])</p></td>
+<td><p>Show an image sequence on display.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.setup" title="libics.driver.display.vialux.VialuxDLP.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>(self)</p></td>
+<td><p>Instantiates the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.shutdown" title="libics.driver.display.vialux.VialuxDLP.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.VialuxDLP.stop" title="libics.driver.display.vialux.VialuxDLP.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>(self)</p></td>
+<td><p>Stops displaying the image sequence.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 25%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>read_channel_bitdepth</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_dark_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_device_name</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_format_color</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_picture_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_hrzt_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_hrzt_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_hrzt_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_vert_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_pixel_vert_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_pixel_vert_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_sequence_repetitions</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>read_temperature</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_channel_bitdepth</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_dark_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_device_name</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_format_color</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_picture_time</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_hrzt_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_hrzt_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_hrzt_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_vert_count</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_pixel_vert_offset</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_pixel_vert_size</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write_sequence_repetitions</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_temperature</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes connection to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.is_connected">
+<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether device is connected.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.is_running">
+<code class="sig-name descname">is_running</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.is_running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether camera is capturing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.is_set_up">
+<code class="sig-name descname">is_set_up</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.is_set_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether device is instantiated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.join_sequence">
+<code class="sig-name descname">join_sequence</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.join_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits for a sequence to finish and returns.</p>
+<p>If continuous projection is set, immediately stops projection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.p_seq">
+<em class="property">property </em><code class="sig-name descname">p_seq</code><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.p_seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_channel_bitdepth">
+<code class="sig-name descname">read_channel_bitdepth</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_dark_time">
+<code class="sig-name descname">read_dark_time</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_dark_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_device_name">
+<code class="sig-name descname">read_device_name</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_device_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_format_color">
+<code class="sig-name descname">read_format_color</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_format_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_picture_time">
+<code class="sig-name descname">read_picture_time</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_picture_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_count">
+<code class="sig-name descname">read_pixel_hrzt_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_offset">
+<code class="sig-name descname">read_pixel_hrzt_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_size">
+<code class="sig-name descname">read_pixel_hrzt_size</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_vert_count">
+<code class="sig-name descname">read_pixel_vert_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_vert_offset">
+<code class="sig-name descname">read_pixel_vert_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_pixel_vert_size">
+<code class="sig-name descname">read_pixel_vert_size</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_sequence_repetitions">
+<code class="sig-name descname">read_sequence_repetitions</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_sequence_repetitions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.read_temperature">
+<code class="sig-name descname">read_temperature</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.read_temperature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">images=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show an image sequence on display.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>images</strong><span class="classifier"><cite>np.ndarray(2)</cite> or <cite>list(np.ndarray(2))</cite></span></dt><dd><p>Image sequence to be displayed.
+If <cite>None</cite>, uses the previously set images.</p>
+</dd>
+<dt><strong>blocking</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to start displaying in the calling thread.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroys the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops displaying the image sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_channel_bitdepth">
+<code class="sig-name descname">write_channel_bitdepth</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_channel_bitdepth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_dark_time">
+<code class="sig-name descname">write_dark_time</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_dark_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_device_name">
+<code class="sig-name descname">write_device_name</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_device_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_format_color">
+<code class="sig-name descname">write_format_color</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_format_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_count">
+<code class="sig-name descname">write_pixel_hrzt_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_offset">
+<code class="sig-name descname">write_pixel_hrzt_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_size">
+<code class="sig-name descname">write_pixel_hrzt_size</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_hrzt_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_vert_count">
+<code class="sig-name descname">write_pixel_vert_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_vert_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_vert_offset">
+<code class="sig-name descname">write_pixel_vert_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_vert_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_pixel_vert_size">
+<code class="sig-name descname">write_pixel_vert_size</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_pixel_vert_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_sequence_repetitions">
+<code class="sig-name descname">write_sequence_repetitions</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_sequence_repetitions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.VialuxDLP.write_temperature">
+<code class="sig-name descname">write_temperature</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.VialuxDLP.write_temperature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-libics.driver.display.vialux.alpV42"></span><p>Author of original file: Konrad</p>
+<p>[THIS FILE HAS BEEN MODIFIED FOR PYTHON 3.]</p>
+<p>This file is the translation of the c header file alp.h to our Python API.
+(The h file can be found as reference in this directory.)
+All functions connecting with the DMD are stored as methods of the PY_ALP_API
+class. The necessary library is alpV42.dll for 64bit (alpV42S.dll for 32bit).
+You might have to install the driver software properly with the CD (ALP-4.2
+Controller Suite VIALUX/DLP/Texas Instruments Installation CD).</p>
+<div class="section" id="changelog">
+<h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Various changes for Python 3</p></li>
+<li><p>Various changes in formatting for PEP8</p></li>
+<li><p>PY_ALP_API.AlpDevAlloc: Bugfix
+Switched initflag and devicenum</p></li>
+<li><p>PY_ALP_API:
+Add verbose option to switch function call printing.</p></li>
+</ul>
+<dl class="class">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.display.vialux.alpV42.</code><code class="sig-name descname">PY_ALP_API</code><span class="sig-paren">(</span><em class="sig-param">dllPath='alpV42.dll'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Vialux ALP 4.2 API functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dllPath</strong><span class="classifier">str</span></dt><dd><p>File path to Library.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>Whether to print called functions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjHalt" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjHalt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjHalt</span></code></a>(self, devhandle)</p></td>
+<td><p>Ends current projection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStartCont" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStartCont"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjStartCont</span></code></a>(self, devhandle, seqhandle)</p></td>
+<td><p>Starts project in a continuous loop.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjWait" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjWait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpProjWait</span></code></a>(self, devhandle)</p></td>
+<td><p>insert help text</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqControl" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqControl</span></code></a>(self, devhandle, seqhandle, …)</p></td>
+<td><p>ALP_DEFAULT doesn”t work.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqInquire" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqInquire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqInquire</span></code></a>(self, devhandle, seqhandle, …)</p></td>
+<td><p>Time values are given in microseconds (mus).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqPut" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqPut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqPut</span></code></a>(self, devhandle, seqhandle, data)</p></td>
+<td><p>Loads the sequence to the ALP.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqTiming" title="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqTiming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpSeqTiming</span></code></a>(self, devhandle, seqhandle[, …])</p></td>
+<td><p>Time values are given in microseconds (mus).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 64%" />
+<col style="width: 36%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>AlpDevAlloc</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpDevControl</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpDevFree</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpDevHalt</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpDevInquire</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpProjControl</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpProjInquire</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpProjStart</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AlpSeqAlloc</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>AlpSeqFree</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevAlloc">
+<code class="sig-name descname">AlpDevAlloc</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devicenum=0</em>, <em class="sig-param">initflag=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevAlloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevControl">
+<code class="sig-name descname">AlpDevControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevFree">
+<code class="sig-name descname">AlpDevFree</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevFree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevHalt">
+<code class="sig-name descname">AlpDevHalt</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevHalt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevInquire">
+<code class="sig-name descname">AlpDevInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpDevInquire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjControl">
+<code class="sig-name descname">AlpProjControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjControl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjHalt">
+<code class="sig-name descname">AlpProjHalt</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjHalt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends current projection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjInquire">
+<code class="sig-name descname">AlpProjInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjInquire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStart">
+<code class="sig-name descname">AlpProjStart</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStart" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStartCont">
+<code class="sig-name descname">AlpProjStartCont</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjStartCont" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts project in a continuous loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjWait">
+<code class="sig-name descname">AlpProjWait</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpProjWait" title="Permalink to this definition">¶</a></dt>
+<dd><p>insert help text</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqAlloc">
+<code class="sig-name descname">AlpSeqAlloc</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">bitplanes=1</em>, <em class="sig-param">picnum=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqAlloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqControl">
+<code class="sig-name descname">AlpSeqControl</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">controltype</em>, <em class="sig-param">controlvalue</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>ALP_DEFAULT doesn”t work. Use specified parameters only.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqFree">
+<code class="sig-name descname">AlpSeqFree</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqFree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqInquire">
+<code class="sig-name descname">AlpSeqInquire</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">inquiretype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqInquire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time values are given in microseconds (mus).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqPut">
+<code class="sig-name descname">AlpSeqPut</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">data</em>, <em class="sig-param">picoffset=0</em>, <em class="sig-param">picload=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqPut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the sequence to the ALP.
+Data needs to be an array of Bytes (e.g. char”s) in C,
+values of 0 to 255.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ctypes</span> <span class="k">as</span> <span class="nn">ct</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">height</span> <span class="o">=</span> <span class="mi">768</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">width</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nBytes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C_ByteArray</span> <span class="o">=</span> <span class="n">nBytes</span> <span class="o">*</span> <span class="n">ct</span><span class="o">.</span><span class="n">c_uint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myArray</span> <span class="o">=</span> <span class="n">C_ByteArray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">testpicture</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">testpicture</span><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">:</span><span class="mi">400</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span> <span class="o">*</span> <span class="mi">255</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myArray</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">create_string_buffer</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">testpicture</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">Values &gt; 127 are interpreted as 1 (&quot;on&quot;),</span>
+<span class="go">values &lt; 128 are interpreted as 0 (&quot;off&quot;).</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqTiming">
+<code class="sig-name descname">AlpSeqTiming</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">devhandle</em>, <em class="sig-param">seqhandle</em>, <em class="sig-param">illuminatetime=0</em>, <em class="sig-param">picturetime=0</em>, <em class="sig-param">synchdelay=0</em>, <em class="sig-param">synchpulsewidth=0</em>, <em class="sig-param">triggerindelay=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.PY_ALP_API.AlpSeqTiming" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time values are given in microseconds (mus).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.driver.display.vialux.alpV42.flipDict">
+<code class="sig-prename descclassname">libics.driver.display.vialux.alpV42.</code><code class="sig-name descname">flipDict</code><span class="sig-paren">(</span><em class="sig-param">dictionary</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.display.vialux.alpV42.flipDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.driver.display</a><ul>
+<li><a class="reference internal" href="#digital-micromirror-devices">Digital Micromirror Devices</a><ul>
+<li><a class="reference internal" href="#changelog">Changelog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.driver.display.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.driver.html" >libics.driver</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

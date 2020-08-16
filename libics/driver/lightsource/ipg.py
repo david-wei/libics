@@ -12,8 +12,11 @@ from libics.driver.terminal import ItfTerminal
 class IpgYLR(LightSource):
 
     """
-    Properties
+    Attributes
     ----------
+
+    **Properties**
+
     current : `float`
         Relative light source current with respect to the maximal current.
     device_name : `str`

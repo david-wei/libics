@@ -22,8 +22,11 @@ class FORMAT_COLOR:
 class Display(DevBase):
 
     """
-    Properties
+    Attributes
     ----------
+    
+    **Properties**
+
     pixel_hrzt_count, pixel_vert_count : `int`
         Pixel count in respective direction.
     pixel_hrzt_size, pixel_vert_size : `float`

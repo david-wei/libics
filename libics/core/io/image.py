@@ -130,7 +130,7 @@ def load_png_to_arraydata(file_path, ad=None):
     ----------
     file_path : `str`
         Path to the bitmap image file.
-    ad : `data.arrays.ArrayData` or `None
+    ad : `data.arrays.ArrayData` or `None`
         Sets the array data to the loaded bitmap values.
         If `None`, creates a new ArrayData object using the
         default values as defined in `cfg.default`.
@@ -174,7 +174,7 @@ def load_wct_to_arraydata(file_path, ad=None):
     ----------
     file_path : `str`
         Path to the WinCamD text file.
-    ad : `data.arrays.ArrayData` or `None
+    ad : `data.arrays.ArrayData` or `None`
         Sets the array data to the loaded WinCamD values.
         If `None`, creates a new ArrayData object using the
         default values as defined in `cfg.default`.
@@ -224,7 +224,7 @@ def load_sif_to_arraydata(file_path, ad=None):
     ----------
     file_path : `str`
         Path to the bitmap image file.
-    ad : `data.arrays.ArrayData` or `None
+    ad : `data.arrays.ArrayData` or `None`
         Sets the array data to the loaded bitmap values.
         If `None`, creates a new ArrayData object using the
         default values as defined in `cfg.default`.

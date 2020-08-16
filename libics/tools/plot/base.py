@@ -209,6 +209,7 @@ def plot(
 
     Supports scatter plots, line plots and 2D error bars.
     See matplotlib API:
+
     * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot>`
     * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar>`
 

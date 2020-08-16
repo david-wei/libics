@@ -260,6 +260,7 @@ def gaussian_2d_tilt(
                    {2 \sigma_u^2}
              -\frac{((y - y_0) \cos \theta - (x - x_0) \sin \theta))^2}
                    {2 \sigma_v^2}} + C
+
     Parameters
     ----------
     var : `numpy.array(2, float)`

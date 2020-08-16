@@ -60,25 +60,25 @@ class FitParamBase(abc.ABC):
 
     Parameters
     ----------
-    func : callable
-        Fit function with call signature func(var, *param).
-            var : scalar, np.ndarray
+    func : `callable`
+        Fit function with call signature `func(var, *param)`.
+            var : scalar, `np.ndarray`
                 If array-like, the first dimension must accept
                 different independent parameters, i.e. (x, y, z, ...).
             param : scalar
                 Fit parameters in the order as stored in this class.
-    param : np.ndarray(1) or int
-        If np.ndarray: used as current parameters.
-        If int: sets dimension of parameters (i.e. constructs an
-                np.ndarray with `param` ones as elements).
-    cov : np.ndarray(2) or np.ndarray(1) or scalar
-        If np.ndarray(2): used as current covariance matrix.
-        If np.ndarray(1): used as current standard deviation. Off-diagonal
-                          elements are set to 0.
+    param : `np.ndarray(1)` or `int`
+        If `np.ndarray`: used as current parameters.
+        If `int`: sets dimension of parameters (i.e. constructs an
+                `np.ndarray` with `param` ones as elements).
+    cov : `np.ndarray(2)` or `np.ndarray(1)` or scalar
+        If `np.ndarray(2)`: used as current covariance matrix.
+        If `np.ndarray(1)`: used as current standard deviation. Off-diagonal
+            elements are set to 0.
         If scalar: covariance matrix filled with given values.
-    param_names : list(str) or None
+    param_names : `list(str)` or `None`
         List of unique parameter names.
-        If None, default names are index numbers.
+        If `None`, default names are index numbers.
     """
 
     def __init__(
@@ -119,7 +119,7 @@ class FitParamBase(abc.ABC):
 
         Parameters
         ----------
-        param_names : list(str)
+        param_names : `list(str)`
             List of unique parameter ID strings in the order
             of the parameters.
         """

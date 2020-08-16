@@ -89,8 +89,8 @@ class AffineTrafo(object):
         """
         Convert an image in target coordinates to origin coordinates.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         image : np.ndarray(2, float)
             Image in target coordinates.
         shape : tuple(int)
@@ -112,8 +112,8 @@ class AffineTrafo(object):
         """
         Convert an image in origin coordinates to target coordinates.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         image : np.ndarray(2, float)
             Image in origin coordinates.
         shape : tuple(int)

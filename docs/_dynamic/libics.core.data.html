@@ -1,0 +1,2329 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.core.data &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.core.data">
+<span id="libics-core-data"></span><h1>libics.core.data<a class="headerlink" href="#module-libics.core.data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-libics.core.data.arrays">
+<span id="arrays"></span><h2>arrays<a class="headerlink" href="#module-libics.core.data.arrays" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.core.data.arrays.ArrayData">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">ArrayData</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Stores a multidimensional array and its scaling information (linear
+scaling and physical quantity).</p>
+<p>Usage of this class is described below.</p>
+<p>Object creation:</p>
+<ol class="arabic simple">
+<li><p>Instantiate an <cite>ArrayData</cite> object.</p></li>
+<li><p>Optional: Define the dimensions of the data using <a class="reference internal" href="#libics.core.data.arrays.ArrayData.add_dim" title="libics.core.data.arrays.ArrayData.add_dim"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_dim()</span></code></a>
+by specifying the metadata and scaling behaviour.</p></li>
+<li><p>Set the data using the <a class="reference internal" href="#libics.core.data.arrays.ArrayData.data" title="libics.core.data.arrays.ArrayData.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute. Default dimensions
+are added or removed if they are not commensurate.</p></li>
+</ol>
+<p>Object modification:</p>
+<ul class="simple">
+<li><p>Metadata can be also added after data assignment. This is done using the
+<a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_dim" title="libics.core.data.arrays.ArrayData.set_dim"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_dim()</span></code></a> method.</p></li>
+<li><p>The numeric metadata mode (i.e. the scaling behaviour) can be modified
+using <a class="reference internal" href="#libics.core.data.arrays.ArrayData.mod_dim" title="libics.core.data.arrays.ArrayData.mod_dim"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mod_dim()</span></code></a>.</p></li>
+<li><p>The metadata can be numerically changed by computing an arithmetic
+operations using <a class="reference internal" href="#libics.core.data.arrays.ArrayData.comp_dim" title="libics.core.data.arrays.ArrayData.comp_dim"><code class="xref py py-meth docutils literal notranslate"><span class="pre">comp_dim()</span></code></a>.</p></li>
+<li><p>The object supports common unary and binary operations, as well as
+vectorized <cite>numpy</cite> ufuncs.</p></li>
+</ul>
+<p>Object properties:</p>
+<ul class="simple">
+<li><p>Numeric metadata can be extracted (depending on the metadata mode).</p></li>
+<li><p>Upon calling the object with some given variables, an interpolated
+result is returned.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>center</strong></dt><dd></dd>
+<dt><strong>data</strong></dt><dd></dd>
+<dt><strong>high</strong></dt><dd></dd>
+<dt><strong>low</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
+<dt><strong>offset</strong></dt><dd></dd>
+<dt><strong>points</strong></dt><dd></dd>
+<dt><strong>shape</strong></dt><dd></dd>
+<dt><strong>step</strong></dt><dd></dd>
+<dt><strong>total_ndim</strong></dt><dd></dd>
+<dt><strong>var_ndim</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var[, mode, extrapolation])</p></td>
+<td><p>Acts as a function and interpolates for the given <cite>var</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.add_dim" title="libics.core.data.arrays.ArrayData.add_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_dim</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Appends variable dimension(s) to the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="libics.core.data.arrays.ArrayData.cmp_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_quantity</span></code></a>(self, other)</p></td>
+<td><p>Compares whether the quantities of two ArrayData objects are identical.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="libics.core.data.arrays.ArrayData.cmp_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_shape</span></code></a>(self, other)</p></td>
+<td><p>Compares whether the shapes of two ArrayData objects are identical.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_var" title="libics.core.data.arrays.ArrayData.cmp_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_var</span></code></a>(self, other)</p></td>
+<td><p>Compares whether the variables of two ArrayData objects are identical.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.comp_dim" title="libics.core.data.arrays.ArrayData.comp_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comp_dim</span></code></a>(self, dim, op[, other, rev])</p></td>
+<td><p>Performs an arithmetic operation on the specified variable dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.copy" title="libics.core.data.arrays.ArrayData.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(self)</p></td>
+<td><p>Returns a deep copy of the object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cv_index_to_quantity" title="libics.core.data.arrays.ArrayData.cv_index_to_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_index_to_quantity</span></code></a>(self, ind, dim)</p></td>
+<td><p>Converts a variable array index to the corresponding variable physical quantity value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cv_quantity_to_index" title="libics.core.data.arrays.ArrayData.cv_quantity_to_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_quantity_to_index</span></code></a>(self, val, dim)</p></td>
+<td><p>Converts a variable physical quantity value to the corresponding variable array index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_center" title="libics.core.data.arrays.ArrayData.get_center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_center</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable center for the specified dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="libics.core.data.arrays.ArrayData.get_common_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_common_obj</span></code></a>(self, other, op[, in_place, …])</p></td>
+<td><p>Creates the common result after operation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="libics.core.data.arrays.ArrayData.get_copy_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_copy_obj</span></code></a>(self, op[, raw])</p></td>
+<td><p>Creates a copy of self object and applies given operation on it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_high" title="libics.core.data.arrays.ArrayData.get_high"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_high</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable high for the specified dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_low" title="libics.core.data.arrays.ArrayData.get_low"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_low</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable low for the specified dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_offset" title="libics.core.data.arrays.ArrayData.get_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_offset</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable offset for the specified dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_points" title="libics.core.data.arrays.ArrayData.get_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_points</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable points for the specified dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_step" title="libics.core.data.arrays.ArrayData.get_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step</span></code></a>(self, dim)</p></td>
+<td><p>Gets the variable step for the specified dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="libics.core.data.arrays.ArrayData.get_var_meshgrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_var_meshgrid</span></code></a>(self[, indexing])</p></td>
+<td><p>Creates a <cite>numpy</cite> meshgrid for the variable dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.mod_dim" title="libics.core.data.arrays.ArrayData.mod_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod_dim</span></code></a>(self, \*args)</p></td>
+<td><p>Modifies the numeric variable description mode (if possible).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.rmv_dim" title="libics.core.data.arrays.ArrayData.rmv_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmv_dim</span></code></a>(self, \*dims[, num])</p></td>
+<td><p>Removes variable dimension(s) from the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="libics.core.data.arrays.ArrayData.set_data_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_quantity</span></code></a>(self, \*\*kwargs)</p></td>
+<td><p>Sets the data quantity object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_dim" title="libics.core.data.arrays.ArrayData.set_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dim</span></code></a>(self, dim, \*\*kwargs)</p></td>
+<td><p>Sets the numeric variable description for a dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_var_quantity" title="libics.core.data.arrays.ArrayData.set_var_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_var_quantity</span></code></a>(self, dim, \*\*kwargs)</p></td>
+<td><p>Sets the data quantity object.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.data.arrays.ArrayData.LINSPACE">
+<code class="sig-name descname">LINSPACE</code><em class="property"> = 'LINSPACE'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LINSPACE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.arrays.ArrayData.LOGGER">
+<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.core.data.arrays.ArrayData (WARNING)&gt;</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.arrays.ArrayData.POINTS">
+<code class="sig-name descname">POINTS</code><em class="property"> = 'POINTS'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.POINTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.arrays.ArrayData.RANGE">
+<code class="sig-name descname">RANGE</code><em class="property"> = 'RANGE'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.RANGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.arrays.ArrayData.VAR_MODES">
+<code class="sig-name descname">VAR_MODES</code><em class="property"> = {'LINSPACE', 'POINTS', 'RANGE'}</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.VAR_MODES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.add_dim">
+<code class="sig-name descname">add_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.add_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends variable dimension(s) to the object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*args</strong><span class="classifier"><cite>dict</cite> or <cite>int</cite></span></dt><dd><p>Dictionaries in the order they should be added.
+These dictionaries are used as <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> for iteratively
+setting dimensions.
+An integer is equivalent to passing an this-integer-length
+list of empty dictionaries.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword dictionary is interpreted as if a single dictionary
+with the <cite>kwargs</cite> as items was passed.
+If any <cite>*args</cite> are given, <cite>**kwargs</cite> are ignored.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If arguments are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.center">
+<em class="property">property </em><code class="sig-name descname">center</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.cmp_quantity">
+<code class="sig-name descname">cmp_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares whether the quantities of two ArrayData objects are identical.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.cmp_shape">
+<code class="sig-name descname">cmp_shape</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares whether the shapes of two ArrayData objects are identical.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.cmp_var">
+<code class="sig-name descname">cmp_var</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares whether the variables of two ArrayData objects are identical.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.comp_dim">
+<code class="sig-name descname">comp_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">op</em>, <em class="sig-param">other=None</em>, <em class="sig-param">rev=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.comp_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an arithmetic operation on the specified variable dimension.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be changed.</p>
+</dd>
+<dt><strong>op</strong><span class="classifier"><cite>str</cite> or <cite>callable</cite></span></dt><dd><p>Operator string. Mapped by <cite>data.types.BINARY_OPS_NUMPY</cite>
+and <cite>data.types.UNARY_OPS_NUMPY</cite>.
+Can also be a function having a binary or unary call signature.</p>
+</dd>
+<dt><strong>other</strong><span class="classifier"><cite>numeric</cite> or <cite>None</cite></span></dt><dd><p>Second operand for binary operations or <cite>None</cite> for unary ones.</p>
+</dd>
+<dt><strong>rev</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to use <cite>other</cite> as first operand, i.e. as
+<cite>op(other, self)</cite> instead of <cite>op(self, other)</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>KeyError</dt><dd><p>If <cite>op</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For the variable modes <cite>“RANGE”, “LINSPACE”</cite>, it is assumed
+that the operation is an affine transformation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.copy">
+<code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a deep copy of the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.cv_index_to_quantity">
+<code class="sig-name descname">cv_index_to_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">ind</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_index_to_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a variable array index to the corresponding variable
+physical quantity value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ind :</strong></dt><dd><p>Index to be converted.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimension.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>val :</dt><dd><p>Physical quantity associated with given quantity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.cv_quantity_to_index">
+<code class="sig-name descname">cv_quantity_to_index</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">val</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_quantity_to_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a variable physical quantity value to the corresponding
+variable array index.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>val</strong><span class="classifier">numeric</span></dt><dd><p>Physical quantity value to be converted.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimension.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ind</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Index associated with given quantity.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>IndexError:</dt><dd><p>If <cite>dim</cite> is out of bounds.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_center">
+<code class="sig-name descname">get_center</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable center for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_common_obj">
+<code class="sig-name descname">get_common_obj</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em>, <em class="sig-param">op</em>, <em class="sig-param">in_place=False</em>, <em class="sig-param">rev=False</em>, <em class="sig-param">raw=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the common result after operation.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>op</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Function signature:
+<cite>op(numpy.ndarray, numpy.ndarray) -&gt; numpy.ndarray</cite>.</p>
+</dd>
+<dt><strong>in_place</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to store result in same instance.</p>
+</dd>
+<dt><strong>rev</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to reverse operand order, i.e. to call
+<cite>op(other, self)</cite> instead of <cite>op(self, other)</cite>.</p>
+</dd>
+<dt><strong>raw</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to return only the data, i.e. without
+the <cite>ArrayData</cite> container.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>ArrayData</cite> or <cite>numpy.ndarray</cite></span></dt><dd><p>Processed object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_copy_obj">
+<code class="sig-name descname">get_copy_obj</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">op</em>, <em class="sig-param">raw=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a copy of self object and applies given operation on it.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>op</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Function signature:
+<cite>op(numpy.ndarray) -&gt; numpy.ndarray</cite></p>
+</dd>
+<dt><strong>raw</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to return only the data, i.e. without
+the <cite>ArrayData</cite> container.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>obj</strong><span class="classifier"><cite>ArrayData</cite></span></dt><dd><p>Processed object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_high">
+<code class="sig-name descname">get_high</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_high" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable high for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_low">
+<code class="sig-name descname">get_low</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_low" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable low for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_offset">
+<code class="sig-name descname">get_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable offset for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_points">
+<code class="sig-name descname">get_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable points for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_step">
+<code class="sig-name descname">get_step</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the variable step for the specified dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.get_var_meshgrid">
+<code class="sig-name descname">get_var_meshgrid</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indexing='ij'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>numpy</cite> meshgrid for the variable dimensions.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>indexing</strong><span class="classifier"><cite>“ij”</cite> or <cite>“xy”</cite></span></dt><dd><p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.meshgrid()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>mg</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Meshgrid as <cite>numpy</cite> array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.high">
+<em class="property">property </em><code class="sig-name descname">high</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.high" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.low">
+<em class="property">property </em><code class="sig-name descname">low</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.low" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.mod_dim">
+<code class="sig-name descname">mod_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.mod_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies the numeric variable description mode (if possible).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*args</strong><span class="classifier"><cite>ArrayData.VAR_MODES</cite> or <cite>(int, ArrayData.VAR_MODES)</cite></span></dt><dd><p>If two parameters are given, they are interpreted as
+<cite>(dim, mode)</cite>.
+If one parameter is given, changes all dimensions
+to the given <cite>mode</cite>.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be changed.</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier"><cite>ArrayData.VAR_MODES</cite></span></dt><dd><p>Mode to be changed to.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If mode change is not possible. This happens mainly for
+conversion from <cite>POINT</cite> mode where the points are not
+linearly spaced.
+If <cite>mode</cite> is invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.ndim">
+<em class="property">property </em><code class="sig-name descname">ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.offset">
+<em class="property">property </em><code class="sig-name descname">offset</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.points">
+<em class="property">property </em><code class="sig-name descname">points</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.points" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.rmv_dim">
+<code class="sig-name descname">rmv_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*dims</em>, <em class="sig-param">num=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.rmv_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes variable dimension(s) from the object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*dims</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimensions to be removed.</p>
+</dd>
+<dt><strong>num</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Removes <cite>num</cite> last dimensions. Is only applied
+if <cite>dims</cite> is not specified.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.set_data_quantity">
+<code class="sig-name descname">set_data_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the data quantity object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>**kwargs</strong></dt><dd><p>See <a class="reference internal" href="#libics.core.data.arrays.assume_quantity" title="libics.core.data.arrays.assume_quantity"><code class="xref py py-func docutils literal notranslate"><span class="pre">assume_quantity()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.set_dim">
+<code class="sig-name descname">set_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the numeric variable description for a dimension.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be set.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>A dimension can be defined by either of the three modes
+<cite>POINTS, RANGE, LINSPACE</cite>.</p>
+</dd>
+<dt><strong>ArrayData.POINTS</strong></dt><dd><dl>
+<dt><cite>points</cite><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>1D array directly specifying the coordinates.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>ArrayData.RANGE</strong></dt><dd><dl>
+<dt><cite>offset</cite><span class="classifier"><cite>float</cite></span></dt><dd><p>Range offset (starting value).</p>
+</dd>
+<dt><cite>center</cite><span class="classifier"><cite>float</cite></span></dt><dd><p>Range center. Is ignored if <cite>offset</cite> is specified.</p>
+</dd>
+<dt><cite>step</cite><span class="classifier"><cite>float</cite></span></dt><dd><p>Range step (difference value).</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>ArrayData.LINSPACE</strong></dt><dd><dl>
+<dt><cite>low</cite><span class="classifier"><cite>float</cite></span></dt><dd><p>Lower bound of linear spacing.</p>
+</dd>
+<dt><cite>high</cite><span class="classifier"><cite>float</cite></span></dt><dd><p>Upper bound of linear spacing.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.set_var_quantity">
+<code class="sig-name descname">set_var_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_var_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the data quantity object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be set.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See <a class="reference internal" href="#libics.core.data.arrays.assume_quantity" title="libics.core.data.arrays.assume_quantity"><code class="xref py py-func docutils literal notranslate"><span class="pre">assume_quantity()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.step">
+<em class="property">property </em><code class="sig-name descname">step</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.total_ndim">
+<em class="property">property </em><code class="sig-name descname">total_ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.total_ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.ArrayData.var_ndim">
+<em class="property">property </em><code class="sig-name descname">var_ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.var_ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.data.arrays.SeriesData">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">SeriesData</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
+<dt><strong>shape</strong></dt><dd></dd>
+<dt><strong>total_ndim</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.SeriesData.add_dim" title="libics.core.data.arrays.SeriesData.add_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_dim</span></code></a>(self, \*args)</p></td>
+<td><p>Appends dimension(s) to the object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.SeriesData.rmv_dim" title="libics.core.data.arrays.SeriesData.rmv_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmv_dim</span></code></a>(self, \*dims[, num])</p></td>
+<td><p>Removes dimension(s) from the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.SeriesData.set_quantity" title="libics.core.data.arrays.SeriesData.set_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_quantity</span></code></a>(self, dim, \*\*kwargs)</p></td>
+<td><p>Sets the quantity object.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.add_dim">
+<code class="sig-name descname">add_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.add_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends dimension(s) to the object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*args</strong><span class="classifier"><cite>dict</cite> or <cite>int</cite></span></dt><dd><p>Dictionaries in the order they should be added.
+These dictionaries are used as <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> for iteratively
+setting dimensions.
+An integer is equivalent to passing an this-integer-length
+list of empty dictionaries.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If arguments are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.ndim">
+<em class="property">property </em><code class="sig-name descname">ndim</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.rmv_dim">
+<code class="sig-name descname">rmv_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*dims</em>, <em class="sig-param">num=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.rmv_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes dimension(s) from the object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*dims</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimensions to be removed.</p>
+</dd>
+<dt><strong>num</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Removes <cite>num</cite> last dimensions. Is only applied
+if <cite>dims</cite> is not specified.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.set_quantity">
+<code class="sig-name descname">set_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.set_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the quantity object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be set.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See <a class="reference internal" href="#libics.core.data.arrays.assume_quantity" title="libics.core.data.arrays.assume_quantity"><code class="xref py py-func docutils literal notranslate"><span class="pre">assume_quantity()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.arrays.SeriesData.total_ndim">
+<em class="property">property </em><code class="sig-name descname">total_ndim</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.total_ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.arrays.assume_quantity">
+<code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">assume_quantity</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.assume_quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a quantity object from keyword arguments.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>quantity</strong><span class="classifier"><cite>types.Quantity</cite></span></dt><dd><p>Directly specified quantity. Takes precedence
+over other methods.</p>
+</dd>
+<dt><strong>name, symbol, unit</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Parameters used to construct <cite>types.Quantity</cite> instance.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>quantity</strong><span class="classifier"><cite>types.Quantity</cite></span></dt><dd><p>Constructed object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.core.data.conversion">
+<span id="conversion"></span><h2>conversion<a class="headerlink" href="#module-libics.core.data.conversion" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.core.data.conversion.Calibration">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">Calibration</code><span class="sig-paren">(</span><em class="sig-param">sd=None</em>, <em class="sig-param">sd_key_dim=0</em>, <em class="sig-param">sd_val_dim=-1</em>, <em class="sig-param">key_data=None</em>, <em class="sig-param">val_data=None</em>, <em class="sig-param">key_quantity=None</em>, <em class="sig-param">val_quantity=None</em>, <em class="sig-param">mode='linear'</em>, <em class="sig-param">extrapolation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.Calibration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.core.data.arrays.SeriesData" title="libics.core.data.arrays.SeriesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.arrays.SeriesData</span></code></a></p>
+<p>Container class for storing calibration data mapping one quantity to
+another. Naming convention: key –map–&gt; val.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sd</strong><span class="classifier">data.seriesdata.SeriesData or None</span></dt><dd><p>Uses series data to construct the calibration object.
+If specified, overwrites any key_data, val_data,
+key_quantity, val_quantity parameters.</p>
+</dd>
+<dt><strong>sd_key_dim, sd_val_dim</strong><span class="classifier">int</span></dt><dd><p>(key, val) dimensions of series data that should
+be used as calibration.</p>
+</dd>
+<dt><strong>key_data, val_data</strong><span class="classifier">np.ndarray(1)</span></dt><dd><p>Data array for (key, val) data values.</p>
+</dd>
+<dt><strong>key_quantity, val_quantity</strong><span class="classifier">data.types.Quantity</span></dt><dd><p>Quantity of (key, val).</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">Calibration.MODE</span></dt><dd><p>NEAREST: Nearest neighbour.
+LINEAR: first order spline.
+QUADRATIC: second order spline.
+CUBIC: third order spline.
+PREVIOUS: previous value.
+NEXT: next value.</p>
+</dd>
+<dt><strong>extrapolation</strong><span class="classifier">bool or float or (float, float)</span></dt><dd><p>True: Performs proper extrapolation.
+False: Uses boundary values.
+float: Uses given number as constant extrapolation.
+(float, float): Used as (left, right) extrapolation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong></dt><dd></dd>
+<dt><strong>key_data</strong></dt><dd></dd>
+<dt><strong>key_quantity</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
+<dt><strong>shape</strong></dt><dd></dd>
+<dt><strong>total_ndim</strong></dt><dd></dd>
+<dt><strong>val_data</strong></dt><dd></dd>
+<dt><strong>val_quantity</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, \*args)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_dim</span></code>(self, \*args)</p></td>
+<td><p>Appends dimension(s) to the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmv_dim</span></code>(self, \*dims[, num])</p></td>
+<td><p>Removes dimension(s) from the object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_quantity</span></code>(self, dim, \*\*kwargs)</p></td>
+<td><p>Sets the quantity object.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 44%" />
+<col style="width: 56%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>MODE</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="libics.core.data.conversion.Calibration.MODE">
+<em class="property">class </em><code class="sig-name descname">MODE</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.CUBIC">
+<code class="sig-name descname">CUBIC</code><em class="property"> = 'cubic'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.CUBIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.LINEAR">
+<code class="sig-name descname">LINEAR</code><em class="property"> = 'linear'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.NEAREST">
+<code class="sig-name descname">NEAREST</code><em class="property"> = 'const'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEAREST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.NEXT">
+<code class="sig-name descname">NEXT</code><em class="property"> = 'next'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.PREVIOUS">
+<code class="sig-name descname">PREVIOUS</code><em class="property"> = 'previous'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.PREVIOUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.conversion.Calibration.MODE.QUADRATIC">
+<code class="sig-name descname">QUADRATIC</code><em class="property"> = 'quadratic'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.QUADRATIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.conversion.Calibration.key_data">
+<em class="property">property </em><code class="sig-name descname">key_data</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.conversion.Calibration.key_quantity">
+<em class="property">property </em><code class="sig-name descname">key_quantity</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.conversion.Calibration.val_data">
+<em class="property">property </em><code class="sig-name descname">val_data</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.conversion.Calibration.val_quantity">
+<em class="property">property </em><code class="sig-name descname">val_quantity</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.conversion.apply_calibration">
+<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">apply_calibration</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">calibration</em>, <em class="sig-param">dim=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.apply_calibration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a calibration to a data.seriesdata.SeriesData object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>sd</strong><span class="classifier"><cite>data.arrays.SeriesData</cite></span></dt><dd><p>Series data the calibration is applied to.</p>
+</dd>
+<dt><strong>calibration</strong><span class="classifier"><cite>Calibration</cite></span></dt><dd><p>Calibration data.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Series data dimension to which calibration is applied.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>sd</strong><span class="classifier"><cite>data.arrays.SeriesData</cite></span></dt><dd><p>Series data with applied calibration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Performs in-place calibration, i.e. <cite>sd</cite> is mutable.</p></li>
+<li><p>Does not check for quantity agreement. After applying calibration,
+<cite>sd</cite> quantity is changed to the quantity stored in calibration.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.conversion.cv_arraydata_to_seriesdata">
+<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_arraydata_to_seriesdata</code><span class="sig-paren">(</span><em class="sig-param">ad</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_arraydata_to_seriesdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an <cite>ArrayData</cite> object to a <cite>SeriesData</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Array data to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>sd</strong><span class="classifier"><cite>data.arrays.SeriesData</cite></span></dt><dd><p>Converted series data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.conversion.cv_datasequence_to_list">
+<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_datasequence_to_list</code><span class="sig-paren">(</span><em class="sig-param">ds</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_datasequence_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the data stored in the <cite>DataSequence</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ds</strong><span class="classifier"><cite>data.sequences.DataSequence</cite></span></dt><dd><p>DataSequence object storing the requested data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>list(dict)</cite></span></dt><dd><p>List of dictionaries mapping column name to value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.conversion.cv_list_to_datasequence">
+<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_list_to_datasequence</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_list_to_datasequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a data list into a <cite>DataSequence</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>list(dict)</cite> or <cite>list</cite></span></dt><dd><p>List of scalars or structured data types.
+Preferentially, the list items should be dictionaries,
+which determine the column name. If no dictionary is given,
+the default column name <cite>“data”</cite> is used.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ds</strong><span class="classifier"><cite>sequences.DataSequence</cite> or <cite>list</cite></span></dt><dd><p>Converted DataSequence object.
+If conversion is unsuccessful, returns input.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.data.conversion.cv_seriesdata_to_arraydata">
+<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_seriesdata_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">data_dim=-1</em>, <em class="sig-param">sampling_shape=None</em>, <em class="sig-param">algorithm='cubic'</em>, <em class="sig-param">fill=nan</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_seriesdata_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a <cite>ArrayData</cite> object to a <cite>SeriesData</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>sd</strong><span class="classifier"><cite>data.arrays.SeriesData</cite></span></dt><dd><p>Series data to be converted.</p>
+</dd>
+<dt><strong>data_dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Series data dimension to be used as data quantity.</p>
+</dd>
+<dt><strong>sampling_shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Array shape of interpolated data.</p>
+</dd>
+<dt><strong>algorithm</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Interpolation algorithm.
+<cite>“nearest”</cite>:</p>
+<blockquote>
+<div><p>Nearest point.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><cite>“linear”</cite>:</dt><dd><p>Linear interpolation.</p>
+</dd>
+<dt><cite>“cubic”</cite>:</dt><dd><p>Cubic interpolation (up to 2D).
+If above 2D, silently uses linear interpolation.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>fill</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Fill value for linear and cubic interpolation if value
+is outside convex hull (i.e. needs extrapolation).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>data.arrays.ArrayData</cite></span></dt><dd><p>Converted array data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.core.data.graphs">
+<span id="graphs"></span><h2>graphs<a class="headerlink" href="#module-libics.core.data.graphs" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.core.data.graphs.DirectedGraph">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.graphs.</code><code class="sig-name descname">DirectedGraph</code><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A simple Python directed graph class.</p>
+<p>Stores the graph in a dictionary mapping vertex-&gt;set(vertex).</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.graphs.DirectedGraph.add_edge" title="libics.core.data.graphs.DirectedGraph.add_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_edge</span></code></a>(self, vertex_from, vertex_to)</p></td>
+<td><p>Adds a directed edge from <cite>vertex_from</cite> to <cite>vertex_to</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.graphs.DirectedGraph.add_vertex" title="libics.core.data.graphs.DirectedGraph.add_vertex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_vertex</span></code></a>(self, vertex)</p></td>
+<td><p>If the vertex <cite>vertex</cite> is not in <cite>self.__graph_dict</cite>, a key <cite>vertex</cite> with an empty list as a value is added to the dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.graphs.DirectedGraph.find_connected_vertices" title="libics.core.data.graphs.DirectedGraph.find_connected_vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_connected_vertices</span></code></a>(self)</p></td>
+<td><p>Finds all connected vertices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.graphs.DirectedGraph.get_edge_number" title="libics.core.data.graphs.DirectedGraph.get_edge_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edge_number</span></code></a>(self, vertex)</p></td>
+<td><p>Gets the number of edges connected at the given <cite>vertex</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.graphs.DirectedGraph.vertices" title="libics.core.data.graphs.DirectedGraph.vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertices</span></code></a>(self)</p></td>
+<td><p>Returns the vertices of a graph.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>has_edge</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.add_edge">
+<code class="sig-name descname">add_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a directed edge from <cite>vertex_from</cite> to <cite>vertex_to</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.add_vertex">
+<code class="sig-name descname">add_vertex</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the vertex <cite>vertex</cite> is not in <cite>self.__graph_dict</cite>,
+a key <cite>vertex</cite> with an empty list as a value is added
+to the dictionary. Otherwise nothing has to be done.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.find_connected_vertices">
+<code class="sig-name descname">find_connected_vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.find_connected_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all connected vertices.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>connections</strong><span class="classifier"><cite>list(list)</cite></span></dt><dd><p>List of list containing vertices.
+Vertices within a deque are mutually connected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.get_edge_number">
+<code class="sig-name descname">get_edge_number</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.get_edge_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of edges connected at the given <cite>vertex</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.has_edge">
+<code class="sig-name descname">has_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.has_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.graphs.DirectedGraph.vertices">
+<code class="sig-name descname">vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the vertices of a graph.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.core.data.sequences">
+<span id="sequences"></span><h2>sequences<a class="headerlink" href="#module-libics.core.data.sequences" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.core.data.sequences.DataSequence">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.sequences.</code><code class="sig-name descname">DataSequence</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.core.frame.DataFrame</span></code></p>
+<p>Stores a multiindex series as a pandas data frame.</p>
+<p>May contain arbitrary heterogeneous data, i.a. supports <cite>ArrayData</cite>.
+Typically this constructor does not have to be directly invoked, instead
+use the <code class="xref py py-func docutils literal notranslate"><span class="pre">data.conversion.cv_list_to_datasequence()</span></code> function
+to generate a <cite>DataSequence</cite> from a list of complex objects.
+For <cite>pandas.DataFrame</cite>-like usage of simple types, use the
+<cite>data.arrays.SeriesData</cite> class instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*args</strong></dt><dd><p>Arguments passed to the <cite>pandas.DataFrame</cite> constructor,
+particularly, includes the tabular data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></dt><dd><p>Transpose index and columns.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">at</span></code></dt><dd><p>Access a single value for a row/column label pair.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></dt><dd><p>Return a list representing the axes of the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">blocks</span></code></dt><dd><p>Internal property, property synonym for as_blocks().</p>
+</dd>
+<dt><strong>columns</strong></dt><dd><p>The column labels of the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtypes</span></code></dt><dd><p>Return the dtypes in the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></dt><dd><p>Indicator whether DataFrame is empty.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ftypes</span></code></dt><dd><p>Return the ftypes (indication of sparse/dense and dtype) in DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">iat</span></code></dt><dd><p>Access a single value for a row/column pair by integer position.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">iloc</span></code></dt><dd><p>Purely integer-location based indexing for selection by position.</p>
+</dd>
+<dt><strong>index</strong></dt><dd><p>The index (row labels) of the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_copy</span></code></dt><dd><p>Return the copy.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ix</span></code></dt><dd><p>A primarily label-location based indexer, with integer position fallback.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">loc</span></code></dt><dd><p>Access a group of rows and columns by label(s) or a boolean array.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></dt><dd><p>Return an int representing the number of axes / array dimensions.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></dt><dd><p>Return a tuple representing the dimensionality of the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></dt><dd><p>Return an int representing the number of elements in this object.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">style</span></code></dt><dd><p>Property returning a Styler object containing methods for building a styled HTML representation fo the DataFrame.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></dt><dd><p>Return a Numpy representation of the DataFrame.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs</span></code>(self)</p></td>
+<td><p>Return a Series/DataFrame with absolute numeric value of each element.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Addition of dataframe and other, element-wise (binary operator <cite>add</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_prefix</span></code>(self, prefix)</p></td>
+<td><p>Prefix labels with string <cite>prefix</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_suffix</span></code>(self, suffix)</p></td>
+<td><p>Suffix labels with string <cite>suffix</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">agg</span></code>(self, func[, axis])</p></td>
+<td><p>Aggregate using one or more operations over the specified axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate</span></code>(self, func[, axis])</p></td>
+<td><p>Aggregate using one or more operations over the specified axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">align</span></code>(self, other[, join, axis, level, …])</p></td>
+<td><p>Align two objects on their axes with the specified join method for each axis Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code>(self[, axis, bool_only, skipna, level])</p></td>
+<td><p>Return whether all elements are True, potentially over an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code>(self[, axis, bool_only, skipna, level])</p></td>
+<td><p>Return whether any element is True, potentially over an axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code>(self, other[, ignore_index, …])</p></td>
+<td><p>Append rows of <cite>other</cite> to the end of caller, returning a new object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code>(self, func[, axis, broadcast, raw, …])</p></td>
+<td><p>Apply a function along an axis of the DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.apply_func" title="libics.core.data.sequences.DataSequence.apply_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_func</span></code></a>(self, func, col_names[, …])</p></td>
+<td><p>Applies a function to each row.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">applymap</span></code>(self, func)</p></td>
+<td><p>Apply a function to a Dataframe elementwise.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_blocks</span></code>(self[, copy])</p></td>
+<td><p>Convert the frame to a dict of dtype -&gt; Constructor Types that each has a homogeneous dtype.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_matrix</span></code>(self[, columns])</p></td>
+<td><p>Convert the frame to its Numpy-array representation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfreq</span></code>(self, freq[, method, how, normalize, …])</p></td>
+<td><p>Convert TimeSeries to specified frequency.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asof</span></code>(self, where[, subset])</p></td>
+<td><p>Return the last row(s) without any NaNs before <cite>where</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign</span></code>(self, \*\*kwargs)</p></td>
+<td><p>Assign new columns to a DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code>(self, dtype[, copy, errors])</p></td>
+<td><p>Cast a pandas object to a specified dtype <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">at_time</span></code>(self, time[, asof, axis])</p></td>
+<td><p>Select values at particular time of day (e.g.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.average" title="libics.core.data.sequences.DataSequence.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>(self, key_columns, col_name[, …])</p></td>
+<td><p>Averages (unweighted mean) a column.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">between_time</span></code>(self, start_time, end_time[, …])</p></td>
+<td><p>Select values between particular times of the day (e.g., 9:00-9:30 AM).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bfill</span></code>(self[, axis, inplace, limit, downcast])</p></td>
+<td><p>Synonym for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFrame.fillna()</span></code> with <code class="docutils literal notranslate"><span class="pre">method='bfill'</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>(self)</p></td>
+<td><p>Return the bool of a single element PandasObject.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">boxplot</span></code>(self[, column, by, ax, fontsize, …])</p></td>
+<td><p>Make a box plot from DataFrame columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code>(self[, lower, upper, axis, inplace])</p></td>
+<td><p>Trim values at input threshold(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_lower</span></code>(self, threshold[, axis, inplace])</p></td>
+<td><p>Trim values below a given threshold.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_upper</span></code>(self, threshold[, axis, inplace])</p></td>
+<td><p>Trim values above a given threshold.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine</span></code>(self, other, func[, fill_value, …])</p></td>
+<td><p>Perform column-wise combine with another DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_first</span></code>(self, other)</p></td>
+<td><p>Update null elements with value in the same location in <cite>other</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compound</span></code>(self[, axis, skipna, level])</p></td>
+<td><p>Return the compound percentage of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>(self[, deep])</p></td>
+<td><p>Make a copy of this object’s indices and data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corr</span></code>(self[, method, min_periods])</p></td>
+<td><p>Compute pairwise correlation of columns, excluding NA/null values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrwith</span></code>(self, other[, axis, drop, method])</p></td>
+<td><p>Compute pairwise correlation between rows or columns of DataFrame with rows or columns of Series or DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>(self[, axis, level, numeric_only])</p></td>
+<td><p>Count non-NA cells for each column or row.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cov</span></code>(self[, min_periods])</p></td>
+<td><p>Compute pairwise covariance of columns, excluding NA/null values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return cumulative maximum over a DataFrame or Series axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummin</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return cumulative minimum over a DataFrame or Series axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return cumulative product over a DataFrame or Series axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return cumulative sum over a DataFrame or Series axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">describe</span></code>(self[, percentiles, include, exclude])</p></td>
+<td><p>Generate descriptive statistics that summarize the central tendency, dispersion and shape of a dataset’s distribution, excluding <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code>(self[, periods, axis])</p></td>
+<td><p>First discrete difference of element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">div</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code>(self, other)</p></td>
+<td><p>Compute the matrix multiplication between the DataFrame and other.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>(self[, labels, axis, index, columns, …])</p></td>
+<td><p>Drop specified labels from rows or columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.drop_column" title="libics.core.data.sequences.DataSequence.drop_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_column</span></code></a>(self, \*col_names[, inplace])</p></td>
+<td><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.drop(col=col_names)()</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_duplicates</span></code>(self[, subset, keep, inplace])</p></td>
+<td><p>Return DataFrame with duplicate rows removed, optionally only considering certain columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">droplevel</span></code>(self, level[, axis])</p></td>
+<td><p>Return DataFrame with requested index / column level(s) removed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code>(self[, axis, how, thresh, subset, …])</p></td>
+<td><p>Remove missing values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duplicated</span></code>(self[, subset, keep])</p></td>
+<td><p>Return boolean Series denoting duplicate rows, optionally only considering certain columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Equal to of dataframe and other, element-wise (binary operator <cite>eq</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code>(self, other)</p></td>
+<td><p>Test whether two objects contain the same elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code>(self, expr[, inplace])</p></td>
+<td><p>Evaluate a string describing operations on DataFrame columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ewm</span></code>(self[, com, span, halflife, alpha, …])</p></td>
+<td><p>Provide exponential weighted functions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">expanding</span></code>(self[, min_periods, center, axis])</p></td>
+<td><p>Provide expanding transformations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">explode</span></code>(self, column, Tuple])</p></td>
+<td><p>Transform each element of a list-like to a row, replicating the index values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffill</span></code>(self[, axis, inplace, limit, downcast])</p></td>
+<td><p>Synonym for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFrame.fillna()</span></code> with <code class="docutils literal notranslate"><span class="pre">method='ffill'</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fillna</span></code>(self[, value, method, axis, inplace, …])</p></td>
+<td><p>Fill NA/NaN values using the specified method.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code>(self[, items, like, regex, axis])</p></td>
+<td><p>Subset rows or columns of dataframe according to labels in the specified index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">first</span></code>(self, offset)</p></td>
+<td><p>Convenience method for subsetting initial periods of time series data based on a date offset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_valid_index</span></code>(self)</p></td>
+<td><p>Return index for first non-NA/null value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">floordiv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Integer division of dataframe and other, element-wise (binary operator <cite>floordiv</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code>(data[, orient, dtype, columns])</p></td>
+<td><p>Construct DataFrame from dict of array-like or dicts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_items</span></code>(items[, columns, orient])</p></td>
+<td><p>Construct a DataFrame from a list of tuples.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_records</span></code>(data[, index, exclude, …])</p></td>
+<td><p>Convert structured or record ndarray to DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ge</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Greater than or equal to of dataframe and other, element-wise (binary operator <cite>ge</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(self, key[, default])</p></td>
+<td><p>Get item from object for given key (ex: DataFrame column).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dtype_counts</span></code>(self)</p></td>
+<td><p>Return counts of unique dtypes in this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ftype_counts</span></code>(self)</p></td>
+<td><p>Return counts of unique ftypes in this object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value</span></code>(self, index, col[, takeable])</p></td>
+<td><p>Quickly retrieve single value at passed column and index.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_values</span></code>(self)</p></td>
+<td><p>Return an ndarray after converting sparse values to dense.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupby</span></code>(self[, by, axis, level, as_index, …])</p></td>
+<td><p>Group DataFrame or Series using a mapper or by a Series of columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gt</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Greater than of dataframe and other, element-wise (binary operator <cite>gt</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code>(self[, n])</p></td>
+<td><p>Return the first <cite>n</cite> rows.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hist</span></code>(data[, column, by, grid, xlabelsize, …])</p></td>
+<td><p>Make a histogram of the DataFrame’s.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmax</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return index of first occurrence of maximum over requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmin</span></code>(self[, axis, skipna])</p></td>
+<td><p>Return index of first occurrence of minimum over requested axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_objects</span></code>(self)</p></td>
+<td><p>Attempt to infer better dtypes for object columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code>(self[, verbose, buf, max_cols, …])</p></td>
+<td><p>Print a concise summary of a DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code>(self, loc, column, value[, …])</p></td>
+<td><p>Insert column into DataFrame at specified location.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code>(self[, method, axis, limit, …])</p></td>
+<td><p>Interpolate values according to different methods.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isin</span></code>(self, values)</p></td>
+<td><p>Whether each element in the DataFrame is contained in values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isna</span></code>(self)</p></td>
+<td><p>Detect missing values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isnull</span></code>(self)</p></td>
+<td><p>Detect missing values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>(self)</p></td>
+<td><p>Iterator over (column name, Series) pairs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iteritems</span></code>(self)</p></td>
+<td><p>Iterator over (column name, Series) pairs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterrows</span></code>(self)</p></td>
+<td><p>Iterate over DataFrame rows as (index, Series) pairs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertuples</span></code>(self[, index, name])</p></td>
+<td><p>Iterate over DataFrame rows as namedtuples.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.join" title="libics.core.data.sequences.DataSequence.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></a>(self, \*args[, how])</p></td>
+<td><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.join()</span></code> with a different default behavior for parameter <cite>how</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>(self)</p></td>
+<td><p>Get the ‘info axis’ (see Indexing for more)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurt</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return unbiased kurtosis over requested axis using Fisher’s definition of kurtosis (kurtosis of normal == 0.0).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kurtosis</span></code>(self[, axis, skipna, level, …])</p></td>
+<td><p>Return unbiased kurtosis over requested axis using Fisher’s definition of kurtosis (kurtosis of normal == 0.0).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last</span></code>(self, offset)</p></td>
+<td><p>Convenience method for subsetting final periods of time series data based on a date offset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_valid_index</span></code>(self)</p></td>
+<td><p>Return index for last non-NA/null value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">le</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Less than or equal to of dataframe and other, element-wise (binary operator <cite>le</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup</span></code>(self, row_labels, col_labels)</p></td>
+<td><p>Label-based “fancy indexing” function for DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lt</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Less than of dataframe and other, element-wise (binary operator <cite>lt</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mad</span></code>(self[, axis, skipna, level])</p></td>
+<td><p>Return the mean absolute deviation of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code>(self, cond[, other, inplace, axis, …])</p></td>
+<td><p>Replace values where the condition is True.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return the maximum of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return the mean of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return the median of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">melt</span></code>(self[, id_vars, value_vars, var_name, …])</p></td>
+<td><p>Unpivot a DataFrame from wide format to long format, optionally leaving identifier variables set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">memory_usage</span></code>(self[, index, deep])</p></td>
+<td><p>Return the memory usage of each column in bytes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge</span></code>(self, right[, how, on, left_on, …])</p></td>
+<td><p>Merge DataFrame or named Series objects with a database-style join.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return the minimum of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Modulo of dataframe and other, element-wise (binary operator <cite>mod</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code>(self[, axis, numeric_only, dropna])</p></td>
+<td><p>Get the mode(s) of each element along the selected axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>mul</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ne</span></code>(self, other[, axis, level])</p></td>
+<td><p>Get Not equal to of dataframe and other, element-wise (binary operator <cite>ne</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlargest</span></code>(self, n, columns[, keep])</p></td>
+<td><p>Return the first <cite>n</cite> rows ordered by <cite>columns</cite> in descending order.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notna</span></code>(self)</p></td>
+<td><p>Detect existing (non-missing) values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notnull</span></code>(self)</p></td>
+<td><p>Detect existing (non-missing) values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nsmallest</span></code>(self, n, columns[, keep])</p></td>
+<td><p>Return the first <cite>n</cite> rows ordered by <cite>columns</cite> in ascending order.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nunique</span></code>(self[, axis, dropna])</p></td>
+<td><p>Count distinct observations over requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pct_change</span></code>(self[, periods, fill_method, …])</p></td>
+<td><p>Percentage change between the current and a prior element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pipe</span></code>(self, func, \*args, \*\*kwargs)</p></td>
+<td><p>Apply func(self, *args, **kwargs).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot</span></code>(self[, index, columns, values])</p></td>
+<td><p>Return reshaped DataFrame organized by given index / column values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pivot_table</span></code>(self[, values, index, columns, …])</p></td>
+<td><p>Create a spreadsheet-style pivot table as a DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.plotting._core.PlotAccessor</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(self, item)</p></td>
+<td><p>Return item and drop from frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pow</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Exponential power of dataframe and other, element-wise (binary operator <cite>pow</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code>(self[, axis, skipna, level, …])</p></td>
+<td><p>Return the product of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">product</span></code>(self[, axis, skipna, level, …])</p></td>
+<td><p>Return the product of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantile</span></code>(self[, q, axis, numeric_only, …])</p></td>
+<td><p>Return values at the given quantile over requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(self, expr[, inplace])</p></td>
+<td><p>Query the columns of a DataFrame with a boolean expression.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radd</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Addition of dataframe and other, element-wise (binary operator <cite>radd</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code>(self[, axis, method, numeric_only, …])</p></td>
+<td><p>Compute numerical data ranks (1 through n) along axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdiv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex</span></code>(self[, labels, index, columns, …])</p></td>
+<td><p>Conform DataFrame to new index with optional filling logic, placing NA/NaN in locations having no value in the previous index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex_like</span></code>(self, other[, method, copy, …])</p></td>
+<td><p>Return an object with matching indices as other object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code>(self[, mapper, index, columns, axis, …])</p></td>
+<td><p>Alter axes labels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename_axis</span></code>(self[, mapper, index, columns, …])</p></td>
+<td><p>Set the name of the axis for the index or columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.rename_column" title="libics.core.data.sequences.DataSequence.rename_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename_column</span></code></a>(self, old_name, new_name)</p></td>
+<td><p>Changes the column name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_levels</span></code>(self, order[, axis])</p></td>
+<td><p>Rearrange index levels using input order.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code>(self[, to_replace, value, inplace, …])</p></td>
+<td><p>Replace values given in <cite>to_replace</cite> with <cite>value</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code>(self, rule[, how, axis, …])</p></td>
+<td><p>Resample time-series data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.reset_index" title="libics.core.data.sequences.DataSequence.reset_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_index</span></code></a>(self, \*\*kwargs)</p></td>
+<td><p>Reset the index, or a level of it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rfloordiv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Integer division of dataframe and other, element-wise (binary operator <cite>rfloordiv</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmod</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Modulo of dataframe and other, element-wise (binary operator <cite>rmod</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmul</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Multiplication of dataframe and other, element-wise (binary operator <cite>rmul</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling</span></code>(self, window[, min_periods, center, …])</p></td>
+<td><p>Provide rolling window calculations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code>(self[, decimals])</p></td>
+<td><p>Round a DataFrame to a variable number of decimal places.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rpow</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Exponential power of dataframe and other, element-wise (binary operator <cite>rpow</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsub</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>rsub</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtruediv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>rtruediv</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code>(self[, n, frac, replace, weights, …])</p></td>
+<td><p>Return a random sample of items from an axis of object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_dtypes</span></code>(self[, include, exclude])</p></td>
+<td><p>Return a subset of the DataFrame’s columns based on the column dtypes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sem</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
+<td><p>Return unbiased standard error of the mean over requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axis</span></code>(self, labels[, axis, inplace])</p></td>
+<td><p>Assign desired index to given axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_index</span></code>(self, keys[, drop, append, …])</p></td>
+<td><p>Set the DataFrame index using existing columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_value</span></code>(self, index, col, value[, takeable])</p></td>
+<td><p>Put single value at passed column and index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code>(self[, periods, freq, axis, fill_value])</p></td>
+<td><p>Shift index by desired number of periods with an optional time <cite>freq</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">skew</span></code>(self[, axis, skipna, level, numeric_only])</p></td>
+<td><p>Return unbiased skew over requested axis Normalized by N-1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_shift</span></code>(self[, periods, axis])</p></td>
+<td><p>Equivalent to <cite>shift</cite> without copying data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_index</span></code>(self[, axis, level, ascending, …])</p></td>
+<td><p>Sort object by labels (along an axis).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.sort_rows" title="libics.core.data.sequences.DataSequence.sort_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_rows</span></code></a>(self, col_name[, ascending])</p></td>
+<td><p>Sorts the rows by numerical values in a column.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_values</span></code>(self, by[, axis, ascending, …])</p></td>
+<td><p>Sort by the values along either axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.core.arrays.sparse.SparseFrameAccessor</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code>(self[, axis])</p></td>
+<td><p>Squeeze 1 dimensional axis objects into scalars.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code>(self[, level, dropna])</p></td>
+<td><p>Stack the prescribed level(s) from columns to index.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
+<td><p>Return sample standard deviation over requested axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Subtraction of dataframe and other, element-wise (binary operator <cite>sub</cite>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code>(self[, axis, skipna, level, …])</p></td>
+<td><p>Return the sum of the values for the requested axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code>(self, axis1, axis2[, copy])</p></td>
+<td><p>Interchange axes and swap values axes appropriately.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">swaplevel</span></code>(self[, i, j, axis])</p></td>
+<td><p>Swap levels i and j in a MultiIndex on a particular axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tail</span></code>(self[, n])</p></td>
+<td><p>Return the last <cite>n</cite> rows.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code>(self, indices[, axis, is_copy])</p></td>
+<td><p>Return the elements in the given <em>positional</em> indices along an axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_clipboard</span></code>(self[, excel, sep])</p></td>
+<td><p>Copy object to the system clipboard.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_csv</span></code>(self[, path_or_buf, sep, na_rep, …])</p></td>
+<td><p>Write object to a comma-separated values (csv) file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dense</span></code>(self)</p></td>
+<td><p>Return dense representation of Series/DataFrame (as opposed to sparse).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code>(self[, orient, into])</p></td>
+<td><p>Convert the DataFrame to a dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_excel</span></code>(self, excel_writer[, sheet_name, …])</p></td>
+<td><p>Write object to an Excel sheet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_feather</span></code>(self, fname)</p></td>
+<td><p>Write out the binary feather-format for DataFrames.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_gbq</span></code>(self, destination_table[, …])</p></td>
+<td><p>Write a DataFrame to a Google BigQuery table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf</span></code>(self, path_or_buf, key, \*\*kwargs)</p></td>
+<td><p>Write the contained data to an HDF5 file using HDFStore.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_html</span></code>(self[, buf, columns, col_space, …])</p></td>
+<td><p>Render a DataFrame as an HTML table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code>(self[, path_or_buf, orient, …])</p></td>
+<td><p>Convert the object to a JSON string.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_latex</span></code>(self[, buf, columns, col_space, …])</p></td>
+<td><p>Render an object to a LaTeX tabular environment table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_msgpack</span></code>(self[, path_or_buf, encoding])</p></td>
+<td><p>Serialize object to input file path using msgpack format.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_numpy</span></code>(self[, dtype, copy])</p></td>
+<td><p>Convert the DataFrame to a NumPy array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_parquet</span></code>(self, fname[, engine, …])</p></td>
+<td><p>Write a DataFrame to the binary parquet format.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_period</span></code>(self[, freq, axis, copy])</p></td>
+<td><p>Convert DataFrame from DatetimeIndex to PeriodIndex with desired frequency (inferred from index if not passed).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code>(self, path[, compression, protocol])</p></td>
+<td><p>Pickle (serialize) object to file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_records</span></code>(self[, index, …])</p></td>
+<td><p>Convert DataFrame to a NumPy record array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sparse</span></code>(self[, fill_value, kind])</p></td>
+<td><p>Convert to SparseDataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_sql</span></code>(self, name, con[, schema, if_exists, …])</p></td>
+<td><p>Write records stored in a DataFrame to a SQL database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_stata</span></code>(self, fname[, convert_dates, …])</p></td>
+<td><p>Export DataFrame object to Stata dta format.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_string</span></code>(self[, buf, columns, col_space, …])</p></td>
+<td><p>Render a DataFrame to a console-friendly tabular output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_timestamp</span></code>(self[, freq, how, axis, copy])</p></td>
+<td><p>Cast to DatetimeIndex of timestamps, at <em>beginning</em> of period.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code>(self)</p></td>
+<td><p>Return an xarray object from the pandas object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(self, func[, axis])</p></td>
+<td><p>Call <code class="docutils literal notranslate"><span class="pre">func</span></code> on self producing a DataFrame with transformed values and that has the same axis length as self.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Transpose index and columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truediv</span></code>(self, other[, axis, level, fill_value])</p></td>
+<td><p>Get Floating division of dataframe and other, element-wise (binary operator <cite>truediv</cite>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">truncate</span></code>(self[, before, after, axis, copy])</p></td>
+<td><p>Truncate a Series or DataFrame before and after some index value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tshift</span></code>(self[, periods, freq, axis])</p></td>
+<td><p>Shift the time index, using the index’s frequency if available.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_convert</span></code>(self, tz[, axis, level, copy])</p></td>
+<td><p>Convert tz-aware axis to target time zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tz_localize</span></code>(self, tz[, axis, level, copy, …])</p></td>
+<td><p>Localize tz-naive index of a Series or DataFrame to target time zone.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unstack</span></code>(self[, level, fill_value])</p></td>
+<td><p>Pivot a level of the (necessarily hierarchical) index labels, returning a DataFrame having a new level of column labels whose inner-most level consists of the pivoted index labels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(self, other[, join, overwrite, …])</p></td>
+<td><p>Modify in place using non-NA values from another DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(self[, axis, skipna, level, ddof, …])</p></td>
+<td><p>Return unbiased variance over requested axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code>(self, cond[, other, inplace, axis, …])</p></td>
+<td><p>Replace values where the condition is False.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xs</span></code>(self, key[, axis, level, drop_level])</p></td>
+<td><p>Return cross-section from the Series/DataFrame.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.apply_func">
+<code class="sig-name descname">apply_func</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">func</em>, <em class="sig-param">col_names</em>, <em class="sig-param">ret_name=True</em>, <em class="sig-param">drop_cols=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.apply_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a function to each row.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>func</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Call signature: <cite>func(*col_names_values)-&gt;res</cite>.</p>
+</dd>
+<dt><strong>col_names</strong><span class="classifier"><cite>object</cite> or <cite>iter(object)</cite></span></dt><dd><p>Column names whose values are passed to <cite>func</cite>.</p>
+</dd>
+<dt><strong>ret_name</strong><span class="classifier"><cite>str</cite> or <cite>bool</cite></span></dt><dd><p>Column name in which return value is stored.
+If <cite>True</cite>, assigns return value to the row
+corresponding to the first item in <cite>col_names</cite>.
+If <cite>False</cite>, does not assign any return value.</p>
+</dd>
+<dt><strong>drop_cols</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to drop the columns used as <cite>func</cite> input.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.average">
+<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key_columns</em>, <em class="sig-param">col_name</em>, <em class="sig-param">add_std=False</em>, <em class="sig-param">add_num=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Averages (unweighted mean) a column.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>key_columns</strong><span class="classifier"><cite>str</cite> or <cite>iter(str)</cite> or <cite>None</cite></span></dt><dd><p>Columns which are used to distinguish different parameters,
+i.e. rows with the same values in the <cite>key_columns</cite> are
+averaged.
+If <cite>None</cite>, performs average on all rows.</p>
+</dd>
+<dt><strong>col_name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Column to be averaged.</p>
+</dd>
+<dt><strong>add_std</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether the standard deviation is added to the data sequence.</p>
+</dd>
+<dt><strong>add_num</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether the averaging number is added to the data sequence.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>dseq</strong><span class="classifier"><cite>DataSequence</cite></span></dt><dd><p>Averaged data sequence.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Uses the <code class="xref py py-func docutils literal notranslate"><span class="pre">np.mean()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">np.std()</span></code> functions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.drop_column">
+<code class="sig-name descname">drop_column</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*col_names</em>, <em class="sig-param">inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.drop_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.drop(col=col_names)()</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.join">
+<code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">how='outer'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.join()</span></code> with a different
+default behavior for parameter <cite>how</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.rename_column">
+<code class="sig-name descname">rename_column</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">old_name</em>, <em class="sig-param">new_name</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.rename_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the column name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.reset_index">
+<code class="sig-name descname">reset_index</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.reset_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the index, or a level of it.</p>
+<p>Reset the index of the DataFrame, and use the default one instead.
+If the DataFrame has a MultiIndex, this method can remove one or more
+levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>level</strong><span class="classifier">int, str, tuple, or list, default None</span></dt><dd><p>Only remove the given levels from the index. Removes all levels by
+default.</p>
+</dd>
+<dt><strong>drop</strong><span class="classifier">bool, default False</span></dt><dd><p>Do not try to insert index into dataframe columns. This resets
+the index to the default integer index.</p>
+</dd>
+<dt><strong>inplace</strong><span class="classifier">bool, default False</span></dt><dd><p>Modify the DataFrame in place (do not create a new object).</p>
+</dd>
+<dt><strong>col_level</strong><span class="classifier">int or str, default 0</span></dt><dd><p>If the columns have multiple levels, determines which level the
+labels are inserted into. By default it is inserted into the first
+level.</p>
+</dd>
+<dt><strong>col_fill</strong><span class="classifier">object, default ‘’</span></dt><dd><p>If the columns have multiple levels, determines how the other
+levels are named. If None then the index name is repeated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>DataFrame</dt><dd><p>DataFrame with the new index.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame.set_index</span></code></dt><dd><p>Opposite of reset_index.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame.reindex</span></code></dt><dd><p>Change to new indices or expand indices.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame.reindex_like</span></code></dt><dd><p>Change to same indices as other DataFrame.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="mf">389.0</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="mf">24.0</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="mf">80.5</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)],</span>
+<span class="gp">... </span>                  <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;falcon&#39;</span><span class="p">,</span> <span class="s1">&#39;parrot&#39;</span><span class="p">,</span> <span class="s1">&#39;lion&#39;</span><span class="p">,</span> <span class="s1">&#39;monkey&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                  <span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;max_speed&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span>
+<span class="go">         class  max_speed</span>
+<span class="go">falcon    bird      389.0</span>
+<span class="go">parrot    bird       24.0</span>
+<span class="go">lion    mammal       80.5</span>
+<span class="go">monkey  mammal        NaN</span>
+</pre></div>
+</div>
+<p>When we reset the index, the old index is added as a column, and a
+new sequential index is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="go">    index   class  max_speed</span>
+<span class="go">0  falcon    bird      389.0</span>
+<span class="go">1  parrot    bird       24.0</span>
+<span class="go">2    lion  mammal       80.5</span>
+<span class="go">3  monkey  mammal        NaN</span>
+</pre></div>
+</div>
+<p>We can use the <cite>drop</cite> parameter to avoid the old index being added as
+a column:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">    class  max_speed</span>
+<span class="go">0    bird      389.0</span>
+<span class="go">1    bird       24.0</span>
+<span class="go">2  mammal       80.5</span>
+<span class="go">3  mammal        NaN</span>
+</pre></div>
+</div>
+<p>You can also use <cite>reset_index</cite> with <cite>MultiIndex</cite>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="s1">&#39;falcon&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="s1">&#39;parrot&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="s1">&#39;lion&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="s1">&#39;monkey&#39;</span><span class="p">)],</span>
+<span class="gp">... </span>                                  <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s1">&#39;speed&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                                     <span class="p">(</span><span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="mf">389.0</span><span class="p">,</span> <span class="s1">&#39;fly&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span> <span class="mf">24.0</span><span class="p">,</span> <span class="s1">&#39;fly&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span> <span class="mf">80.5</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                   <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s1">&#39;jump&#39;</span><span class="p">)],</span>
+<span class="gp">... </span>                  <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span>
+<span class="go">               speed species</span>
+<span class="go">                 max    type</span>
+<span class="go">class  name</span>
+<span class="go">bird   falcon  389.0     fly</span>
+<span class="go">       parrot   24.0     fly</span>
+<span class="go">mammal lion     80.5     run</span>
+<span class="go">       monkey    NaN    jump</span>
+</pre></div>
+</div>
+<p>If the index has multiple levels, we can reset a subset of them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="go">         class  speed species</span>
+<span class="go">                  max    type</span>
+<span class="go">name</span>
+<span class="go">falcon    bird  389.0     fly</span>
+<span class="go">parrot    bird   24.0     fly</span>
+<span class="go">lion    mammal   80.5     run</span>
+<span class="go">monkey  mammal    NaN    jump</span>
+</pre></div>
+</div>
+<p>If we are not dropping the index, by default, it is placed in the top
+level. We can place it in another level:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">                speed species</span>
+<span class="go">         class    max    type</span>
+<span class="go">name</span>
+<span class="go">falcon    bird  389.0     fly</span>
+<span class="go">parrot    bird   24.0     fly</span>
+<span class="go">lion    mammal   80.5     run</span>
+<span class="go">monkey  mammal    NaN    jump</span>
+</pre></div>
+</div>
+<p>When the index is inserted under another level, we can specify under
+which one with the parameter <cite>col_fill</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">)</span>
+<span class="go">              species  speed species</span>
+<span class="go">                class    max    type</span>
+<span class="go">name</span>
+<span class="go">falcon           bird  389.0     fly</span>
+<span class="go">parrot           bird   24.0     fly</span>
+<span class="go">lion           mammal   80.5     run</span>
+<span class="go">monkey         mammal    NaN    jump</span>
+</pre></div>
+</div>
+<p>If we specify a nonexistent level for <cite>col_fill</cite>, it is created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;genus&#39;</span><span class="p">)</span>
+<span class="go">                genus  speed species</span>
+<span class="go">                class    max    type</span>
+<span class="go">name</span>
+<span class="go">falcon           bird  389.0     fly</span>
+<span class="go">parrot           bird   24.0     fly</span>
+<span class="go">lion           mammal   80.5     run</span>
+<span class="go">monkey         mammal    NaN    jump</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.sequences.DataSequence.sort_rows">
+<code class="sig-name descname">sort_rows</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">col_name</em>, <em class="sig-param">ascending=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.sort_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts the rows by numerical values in a column.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>col_name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Column name of values to be sorted by.</p>
+</dd>
+<dt><strong>ascending</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to sort ascending (or descending).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-libics.core.data.types">
+<span id="types"></span><h2>types<a class="headerlink" href="#module-libics.core.data.types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="libics.core.data.types.Quantity">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">Quantity</code><span class="sig-paren">(</span><em class="sig-param">name='N/A'</em>, <em class="sig-param">symbol=None</em>, <em class="sig-param">unit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data type for physical quantities (name and unit).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><cite>str</cite>, optional</span></dt><dd><p>Name of physical quantity.</p>
+</dd>
+<dt><strong>symbol</strong><span class="classifier">str or None, optional</span></dt><dd><p>Symbol of variable.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier"><cite>str</cite> or <cite>None</cite>, optional</span></dt><dd><p>Unit of physical quantity. None is interpreted as
+unitless quantity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 48%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>mathstr</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.core.data.types.Quantity.mathstr">
+<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.mathstr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.data.types.Result">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">Result</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Container class wrapping a dictionary and allowing access by attribute.</p>
+<p>Typical use case as a more complex results container.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code>(iterable[, value])</p></td>
+<td><p>Create a new dictionary with keys from iterable and values set to value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(self, key[, default])</p></td>
+<td><p>Return the value for key if key is in the dictionary, else default.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>()</p></td>
+<td><p>If key is not found, d is returned if given, otherwise KeyError is raised</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code>()</p></td>
+<td><p>2-tuple; but raise KeyError if D is empty.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code>(self, key[, default])</p></td>
+<td><p>Insert key with a value of default if key is not in the dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>()</p></td>
+<td><p>If E is present and has a .keys() method, then does:  for k in E: D[k] = E[k] If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v In either case, this is followed by: for k in F:  D[k] = F[k]</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 42%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>set_result</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.core.data.types.Result.set_result">
+<code class="sig-name descname">set_result</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Result.set_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.data.types.ValCheckDesc">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">ValCheckDesc</code><span class="sig-paren">(</span><em class="sig-param">allow_none=True</em>, <em class="sig-param">check_func=None</em>, <em class="sig-param">check_type=None</em>, <em class="sig-param">check_iter=None</em>, <em class="sig-param">check_min=None</em>, <em class="sig-param">check_max=None</em>, <em class="sig-param">assume_func=None</em>, <em class="sig-param">add_io_key=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValCheckDesc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Descriptor class for validity-checked attributes.</p>
+<p>Also provides an interface for data structure assumptions.
+Raises <cite>ValueError</cite> if invalid.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>allow_none</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to allow the <cite>None</cite> value regardless of other validity
+checks.</p>
+</dd>
+<dt><strong>check_func</strong><span class="classifier"><cite>callable</cite> or <cite>None</cite></span></dt><dd><p>Call signature: <cite>val_check(new_val)-&gt;bool</cite>.
+Should return <cite>True</cite> if valid and <cite>False</cite> if not.</p>
+</dd>
+<dt><strong>check_type</strong><span class="classifier"><cite>class</cite> or <cite>None</cite></span></dt><dd><p>Valid classes an object can be an instance of.</p>
+</dd>
+<dt><strong>check_iter</strong><span class="classifier"><cite>iterable</cite> or <cite>None</cite></span></dt><dd><p>Iterable containing valid values.</p>
+</dd>
+<dt><strong>check_min, check_max</strong><span class="classifier"><cite>object</cite> or <cite>None</cite></span></dt><dd><p>Objects implementing the <cite>&lt;=, &gt;=</cite> operators, which are checked against.
+Allows for vectorized values.</p>
+</dd>
+<dt><strong>assume_func</strong><span class="classifier"><cite>callable</cite> or <cite>None</cite></span></dt><dd><p>Function that changes the input into a data format the value should
+be stored in. Call signature: <cite>assume_func(new_val)-&gt;object</cite>.
+Is called after the check functions.</p>
+</dd>
+<dt><strong>add_io_key</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to include descriptor when serializing the owning class
+using the functions in <cite>libics.file.io</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.data.types.ValQuantity">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">ValQuantity</code><span class="sig-paren">(</span><em class="sig-param">name='N/A'</em>, <em class="sig-param">symbol=None</em>, <em class="sig-param">unit=None</em>, <em class="sig-param">val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.core.data.types.Quantity" title="libics.core.data.types.Quantity"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.types.Quantity</span></code></a></p>
+<p>Data type for physical quantities with values.</p>
+<p>Supports common arithmetic operations (<cite>+, -, *, /, //, %, **</cite>)
+and comparison operations (<cite>==, !=, &lt;, &lt;=, &gt;, &gt;=</cite>)
+with other <cite>ValQuantity</cite> objects or numeric values.
+Supports numeric casting into <cite>int, float, complex</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><cite>str</cite>, optional</span></dt><dd><p>Name of physical quantity.</p>
+</dd>
+<dt><strong>symbol</strong><span class="classifier">str or None, optional</span></dt><dd><p>Symbol of variable.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier"><cite>str</cite> or <cite>None</cite>, optional</span></dt><dd><p>Unit of physical quantity. None is interpreted as
+unitless quantity.</p>
+</dd>
+<dt><strong>val</strong></dt><dd><p>Value of physical quantity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 48%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>mathstr</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.ALL_OPS">
+<code class="sig-name descname">ALL_OPS</code><em class="property"> = ['+', '-', '*', '/', '//', '%', '**', '&amp;']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.ALL_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.CANCEL_OPS">
+<code class="sig-name descname">CANCEL_OPS</code><em class="property"> = ['/', '//']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.CANCEL_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.COMBINE_OPS">
+<code class="sig-name descname">COMBINE_OPS</code><em class="property"> = ['*']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.COMBINE_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.LINEAR_OPS">
+<code class="sig-name descname">LINEAR_OPS</code><em class="property"> = ['+', '-', '%', '&amp;']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.LINEAR_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.MATHSTR_OP">
+<code class="sig-name descname">MATHSTR_OP</code><em class="property"> = {'%': '\\mathrm{{mod}}', '&amp;': '&amp;', '*': '\\cdot', '**': '^', '+': '+', '-': '-', '/': '/', '//': '\\mathrm{{div}}'}</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.MATHSTR_OP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.NUMERIC_OPS">
+<code class="sig-name descname">NUMERIC_OPS</code><em class="property"> = ['**']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.NUMERIC_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="libics.core.data.types.ValQuantity.STR_OP">
+<code class="sig-name descname">STR_OP</code><em class="property"> = {'%': '%', '&amp;': '&amp;', '*': '*', '**': '**', '+': '+', '-': '-', '/': '/', '//': '//'}</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.STR_OP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.data.types.ValQuantity.mathstr">
+<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">val=True</em>, <em class="sig-param">val_format=None</em>, <em class="sig-param">unit_math=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity.mathstr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.core.data</a><ul>
+<li><a class="reference internal" href="#module-libics.core.data.arrays">arrays</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-libics.core.data.conversion">conversion</a></li>
+<li><a class="reference internal" href="#module-libics.core.data.graphs">graphs</a></li>
+<li><a class="reference internal" href="#module-libics.core.data.sequences">sequences</a></li>
+<li><a class="reference internal" href="#module-libics.core.data.types">types</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.core.data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

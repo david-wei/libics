@@ -32,8 +32,11 @@ class FFT_WINDOW:
 class DevSpectrum(DevBase):
 
     """
-    Properties
+    Attributes
     ----------
+    
+    **Properties**
+
     frequency_range : `(float, float)`
         Frequency range (start, stop) in Hertz (Hz).
     frequency_bins : `int`
@@ -112,8 +115,11 @@ class DevSpectrum(DevBase):
 class SpectrumAnalyzer(DevSpectrum):
 
     """
-    Properties
+    Attributes
     ----------
+
+    **Properties**
+
     power_max : `float`
         Maximum input power in Watt (W).
     """
@@ -168,8 +174,11 @@ class SpectrumAnalyzer(DevSpectrum):
 class FftAnalyzer(DevBase):
 
     """
-    Properties
+    Attributes
     ----------
+    
+    **Properties**
+
     input_coupling : `INPUT_COUPLING`
         Input port coupling (AC/DC).
     voltage_max : `float` or `None`

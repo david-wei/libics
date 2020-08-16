@@ -9,15 +9,18 @@ from libics.driver.device import DevBase
 class PiezoActuator(DevBase):
 
     """
-    Configuration
-    -------------
+    Attributes
+    ----------
+
+    **Configuration**
+
     channel : `int`
         Voltage channel.
     deformation_coeff : `float`
         Displacement-voltage ratio in meters per volt (m/V).
 
-    Properties
-    ----------
+    **Properties**
+
     voltage : `float`
         Voltage in volts (V).
     voltage_min, voltage_max : `float`
@@ -67,8 +70,11 @@ class PiezoActuator(DevBase):
 class Picomotor(DevBase):
 
     """
-    Configuration
-    -------------
+    Attributes
+    ----------
+
+    **Configuration**
+
     channel : `int`
         Motor axis.
     step_size : `float`
