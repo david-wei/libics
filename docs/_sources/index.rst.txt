@@ -10,15 +10,10 @@ Documentation of libics
    :maxdepth: 2
    :caption: Contents:
     
-   _dynamic/libics.cfg
-   _dynamic/libics.data.rst
-   _dynamic/libics.display.rst
-   _dynamic/libics.drv.rst
-   _dynamic/libics.env.rst
-   _dynamic/libics.file.rst
-   _dynamic/libics.func.rst
-   _dynamic/libics.trafo.rst
-   _dynamic/libics.util.rst
+   _dynamic/libics.env
+   _dynamic/libics.core
+   _dynamic/libics.driver
+   _dynamic/libics.tools
 
 .. automodule:: libics
     :members:

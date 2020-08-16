@@ -6,10 +6,26 @@ libics.env
     :undoc-members:
     :show-inheritance:
 
-colors
+constants
+---------
+
+.. automodule:: libics.env.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+logging
+-------
+
+.. automodule:: libics.env.logging
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+system
 ------
 
-.. automodule:: libics.env.colors
+.. automodule:: libics.env.system
     :members:
     :undoc-members:
     :show-inheritance:

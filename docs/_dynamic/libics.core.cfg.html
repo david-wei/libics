@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.core.cfg &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="libics.core" href="libics.core.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="libics.core.html" title="libics.core"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.core.cfg">
+<span id="libics-core-cfg"></span><h1>libics.core.cfg<a class="headerlink" href="#module-libics.core.cfg" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="libics.core.cfg.CfgBase">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">CfgBase</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
+<p>Configuration file base class.</p>
+<p>Attributes must be of built-in/primitive types or (subclasses of)
+<cite>CfgBase</cite>.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>(self)</p></td>
+<td><p>Default saved attributes getter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.cfg.CfgBase.get_items" title="libics.core.cfg.CfgBase.get_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_items</span></code></a>(self[, use_all])</p></td>
+<td><p>Gets configuration attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.cfg.CfgBase.load_cfg" title="libics.core.cfg.CfgBase.load_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_cfg</span></code></a>(self, file_path[, fmt, preserve_case])</p></td>
+<td><p>Loads a configuration text file to object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.cfg.CfgBase.map_recursive" title="libics.core.cfg.CfgBase.map_recursive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_recursive</span></code></a>(self[, item_func, cfg_func, …])</p></td>
+<td><p>Applies a function recursively on all configuration items.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.cfg.CfgBase.save_cfg" title="libics.core.cfg.CfgBase.save_cfg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_cfg</span></code></a>(self, file_path[, fmt, serialize_all])</p></td>
+<td><p>Saves the configuration object to a text file.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="libics.core.cfg.CfgBase.LOGGER">
+<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.core.cfg.CfgBase (WARNING)&gt;</em><a class="headerlink" href="#libics.core.cfg.CfgBase.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libics.core.cfg.CfgBase.get_items">
+<code class="sig-name descname">get_items</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">use_all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.get_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets configuration attributes.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>sub_cfgs</strong><span class="classifier"><cite>dict(str)</cite></span></dt><dd><p>Keys of attributes which are configurations themselves.</p>
+</dd>
+<dt><strong>item_cfgs</strong><span class="classifier"><cite>dict(str)</cite></span></dt><dd><p>Configuration item keys.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.cfg.CfgBase.load_cfg">
+<code class="sig-name descname">load_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">preserve_case=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.load_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a configuration text file to object.</p>
+<p>In contrast to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code> method, this method assumes no
+stored metadata.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Save file path.</p>
+</dd>
+<dt><strong>fmt</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>File format: <cite>“json”</cite>, <cite>“ini”</cite>, <cite>“yml”</cite>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the parsers. Notable arguments include:
+<cite>“ini”</cite>:</p>
+<blockquote>
+<div><p><cite>interpolation</cite>: <cite>None</cite> to raw parse <cite>%</cite>.
+<cite>strict</cite>: <cite>False</cite> to allow non-safe files.
+<cite>preserve_case</cite>: <cite>False</cite> to lowercase option names.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.cfg.CfgBase.map_recursive">
+<code class="sig-name descname">map_recursive</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">item_func=None</em>, <em class="sig-param">cfg_func=None</em>, <em class="sig-param">use_all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.map_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a function recursively on all configuration items.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>item_func</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Function which is recursively called on configuration items
+Sets its value to the function return value.
+Call signature: <cite>func(key, old_val)-&gt;new_val</cite>.</p>
+</dd>
+<dt><strong>cfg_func</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Function which is called on attributes which themselves are
+<cite>CfgBase</cite> objects.
+If the return value is <cite>False</cite>, recursively
+calls the <cite>map_recursive</cite> method on the attribute.
+If the return value is <cite>True</cite>, continues without further
+handling of the attribute.
+Call signature: <cite>func(key, sub_cfg)-&gt;bool</cite>.</p>
+</dd>
+<dt><strong>use_all</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to map all attributes or only the
+ones stated in <cite>SER_KEYS</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.core.cfg.CfgBase.save_cfg">
+<code class="sig-name descname">save_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">serialize_all=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.save_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the configuration object to a text file.</p>
+<p>In contrast to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code> method, this method does not
+save any metadata.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Save file path.</p>
+</dd>
+<dt><strong>fmt</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>File format: <cite>“json”</cite>, <cite>“ini”</cite>, <cite>“yml”</cite>.</p>
+</dd>
+<dt><strong>serialize_all</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to serialize all attributes or only the
+ones stated in <cite>SER_KEYS</cite>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to parsers. Notable arguments include:
+<cite>“json”</cite>: <cite>indent</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.cfg.NamedTuple">
+<code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">NamedTuple</code><span class="sig-paren">(</span><em class="sig-param">mapping</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.NamedTuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively converts mappings to nested named tuples.</p>
+<p>Named tuples are mapping objects (dicts) whose key-value pairs are
+accessible with attribute notation (e.g. object.attr_lvl0.attr_lvl1.key).
+Warning: converts all numeric keys to strings!</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>mapping</strong><span class="classifier"><cite>collections.Mapping</cite></span></dt><dd><p>Mapping object like dictionaries.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>named_tuple</strong><span class="classifier"><cite>collections.namedtuple</cite></span></dt><dd><p>Nested named tuple.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="libics.core.cfg.ProtectedDict">
+<em class="property">class </em><code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">ProtectedDict</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.ProtectedDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.UserDict</span></code></p>
+<p>Dictionary wrapper to make <a class="reference internal" href="#libics.core.cfg.NamedTuple" title="libics.core.cfg.NamedTuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></a> not convert it to
+a named tuple (to keep it as <cite>dict</cite>).</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(self, key[, default])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(self, key[, default])</p></td>
+<td><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code>(self)</p></td>
+<td><p>as a 2-tuple; but raise KeyError if D is empty.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code>(self, key[, default])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(\*args, \*\*kwds)</p></td>
+<td><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>(self)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>copy</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>fromkeys</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="libics.core.cfg.cv_mapping_to_namedtuple">
+<code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">cv_mapping_to_namedtuple</code><span class="sig-paren">(</span><em class="sig-param">mapping</em>, <em class="sig-param">name='NamedTuple'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.cv_mapping_to_namedtuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a mapping to a named tuple (non-recursively).</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="libics.core.html"
+                        title="previous chapter">libics.core</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.core.cfg.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="libics.core.html" title="libics.core"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

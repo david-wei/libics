@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>libics.driver.emulator &#8212; libics 1.0dev documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.driver.html" accesskey="U">libics.driver</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-libics.driver.emulator">
+<span id="libics-driver-emulator"></span><h1>libics.driver.emulator<a class="headerlink" href="#module-libics.driver.emulator" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="libics.driver.emulator.get_driver">
+<code class="sig-prename descclassname">libics.driver.emulator.</code><code class="sig-name descname">get_driver</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.get_driver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="libics.driver.emulator.get_manufacturer">
+<code class="sig-prename descclassname">libics.driver.emulator.</code><code class="sig-name descname">get_manufacturer</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.get_manufacturer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-libics.driver.emulator.base"></span><dl class="class">
+<dt id="libics.driver.emulator.base.ItfEmulator">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.emulator.base.</code><code class="sig-name descname">ItfEmulator</code><a class="headerlink" href="#libics.driver.emulator.base.ItfEmulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.interface.ItfBase</span></code></p>
+<p>Relays interface calls to the object’s own interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong></dt><dd></dd>
+<dt><strong>p</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self, \*\*cfg)</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(self, id)</p></td>
+<td><p>Connects to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deregister</span></code>(self[, id, dev])</p></td>
+<td><p>De-registers a device from the interface either by ID or object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span></code>(self)</p></td>
+<td><p>Gets all registered devices using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.base.ItfEmulator.discover" title="libics.driver.emulator.base.ItfEmulator.discover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">discover</span></code></a>(self)</p></td>
+<td><p>Discovers devices using the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code>(self)</p></td>
+<td><p>Checks whether device is connected.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.base.ItfEmulator.lock" title="libics.driver.emulator.base.ItfEmulator.lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lock</span></code></a>(self)</p></td>
+<td><p>Locks access to the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code>(self, id, dev)</p></td>
+<td><p>Registers a device using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.base.ItfEmulator.release" title="libics.driver.emulator.base.ItfEmulator.release"><code class="xref py py-obj docutils literal notranslate"><span class="pre">release</span></code></a>(self)</p></td>
+<td><p>Releases access lock to the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>(self)</p></td>
+<td><p>Instantiates the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.driver.emulator.base.ItfEmulator.discover">
+<code class="sig-name descname">discover</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.base.ItfEmulator.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discovers devices using the interface.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>devs</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>List of device IDs available on the interface.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.base.ItfEmulator.lock">
+<code class="sig-name descname">lock</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.base.ItfEmulator.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locks access to the interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.base.ItfEmulator.release">
+<code class="sig-name descname">release</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.base.ItfEmulator.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Releases access lock to the interface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="gpib">
+<h2>GPIB<a class="headerlink" href="#gpib" title="Permalink to this headline">¶</a></h2>
+<p><strong>prologix</strong></p>
+<span class="target" id="module-libics.driver.emulator.prologix"></span><dl class="class">
+<dt id="libics.driver.emulator.prologix.PrologixGpib">
+<em class="property">class </em><code class="sig-prename descclassname">libics.driver.emulator.prologix.</code><code class="sig-name descname">PrologixGpib</code><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.driver.emulator.base.ItfEmulator" title="libics.driver.emulator.base.ItfEmulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.emulator.base.ItfEmulator</span></code></a>, <a class="reference internal" href="libics.driver.terminal.html#libics.driver.terminal.gpib.ItfGpib" title="libics.driver.terminal.gpib.ItfGpib"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.terminal.gpib.ItfGpib</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong></dt><dd></dd>
+<dt><strong>p</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.close" title="libics.driver.emulator.prologix.PrologixGpib.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self[, itf])</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.connect" title="libics.driver.emulator.prologix.PrologixGpib.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(self, id)</p></td>
+<td><p>Connects to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deregister</span></code>(self[, id, dev])</p></td>
+<td><p>De-registers a device from the interface either by ID or object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span></code>(self)</p></td>
+<td><p>Gets all registered devices using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">discover</span></code>(self)</p></td>
+<td><p>Discovers devices using the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.flush_in" title="libics.driver.emulator.prologix.PrologixGpib.flush_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flush_in</span></code></a>(self)</p></td>
+<td><p>Flushes the input buffer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.flush_out" title="libics.driver.emulator.prologix.PrologixGpib.flush_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flush_out</span></code></a>(self)</p></td>
+<td><p>Flushes the output buffer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.is_connected" title="libics.driver.emulator.prologix.PrologixGpib.is_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code></a>(self)</p></td>
+<td><p>Checks whether device is connected.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.is_set_up" title="libics.driver.emulator.prologix.PrologixGpib.is_set_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code></a>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lock</span></code>(self)</p></td>
+<td><p>Locks access to the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(self, msg)</p></td>
+<td><p>Sends and receives a message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.recv" title="libics.driver.emulator.prologix.PrologixGpib.recv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recv</span></code></a>(self)</p></td>
+<td><p>Receives a message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code>(self, id, dev)</p></td>
+<td><p>Registers a device using the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">release</span></code>(self)</p></td>
+<td><p>Releases access lock to the interface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.send" title="libics.driver.emulator.prologix.PrologixGpib.send"><code class="xref py py-obj docutils literal notranslate"><span class="pre">send</span></code></a>(self, msg)</p></td>
+<td><p>Sends a message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.setup" title="libics.driver.emulator.prologix.PrologixGpib.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>(self)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.driver.emulator.prologix.PrologixGpib.shutdown" title="libics.driver.emulator.prologix.PrologixGpib.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code>(self, msg, val)</p></td>
+<td><p>Sends a message and checks for validation response.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes connection to the device.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Interface-unique device ID to disconnect from.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">id</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects to the device.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Interface-unique device ID to connect to.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.flush_in">
+<code class="sig-name descname">flush_in</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.flush_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes the input buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.flush_out">
+<code class="sig-name descname">flush_out</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.flush_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes the output buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.is_connected">
+<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether device is connected.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.is_set_up">
+<code class="sig-name descname">is_set_up</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.is_set_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether device is instantiated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.recv">
+<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.recv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives a message.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>msg</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Message string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>msg</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Message string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.setup" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If interface is not set.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libics.driver.emulator.prologix.PrologixGpib.shutdown">
+<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.emulator.prologix.PrologixGpib.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroys the device.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">libics.driver.emulator</a><ul>
+<li><a class="reference internal" href="#gpib">GPIB</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_dynamic/libics.driver.emulator.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="libics.driver.html" >libics.driver</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019-2020, David Wei.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

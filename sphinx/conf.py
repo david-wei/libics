@@ -20,13 +20,13 @@ sys.path.insert(0, os.path.abspath('../libics'))
 # -- Project information -----------------------------------------------------
 
 project = 'libics'
-copyright = '2019, David Wei'
+copyright = '2019-2020, David Wei'
 author = 'David Wei'
 
 # The short X.Y version
-version = '0.0'
+version = '1.0'
 # The full version, including alpha/beta/rc tags
-release = '0.0dev'
+release = '1.0dev'
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,9 +37,13 @@ release = '0.0dev'
 extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.githubpages',
+    #'sphinx.ext.napoleon'
     'numpydoc.numpydoc'
 ]
-# numpydoc_show_class_members = False
+#numpydoc_show_class_members = False
+#napoleon_google_docstring = False
+#napoleon_use_param = False
+#napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
