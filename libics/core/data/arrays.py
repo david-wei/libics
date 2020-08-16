@@ -209,17 +209,14 @@ class ArrayData(object):
         dim, mode = args
         if mode not in self.VAR_MODES:
             raise ValueError("invalid variable mode ({:s})".format(str(mode)))
-        if self.var_mode[dim] == self.RANGE:
-            if mode == self.POINTS:
-                self.set_dim(dim, points=self.get_points(dim))
-            elif mode == self.LINSPACE:
-                self.set_dim(
-                    dim, offset=self.get_offset(dim), step=self.get_step(dim)
-                )
-        elif self.var_mode[dim] == self.LINSPACE:
+        if self.var_mode[dim] in [self.RANGE, self.LINSPACE]:
             if mode == self.POINTS:
                 self.set_dim(dim, points=self.get_points(dim))
             elif mode == self.RANGE:
+                self.set_dim(
+                    dim, offset=self.get_offset(dim), step=self.get_step(dim)
+                )
+            elif mode == self.LINSPACE:
                 self.set_dim(
                     dim, low=self.get_low(dim), high=self.get_high(dim)
                 )
