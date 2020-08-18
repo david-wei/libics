@@ -501,6 +501,18 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return self._high[dim]
 
+    def max(self):
+        return np.max(self.data)
+
+    def min(self):
+        return np.min(self.data)
+
+    def mean(self):
+        return np.mean(self.data)
+
+    def std(self):
+        return np.std(self.data)
+
     def get_var_meshgrid(self, indexing="ij"):
         """
         Creates a `numpy` meshgrid for the variable dimensions.

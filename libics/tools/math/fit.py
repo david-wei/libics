@@ -36,16 +36,12 @@ def split_fit_data(data, func_dim=-1):
             (data.data[0:func_dim], data.data[func_dim + 1:])
         )
     else:
-        if isinstance(data, np.ndarray):
-            func_data = data
-        elif isinstance(data, ArrayData):
-            func_data = data.data
-        var_data = np.indices(func_data.shape)
         if isinstance(data, ArrayData):
-            for i in range(len(var_data)):
-                scale = data.scale.scale[i]
-                offset = data.scale.offset[i]
-                var_data[i] = var_data[i] * scale + offset
+            func_data = data.data
+            var_data = data.get_var_meshgrid()
+        else:
+            func_data = np.array(data)
+            var_data = np.indices(func_data.shape)
     return var_data, func_data
 
 

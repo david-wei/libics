@@ -1,11 +1,16 @@
 import numpy as np
 from scipy import ndimage, optimize
 
+from libics.env import logging
+from libics.core.io import FileBase
+from libics.tools.math.fit import split_fit_data
+from libics.tools.math.peaked import FitGaussian2dTilt
+
 
 ###############################################################################
 
 
-class AffineTrafo(object):
+class AffineTrafo(FileBase):
 
     """
     Defines an affine transformation in arbitrary dimensions.
@@ -19,6 +24,8 @@ class AffineTrafo(object):
 
     # TODO: transformation of array data.
     """
+
+    SER_KEYS = FileBase.SER_KEYS | {"matrix", "offset"}
 
     def __init__(
         self,
@@ -132,6 +139,204 @@ class AffineTrafo(object):
             image, inv_matrix, offset=inv_offset, output_shape=shape,
             order=order, mode="constant", cval=0.0
         )
+
+
+class AffineTrafo2d(AffineTrafo):
+
+    """
+    Maps origin pixel positions to target pixels positions.
+
+    Convention: ``target_coord = matrix * origin_coord + offset``.
+
+    Usage:
+
+    * Take images for different single-pixel illuminations.
+    * Calculate transformation parameters with :py:meth:`calc_trafo`.
+    * Perform transforms with call method
+      (or :py:meth:`cv_to_target`, :py:meth:`cv_to_origin`).
+    """
+
+    LOGGER = logging.get_logger("libics.tools.trafo.linear.AffineTrafo2d")
+
+    def __init__(
+        self,
+        matrix=np.diag([1, 1]).astype(float),
+        offset=np.array([0, 0], dtype=float)
+    ):
+        self._matrix = None
+        self._offset = None
+        self._matrix_scale = None
+        self._matrix_rotation = None
+        self._matrix_shear = None
+        super().__init__(matrix=matrix, offset=offset)
+
+    @property
+    def matrix(self):
+        return self._matrix
+
+    @matrix.setter
+    def matrix(self, val):
+        self._matrix = val
+        mat_dec = self._decompose_matrix(val)
+        self._matrix_scale, self._matrix_shear, self._matrix_rotation = mat_dec
+
+    @property
+    def origin_scale(self):
+        pass
+
+    @property
+    def target_scale(self):
+        pass
+
+    @property
+    def matrix_scale(self):
+        return self._matrix_scale
+
+    @property
+    def origin_shear(self):
+        pass
+
+    @property
+    def target_shear(self):
+        pass
+
+    @property
+    def matrix_shear(self):
+        return self._matrix_shear
+
+    @property
+    def origin_rotation(self):
+        pass
+
+    @property
+    def target_rotation(self):
+        pass
+
+    @property
+    def matrix_rotation(self):
+        return self._matrix_rotation
+
+    @property
+    def origin_offset(self):
+        pass
+
+    @property
+    def target_offset(self):
+        pass
+
+    @staticmethod
+    def _decompose_matrix(mat):
+        """
+        Decomposes an affine transformation matrix.
+
+        Parameters
+        ----------
+        mat : `np.ndarray(2, float)`
+            Affine transformation matrix.
+
+        Returns
+        -------
+        mat_scale, mat_shear, mat_rotation : `np.ndarray(2, float)`
+            Scaling, shear, rotation matrices.
+            Matrices are applied in above order,
+            i.e. ``M_rot M_shear M_scale vec``.
+        """
+        raise NotImplementedError
+
+    def fit_peak_coordinates(self, image, snr=1.5):
+        """
+        Uses a Gaussian fit to obtain the peak coordinates of an image.
+
+        Parameters
+        ----------
+        image : `np.ndarray(2, float)` or `ArrayData`
+            Image to be analyzed.
+        snr : `float`
+            Maximum-to-mean ratio required for fit.
+
+        Returns
+        -------
+        x, y : float, None
+            (Fractional) image index coordinates of fit position.
+            None: If fit failed.
+        """
+        max_, mean, sum_ = image.max(), image.mean(), image.sum()
+        if (max_ == 0 or mean == 0 or max_ / mean < snr
+                or max_ / sum_ < 1 / 100**2):
+            self.LOGGER.warning("fit_peak_coordinates: insufficient SNR")
+            return None
+        try:
+            self.LOGGER.debug("fit_peak_coordinates: fitting curve")
+            _fit = FitGaussian2dTilt()
+            _data = split_fit_data(image)
+            _fit.find_init_param(*_data)
+            _fit.find_fit(*_data)
+            x, y = _fit.param[0], _fit.param[1]
+            dx, dy = _fit.std[0], _fit.std[1]
+        except (TypeError, RuntimeError) as e:
+            self.LOGGER.warning(
+                "fit_peak_coordinates: fit failed ({:s})".format(str(e))
+            )
+            return None
+        x, y = abs(x), abs(y)
+        if (x != 0 and dx / x > 0.2) or (y != 0 and dy / y > 0.2):
+            self.LOGGER.warning("fit_peak_coordinates: did not converge")
+            return None
+        return np.array([x, y])
+
+    def calc_trafo(self, origin, target, **kwargs):
+        """
+        Estimates the transformation parameters.
+
+        If images are passed, a 2D Gaussian fit is applied.
+
+        Parameters
+        ----------
+        origin : `list(np.ndarray(2, float) or (x, y))`
+            List of origin images or coordinates.
+        target : `list(np.ndarray(2, float) or (x, y))`
+            List of target images or coordinates.
+        **kwargs
+            Keyword arguments passed to :py:meth:`fit_peak_coordinates`.
+
+        Returns
+        -------
+        ret : `bool`
+            Whether calculation was successful.
+
+        Notes
+        -----
+        * Coordinate and image order must be identical.
+        * At least two images are required. Additional data is used to obtain
+          a more accurate map.
+        """
+        if min(len(origin), len(target)) <= 1:
+            raise ValueError("not enough images or coordinates")
+        if len(origin) != len(target):
+            self.LOGGER.warning("unequal origin/target list length")
+        origin_coords = []
+        target_coords = []
+        for i in range(min(len(origin), len(target))):
+            _origin = np.array(origin[i], dtype=float)
+            _target = np.array(target[i], dtype=float)
+            if _origin.ndim != 1:
+                _origin = self.fit_peak_coordinates(_origin, **kwargs)
+                if _origin is None:
+                    continue
+            if _target.ndim != 1:
+                _target = self.fit_peak_coordinates(_target, **kwargs)
+                if _target is None:
+                    continue
+            origin_coords.append(_origin)
+            target_coords.append(_target)
+        origin_coords = np.array(origin_coords)
+        target_coords = np.array(target_coords)
+        if len(origin_coords) >= 2:
+            self.fit_affine_transform(origin_coords, target_coords)
+            return True
+        else:
+            self.LOGGER.warning("not enough coordinates extracted from images")
+            return False
 
 
 ###############################################################################
