@@ -55,7 +55,7 @@ class ArrayData(object):
 
     def __init__(self):
         # Data
-        self.data_quantity = None
+        self.set_data_quantity()
         self._data = np.empty(0)
         # Variable
         self.var_quantity = []

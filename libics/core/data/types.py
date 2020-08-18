@@ -86,6 +86,18 @@ class Quantity(object):
             s += r" ($\mathregular{" + self.unit + r"}$)"
         return s
 
+    def labelstr(self, math=True, **kwargs):
+        if self.has_name():
+            if math is True:
+                return self.mathstr(**kwargs)
+            else:
+                return str(self)
+        else:
+            return None
+
+    def has_name(self):
+        return self.name != NO_NAME
+
     # +++++++++++++++++
     # Binary operations
     # +++++++++++++++++

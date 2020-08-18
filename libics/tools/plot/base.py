@@ -325,7 +325,7 @@ def pcolormesh(
                 art, ax=ax, cax=colorbar, orientation=cb_orientation
             )
         if isinstance(clabel, str):
-            cb.set_label(clabel)
+            cb.set_label(misc.capitalize_first_char(clabel))
     return art
 
 
@@ -396,7 +396,7 @@ def contourf(
                 art, ax=ax, cax=colorbar, orientation=cb_orientation
             )
         if isinstance(clabel, str):
-            cb.set_label(clabel)
+            cb.set_label(misc.capitalize_first_char(clabel))
     return art
 
 
@@ -433,14 +433,14 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].get_points(0)
             data_dict["y"] = data[0].data
-            data_dict["xlabel"] = data[0].var_quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].var_quantity[0].labelstr()
+            data_dict["ylabel"] = data[0].data_quantity.labelstr()
         # (SD)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
             data_dict["y"] = data[0].data[1]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].quantity[1].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr()
+            data_dict["ylabel"] = data[0].quantity[1].labelstr()
         # (AR)
         else:
             data_dict["x"] = np.arange(len(data[0]))
@@ -450,18 +450,18 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
         # (AD, ...)
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].data
-            data_dict["xlabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].data_quantity.labelstr()
         # (SD, ...)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr()
         # (AR, ...):
         else:
             data_dict["x"] = data[0]
         # (..., AD)
         if isinstance(data[1], ArrayData):
             data_dict["y"] = data[1].data
-            data_dict["ylabel"] = data[1].data_quantity.mathstr()
+            data_dict["ylabel"] = data[1].data_quantity.labelstr()
         # (..., SD)
         elif isinstance(data[1], SeriesData):
             data_dict["y"] = data[1].data[0]
@@ -509,9 +509,9 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         if isinstance(data[0], ArrayData):
             data_dict["x"], data_dict["y"] = data[0].get_var_meshgrid()
             data_dict["c"] = data[0].data
-            data_dict["xlabel"] = data[0].var_quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].var_quantity[1].mathstr()
-            data_dict["clabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].var_quantity[0].labelstr()
+            data_dict["ylabel"] = data[0].var_quantity[1].labelstr()
+            data_dict["clabel"] = data[0].data_quantity.labelstr()
         # (AR)
         else:
             _data0 = np.array(data[0])
@@ -523,29 +523,29 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         # (AD, ...)
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].data
-            data_dict["xlabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].data_quantity.labelstr()
         # (SD, ...)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr()
         # (AR, ...):
         else:
             data_dict["x"] = data[0]
         # (..., AD, ...)
         if isinstance(data[1], ArrayData):
             data_dict["y"] = data[1].data
-            data_dict["ylabel"] = data[1].data_quantity.mathstr()
+            data_dict["ylabel"] = data[1].data_quantity.labelstr()
         # (..., SD, ...)
         elif isinstance(data[1], SeriesData):
             data_dict["y"] = data[1].data[0]
-            data_dict["ylabel"] = data[1].quantity[0].mathstr()
+            data_dict["ylabel"] = data[1].quantity[0].labelstr()
         # (..., AR, ...):
         else:
             data_dict["y"] = data[1]
         # (..., AD)
         if isinstance(data[2], ArrayData):
             data_dict["c"] = data[2].data
-            data_dict["clabel"] = data[2].data_quantity.mathstr()
+            data_dict["clabel"] = data[2].data_quantity.labelstr()
         # (..., AR)
         else:
             data_dict["c"] = data[2]
