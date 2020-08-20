@@ -258,6 +258,15 @@ def plot(
     return art
 
 
+def scatter(*args, marker="O", linestyle="None", **kwargs):
+    """
+    Wrapper for :py:func:`plot`.
+
+    Defaults to markers instead of lines.
+    """
+    return plot(*args, linestyle=linestyle, marker=marker, **kwargs)
+
+
 def pcolormesh(
     *data, x=None, y=None, c=None,
     xlabel=True, ylabel=True, title=None,
@@ -327,6 +336,15 @@ def pcolormesh(
         if isinstance(clabel, str):
             cb.set_label(misc.capitalize_first_char(clabel))
     return art
+
+
+def pcolorim(*args, aspect=1, **kwargs):
+    """
+    Wrapper for :py:func:`pcolormesh`.
+
+    Defaults to a common aspect ratio.
+    """
+    return pcolormesh(*args, aspect=aspect, **kwargs)
 
 
 def contourf(
@@ -515,8 +533,11 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         # (AR)
         else:
             _data0 = np.array(data[0])
-            data_dict["x"] = np.arange(_data0.shape[0])
-            data_dict["y"] = np.arange(_data0.shape[1])
+            _meshgrid0 = np.meshgrid(
+                np.arange(_data0.shape[0]), np.arange(_data0.shape[1]),
+                indexing="ij"
+            )
+            data_dict["x"], data_dict["y"] = _meshgrid0
             data_dict["c"] = _data0
     # Three parameters
     elif len(data) == 3:
