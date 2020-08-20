@@ -97,7 +97,25 @@ DIR_LIBICS = ASSUME_DIR(DIR_HOME, ".libics")
 FILE_DIRS = ASSUME_FILE(DIR_LIBICS, "env.dirs.json")
 DIRS = READ_JSON(FILE_DIRS)
 FILE_CONFIG = ASSUME_FILE(DIR_LIBICS, "env.config.json")
+FILE_CONFIG_OLD = os.path.join(DIR_LIBICS, "env.config_old.json")
 CONFIG = READ_JSON(FILE_CONFIG)
+
+
+def ASSUME_CONFIG_ITEM(key, val):
+    global CONFIG
+    if key not in CONFIG:
+        CONFIG[key] = val
+
+
+def WRITE_CONFIG(copy_to_old=True):
+    global CONFIG
+    global FILE_CONFIG
+    global FILE_CONFIG_OLD
+    if copy_to_old:
+        if os.path.exists(FILE_CONFIG_OLD):
+            os.remove(FILE_CONFIG_OLD)
+        shutil.copyfile(FILE_CONFIG, FILE_CONFIG_OLD)
+    WRITE_JSON(FILE_CONFIG, CONFIG)
 
 
 ###############################################################################
