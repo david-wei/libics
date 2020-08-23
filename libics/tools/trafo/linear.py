@@ -2,6 +2,7 @@ import numpy as np
 from scipy import ndimage, optimize
 
 from libics.env import logging
+from libics.core.data.arrays import ArrayData
 from libics.core.io import FileBase
 from libics.tools.math.fit import split_fit_data
 from libics.tools.math.peaked import FitGaussian2dTilt
@@ -17,12 +18,10 @@ class AffineTrafo(FileBase):
 
     Parameters
     ----------
-    matrix : np.ndarray(2, float)
+    matrix : `np.ndarray(2, float)`
         Transformation matrix.
-    offset : np.ndarray(1, float)
+    offset : `np.ndarray(1, float)`
         Transformation offset.
-
-    # TODO: transformation of array data.
     """
 
     SER_KEYS = FileBase.SER_KEYS | {"matrix", "offset"}
@@ -35,30 +34,47 @@ class AffineTrafo(FileBase):
         self.matrix = matrix
         self.offset = offset
 
+    @property
+    def matrix_to_target(self):
+        return self.matrix
+
+    @property
+    def matrix_to_origin(self):
+        return np.linalg.inv(self.matrix)
+
+    @property
+    def offset_to_target(self):
+        return self.offset
+
+    @property
+    def offset_to_origin(self):
+        return -np.dot(self.matrix_to_origin, self.offset)
+
     def fit_affine_transform(self, origin_coords, target_coords):
         """
         Fits the affine transform matrix and offset vector.
 
         Parameters
         ----------
-        origin_coords, target_coords : list(np.ndarray(1, float))
+        origin_coords, target_coords : `list(np.ndarray(1, float))`
             List of (origin, target) coordinates in corresponding order.
 
         Returns
         -------
-        success : bool
+        success : `bool`
             Whether transformation fit succeeded.
             Matrix and offset attributes are only written
             in the case of success.
 
         Notes
         -----
-        Following H. Späth, Math. Com. 9 (1), 27-34.
+        Following H. Späth, Math. Com. 9 (1), 27-34 (2004).
         Variable naming convention:
-        * q: origin coordinates.
-        * p: target coordinates.
-        * m: transform matrix.
-        * b: transform offset.
+
+        * `q`: origin coordinates.
+        * `p`: target coordinates.
+        * `m`: transform matrix.
+        * `b`: transform offset.
         """
         # Variables
         q = np.array([
@@ -86,59 +102,177 @@ class AffineTrafo(FileBase):
 
     # ++++ Perform transformation ++++
 
-    def __call__(self, image, shape, order=3, direction="to_target"):
+    def __call__(self, *args, direction="to_target", **kwargs):
+        """
+        Performs a transformation.
+
+        Parameters
+        ----------
+        direction : `string`
+            `"to_target"`: see :py:meth:`cv_to_target`.
+            `"to_origin"`: see :py:meth:`cv_to_origin`.
+        """
         if direction == "to_target":
-            return self.cv_to_target(image, shape, order=order)
+            return self.cv_to_target(*args, **kwargs)
         elif direction == "to_origin":
-            return self.cv_to_origin(image, shape, order=order)
+            return self.cv_to_origin(*args, **kwargs)
 
-    def cv_to_origin(self, image, shape, order=3):
+    def cv_to_origin(
+        self, target_array, origin_shape, centered=False, supersample=None,
+        **kwargs
+    ):
         """
-        Convert an image in target coordinates to origin coordinates.
+        Convert an array in target coordinates to origin coordinates.
+
+        See :py:meth:`cv_to_target`.
+        """
+        matrix = np.linalg.inv(self.matrix)
+        offset = -np.dot(matrix, self.offset)
+        return self._cv_array(
+            target_array, origin_shape, matrix, offset,
+            centered=centered, supersample=supersample, **kwargs
+        )
+
+    def cv_to_target(
+        self, origin_array, target_shape, centered=False, supersample=None,
+        **kwargs
+    ):
+        """
+        Convert an array in origin coordinates to target coordinates.
 
         Parameters
         ----------
-        image : np.ndarray(2, float)
-            Image in target coordinates.
-        shape : tuple(int)
-            Shape of trafo_image.
-        order : int
-            Spline interpolation order.
+        origin_array : `np.ndarray(float)` or `ArrayData(float)`
+            Array in origin coordinates.
+        target_shape : `tuple(int)` or `ArrayData(float)`
+            Shape of target array.
+            If `ArrayData`, loads the transformed array into this object.
+        centered : `bool`
+            Only relevant if `target_shape` is `tuple(int)`.
+            If `True`, sets the origin zero to the center of the array.
+            Otherwise assumes the center to be at index `(0, 0)`.
+        supersample : `int`
+            Origin array supersampling repetitions (for sharper edges).
+        **kwargs
+            See scipy documentation for ``scipy.ndimage.map_coordinates``.
+            Notable options: `order : int` (interpolation order).
 
         Returns
         -------
-        trafo_image : np.ndarray(2, float)
-            Image in origin coordinates.
+        target_array : `np.ndarray(float)` or `ArrayData(float)`
+            Array transformed to target coordinates.
+            Return type depends on `target_shape` type.
+
+        Notes
+        -----
+        * Performs subsequent transformations from image to origin to target
+          coordinates.
+        * Interpolates into the requested target shape.
+        * For algorithm see :py:meth:`_cv_array`.
         """
-        return ndimage.affine_transform(
-            image, self.matrix, offset=self.offset, output_shape=shape,
-            order=order, mode="constant", cval=0.0
+        return self._cv_array(
+            origin_array, target_shape, self.matrix, self.offset,
+            centered=centered, supersample=supersample, **kwargs
         )
 
-    def cv_to_target(self, image, shape, order=3):
-        """
-        Convert an image in origin coordinates to target coordinates.
+    @staticmethod
+    def _cv_array(
+        from_array, to_shape, matrix, offset, centered=False, supersample=None,
+        **kwargs
+    ):
+        r"""
+        Performs the affine transformation.
 
-        Parameters
-        ----------
-        image : np.ndarray(2, float)
-            Image in origin coordinates.
-        shape : tuple(int)
-            Shape of trafo_image.
-        order : int
-            Spline interpolation order.
+        For parameters see :py:meth:`cv_to_target` as example.
 
-        Returns
-        -------
-        trafo_image : np.ndarray(2, float)
-            Image in target coordinates.
+        Notes
+        -----
+        Variables: coordinate :math:`\mathbf{c}`, to-system :math:`t`,
+        from-system :math:`f`, image-system :math:`i`,
+        transformation matrix :math:`\mathrm{M}`,
+        transformation offset :math:`\mathbf{b}`.
+
+        .. math::
+            \mathbf{c}_t = \mathrm{M}_{ti}\mathbf{c}_i+\mathbf{b}_{ti},\\
+            \mathrm{M}_{ti} = \mathrm{M}_{tf}\mathrm{M}_{fi},\\
+            \mathbf{b}_{ti} = \mathrm{M}_{tf}\mathbf{b}_{fi}+\mathbf{b}_{tf},\\
+            \mathbf{c}_i = \mathrm{M}_{ti}^{-1}\mathbf{c}_t
+                           - \mathrm{M}_{ti}^{-1}\mathbf{b}_{ti}.
         """
-        inv_matrix = np.linalg.inv(self.matrix)
-        inv_offset = -np.dot(inv_matrix, self.offset)
-        return ndimage.affine_transform(
-            image, inv_matrix, offset=inv_offset, output_shape=shape,
-            order=order, mode="constant", cval=0.0
+        # Extract from_array parameters
+        if not isinstance(from_array, ArrayData):
+            _from_array = ArrayData()
+            if centered is True:
+                for i in range(from_array.ndim):
+                    _from_array.add_dim(
+                        offset=(from_array.shape[i] - 1) / 2, step=1
+                    )
+            else:
+                _from_array.add_dim(from_array.ndim)
+            _from_array.data = from_array
+            from_array = _from_array
+
+        _step = np.array(from_array.step)
+        _low = np.array(from_array.low)
+        _from = from_array.data
+
+        if supersample is not None:
+            supersample = round(supersample)
+            _step = _step / supersample
+            _low = _low - _step / supersample / 2
+            _from = AffineTrafo._supersample(_from, supersample)
+        # Extract to_shape parameters
+        if isinstance(to_shape, ArrayData):
+            _coord_t = to_shape.get_var_meshgrid()
+        else:
+            if centered is True:
+                _coord_t = np.array(np.meshgrid(*[
+                    np.arange(s) - s // 2 for s in to_shape
+                ], indexing="ij"), dtype=float)
+            else:
+                _coord_t = np.indices(to_shape, dtype=float)
+        # Linear transform origin to target
+        mtf = matrix
+        btf = offset
+        # Linear transform image to origin
+        mfi = np.diag(_step)
+        bfi = _low
+        # Linear transform image to target
+        mti = np.dot(mtf, mfi)
+        bti = np.dot(mtf, bfi) + btf
+        # Coordinate transformation
+        ct = _coord_t
+        ci = np.einsum(
+            "ij,j...->i...",
+            np.linalg.inv(mti),
+            ct - AffineTrafo._append_dims(bti, ct.ndim - 1)
         )
+        _to = ndimage.map_coordinates(_from, ci, **kwargs)
+        # Return transformed array
+        if isinstance(to_shape, ArrayData):
+            to_shape.data = _to
+            return to_shape
+        else:
+            return _to
+
+    @staticmethod
+    def _append_dims(ar, dims=1):
+        """Appends `dims` empty dimensions to the given numpy `ar`ray."""
+        return ar.reshape((-1,) + (1,) * dims)
+
+    @staticmethod
+    def _supersample(ar, rep):
+        """Supersamples an `ar`ray in all dimensions by `rep`etitions."""
+        ar = np.array(ar)
+        if not np.isscalar(rep):
+            rep = int(round(rep))
+        if rep == 1:
+            return ar
+        elif rep < 1:
+            raise ValueError(f"invalid repetitions {str(rep):s}")
+        for i in range(ar.ndim):
+            ar = ar.repeat(rep, axis=i)
+        return ar
 
 
 class AffineTrafo2d(AffineTrafo):
@@ -163,85 +297,115 @@ class AffineTrafo2d(AffineTrafo):
         matrix=np.diag([1, 1]).astype(float),
         offset=np.array([0, 0], dtype=float)
     ):
-        self._matrix = None
-        self._offset = None
-        self._matrix_scale = None
-        self._matrix_rotation = None
-        self._matrix_shear = None
         super().__init__(matrix=matrix, offset=offset)
 
-    @property
-    def matrix(self):
-        return self._matrix
-
-    @matrix.setter
-    def matrix(self, val):
-        self._matrix = val
-        mat_dec = self._decompose_matrix(val)
-        self._matrix_scale, self._matrix_shear, self._matrix_rotation = mat_dec
-
-    @property
-    def origin_scale(self):
-        pass
-
-    @property
-    def target_scale(self):
-        pass
-
-    @property
-    def matrix_scale(self):
-        return self._matrix_scale
-
-    @property
-    def origin_shear(self):
-        pass
-
-    @property
-    def target_shear(self):
-        pass
-
-    @property
-    def matrix_shear(self):
-        return self._matrix_shear
-
-    @property
-    def origin_rotation(self):
-        pass
-
-    @property
-    def target_rotation(self):
-        pass
-
-    @property
-    def matrix_rotation(self):
-        return self._matrix_rotation
-
-    @property
-    def origin_offset(self):
-        pass
-
-    @property
-    def target_offset(self):
-        pass
-
-    @staticmethod
-    def _decompose_matrix(mat):
+    def set_target_axes(
+        self,
+        magnification=np.ones(2, dtype=float),
+        angle=np.zeros(2, dtype=float),
+        offset=np.zeros(2, dtype=float)
+    ):
         """
-        Decomposes an affine transformation matrix.
+        Sets the target coordinate system axes.
 
         Parameters
         ----------
-        mat : `np.ndarray(2, float)`
-            Affine transformation matrix.
+        magnification : `(float, float)`
+            Length of unit vectors in origin units.
+        angle : `(float, float)`
+            Angle of unit vectors with respect to origin axes in radians (rad).
+        offset : `(float, float)`
+            Coordinate system zero position in origin units.
+        """
+        # Coordinates: (u, v) target, (x, y) origin
+        # Transformation: c_t = M_to c_o + b_to
+        mu, mv = magnification
+        thu, thv = angle
+        bot = offset
+        mot = np.array([
+            [mu * np.cos(thu), -mv * np.sin(thv)],
+            [mu * np.sin(thu), mv * np.cos(thv)]
+        ])
+        self.matrix = np.linalg.inv(mot)
+        self.offset = -np.dot(self.matrix, bot)
 
+    def get_target_axes(self):
+        """
         Returns
         -------
-        mat_scale, mat_shear, mat_rotation : `np.ndarray(2, float)`
-            Scaling, shear, rotation matrices.
-            Matrices are applied in above order,
-            i.e. ``M_rot M_shear M_scale vec``.
+        magnification : `(float, float)`
+            Length of unit vectors in origin units.
+        angle : `(float, float)`
+            Angle of unit vectors with respect to origin axes in radians (rad).
+        offset : `(float, float)`
+            Coordinate system zero position in origin units.
         """
-        raise NotImplementedError
+        mot = self.matrix_to_origin
+        bot = self.offset_to_origin
+        thu = np.atan2(mot[1, 0], mot[0, 0])
+        thv = np.atan2(-mot[0, 1], mot[1, 1])
+        mu = np.sqrt(mot[0, 0]**2 + mot[1, 0]**2)
+        mv = np.sqrt(mot[0, 1]**2 + mot[1, 1]**2)
+        return (
+            np.array([mu, mv]),
+            np.array([thu, thv]),
+            np.array(bot)
+        )
+
+    def set_origin_axes(
+        self,
+        magnification=np.ones(2, dtype=float),
+        angle=np.zeros(2, dtype=float),
+        offset=np.zeros(2, dtype=float)
+    ):
+        """
+        Sets the origin coordinate system axes.
+
+        Parameters
+        ----------
+        magnification : `(float, float)`
+            Length of unit vectors in target units.
+        angle : `(float, float)`
+            Angle of unit vectors with respect to target axes in radians (rad).
+        offset : `(float, float)`
+            Coordinate system zero position in target units.
+        """
+        # Coordinates: (u, v) target, (x, y) origin
+        # Transformation: c_t = M_to c_o + b_to
+        mx, my = magnification
+        thx, thy = angle
+        bto = offset
+        mto = np.array([
+            [mx * np.cos(thx), -my * np.sin(thy)],
+            [mx * np.sin(thx), my * np.cos(thy)]
+        ])
+        self.matrix = mto
+        self.offset = bto
+
+    def get_origin_axes(self):
+        """
+        Returns
+        -------
+        magnification : `(float, float)`
+            Length of unit vectors in target units.
+        angle : `(float, float)`
+            Angle of unit vectors with respect to target axes in radians (rad).
+        offset : `(float, float)`
+            Coordinate system zero position in target units.
+        """
+        mto = self.matrix_to_target
+        bto = self.offset_to_target
+        thx = np.atan2(mto[1, 0], mto[0, 0])
+        thy = np.atan2(-mto[0, 1], mto[1, 1])
+        mx = np.sqrt(mto[0, 0]**2 + mto[1, 0]**2)
+        my = np.sqrt(mto[0, 1]**2 + mto[1, 1]**2)
+        return (
+            np.array([mx, my]),
+            np.array([thx, thy]),
+            np.array(bto)
+        )
+
+    # +++++++++++++++++++++++++++++++++++++++++
 
     def fit_peak_coordinates(self, image, snr=1.5):
         """
