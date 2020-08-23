@@ -22,11 +22,15 @@ class ArrayData(object):
 
     Object creation:
 
-    1. Instantiate an `ArrayData` object.
-    2. Optional: Define the dimensions of the data using :py:meth:`add_dim`
-       by specifying the metadata and scaling behaviour.
-    3. Set the data using the :py:attr:`data` attribute. Default dimensions
-       are added or removed if they are not commensurate.
+    * Instantiate an `ArrayData` object.
+    * Optional: Define the dimensions of the data using :py:meth:`add_dim`
+      by specifying the metadata and scaling behavior.
+    * Set the data using the :py:attr:`data` attribute. Default dimensions
+      are added or removed if they are not commensurate.
+    * Alternative: This class can also be used to specify the variables
+      (i.e. array indices) only, metadata and scaling behavior are set
+      accordingly. Instead of setting the data, the attribute
+      :py:attr`var_shape` can be set.
 
     Object modification:
 
@@ -57,6 +61,7 @@ class ArrayData(object):
         # Data
         self.set_data_quantity()
         self._data = np.empty(0)
+        self._placeholder_shape = tuple()
         # Variable
         self.var_quantity = []
         self.var_mode = []
@@ -392,7 +397,7 @@ class ArrayData(object):
             return self._points[dim]
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = (self.shape[dim] - 0.9) * _step
+            _range = (self.var_shape[dim] - 0.9) * _step
             if self._offset[dim] is not None:
                 _offset = self._offset[dim]
             else:
@@ -400,7 +405,7 @@ class ArrayData(object):
             _stop = _offset + _range + 0.1 * _step
             return np.arange(_offset, _stop, _step)
         elif self.var_mode[dim] == self.LINSPACE:
-            _num = self.shape[dim]
+            _num = self.var_shape[dim]
             return np.linspace(self._low[dim], self._high[dim], num=_num)
         else:
             raise ValueError("invalid mode: {:s}".format(str(self.var_mode)))
@@ -459,7 +464,9 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.RANGE:
             return self._step[dim]
         elif self.var_mode[dim] == self.LINSPACE:
-            return (self._high[dim] - self._low[dim]) / (self.shape[dim] - 1)
+            return (
+                (self._high[dim] - self._low[dim]) / (self.var_shape[dim] - 1)
+            )
 
     def get_low(self, dim):
         """
@@ -475,7 +482,7 @@ class ArrayData(object):
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = self.var_shape[dim] * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -492,7 +499,7 @@ class ArrayData(object):
             return np.min(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = self.shape[dim] * _step
+            _range = self.var_shape[dim] * _step
             if self._offset[dim] is not None:
                 return self._offset[dim] + _range
             else:
@@ -535,49 +542,73 @@ class ArrayData(object):
 
     @property
     def ndim(self):
+        """Data array ndim."""
         return self._data.ndim
 
     @property
     def var_ndim(self):
+        """Variable ndim."""
         return len(self.var_mode)
 
     @property
     def total_ndim(self):
+        """Total ndim (variable and data dimension)."""
         return self.ndim + 1
 
     @property
     def shape(self):
+        """Data array shape."""
         return self._data.shape
 
+    @property
+    def var_shape(self):
+        """Variable (placeholder) shape. Is updated upon setting `data`."""
+        if self.ndim == self.var_ndim:
+            return self.shape
+        else:
+            return self._placeholder_shape
+
+    @var_shape.setter
+    def var_shape(self, val):
+        self._placeholder_shape = tuple(val)
+
     def __len__(self):
+        """Length of data."""
         return len(self._data)
 
     @property
     def points(self):
-        return [self.get_points(dim) for dim in range(self.ndim)]
+        """List of variable points."""
+        return [self.get_points(dim) for dim in range(self.var_ndim)]
 
     @property
     def offset(self):
-        return [self.get_offset(dim) for dim in range(self.ndim)]
+        """List of variable offsets."""
+        return [self.get_offset(dim) for dim in range(self.var_ndim)]
 
     @property
     def center(self):
-        return [self.get_center(dim) for dim in range(self.ndim)]
+        """List of variable centers."""
+        return [self.get_center(dim) for dim in range(self.var_ndim)]
 
     @property
     def step(self):
-        return [self.get_step(dim) for dim in range(self.ndim)]
+        """List of variable steps."""
+        return [self.get_step(dim) for dim in range(self.var_ndim)]
 
     @property
     def low(self):
-        return [self.get_low(dim) for dim in range(self.ndim)]
+        """List of variable minima."""
+        return [self.get_low(dim) for dim in range(self.var_ndim)]
 
     @property
     def high(self):
-        return [self.get_high(dim) for dim in range(self.ndim)]
+        """List of variable maxima."""
+        return [self.get_high(dim) for dim in range(self.var_ndim)]
 
     @property
     def data(self):
+        """Data array."""
         return self._data
 
     @data.setter
@@ -588,11 +619,14 @@ class ArrayData(object):
             self.add_dim(diff_ndim)
         elif diff_ndim < 0:
             self.rmv_dim(num=np.abs(diff_ndim))
+        self.var_shape = self.shape
 
     def __getitem__(self, key):
+        """Get data array item by index."""
         return self.data[key]
 
     def __setitem__(self, key, val):
+        """Set data array item by index."""
         self.data[key] = val
 
     def __str__(self):
