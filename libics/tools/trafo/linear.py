@@ -1,9 +1,11 @@
 import numpy as np
 from scipy import ndimage, optimize
+import time
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData
 from libics.core.io import FileBase
+from libics.core.util import misc
 from libics.tools.math.fit import split_fit_data
 from libics.tools.math.peaked import FitGaussian2dTilt
 
@@ -448,11 +450,51 @@ class AffineTrafo2d(AffineTrafo):
             return None
         return np.array([x, y])
 
-    def calc_trafo(self, origin, target, **kwargs):
+    def find_peak_coordinates(
+        self, origin, target, algorithm="fit", print_progress=False, **kwargs
+    ):
+        """
+        Finds peak coordinates.
+
+        See :py:meth:`calc_trafo`.
+        """
+        # Find coordinates
+        origin_coords = []
+        target_coords = []
+        list_len = min(len(origin), len(target))
+        t0 = time.time()
+        for i in range(list_len):
+            if print_progress:
+                misc.print_progress(i, list_len, start_time=t0)
+            _origin = np.array(origin[i], dtype=float)
+            _target = np.array(target[i], dtype=float)
+            if _origin.ndim != 1:
+                if algorithm == "fit":
+                    _origin = self.fit_peak_coordinates(_origin, **kwargs)
+                else:
+                    _origin = np.unravel_index(_origin.argmax(), _origin.shape)
+                if _origin is None:
+                    continue
+            if _target.ndim != 1:
+                if algorithm == "fit":
+                    _target = self.fit_peak_coordinates(_target, **kwargs)
+                elif algorithm == "max":
+                    _target = np.unravel_index(_target.argmax(), _target.shape)
+                if _target is None:
+                    continue
+            origin_coords.append(_origin)
+            target_coords.append(_target)
+        if print_progress:
+            misc.print_progress(list_len, list_len, start_time=t0)
+        return np.array(origin_coords), np.array(target_coords)
+
+    def calc_trafo(
+        self, origin, target, algorithm="fit", print_progress=False, **kwargs
+    ):
         """
         Estimates the transformation parameters.
 
-        If images are passed, a 2D Gaussian fit is applied.
+        Wrapper for peak coordinate finding and transformation fitting.
 
         Parameters
         ----------
@@ -460,6 +502,11 @@ class AffineTrafo2d(AffineTrafo):
             List of origin images or coordinates.
         target : `list(np.ndarray(2, float) or (x, y))`
             List of target images or coordinates.
+        algorithm : `str`
+            Algorithm to use to determine coordinates for given image.
+            `"fit", "max"`.
+        print_progress : `bool`
+            Whether to print a progress bar to console.
         **kwargs
             Keyword arguments passed to :py:meth:`fit_peak_coordinates`.
 
@@ -474,27 +521,20 @@ class AffineTrafo2d(AffineTrafo):
         * At least two images are required. Additional data is used to obtain
           a more accurate map.
         """
+        # Check parameters
         if min(len(origin), len(target)) <= 1:
             raise ValueError("not enough images or coordinates")
         if len(origin) != len(target):
             self.LOGGER.warning("unequal origin/target list length")
-        origin_coords = []
-        target_coords = []
-        for i in range(min(len(origin), len(target))):
-            _origin = np.array(origin[i], dtype=float)
-            _target = np.array(target[i], dtype=float)
-            if _origin.ndim != 1:
-                _origin = self.fit_peak_coordinates(_origin, **kwargs)
-                if _origin is None:
-                    continue
-            if _target.ndim != 1:
-                _target = self.fit_peak_coordinates(_target, **kwargs)
-                if _target is None:
-                    continue
-            origin_coords.append(_origin)
-            target_coords.append(_target)
-        origin_coords = np.array(origin_coords)
-        target_coords = np.array(target_coords)
+        if algorithm not in ["fit", "max"]:
+            self.LOGGER.warning(f"invalid algorithm ({algorithm}), using max")
+            algorithm = "max"
+        # Fit transformation
+        origin_coords, target_coords = self.find_peak_coordinates(
+            origin, target,
+            algorithm=algorithm, print_progress=print_progress,
+            **kwargs
+        )
         if len(origin_coords) >= 2:
             self.fit_affine_transform(origin_coords, target_coords)
             return True
