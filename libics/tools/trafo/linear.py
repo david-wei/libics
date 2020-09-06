@@ -119,6 +119,39 @@ class AffineTrafo(FileBase):
         elif direction == "to_origin":
             return self.cv_to_origin(*args, **kwargs)
 
+    def coord_to_origin(self, target_coords):
+        """
+        Transforms given target coordinates into origin coordinates.
+
+        See :py:meth:`coord_to_target`.
+        """
+        ct = np.array(target_coords)
+        mot = self.matrix_to_origin
+        bot = self.offset_to_origin
+        co = np.einsum("ij,...j->...i", mot, ct) + bot
+        return co
+
+    def coord_to_target(self, origin_coords):
+        """
+        Transforms given origin coordinates into target coordinates.
+
+        Parameters
+        ----------
+        origin_coords : `np.ndarray(float)`
+            Coordinates in origin space. The different dimensions should be
+            placed on the last axes (dimensions: [..., ndim]).
+
+        Returns
+        -------
+        target_coords : `np.ndarray(float)`
+            Transformed coordinates in target space.
+        """
+        co = np.array(origin_coords)
+        mto = self.matrix_to_target
+        bto = self.offset_to_target
+        ct = np.einsum("ij,...j->...i", mto, co) + bto
+        return ct
+
     def cv_to_origin(
         self, target_array, origin_shape, centered=False, supersample=None,
         **kwargs
