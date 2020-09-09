@@ -347,6 +347,12 @@ class FitGaussian2dTilt(fit.FitParamBase):
         else:
             raise ValueError("invalid algorithm ({:s})".format(algorithm))
 
+    def find_fit(self, *args, **kwargs):
+        ret = super().find_fit(*args, **kwargs)
+        self.param[3] = np.abs(self.param[3])
+        self.param[4] = np.abs(self.param[4])
+        return ret
+
 
 ###############################################################################
 # Lorentzian Functions
