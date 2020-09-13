@@ -48,6 +48,12 @@ class ArrayData(object):
     * Numeric metadata can be extracted (depending on the metadata mode).
     * Upon calling the object with some given variables, an interpolated
       result is returned.
+
+    Subclassing or class modification:
+
+    * Follow the convention to declare all instance attributes within the
+      constructor.
+    * Remember to add these attribute names to :py:meth:`copy_var`.
     """
 
     POINTS = "POINTS"
@@ -58,7 +64,11 @@ class ArrayData(object):
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
     def __init__(self):
+        # -------------------
+        # Instance attributes
+        # -------------------
         # Data
+        self.data_quantity = None
         self.set_data_quantity()
         self._data = np.empty(0)
         self._placeholder_shape = tuple()
@@ -664,6 +674,23 @@ class ArrayData(object):
         Returns a deep copy of the object.
         """
         return copy.deepcopy(self)
+
+    def copy_var(self):
+        """
+        Returns a deep copy of all objects except for :py:attr:`data`,
+        which is copied by reference.
+        """
+        obj = self.__class__()
+        for attr_name in [
+            "data_quantity", "_placeholder_shape",
+            "var_quantity", "var_mode",
+            "_points",
+            "_offset", "_center", "_step",
+            "_low", "_high"
+        ]:
+            setattr(obj, attr_name, copy.deepcopy(getattr(self, attr_name)))
+        obj.data = self.data
+        return obj
 
     def cv_index_to_quantity(self, ind, dim):
         """
