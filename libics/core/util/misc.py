@@ -166,7 +166,8 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
     Parameters
     ----------
     obj : `object` or `dict`
-        Object or keyword argument dictionary.
+        Object itself, keyword argument dictionary
+        or single positional argument.
     cls_ : `class`
         Class of instance to be constructed.
     raise_exception : `Exception` or `None`
@@ -197,6 +198,13 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
             else:
                 raise raise_exception
     else:
+        try:
+            return cls_(obj)
+        except TypeError:
+            if raise_exception is None:
+                return obj
+            else:
+                raise raise_exception
         if raise_exception is None:
             return obj
         else:

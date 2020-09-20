@@ -8,7 +8,7 @@ from importlib import import_module
 
 
 from libics import env
-from libics.core.data.types import Result
+from libics.core.data.types import AttrDict
 from libics.core.io import image
 from libics.core.util import misc
 
@@ -582,7 +582,7 @@ def load(
     elif "sif" in fmt:
         obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls)
     elif "mat" in fmt:
-        obj = Result(**scipy.io.loadmat(file_path))
+        obj = AttrDict(scipy.io.loadmat(file_path))
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
     return obj

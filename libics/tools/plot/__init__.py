@@ -1,6 +1,5 @@
 from .base import *
 from . import colors
-from . import default
 
 
 import matplotlib.pyplot

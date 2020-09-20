@@ -636,25 +636,78 @@ class ValCheckDesc:
 ###############################################################################
 
 
-class Result(dict):
+class AttrDict(dict):
 
     """
-    Container class wrapping a dictionary and allowing access by attribute.
+    Dictionary container supporting recursive attribute access of items.
 
-    Typical use case as a more complex results container.
+    Parameters
+    ----------
+    rec : `bool`
+        Whether given sub-dictionaries should be recursively converted
+        to `AttrDict` objects.
+
+    Notes
+    -----
+    * If a requested attribute does not exist, creates an empty `AttrDict`
+      object to prevent empty attributes. This is only implemented for public
+      attribute names, i.e. fails when the name starts with `"_"`.
+
+    Examples
+    --------
+    >>> my_dict = {"a": "A", "b": {"c": "C"}}
+    >>> my_attrdict = AttrDict(my_dict)
+    >>> my_attrdict
+    {'a': 'A', 'b': {'c': 'C'}}
+    >>> my_attrdict["b"]["c"] == my_attrdict.b.c
+    True
+    >>> my_attrdict.d.e.f = "nested_val"
+    >>> my_attrdict
+    {'a': 'A', 'b': {'c': 'C'}, 'd': {'e': {'f': 'nested_val'}}}
     """
 
-    def __init__(self, **kwargs):
-        self.update(kwargs)
+    def __init__(self, *args, rec=True, **kwargs):
+        # Update constructor dict by kwarg items
+        if len(kwargs) > 0:
+            if len(args) == 0:
+                args = ({},)
+            args[0].update(kwargs)
+        # Recursive constructor
+        if rec is True:
+            super().__init__()
+            if len(args) > 0:
+                d = args[0]
+                for k, v in d.items():
+                    if isinstance(v, dict):
+                        self[k] = AttrDict(v)
+                    else:
+                        self[k] = v
+        # Non-recursive constructor
+        else:
+            super().__init__(*args, **kwargs)
 
-    def set_result(self, **kwargs):
-        self.update(kwargs)
+    def __getitem__(self, key):
+        if not isinstance(key, str):
+            raise KeyError(f"invalid key type {repr(key)} (must be str)")
+        if "." not in key:
+            return super().__getitem__(key)
+        else:
+            key, subkey = key.split(".", 1)
+            return super().__getitem__(key)[subkey]
 
-    def __setattr__(self, name, value):
-        self[name] = value
+    def __setitem__(self, key, val):
+        if not isinstance(key, str):
+            raise KeyError(f"invalid key type {repr(key)} (must be str)")
+        if "." not in key:
+            super().__setitem__(key, val)
+        else:
+            key, subkey = key.split(".", 1)
+            super().__getitem__(key)[subkey] = val
 
-    def __getattr__(self, name):
-        if name not in self:
-            raise AttributeError("'{:s}' object has no attribute '{:s}'"
-                                 .format(self.__class__.__name__, name))
-        return self[name]
+    def __getattr__(self, key):
+        if key not in self and key[0] != "_":
+            self[key] = AttrDict()
+        return self[key]
+
+    def __setattr__(self, key, val):
+        self[key] = val
