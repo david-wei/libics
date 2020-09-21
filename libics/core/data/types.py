@@ -652,6 +652,9 @@ class AttrDict(dict):
     * If a requested attribute does not exist, creates an empty `AttrDict`
       object to prevent empty attributes. This is only implemented for public
       attribute names, i.e. fails when the name starts with `"_"`.
+    * If multiple sequential dots (e.g. `"abc..def"`) are in a key, it
+      is interpreted as single string (instead of attributes).
+      This behavior was chosen to support ellipses (`"..."`) in strings.
 
     Examples
     --------
@@ -689,7 +692,7 @@ class AttrDict(dict):
     def __getitem__(self, key):
         if not isinstance(key, str):
             raise KeyError(f"invalid key type {repr(key)} (must be str)")
-        if "." not in key:
+        if ("." not in key) or (".." in key):
             return super().__getitem__(key)
         else:
             key, subkey = key.split(".", 1)
@@ -698,10 +701,12 @@ class AttrDict(dict):
     def __setitem__(self, key, val):
         if not isinstance(key, str):
             raise KeyError(f"invalid key type {repr(key)} (must be str)")
-        if "." not in key:
+        if ("." not in key) or (".." in key):
             super().__setitem__(key, val)
         else:
             key, subkey = key.split(".", 1)
+            if key not in self:
+                super().__setitem__(key, AttrDict())
             super().__getitem__(key)[subkey] = val
 
     def __getattr__(self, key):
