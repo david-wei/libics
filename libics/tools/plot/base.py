@@ -699,16 +699,16 @@ def _process_marker_param(
             if "markerfacecolor" not in kwargs:
                 kwargs["markeredgecolor"] = kwargs["color"]
             kwargs["markerfacecolor"] = colors.lighten_rgb(
-                colors.hex_to_rgb(
-                    mpl.colorConverter.to_rgb(kwargs["markeredgecolor"])
-                )
+                colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
+                    kwargs["markeredgecolor"]
+                ))
             )
         else:
             if "markerfacecolor" not in kwargs:
                 kwargs["markerfacecolor"] = colors.lighten_rgb(
-                    colors.hex_to_rgb(
-                        mpl.colorConverter.to_rgb(kwargs["markerfacecolor"])
-                    )
+                    colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
+                        kwargs["markerfacecolor"]
+                    ))
                 )
         kwargs["marker"] = "o"
     else:
