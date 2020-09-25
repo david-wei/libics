@@ -256,6 +256,8 @@ def plot(
         x = np.array(x) / xnorm
     if ynorm is not None:
         y = np.array(y) / ynorm
+        if yerr is not None:
+            yerr = np.array(yerr) / ynorm
     # Process marker style
     if "color" not in kwargs:
         kwargs["color"] = ax._get_lines.get_next_color()

@@ -165,7 +165,7 @@ class ValQuantity(Quantity):
             if self.val is not None:
                 s += " " + self.unit
             else:
-                s += " [" + self.unit + "]"
+                s += " (" + self.unit + ")"
         return s
 
     def mathstr(self, name=True, symbol=True, unit=True,
@@ -187,7 +187,7 @@ class ValQuantity(Quantity):
             if val and self.val is not None:
                 s += " " + str_unit
             else:
-                s += " [" + str_unit + "]"
+                s += " (" + str_unit + ")"
         return s
 
     def __int__(self):
