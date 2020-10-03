@@ -80,6 +80,13 @@ class FitParamBase(abc.ABC):
     def __init__(
         self, func, param, cov=0, param_names=None
     ):
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("always")
+            warnings.warn(
+                "Use `libics.tools.math.models.ModelBase`-based fit framework",
+                DeprecationWarning
+            )
         # Function
         self.func = func
         # Parameters

@@ -23,10 +23,12 @@ class ModelBase(abc.ABC):
     Assumes a concrete model class (i.e. subclass of this base class).
     >>> class Model(ModelBase):
     ...     P_ALL = ["x0"]
+    ...     P_DEFAULT = [1]
     ...     @staticmethod
     ...     def _func(var, x0):
     ...         return var + x0
     >>> model = Model()
+    >>> model.pfit = ["x0"]
     >>> model.p0 = [1]
     >>> var_data, func_data = np.array([[0, 1, 2], [2.2, 3.0, 3.8]])
     >>> model.find_popt(var_data, func_data)
@@ -45,6 +47,8 @@ class ModelBase(abc.ABC):
     * `P_ALL` : `Iterable[str]`, e.g. `["x0", "y0", "z0"]`.
       Ordered (w.r.t model function) list of parameter names (will be used to
       access parameters). Class attribute.
+    * `P_DEFAULT` : `Iterable[float]`.
+      Default `p0` parameters.
     * `_func` : `Callable[var, *param]`.
       Model function. Static method.
     * `find_p0` : `Callable[*data]`.
@@ -56,6 +60,7 @@ class ModelBase(abc.ABC):
 
     # Ordered list of all parameter names
     P_ALL = NotImplemented
+    P_DEFAULT = NotImplemented
 
     def __init__(self):
         # Parameter names to be fitted (map to _popt index)
@@ -73,6 +78,11 @@ class ModelBase(abc.ABC):
         super().__init_subclass__(**kwargs)
         if cls.P_ALL is NotImplemented:
             raise NotImplementedError("Class attribute `P_ALL` is missing")
+        if (
+            cls.P_DEFAULT is NotImplemented
+            or len(cls.P_DEFAULT) != len(cls.P_ALL)
+        ):
+            raise NotImplementedError("Class attribute `P_DEFAULT` is missing")
 
     @staticmethod
     @abc.abstractmethod
@@ -124,7 +134,7 @@ class ModelBase(abc.ABC):
         """All :py:attr:`p0`"""
         return (
             self._p0 if self.p0_is_set()
-            else np.ones(len(self.pall), dtype=float)
+            else np.array(self.P_DEFAULT, dtype=float)
         )
 
     @p0.setter
@@ -135,7 +145,7 @@ class ModelBase(abc.ABC):
 
     def get_p0(self, as_dict=True):
         if as_dict:
-            return misc.make_dict(self.pfit, self.p0)
+            return misc.make_dict(self.pall, self.p0)
         else:
             return self.p0
 
@@ -159,11 +169,13 @@ class ModelBase(abc.ABC):
             popt[self.pall[k]] = self._popt[i]
         return np.array(popt)
 
-    def get_popt(self, as_dict=True):
+    def get_popt(self, as_dict=True, pall=True):
+        popt = self.popt if pall else self._popt.copy()
         if as_dict:
-            return misc.make_dict(self.pfit, self.popt)
+            pnames = self.pall if pall else self.pfit
+            return misc.make_dict(pnames, popt)
         else:
-            return self.popt
+            return popt
 
     @property
     def popt_for_fit(self):
@@ -172,6 +184,8 @@ class ModelBase(abc.ABC):
 
     @property
     def pstd(self):
+        # TODO: Get pall with dummy std for p0 only
+        # TODO: Same for pcov
         return np.sqrt(np.diag(self.pcov))
 
     def get_pstd(self, as_dict=True):
@@ -189,8 +203,11 @@ class ModelBase(abc.ABC):
         else:
             return self.popt[key]
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.__class__.__name__}: {self.get_popt(as_dict=True)}"
+
+    def __repr__(self):
+        return f"<{str(self)}>"
 
     # +++++++++++++++++++++++++++++++++++++++
     # Methods API

@@ -1,7 +1,8 @@
 import numpy as np
 from scipy import ndimage, special, stats
 
-from libics.tools.math import fit
+from libics.env import logging
+from libics.tools.math.models import ModelBase
 
 
 ###############################################################################
@@ -32,6 +33,36 @@ def exponential_decay_1d(x,
     """
     exponent = -np.abs(x - center) / length
     return amplitude * np.exp(exponent) + offset
+
+
+class FitExponentialDecay1d(ModelBase):
+
+    """
+    Fit class for :py:func:`exponential_decay_1d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    xi (length)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitExponentialDecay1d")
+    P_ALL = ["a", "x0", "xi", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return exponential_decay_1d(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data = self._split_fit_data(*data)
+        c = np.min(func_data) / 2
+        a = np.max(func_data) - c
+        x0 = 0
+        xi = (np.max(var_data) - np.min(var_data)) / np.log(np.abs(2 * c / a))
+        self.p0 = [a, x0, xi, c]
 
 
 def exponential_decay_nd(x,
@@ -89,14 +120,28 @@ def gaussian_1d(x,
     return amplitude * np.exp(exponent) + offset
 
 
-class FitGaussian1d(fit.FitParamBase):
+class FitGaussian1d(ModelBase):
 
-    def __init__(self, fit_offset=True, **kwargs):
-        super().__init__(
-            gaussian_1d, 4 if fit_offset else 3, **kwargs
-        )
+    """
+    Fit class for :py:func:`gaussian_1d`.
 
-    def find_init_param(self, var_data, func_data):
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    wx (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitGaussian1d")
+    P_ALL = ["a", "x0", "wx", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return gaussian_1d(var, *p)
+
+    def find_p0(self, *data):
         """
         Algorithm: filter -> centering (max/mean) -> windowing -> statistics.
 
@@ -104,6 +149,7 @@ class FitGaussian1d(fit.FitParamBase):
         -----
         Currently only works for positive data.
         """
+        var_data, func_data = self._split_fit_data(*data)
         # Algorithm start
         x = var_data.astype(
             float if np.issubdtype(var_data.dtype, np.integer)
@@ -127,15 +173,11 @@ class FitGaussian1d(fit.FitParamBase):
             idx_slice = slice(None, 2 * idx0 + 1)
         else:
             idx_slice = slice(2 * idx0 - len(x), None)
-        w = np.sqrt(np.sum((x[idx_slice] - x0)**2 * _pdf[idx_slice]))
+        wx = np.sqrt(np.sum((x[idx_slice] - x0)**2 * _pdf[idx_slice]))
         a = np.max(f)
         c = f_min
         # Algorithm end
-        fit_offset = False if len(self.param) == 3 else True
-        if fit_offset:
-            self.param = [a, x0, w, c]
-        else:
-            self.param = [a, x0, w]
+        self.p0 = [a, x0, wx, c]
 
     @staticmethod
     def _get_center(x, f, max_weight=0.3, use_unbiased_pdf=True):
@@ -285,73 +327,87 @@ def gaussian_2d_tilt(
     return amplitude * np.exp(-exponent / 2.0) + offset
 
 
-class FitGaussian2dTilt(fit.FitParamBase):
+class FitGaussian2dTilt(ModelBase):
 
-    def __init__(self, fit_offset=True, **kwargs):
-        super().__init__(
-            gaussian_2d_tilt, 7 if fit_offset else 6, **kwargs
-        )
+    """
+    Fit class for :py:func:`gaussian_2d_tilt`.
 
-    def _find_init_param_linear(self, var_data, func_data):
+    Parameters
+    ----------
+    a (amplitude)
+    x0, y0 (center)
+    wu, wv (width)
+    tilt (tilt)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitGaussian2dTilt")
+    P_ALL = ["a", "x0", "y0", "wu", "wv", "tilt", "c"]
+    P_DEFAULT = [1, 0, 0, 1, 1, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return gaussian_2d_tilt(var, *p)
+
+    def _find_p0_linear(self, var_data, func_data):
         """
         Algorithm: linear min/max approximation.
         """
-        fit_offset = False if len(self.param) == 6 else True
-        offset = func_data.min()
+        c = func_data.min()
         xmin, xmax = var_data[0].min(), var_data[0].max()
         ymin, ymax = var_data[1].min(), var_data[1].max()
-        self.param[0] = func_data.max() - offset
-        self.param[1], self.param[2] = (xmin + xmax) / 2, (ymin + ymax) / 2
-        self.param[3], self.param[4] = (xmin - xmax) / 2, (ymin - ymax) / 2
-        self.param[5] = 0.0
-        if fit_offset:
-            self.param[6] = offset
+        a = func_data.max() - c
+        x0, y0 = (xmin + xmax) / 2, (ymin + ymax) / 2
+        wu, wv = (xmin - xmax) / 2, (ymin - ymax) / 2
+        tilt = 0
+        return [a, x0, y0, wu, wv, tilt, c]
 
-    def _find_init_param_fit1d(self, var_data, func_data):
+    def _find_p0_fit1d(self, var_data, func_data):
         """
         Algorithm: 1D profile fits.
         """
         # Perform 1D profile fits
-        xx, fx = fit.split_fit_data(np.sum(func_data, axis=1))
-        xy, fy = fit.split_fit_data(np.sum(func_data, axis=0))
-        fit_1d = FitGaussian1d(fit_offset=True)
-        fit_1d.find_init_param(xx[0], fx)
-        fit_1d.find_fit(xx[0], fx)
-        px = np.copy(fit_1d.param)
-        fit_1d.find_init_param(xy[0], fy)
-        fit_1d.find_fit(xy[0], fy)
-        py = np.copy(fit_1d.param)
+        xdata = np.sum(func_data, axis=1)
+        ydata = np.sum(func_data, axis=0)
+        fit_1d = FitGaussian1d()
+        fit_1d.find_p0(xdata)
+        fit_1d.find_popt(xdata)
+        px = np.copy(fit_1d.popt)
+        fit_1d.find_p0(ydata)
+        fit_1d.find_popt(ydata)
+        py = np.copy(fit_1d.popt)
         # Use 1D fit parameters for 2D fit initial parameters
         ax, x0, wx, _ = px
         ay, y0, wy, _ = py
         a = np.mean([ax / wy, ay / wx]) / np.sqrt(2 * np.pi)
-        phi = 0
+        tilt = 0
         c = 0
-        fit_offset = False if len(self.param) == 6 else True
-        if fit_offset:
-            self.param = [a, x0, y0, wx, wy, phi, c]
-        else:
-            self.param = [a, x0, y0, wx, wy, phi]
+        return [a, x0, y0, wx, wy, tilt, c]
 
-    def find_init_param(self, var_data, func_data, algorithm="linear"):
+    def find_p0(self, *data, algorithm="linear"):
         """
         Parameters
         ----------
         algorithm : `str`
             `"linear", "fit1d"`.
         """
+        var_data, func_data = self._split_fit_data(*data)
         if algorithm == "linear":
-            self._find_init_param_linear(var_data, func_data)
+            self.p0 = self._find_p0_linear(var_data, func_data)
         elif algorithm == "fit1d":
-            self._find_init_param_fit1d(var_data, func_data)
+            self.p0 = self._find_p0_fit1d(var_data, func_data)
         else:
             raise ValueError("invalid algorithm ({:s})".format(algorithm))
 
-    def find_fit(self, *args, **kwargs):
-        ret = super().find_fit(*args, **kwargs)
-        self.param[3] = np.abs(self.param[3])
-        self.param[4] = np.abs(self.param[4])
-        return ret
+    def find_popt(self, *args, **kwargs):
+        psuccess = super().find_popt(*args, **kwargs)
+        if psuccess:
+            # Enforce positive widths
+            for pname in ["wu", "wv"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = np.abs(self._popt[pidx])
+        return psuccess
 
 
 ###############################################################################
@@ -371,23 +427,38 @@ def lorentzian_1d_abs(
     return amplitude / (1 + ((var - center) / width)**2) + offset
 
 
-class FitLorentzian1dAbs(fit.FitParamBase):
+class FitLorentzian1dAbs(ModelBase):
 
-    def __init__(self, fit_offset=True, **kwargs):
-        super().__init__(
-            lorentzian_1d_abs, 4 if fit_offset else 3, **kwargs
-        )
+    """
+    Fit class for :py:func:`lorentzian_1d_abs`.
 
-    def find_init_param(self, var_data, func_data):
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    wx (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitLorentzian1dAbs")
+    P_ALL = ["a", "x0", "wx", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return lorentzian_1d_abs(var, *p)
+
+    def find_p0(self, *data):
         """
         Algorithm: dummy max.
         """
+        var_data, func_data = self._split_fit_data(*data)
         idx_max = np.argmax(func_data)
-        self.param[0] = func_data[idx_max]
-        self.param[1] = var_data[idx_max]
-        self.param[2] = (np.max(var_data) - np.min(var_data)) / 4
-        if len(self.param) == 4:
-            self.param[3] = 0.0
+        a = func_data[idx_max]
+        x0 = var_data[idx_max]
+        wx = (np.max(var_data) - np.min(var_data)) / 4
+        c = 0
+        self.p0 = [a, x0, wx, c]
 
 
 ###############################################################################
@@ -421,27 +492,39 @@ def airy_disk_2d(
     return amplitude * res**2 + offset
 
 
-class FitAiryDisk2d(fit.FitParamBase):
+class FitAiryDisk2d(ModelBase):
 
-    def __init__(self, fit_offset=True, **kwargs):
-        super().__init__(
-            airy_disk_2d, 5 if fit_offset else 4, **kwargs
-        )
+    """
+    Fit class for :py:func:`airy_disk_2d`.
 
-    def find_init_param(self, var_data, func_data):
+    Parameters
+    ----------
+    a (amplitude)
+    x0, y0 (center)
+    w (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitAiryDisk2d")
+    P_ALL = ["a", "x0", "y0", "w", "c"]
+    P_DEFAULT = [1, 0, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return airy_disk_2d(var, *p)
+
+    def find_p0(self, *data):
         """
         Algorithm: linear min/max approximation.
         """
-        fit_offset = False if len(self.param) == 4 else True
-        offset = func_data.min()
+        var_data, func_data = self._split_fit_data(*data)
+        c = func_data.min()
         xmin, xmax = var_data[0].min(), var_data[0].max()
         ymin, ymax = var_data[1].min(), var_data[1].max()
-        self.param[0] = func_data.max() - offset
-        self.param[1], self.param[2] = (xmin + xmax) / 2, (ymin + ymax) / 2
-        self.param[3] = (xmax - xmin + ymax - ymin) / 10
-        self.param[4] = 0.0
-        if fit_offset:
-            self.param[4] = offset
+        a = func_data.max() - c
+        x0, y0 = (xmin + xmax) / 2, (ymin + ymax) / 2
+        w = (xmax - xmin + ymax - ymin) / 10
+        self.p0 = [a, x0, y0, w, c]
 
 
 def dsc_bloch_osc_1d(
