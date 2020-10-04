@@ -37,6 +37,14 @@ class ModelBase(abc.ABC):
     array([2.])
     >>> model.pstd
     array([0.013333333])
+    >>> model.x0
+    2.
+    >>> model.x0_std
+    0.013333333
+    >>> model["x0"]
+    2.
+    >>> model["x0_std"]
+    0.013333333
     >>> model(var_data)
     array([2., 3., 4.])
 
@@ -70,7 +78,7 @@ class ModelBase(abc.ABC):
         # Optimized fit parameters
         self._popt = None
         # Covariance matrix of fit parameters
-        self.pcov = None
+        self._pcov = None
         # Flag whether fit succeeded
         self.psuccess = None
 
@@ -183,10 +191,26 @@ class ModelBase(abc.ABC):
         return self._popt
 
     @property
+    def pcov(self):
+        return self._pcov
+
+    @property
+    def pcov_for_fit(self):
+        return self._pcov
+
+    @pcov_for_fit.setter
+    def pcov_for_fit(self, val):
+        self._pcov = val
+
+    @property
     def pstd(self):
         # TODO: Get pall with dummy std for p0 only
         # TODO: Same for pcov
         return np.sqrt(np.diag(self.pcov))
+
+    @property
+    def pstd_for_fit(self):
+        return np.sqrt(np.diag(self.pcov_for_fit))
 
     def get_pstd(self, as_dict=True):
         if as_dict:
@@ -195,11 +219,17 @@ class ModelBase(abc.ABC):
             return self.pstd
 
     def __getattr__(self, name):
-        return self.popt[self.pall[name]]
+        if name[-4:] == "_std":
+            return self.pstd[self.pall[name[:-4]]]
+        else:
+            return self.popt[self.pall[name]]
 
     def __getitem__(self, key):
         if isinstance(key, str):
-            return self.popt[self.pall[key]]
+            if key[-4:] == "_std":
+                return self.pstd[self.pall[key[:-4]]]
+            else:
+                return self.popt[self.pall[key]]
         else:
             return self.popt[key]
 
@@ -246,7 +276,7 @@ class ModelBase(abc.ABC):
         def _fit_func(var, *p):
             for k_fit, i_fit in _pfit.items():
                 _p[_pall[k_fit]] = p[i_fit]
-            return _func(var, *_p)
+            return _func(var, *_p).ravel()
 
         # Prepare fit data
         split_data = self._split_fit_data(*data)
@@ -254,12 +284,12 @@ class ModelBase(abc.ABC):
         p0 = self.p0_for_fit
 
         # Optimize parameters
-        self.popt, self.pcov = scipy.optimize.curve_fit(
+        self.popt_for_fit, self.pcov_for_fit = scipy.optimize.curve_fit(
             _fit_func, var_data, func_data, p0=p0, **kwargs
         )
         self.psuccess = (
-            not np.any(np.isnan(self.pcov))
-            and np.all(np.isfinite(self.pcov))
+            not np.any(np.isnan(self.pcov_for_fit))
+            and np.all(np.isfinite(self.pcov_for_fit))
         )
         return self.psuccess
 

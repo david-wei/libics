@@ -337,7 +337,7 @@ class FitGaussian2dTilt(ModelBase):
     a (amplitude)
     x0, y0 (center)
     wu, wv (width)
-    tilt (tilt)
+    tilt (tilt in [-45°, 45°])
     c (offset)
     """
 
@@ -367,6 +367,7 @@ class FitGaussian2dTilt(ModelBase):
         Algorithm: 1D profile fits.
         """
         # Perform 1D profile fits
+        len_x, len_y = func_data.shape
         xdata = np.sum(func_data, axis=1)
         ydata = np.sum(func_data, axis=0)
         fit_1d = FitGaussian1d()
@@ -377,14 +378,14 @@ class FitGaussian2dTilt(ModelBase):
         fit_1d.find_popt(ydata)
         py = np.copy(fit_1d.popt)
         # Use 1D fit parameters for 2D fit initial parameters
-        ax, x0, wx, _ = px
-        ay, y0, wy, _ = py
+        ax, x0, wx, cx = px
+        ay, y0, wy, cy = py
         a = np.mean([ax / wy, ay / wx]) / np.sqrt(2 * np.pi)
         tilt = 0
-        c = 0
+        c = np.mean([cx / len_y, cy / len_x])
         return [a, x0, y0, wx, wy, tilt, c]
 
-    def find_p0(self, *data, algorithm="linear"):
+    def find_p0(self, *data, algorithm="fit1d"):
         """
         Parameters
         ----------
@@ -407,6 +408,27 @@ class FitGaussian2dTilt(ModelBase):
                 if pname in self.pfit:
                     pidx = self.pfit[pname]
                     self._popt[pidx] = np.abs(self._popt[pidx])
+            # Enforce tilt angle in [-45°, 45°]
+            if "tilt" in self.pfit:
+                tilt_idx = self.pfit["tilt"]
+                tilt = self.popt_for_fit[tilt_idx] % np.pi
+                # Tilt angle in [135°, 180°]
+                if tilt >= 3/4 * np.pi:
+                    tilt -= np.pi
+                # Tilt angle in [45°, 135°]
+                elif tilt > 1/4 * np.pi:
+                    # Perform wu/wv axes swap
+                    if np.all((pname in self.pfit for pname in ["wu", "wv"])):
+                        tilt -= 1/2 * np.pi
+                        wu_idx, wv_idx = self.pfit["wu"], self.pfit["wv"]
+                        popt = self.popt_for_fit
+                        pcov = self.pcov_for_fit
+                        popt[[wu_idx, wv_idx]] = popt[[wv_idx, wu_idx]]
+                        pcov[[wu_idx, wv_idx]] = pcov[[wu_idx, wv_idx]]
+                        pcov[:, [wu_idx, wv_idx]] = pcov[:, [wu_idx, wv_idx]]
+                        self.popt_for_fit = popt
+                        self.pcov_for_fit = pcov
+                self.popt_for_fit[tilt_idx] = tilt
         return psuccess
 
 
