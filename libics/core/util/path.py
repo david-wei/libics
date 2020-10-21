@@ -31,7 +31,7 @@ class FolderContentsResult(object):
     """
 
     def __init__(self, **kwargs):
-        self.regex = ""
+        self.regex = None
         self.path = ""
         self.folders_matched = []
         self.files_matched = []
@@ -57,6 +57,19 @@ class FolderContentsResult(object):
 
     def __getitem__(self, key):
         return list(self)[key]
+
+    def __repr__(self):
+        s = f"<{self.__class__.__name__} at {hex(id(self))}>\n"
+        s += f" * path: {self.path}\n"
+        if self.regex is None:
+            names = ["folders", "files"]
+        else:
+            s += f" * regex: {self.regex}\n"
+            names = ["folders_matched", "files_matched",
+                     "folders_unmatched", "files_unmatched"]
+        for name in names:
+            s += f" * {name}: {getattr(self, name)}\n"
+        return s[:-1]
 
 
 def get_folder_contents(folder, regex=None):
