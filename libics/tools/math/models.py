@@ -173,8 +173,9 @@ class ModelBase(abc.ABC):
     def popt(self):
         """All :py:attr:`popt` (non-fitted ones use :py:attr:`p0`)"""
         popt = self.p0.copy()
-        for k, i in self.pfit.items():
-            popt[self.pall[k]] = self._popt[i]
+        if self._popt is not None:
+            for k, i in self.pfit.items():
+                popt[self.pall[k]] = self._popt[i]
         return np.array(popt)
 
     def get_popt(self, as_dict=True, pall=True):
@@ -383,6 +384,9 @@ class ModelBase(abc.ABC):
         # Parse arguments
         if len(data) == 1:
             data = data[0]
+        elif len(data) == 2:
+            # FIXME: check for types
+            return data
         else:
             raise NotImplementedError
         # Split data

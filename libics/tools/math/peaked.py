@@ -141,7 +141,8 @@ class FitGaussian1d(ModelBase):
     def _func(var, *p):
         return gaussian_1d(var, *p)
 
-    def find_p0(self, *data):
+    @staticmethod
+    def _find_p0_stat(var_data, func_data):
         """
         Algorithm: filter -> centering (max/mean) -> windowing -> statistics.
 
@@ -149,7 +150,6 @@ class FitGaussian1d(ModelBase):
         -----
         Currently only works for positive data.
         """
-        var_data, func_data = self._split_fit_data(*data)
         # Algorithm start
         x = var_data.astype(
             float if np.issubdtype(var_data.dtype, np.integer)
@@ -165,7 +165,7 @@ class FitGaussian1d(ModelBase):
         _pdf[_pdf < 0] = 0
         _pdf /= np.sum(_pdf)
         # Initial parameters
-        x0 = self._get_center(x, f)
+        x0 = FitGaussian1d._get_center(x, f)
         # Avoid standard deviation bias
         idx0 = np.argmin(np.abs(x - x0))
         idx_slice = None
@@ -177,7 +177,12 @@ class FitGaussian1d(ModelBase):
         a = np.max(f)
         c = f_min
         # Algorithm end
-        self.p0 = [a, x0, wx, c]
+        p0 = [a, x0, wx, c]
+        return p0
+
+    def find_p0(self, *data):
+        var_data, func_data = self._split_fit_data(*data)
+        self.p0 = self._find_p0_stat(var_data, func_data)
 
     @staticmethod
     def _get_center(x, f, max_weight=0.3, use_unbiased_pdf=True):
@@ -349,7 +354,8 @@ class FitGaussian2dTilt(ModelBase):
     def _func(var, *p):
         return gaussian_2d_tilt(var, *p)
 
-    def _find_p0_linear(self, var_data, func_data):
+    @staticmethod
+    def _find_p0_linear(var_data, func_data):
         """
         Algorithm: linear min/max approximation.
         """
@@ -362,7 +368,8 @@ class FitGaussian2dTilt(ModelBase):
         tilt = 0
         return [a, x0, y0, wu, wv, tilt, c]
 
-    def _find_p0_fit1d(self, var_data, func_data):
+    @staticmethod
+    def _find_p0_fit1d(var_data, func_data):
         """
         Algorithm: 1D profile fits.
         """
@@ -430,6 +437,337 @@ class FitGaussian2dTilt(ModelBase):
                         self.pcov_for_fit = pcov
                 self.popt_for_fit[tilt_idx] = tilt
         return psuccess
+
+
+###############################################################################
+# Polynomial Functions
+###############################################################################
+
+
+def parabolic_1d(x, a, x0, wx, c=0):
+    r"""
+    Parabola on finite support in one dimension.
+
+    .. math::
+        \left(a - \frac{\sign{a}}{2} \left(\frac{x - x_0}{w_x}\right)^2\right)
+        \Theta (w_x \sqrt{2 A} - |x - x_0|) + c
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    a : `float`
+        Amplitude :math:`A`.
+    x0 : `float`
+        Center :math:`x_0`.
+    wx : `float`
+        Width of parabola :math:`w_x`.
+        Normalized to be consistent with Gaussian width in series expansion.
+    c : `float`, optional (default: 0)
+        Offset :math:`C`.
+    """
+    dx = x - x0
+    return (
+        c + (a - (dx / wx)**2 / 2 * np.sign(a))
+        * np.sign(wx * np.sqrt(2 * np.abs(a)) - np.abs(dx))
+    )
+
+
+def parabolic_1d_int2d(var, a, x0, wx, c=0):
+    """
+    3D parabola on finite support integrated over two dimensions.
+    """
+    arg = 1 - (var - x0)**2 / wx**2
+    arg[arg * np.sign(a) < 0] = 0
+    res = a * arg**2 + c
+    return res
+
+
+class FitParabolic1dInt2d(FitGaussian1d):
+
+    """
+    Fit class for :py:func:`parabolic_1d_int2d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    wx (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitParabolic1dInt2d")
+    P_ALL = ["a", "x0", "wx", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return parabolic_1d_int2d(var, *p)
+
+    def find_p0(self, *data):
+        super().find_p0(*data)
+        self.p0[self.pall["wx"]] *= np.sqrt(2)
+
+
+def parabolic_2d_int1d_tilt(var, a, x0, y0, wu, wv, tilt=0, c=0):
+    """
+    3D parabola on finite support integrated over one dimension.
+    """
+    tilt_cos, tilt_sin = np.cos(tilt), np.sin(tilt)
+    dx, dy = var[0] - x0, var[1] - y0
+    arg = (
+        1 - (dx * tilt_cos + dy * tilt_sin)**2 / wu**2
+        - (dy * tilt_cos - dx * tilt_sin)**2 / wv**2
+    )
+    arg[arg * np.sign(a) < 0] = 0
+    res = a * arg**(3/2) + c
+    return res
+
+
+class FitParabolic2dInt1dTilt(FitGaussian2dTilt):
+
+    """
+    Fit class for :py:func:`parabolic_1d_int2d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0, y0 (center)
+    wu, wv (width)
+    tilt (tilt in [-45°, 45°])
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitParabolic2dInt1dTilt")
+    P_ALL = ["a", "x0", "y0", "wu", "wv", "tilt", "c"]
+    P_DEFAULT = [1, 0, 0, 1, 1, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return parabolic_2d_int1d_tilt(var, *p)
+
+    def _find_p0_linear(self, *data):
+        p0 = super()._find_p0_linear(*data)
+        for key in ["wu", "wv"]:
+            p0[self.pall[key]] *= np.sqrt(2)
+        return p0
+
+    @staticmethod
+    def _find_p0_fit1d(var_data, func_data):
+        # Perform 1D profile fits
+        len_x, len_y = func_data.shape
+        xdata = np.sum(func_data, axis=1)
+        ydata = np.sum(func_data, axis=0)
+        fit_1d = FitParabolic1dInt2d()
+        fit_1d.find_p0(xdata)
+        fit_1d.find_popt(xdata)
+        px = np.copy(fit_1d.popt)
+        fit_1d.find_p0(ydata)
+        fit_1d.find_popt(ydata)
+        py = np.copy(fit_1d.popt)
+        # Use 1D fit parameters for 2D fit initial parameters
+        ax, x0, wx, cx = px
+        ay, y0, wy, cy = py
+        a = np.mean([ax / wy, ay / wx]) / (3/8 * np.pi)
+        tilt = 0
+        c = np.mean([cx / len_y, cy / len_x])
+        return [a, x0, y0, wx, wy, tilt, c]
+
+
+###############################################################################
+# Bimodal Gaussian Functions
+###############################################################################
+
+
+def bm_gaussian_parabolic_1d_int2d(x, ag, ap, x0, wgx, wpx, c=0):
+    g = gaussian_1d(x, ag, x0, wgx)
+    p = parabolic_1d_int2d(x, ap, x0, wpx)
+    return g + p + c
+
+
+class FitBmGaussianParabolic1dInt2d(FitGaussian1d):
+
+    """
+    Fit class for :py:func:`bm_gaussian_parabolic_1d_int2d`.
+
+    Parameters
+    ----------
+    ag, ap (amplitudes of Gaussian and parabola)
+    x0 (center)
+    wgx, wpx (width of Gaussian and parabola)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitBmGaussianParabolic1d")
+    P_ALL = ["ag", "ap", "x0", "wgx", "wpx", "c"]
+    P_DEFAULT = [0.5, 0.5, 0, 1, 0.5, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return bm_gaussian_parabolic_1d_int2d(var, *p)
+
+    def find_p0(self, *data):
+        """
+        Algorithm: find_p0 of Gaussian -> split data at width
+        -> fit tails with Gaussian, center with parabola.
+
+        Notes
+        -----
+        Currently only works for positive data.
+        """
+        var_data, func_data = self._split_fit_data(*data)
+        fitg, fitp = FitGaussian1d(), FitParabolic1dInt2d()
+        # Split data
+        fitg.find_p0(var_data, func_data)
+        _x0, _wx = fitg.p0[[1, 2]]
+        _var_mask = (np.abs(var_data - _x0) > _wx)
+        _fun_mask = _var_mask.ravel()
+        _var_data_g, _func_data_g = var_data[_var_mask], func_data[_fun_mask]
+        _var_data_p, _func_data_p = var_data[~_var_mask], func_data[~_fun_mask]
+        # Fit split data
+        fitg.find_p0(_var_data_g, _func_data_g)
+        fitg.find_popt(_var_data_g, _func_data_g)
+        ag, x0g, wgx, cg = fitg.popt
+        fitp.find_p0(_var_data_p, _func_data_p)
+        fitp.find_popt(_var_data_p, _func_data_p)
+        ap, x0p, wpx, cp = fitp.popt
+        # Assign p0
+        x0 = np.mean([x0g, x0p])
+        c = 0.8 * cg + 0.2 * cp
+        self.p0 = [ag, ap, x0, wgx, wpx, c]
+
+    def get_fit_gaussian_1d(self):
+        """
+        Gets a fit object only modelling the Gaussian part.
+        """
+        fit = FitGaussian1d()
+        fit.p0 = [self.ag, self.x0, self.wgx, self.c]
+        return fit
+
+    def get_fit_parabolic_1d_int2d(self):
+        """
+        Gets a fit object only modelling the parabolic part.
+        """
+        fit = FitParabolic1dInt2d()
+        fit.p0 = [self.ap, self.x0, self.wpx, 0]
+        return fit
+
+
+def bm_gaussian_parabolic_2d_int1d(
+    var, ag, ap, x0, y0, wgu, wgv, wpu, wpv, tilt=0, c=0
+):
+    g = gaussian_2d_tilt(var, ag, x0, y0, wgu, wgv, tilt)
+    p = parabolic_2d_int1d_tilt(var, ap, x0, y0, wpu, wpv, tilt)
+    return g + p + c
+
+
+class FitBmGaussianParabolic2dInt1dTilt(FitGaussian2dTilt):
+
+    """
+    Fit class for :py:func:`bm_gaussian_parabolic_2d_int1d`.
+
+    Parameters
+    ----------
+    ag, ap (amplitudes of Gaussian and parabola)
+    x0, y0 (center)
+    wgu, wgv, wpu, wpv (widths of Gaussian and parabola)
+    tilt (tilt in [-45°, 45°])
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger(
+        "libics.math.peaked.FitBmGaussianParabolic2dInt1dTilt"
+    )
+    P_ALL = ["ag", "ap", "x0", "y0", "wgu", "wgv", "wpu", "wpv", "tilt", "c"]
+    P_DEFAULT = [0.5, 0.5, 0, 0, 1, 1, 0.5, 0.5, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return bm_gaussian_parabolic_2d_int1d(var, *p)
+
+    @staticmethod
+    def _find_p0_fit1d(var_data, func_data):
+        # Perform 1D profile fits
+        len_x, len_y = func_data.shape
+        xdata = np.sum(func_data, axis=1)
+        ydata = np.sum(func_data, axis=0)
+        fit_1d = FitBmGaussianParabolic1dInt2d()
+        fit_1d.find_p0(xdata)
+        fit_1d.find_popt(xdata)
+        px = np.copy(fit_1d.popt)
+        fit_1d.find_p0(ydata)
+        fit_1d.find_popt(ydata)
+        py = np.copy(fit_1d.popt)
+        # Use 1D fit parameters for 2D fit initial parameters
+        agx, apx, x0, wgx, wpx, cx = px
+        agy, apy, y0, wgy, wpy, cy = py
+        ag = np.mean([agx / wgy, agy / wgx]) / np.sqrt(2 * np.pi)
+        ap = np.mean([apx / wpy, apy / wpx]) / (3/8 * np.pi)
+        tilt = 0
+        c = np.mean([cx / len_y, cy / len_x])
+        return [ag, ap, x0, y0, wgx, wgy, wpx, wpy, tilt, c]
+
+    def find_p0(self, *data):
+        var_data, func_data = self._split_fit_data(*data)
+        self.p0 = self._find_p0_fit1d(var_data, func_data)
+
+    def find_popt(self, *args, **kwargs):
+        psuccess = super().find_popt(*args, **kwargs)
+        if psuccess:
+            # Enforce positive widths
+            for pname in ["wgu", "wgv", "wpu", "wpv"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = np.abs(self._popt[pidx])
+            # Enforce tilt angle in [-45°, 45°]
+            if "tilt" in self.pfit:
+                tilt_idx = self.pfit["tilt"]
+                tilt = self.popt_for_fit[tilt_idx] % np.pi
+                # Tilt angle in [135°, 180°]
+                if tilt >= 3/4 * np.pi:
+                    tilt -= np.pi
+                # Tilt angle in [45°, 135°]
+                elif tilt > 1/4 * np.pi:
+                    # Perform wu/wv axes swap
+                    if np.all((pname in self.pfit
+                               for pname in ["wgu", "wgv", "wpu", "wpv"])):
+                        tilt -= 1/2 * np.pi
+                        wgu_idx, wgv_idx = self.pfit["wgu"], self.pfit["wpv"]
+                        wpu_idx, wpv_idx = self.pfit["wpu"], self.pfit["wpv"]
+                        popt = self.popt_for_fit
+                        pcov = self.pcov_for_fit
+                        popt[[wgu_idx, wgv_idx]] = popt[[wgv_idx, wgu_idx]]
+                        popt[[wpu_idx, wpv_idx]] = popt[[wpv_idx, wpu_idx]]
+                        pcov[[wgu_idx, wgv_idx]] = pcov[[wgu_idx, wgv_idx]]
+                        pcov[[wpu_idx, wpv_idx]] = pcov[[wpu_idx, wpv_idx]]
+                        pcov[:, [wgu_idx, wgv_idx]] = (
+                            pcov[:, [wgu_idx, wgv_idx]]
+                        )
+                        pcov[:, [wpu_idx, wpv_idx]] = (
+                            pcov[:, [wpu_idx, wpv_idx]]
+                        )
+                        self.popt_for_fit = popt
+                        self.pcov_for_fit = pcov
+                self.popt_for_fit[tilt_idx] = tilt
+        return psuccess
+
+    def get_fit_gaussian_2d_tilt(self):
+        """
+        Gets a fit object only modelling the Gaussian part.
+        """
+        fit = FitGaussian2dTilt()
+        fit.p0 = [self.ag, self.x0, self.y0, self.wgu, self.wgv,
+                  self.tilt, self.c]
+        return fit
+
+    def get_fit_parabolic_2d_int1d_tilt(self):
+        """
+        Gets a fit object only modelling the parabolic part.
+        """
+        fit = FitParabolic2dInt1dTilt()
+        fit.p0 = [self.ap, self.x0, self.y0, self.wpu, self.wpv,
+                  self.tilt, 0]
+        return fit
 
 
 ###############################################################################
