@@ -72,7 +72,7 @@ class ModelBase(abc.ABC):
 
     def __init__(self):
         # Parameter names to be fitted (map to _popt index)
-        self._pfit = {}
+        self._pfit = None
         # Initial fit parameters
         self._p0 = None
         # Optimized fit parameters
@@ -190,6 +190,10 @@ class ModelBase(abc.ABC):
         """Fitted :py:attr:`popt`"""
         return self._popt
 
+    @popt_for_fit.setter
+    def popt_for_fit(self, val):
+        self._popt = val
+
     @property
     def pcov(self):
         return self._pcov
@@ -219,10 +223,17 @@ class ModelBase(abc.ABC):
             return self.pstd
 
     def __getattr__(self, name):
+        get_std = False
         if name[-4:] == "_std":
-            return self.pstd[self.pall[name[:-4]]]
-        else:
-            return self.popt[self.pall[name]]
+            get_std = True
+            name = name[:-4]
+        try:
+            if get_std is True:
+                return self.pstd[self.pall[name]]
+            else:
+                return self.popt[self.pall[name]]
+        except KeyError:
+            return super().__getattribute__(name)
 
     def __getitem__(self, key):
         if isinstance(key, str):

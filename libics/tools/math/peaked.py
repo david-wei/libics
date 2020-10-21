@@ -154,7 +154,7 @@ class FitGaussian1d(ModelBase):
         x = var_data.astype(
             float if np.issubdtype(var_data.dtype, np.integer)
             else var_data.dtype
-        )
+        ).ravel()
         f = func_data.astype(
             float if np.issubdtype(func_data.dtype, np.integer)
             else func_data.dtype
