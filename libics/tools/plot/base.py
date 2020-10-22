@@ -337,7 +337,9 @@ def pcolormesh(
     xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
     ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
     cnorm, clabel = _process_norm_param(cnorm, label=clabel)
-    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    p = _get_xyc_from_data(
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+    )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
     # Process normalization
@@ -431,7 +433,9 @@ def contourf(
     xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
     ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
     cnorm, clabel = _process_norm_param(cnorm, label=clabel)
-    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    p = _get_xyc_from_data(
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+    )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
     # Process normalization
@@ -546,7 +550,9 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
     return data_dict
 
 
-def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
+def _get_xyc_from_data(
+    *data, xlabel=True, ylabel=True, clabel=True, use_bins=True
+):
     """
     Parameters
     ----------
@@ -556,6 +562,9 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         If `True`, uses interpreted labels.
         If `False`, does not use labels.
         If `str`, uses string as label.
+    use_bins : `bool` or `None`
+        Whether to get bins instead of points.
+        TODO: Only works for single-parameter `data`.
 
     Returns
     -------
@@ -574,7 +583,10 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
     elif len(data) == 1:
         # (AD)
         if isinstance(data[0], ArrayData):
-            data_dict["x"], data_dict["y"] = data[0].get_var_meshgrid()
+            data_dict["x"], data_dict["y"] = (
+                data[0].get_var_meshgrid_bins() if use_bins is True
+                else data[0].get_var_meshgrid()
+            )
             data_dict["c"] = data[0].data
             data_dict["xlabel"] = data[0].var_quantity[0].labelstr(val=False)
             data_dict["ylabel"] = data[0].var_quantity[1].labelstr(val=False)
@@ -582,10 +594,11 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         # (AR)
         else:
             _data0 = np.array(data[0])
-            _meshgrid0 = np.meshgrid(
-                np.arange(_data0.shape[0]), np.arange(_data0.shape[1]),
-                indexing="ij"
-            )
+            _x = (np.arange(-0.5, _data0.shape[0] + 0.5) if use_bins is True
+                  else np.arange(_data0.shape[0]))
+            _y = (np.arange(-0.5, _data0.shape[1] + 0.5) if use_bins is True
+                  else np.arange(_data0.shape[1]))
+            _meshgrid0 = np.meshgrid(_x, _y, indexing="ij")
             data_dict["x"], data_dict["y"] = _meshgrid0
             data_dict["c"] = _data0
     # Three parameters
@@ -600,7 +613,7 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
             data_dict["xlabel"] = data[0].quantity[0].labelstr(val=False)
         # (AR, ...):
         else:
-            data_dict["x"] = data[0]
+            data_dict["x"] = np.array(data[0])
         # (..., AD, ...)
         if isinstance(data[1], ArrayData):
             data_dict["y"] = data[1].data
@@ -611,14 +624,14 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
             data_dict["ylabel"] = data[1].quantity[0].labelstr(val=False)
         # (..., AR, ...):
         else:
-            data_dict["y"] = data[1]
+            data_dict["y"] = np.array(data[1])
         # (..., AD)
         if isinstance(data[2], ArrayData):
             data_dict["c"] = data[2].data
             data_dict["clabel"] = data[2].data_quantity.labelstr(val=False)
         # (..., AR)
         else:
-            data_dict["c"] = data[2]
+            data_dict["c"] = np.array(data[2])
     # Invalid arguments
     else:
         raise TypeError("wrong number of arguments ({:d})".format(len(data)))

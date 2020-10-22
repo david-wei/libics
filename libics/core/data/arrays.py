@@ -518,6 +518,22 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return self._high[dim]
 
+    def get_bins(self, dim):
+        """
+        Gets the bins of variable points for the specified dimension.
+
+        The returned bins (array of size `len(points) + 1`) refer to the
+        centers between adjacent points.
+        Edge bins (where one side is undefined) use the other side to form
+        symmetric bins around the edge points.
+        """
+        _points = self.get_points(dim)
+        _bins = np.empty(len(_points) + 1, dtype=float)
+        _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
+        _bins[0] = 2 * _points[0] - _bins[1]
+        _bins[-1] = 2 * _points[-1] - _bins[-2]
+        return _bins
+
     def max(self):
         return np.max(self.data)
 
@@ -545,6 +561,22 @@ class ArrayData(object):
             Meshgrid as `numpy` array.
         """
         return np.array(np.meshgrid(*self.points, indexing=indexing))
+
+    def get_var_meshgrid_bins(self, indexing="ij"):
+        """
+        Creates a `numpy` meshgrid for the bins of the variable dimensions.
+
+        Parameters
+        ----------
+        indexing : `"ij"` or `"xy"`
+            See :py:func:`numpy.meshgrid`.
+
+        Returns
+        -------
+        mg : `np.ndarray`
+            Meshgrid of bins as `numpy` array.
+        """
+        return np.array(np.meshgrid(*self.bins, indexing=indexing))
 
     # ++++++++++
     # Properties
@@ -617,6 +649,11 @@ class ArrayData(object):
         return [self.get_high(dim) for dim in range(self.var_ndim)]
 
     @property
+    def bins(self):
+        """List of variable bins."""
+        return [self.get_bins(dim) for dim in range(self.var_ndim)]
+
+    @property
     def data(self):
         """Data array."""
         return self._data
@@ -632,15 +669,71 @@ class ArrayData(object):
         self.var_shape = self.shape
 
     def __getitem__(self, key):
-        """Get data array item by index."""
-        return self.data[key]
+        """Get sliced `ArrayData` object. Supports variable change."""
+        if np.isscalar(key) or isinstance(key, slice):
+            key = (key,)
+        # If single item
+        if (len(key) == self.ndim and np.all([np.isscalar(k) for k in key])):
+            return self.data[key]
+        # Else (slice in at least one dimension)
+        obj = self.copy_var()
+        kdim = len(key)
+        for i, k in enumerate(reversed(key)):
+            dim = kdim - i - 1
+            # If single entry
+            if np.isscalar(k):
+                obj.rmv_dim(dim)
+            # If slice
+            elif isinstance(k, slice):
+                _var_mode = obj.var_mode[dim]
+                _size = obj.shape[dim]
+                # Normalize slice
+                _kstart, _kstop, _kstep = 0, _size, 1
+                if k.start is not None:
+                    _kstart = k.start if k.start >= 0 else k.start % _size
+                if k.step is not None:
+                    _kstep = k.step
+                if k.stop is not None:
+                    _kstop = k.stop if k.stop >= 0 else k.stop % _size
+                    _kstop = (((_kstop - _kstart) // _kstep - 1) * _kstep
+                              + _kstart + 1)
+                if _kstop < _kstart:
+                    continue
+                # Slice variable
+                if _var_mode == self.POINTS:
+                    _points = obj.get_points(dim)
+                    obj.set_dim(dim, points=_points[k])
+                elif _var_mode == self.RANGE:
+                    _offset, _step = obj.get_offset(dim), obj.get_step(dim)
+                    _offset += _kstart * _step
+                    _step *= _kstep
+                    obj.set_dim(dim, offset=_offset, step=_step)
+                elif _var_mode == self.LINSPACE:
+                    _low, _step = obj.get_low(dim), obj.get_step(dim)
+                    _low += _kstart * _step
+                    _high = _low + (_kstop - _kstart - 1) * _kstep * _step
+                    obj.set_dim(dim, low=_low, high=_high)
+                else:
+                    raise ValueError(f"invalid mode: {_var_mode}")
+            # Else (error)
+            else:
+                raise ValueError(f"invalid key type ({k} of type {type(k)})")
+        obj.data = self.data[key]
+        return obj
 
     def __setitem__(self, key, val):
         """Set data array item by index."""
         self.data[key] = val
 
+    def __iter__(self):
+        """
+        To prevent slow iteration with :py:meth:`__getitem__`,
+        returns `np.ndarray` iterator.
+        """
+        return iter(self.data)
+
     def __str__(self):
-        s = str(self.data_quantity)
+        s = f"{str(self.data_quantity)}\n"
         s += "Quantity:\n["
         for i in range(self.ndim):
             if i > 0:
@@ -648,6 +741,7 @@ class ArrayData(object):
             s += str(self.var_quantity[i])
             if i < self.ndim - 1:
                 s += ",\n"
+        s += "]\n"
         s += "Var:\n["
         for i in range(self.ndim):
             if i > 0:
