@@ -375,14 +375,16 @@ class FitGaussian2dTilt(ModelBase):
         """
         # Perform 1D profile fits
         len_x, len_y = func_data.shape
+        xvar = var_data[0][..., 0]
+        yvar = var_data[1][0]
         xdata = np.sum(func_data, axis=1)
         ydata = np.sum(func_data, axis=0)
         fit_1d = FitGaussian1d()
-        fit_1d.find_p0(xdata)
-        fit_1d.find_popt(xdata)
+        fit_1d.find_p0(xvar, xdata)
+        fit_1d.find_popt(xvar, xdata)
         px = np.copy(fit_1d.popt)
-        fit_1d.find_p0(ydata)
-        fit_1d.find_popt(ydata)
+        fit_1d.find_p0(yvar, ydata)
+        fit_1d.find_popt(yvar, ydata)
         py = np.copy(fit_1d.popt)
         # Use 1D fit parameters for 2D fit initial parameters
         ax, x0, wx, cx = px
@@ -556,14 +558,16 @@ class FitParabolic2dInt1dTilt(FitGaussian2dTilt):
     def _find_p0_fit1d(var_data, func_data):
         # Perform 1D profile fits
         len_x, len_y = func_data.shape
+        xvar = var_data[0][..., 0]
+        yvar = var_data[1][0]
         xdata = np.sum(func_data, axis=1)
         ydata = np.sum(func_data, axis=0)
         fit_1d = FitParabolic1dInt2d()
-        fit_1d.find_p0(xdata)
-        fit_1d.find_popt(xdata)
+        fit_1d.find_p0(xvar, xdata)
+        fit_1d.find_popt(xvar, xdata)
         px = np.copy(fit_1d.popt)
-        fit_1d.find_p0(ydata)
-        fit_1d.find_popt(ydata)
+        fit_1d.find_p0(yvar, ydata)
+        fit_1d.find_popt(yvar, ydata)
         py = np.copy(fit_1d.popt)
         # Use 1D fit parameters for 2D fit initial parameters
         ax, x0, wx, cx = px
@@ -689,14 +693,16 @@ class FitBmGaussianParabolic2dInt1dTilt(FitGaussian2dTilt):
     def _find_p0_fit1d(var_data, func_data):
         # Perform 1D profile fits
         len_x, len_y = func_data.shape
+        xvar = var_data[0][..., 0]
+        yvar = var_data[1][0]
         xdata = np.sum(func_data, axis=1)
         ydata = np.sum(func_data, axis=0)
         fit_1d = FitBmGaussianParabolic1dInt2d()
-        fit_1d.find_p0(xdata)
-        fit_1d.find_popt(xdata)
+        fit_1d.find_p0(xvar, xdata)
+        fit_1d.find_popt(xvar, xdata)
         px = np.copy(fit_1d.popt)
-        fit_1d.find_p0(ydata)
-        fit_1d.find_popt(ydata)
+        fit_1d.find_p0(yvar, ydata)
+        fit_1d.find_popt(yvar, ydata)
         py = np.copy(fit_1d.popt)
         # Use 1D fit parameters for 2D fit initial parameters
         agx, apx, x0, wgx, wpx, cx = px

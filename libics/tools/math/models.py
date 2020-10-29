@@ -129,7 +129,7 @@ class ModelBase(abc.ABC):
     def pfit(self, val):
         # Check arguments
         for v in val:
-            if v not in self._pall:
+            if v not in self.P_ALL:
                 raise ValueError(f"invalid parameter name {v}")
         # Set fit parameters
         if isinstance(val, dict):
