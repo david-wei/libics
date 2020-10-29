@@ -407,7 +407,7 @@ class ArrayData(object):
             return self._points[dim]
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = (self.var_shape[dim] - 0.9) * _step
+            _range = (self.var_shape[dim] - 1) * _step
             if self._offset[dim] is not None:
                 _offset = self._offset[dim]
             else:
@@ -581,6 +581,11 @@ class ArrayData(object):
     # ++++++++++
     # Properties
     # ++++++++++
+
+    @property
+    def size(self):
+        """Data array size."""
+        return self._data.size
 
     @property
     def ndim(self):
@@ -1173,6 +1178,8 @@ class ArrayData(object):
 
     def __array_ufunc__(self, ufunc, method, i, *inputs, **kwargs):
         # Convert ArrayData inputs into np.ndarray inputs
+        if isinstance(i, ArrayData):
+            i = i.data
         inputs = tuple([(it.data if isinstance(it, ArrayData) else it)
                         for it in inputs])
         # Declare output object
@@ -1186,10 +1193,14 @@ class ArrayData(object):
             self.data.__array_ufunc__(ufunc, method, i, *inputs, **kwargs)
         # Construct new object
         else:
-            obj = copy.deepcopy(self)
-            obj.data = self.data.__array_ufunc__(
+            res = self.data.__array_ufunc__(
                 ufunc, method, i, *inputs, **kwargs
             )
+            if np.isscalar(res):
+                obj = res
+            else:
+                obj = copy.deepcopy(self)
+                obj.data = res
         # Return ArrayData object with data as calculated by the ufunc
         return obj
 
