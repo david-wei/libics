@@ -1,10 +1,23 @@
 import math
+import numbers
 import operator
 import os
 import re
 import time
 
 import numpy as np
+
+
+###############################################################################
+# Type Checks
+###############################################################################
+
+
+def is_number(var):
+    """
+    Returns whether given variable is of scalar, numeric type.
+    """
+    return isinstance(var, numbers.Numbers)
 
 
 ###############################################################################
@@ -788,6 +801,45 @@ def get_numpy_dtype_str(dtype):
     return str(dtype)
 
 
+def get_numpy_array_index(ar_or_ndim, dim, idx, default_idx=slice(None)):
+    """
+    Gets the multidimensional index to slice an array.
+
+    Parameters
+    ----------
+    ar_or_ndim : `np.ndarray` or `int`
+        Array or number of dimensions of targeted array.
+    dim : `int` or `Iterable[int]`
+        Index or indices of dimensions.
+    idx : `int` or `slice` or `Iterable[int or slice]`
+        Actual indices.
+        If iterable is given, must be in the same order as `dim`.
+    default_idx : `int` or `slice`
+        Indices of dimensions not in `dim`.
+
+    Returns
+    -------
+    slc : `tuple(int or slice)`
+        Slicing indices.
+
+    Examples
+    --------
+    >>> ar = np.arange(2 * 3 * 4).reshape((2, 3, 4))
+    >>> slc0 = get_numpy_array_index(ar, (0, 2), (0, 0))
+    >>> np.all(ar[slc0] == ar[0, :, 0])
+    True
+    >>> slc1 = get_numpy_array_index(ar.ndim, (1, 2), (0, slice(0, 2)))
+    >>> np.all(ar[slc1] == ar[:, 0, 0:2])
+    True
+    """
+    ndim = ar_or_ndim if np.isscalar(ar_or_ndim) else ar_or_ndim.ndim
+    dim, idx = assume_iter(dim), assume_iter(idx)
+    slc = ndim * [default_idx]
+    for i, d in enumerate(dim):
+        slc[d] = idx[i]
+    return tuple(slc)
+
+
 def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
     """
     Pads or shrinks a numpy array to a requested shape.
@@ -832,6 +884,39 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
             padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
             ar = np.concatenate((padl, ar, padr), axis=dim)
     return ar
+
+
+def cv_array_points_to_bins(ar):
+    """
+    Converts a center point array to bin points.
+
+    Dimensions: `(ndim0, ndim1, ...) -> (ndim0 + 1, ndim1 + 1, ...)`.
+
+    Notes
+    -----
+    FIXME: Does not work for multiple dimensions.
+    TODO: Does not apply proper dimensional averaging, only "diagonal"
+    two-point average.
+    """
+    ar = np.array(ar)
+    bins = np.zeros(np.array(ar.shape) + 1,
+                    dtype=complex if ar.dtype == complex else float)
+    slice_center = tuple(ar.ndim * [slice(1, -1)])
+    slice_front = tuple(ar.ndim * [slice(None, -1)])
+    slice_back = tuple(ar.ndim * [slice(1, None)])
+    bins[slice_center] = (ar[slice_front] + ar[slice_back]) / 2
+    print(bins)
+    _gnai = get_numpy_array_index
+    for dim in range(ar.ndim):
+        bins[_gnai(bins, dim, 0, default_idx=slice(None, -1))] = (
+            2 * ar[_gnai(ar, dim, 0)]
+            - bins[_gnai(bins, dim, 1, default_idx=slice(None, -1))]
+        )
+        bins[_gnai(bins, dim, -1, default_idx=slice(1, None))] = (
+            2 * ar[_gnai(ar, dim, -1)]
+            - bins[_gnai(bins, dim, -2, default_idx=slice(1, None))]
+        )
+    return bins
 
 
 def transpose_array(ar):
