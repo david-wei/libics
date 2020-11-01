@@ -712,6 +712,10 @@ class AttrDict(dict):
     def __getattr__(self, key):
         if key not in self and key[0] != "_":
             self[key] = AttrDict()
+        elif key not in self:
+            raise AttributeError(
+                f"'{self.__class__.__name__}' object has no attribute '{key}'"
+            )
         return self[key]
 
     def __setattr__(self, key, val):
