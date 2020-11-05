@@ -8,7 +8,6 @@ from importlib import import_module
 
 
 from libics import env
-from libics.core.data.types import AttrDict
 from libics.core.io import image
 from libics.core.util import misc
 
@@ -189,7 +188,7 @@ class ObjEncoder(object):
             d["__cls__"] = get_fqname_from_class(
                 type(obj), cls_map=cls.CLS_MAP
             )
-            if isinstance(obj, FileBase):
+            if isinstance(obj, FileBase) or hasattr(obj, "__LIBICS_IO__"):
                 d["__obj__"] = cls.serialize(obj.attributes())
             elif isinstance(obj, np.ndarray):
                 d["__obj__"] = cls._serialize_numpy_ndarray(obj)
@@ -361,6 +360,8 @@ class ObjDecoder(object):
                 ret = cls._deserialize_special_types(ser)
                 if ret != ID_NOT_SPECIAL:
                     return ret
+                else:
+                    return ser
             # List or tuple
             else:
                 return [cls.deserialize(item) for item in ser]
@@ -582,6 +583,7 @@ def load(
     elif "sif" in fmt:
         obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls)
     elif "mat" in fmt:
+        from libics.core.data.types import AttrDict
         obj = AttrDict(scipy.io.loadmat(file_path))
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))

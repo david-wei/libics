@@ -85,6 +85,16 @@ class ArrayData(object):
         self._low = []
         self._high = []
 
+    __LIBICS_IO__ = True
+    SER_KEYS = {
+        "data_quantity", "data", "var_quantity", "var_mode",
+        "_points", "_offset", "_center", "_step", "_low", "_high"
+    }
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
     # ++++
     # Data
     # ++++

@@ -61,6 +61,13 @@ class Quantity(object):
         self.symbol = symbol
         self.unit = unit
 
+    __LIBICS_IO__ = True
+    SER_KEYS = {"name", "symbol", "unit"}
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
     # ++++++++++++++++
     # Unary operations
     # ++++++++++++++++
@@ -142,6 +149,8 @@ class ValQuantity(Quantity):
     val
         Value of physical quantity.
     """
+
+    SER_KEYS = Quantity.SER_KEYS | {"val"}
 
     def __init__(self, name=NO_NAME, symbol=None, unit=None, val=None):
         super().__init__(name=name, symbol=symbol, unit=unit)
