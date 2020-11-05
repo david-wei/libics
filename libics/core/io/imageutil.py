@@ -104,10 +104,21 @@ def parse_wct_to_numpy_array(file_path):
     except(pd.EmptyDataError, pd.ParserError) as e:
         raise AttributeError(e)
     # Verify pixel count
-    if (parsed_data.shape
-            != (header_data["pxcount_x"], header_data["pxcount_y"])):
-        raise AttributeError("invalid .wct pixel count ({:s})"
-                             .format(file_path))
+    header_shape = (header_data["pxcount_x"], header_data["pxcount_y"])
+    if parsed_data.shape != header_shape:
+        # Handle bug in DataRay
+        if (
+            parsed_data.shape[0] == header_shape[0] - 1
+            and parsed_data.shape[1] == header_shape[1]
+        ):
+            header_data["pxcount_x"] = header_data["pxcount_x"] - 1
+        else:
+            raise AttributeError(
+                f"invalid .wct pixel count "
+                f"(header: ({header_data['pxcount_x']}, "
+                f"{header_data['pxcount_y']}), shape: {parsed_data.shape}) "
+                f"for file {file_path})"
+            )
     # Remove redundant metadata keys
     header_data.pop("code_wct")
     header_data.pop("pxcount_x")
