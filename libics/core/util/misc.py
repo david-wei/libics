@@ -17,7 +17,7 @@ def is_number(var):
     """
     Returns whether given variable is of scalar, numeric type.
     """
-    return isinstance(var, numbers.Numbers)
+    return isinstance(var, numbers.Number)
 
 
 ###############################################################################
