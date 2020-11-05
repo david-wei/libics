@@ -6,7 +6,6 @@ from libics.env import logging
 from libics.core.data.arrays import ArrayData
 from libics.core.io import FileBase
 from libics.core.util import misc
-from libics.tools.math.fit import split_fit_data
 from libics.tools.math.peaked import FitGaussian2dTilt
 
 
@@ -377,8 +376,8 @@ class AffineTrafo2d(AffineTrafo):
         """
         mot = self.matrix_to_origin
         bot = self.offset_to_origin
-        thu = np.atan2(mot[1, 0], mot[0, 0])
-        thv = np.atan2(-mot[0, 1], mot[1, 1])
+        thu = np.arctan2(mot[1, 0], mot[0, 0])
+        thv = np.arctan2(-mot[0, 1], mot[1, 1])
         mu = np.sqrt(mot[0, 0]**2 + mot[1, 0]**2)
         mv = np.sqrt(mot[0, 1]**2 + mot[1, 1]**2)
         return (
@@ -430,8 +429,8 @@ class AffineTrafo2d(AffineTrafo):
         """
         mto = self.matrix_to_target
         bto = self.offset_to_target
-        thx = np.atan2(mto[1, 0], mto[0, 0])
-        thy = np.atan2(-mto[0, 1], mto[1, 1])
+        thx = np.arctan2(mto[1, 0], mto[0, 0])
+        thy = np.arctan2(-mto[0, 1], mto[1, 1])
         mx = np.sqrt(mto[0, 0]**2 + mto[1, 0]**2)
         my = np.sqrt(mto[0, 1]**2 + mto[1, 1]**2)
         return (
@@ -442,7 +441,7 @@ class AffineTrafo2d(AffineTrafo):
 
     # +++++++++++++++++++++++++++++++++++++++++
 
-    def fit_peak_coordinates(self, image, snr=1.5):
+    def fit_peak_coordinates(self, image, snr=1.5, max_sum_ratio=1/100**2):
         """
         Uses a Gaussian fit to obtain the peak coordinates of an image.
 
@@ -452,6 +451,8 @@ class AffineTrafo2d(AffineTrafo):
             Image to be analyzed.
         snr : `float`
             Maximum-to-mean ratio required for fit.
+        max_sum_ratio : `float`
+            Maximum-to-sum ratio required for fit.
 
         Returns
         -------
@@ -461,17 +462,16 @@ class AffineTrafo2d(AffineTrafo):
         """
         max_, mean, sum_ = image.max(), image.mean(), image.sum()
         if (max_ == 0 or mean == 0 or max_ / mean < snr
-                or max_ / sum_ < 1 / 100**2):
+                or max_ / sum_ < max_sum_ratio):
             self.LOGGER.warning("fit_peak_coordinates: insufficient SNR")
             return None
         try:
             self.LOGGER.debug("fit_peak_coordinates: fitting curve")
             _fit = FitGaussian2dTilt()
-            _data = split_fit_data(image)
-            _fit.find_init_param(*_data)
-            _fit.find_fit(*_data)
-            x, y = _fit.param[0], _fit.param[1]
-            dx, dy = _fit.std[0], _fit.std[1]
+            _fit.find_p0(image)
+            _fit.find_popt(image)
+            x, y = _fit.x0, _fit.y0
+            dx, dy = _fit.x0_std, _fit.y0_std
         except (TypeError, RuntimeError) as e:
             self.LOGGER.warning(
                 "fit_peak_coordinates: fit failed ({:s})".format(str(e))
