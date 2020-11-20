@@ -92,23 +92,24 @@ def get_folder_contents(folder, regex=None):
         regex = None
     folders_matched, folders_unmatched = [], []
     files_matched, files_unmatched = [], []
-    for item in os.listdir(folder):
-        if os.path.isfile(os.path.join(folder, item)):
-            try:
-                if regex is not None and re.search(regex, item):
-                    files_matched.append(item)
-                else:
+    if os.path.exists(folder):
+        for item in os.listdir(folder):
+            if os.path.isfile(os.path.join(folder, item)):
+                try:
+                    if regex is not None and re.search(regex, item):
+                        files_matched.append(item)
+                    else:
+                        files_unmatched.append(item)
+                except re.error:
                     files_unmatched.append(item)
-            except re.error:
-                files_unmatched.append(item)
-        else:
-            try:
-                if regex is not None and re.search(regex, item):
-                    folders_matched.append(item)
-                else:
+            else:
+                try:
+                    if regex is not None and re.search(regex, item):
+                        folders_matched.append(item)
+                    else:
+                        folders_unmatched.append(item)
+                except re.error:
                     folders_unmatched.append(item)
-            except re.error:
-                folders_unmatched.append(item)
     return FolderContentsResult(
         regex=regex, path=folder,
         folders_matched=folders_matched, files_matched=files_matched,
