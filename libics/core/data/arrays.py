@@ -600,7 +600,10 @@ class ArrayData(object):
     @property
     def ndim(self):
         """Data array ndim."""
-        return self._data.ndim
+        if self._data.shape == (0,):
+            return 0
+        else:
+            return self._data.ndim
 
     @property
     def var_ndim(self):
@@ -928,6 +931,104 @@ class ArrayData(object):
             func_val = func_val.reshape(shape)
         return func_val
 
+    def supersample(self, rep):
+        """
+        Gets a supersampled `ArrayData` object.
+
+        Parameters
+        ----------
+        rep : `int` or `Iter[int]`
+            Supersampling repetitions (number of new indices per old index).
+            If iterable, each value corresponds to the respective dimension.
+
+        Returns
+        -------
+        ad : `ArrayData`
+            Supersampled array data.
+        """
+        if np.isscalar(rep):
+            rep = self.ndim * (rep,)
+        if rep != self.ndim:
+            raise ValueError("invalid dimensions")
+        ad = self.copy()
+        for i in range(self.ndim):
+            _rep = int(round(rep[i]))
+            if _rep > 1:
+                ad.data = ad.data.repeat(_rep, axis=i)
+                _new_step = ad.get_step(i) / _rep
+                if ad.var_mode[i] == self.RANGE:
+                    ad._step[i] = _new_step
+                    if ad._offset[i] is not None:
+                        ad._offset[i] -= _new_step * (_rep - 1) / 2
+                elif ad.var_mode[i] == self.LINSPACE:
+                    ad._low[i] -= _new_step * (_rep - 1) / 2
+                    ad._high[i] += _new_step * (_rep - 1) / 2
+                elif ad.var_mode[i] == self.POINTS:
+                    raise NotImplementedError("POINTS mode not implemented")
+        return ad
+
+    def pad(self, shape, val=0):
+        """
+        Gets a resized `ArrayData` with the old data centered and padded.
+
+        Can also be used to obtain a centered slice.
+
+        Parameters
+        ----------
+        shape : `tuple(int)` or `float`
+            Padded shape.
+            If `float`, scales all dimensions by the factor `shape`.
+        val : `Any`
+            Padding value.
+
+        Returns
+        -------
+        ad : `ArrayData`
+            Padded array data with `shape`.
+        """
+        # Parse arguments
+        if shape is None:
+            return self.copy()
+        if np.isscalar(shape):
+            shape = tuple(np.round(shape * np.array(self.shape)).astype(int))
+        if len(shape) != self.ndim:
+            raise ValueError("invalid dimensions")
+        # Setup array data
+        ad = self.copy_var()
+        ad.data = np.full(shape, val, dtype=self.data.dtype)
+        # Find lower indices
+        shape_half_diff = [
+            (shape[i] - self.shape[i]) // 2 for i in range(self.ndim)
+        ]
+        # Find slices for old and new array
+        slice_old, slice_new = [], []
+        for i in range(self.ndim):
+            # New shape is larger
+            if shape_half_diff[i] >= 0:
+                slice_old.append(slice(None))
+                slice_new.append(slice(
+                    shape_half_diff[i], shape_half_diff[i] + self.shape[i]
+                ))
+            # Old shape is larger
+            else:
+                slice_old.append(slice(
+                    -shape_half_diff[i], -shape_half_diff[i] + ad.shape[i]
+                ))
+                slice_new.append(slice(None))
+        slice_old, slice_new = tuple(slice_old), tuple(slice_new)
+        ad.data[slice_new] = self.data[slice_old]
+        # Change variable data
+        for i in range(self.ndim):
+            if ad.var_mode[i] == self.RANGE:
+                if ad._offset[i] is not None:
+                    ad._offset[i] -= shape_half_diff[i] * ad.get_step(i)
+            elif ad.var_mode[i] == self.LINSPACE:
+                ad._low[i] -= shape_half_diff[i] * ad.get_step(i)
+                ad._high[i] += shape_half_diff[i] * ad.get_step(i)
+            elif ad.var_mode[i] == self.POINTS:
+                raise NotImplementedError("POINTS mode not implemented")
+        return ad
+
     # ++++++++++++++++++++++
     # Combination operations
     # ++++++++++++++++++++++
@@ -955,7 +1056,7 @@ class ArrayData(object):
         """
         return np.all([
             np.allclose(self.get_points(dim), other.get_points(dim))
-            for dim in self.ndim
+            for dim in range(self.ndim)
         ])
 
     def get_common_obj(self, other, op, in_place=False, rev=False, raw=False):
