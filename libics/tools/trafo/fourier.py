@@ -7,21 +7,22 @@ from libics.core.data.arrays import ArrayData
 ###############################################################################
 
 
-def fft_arraydata(ad, mode=None):
+def fft(ad, mode=None, symmetric=True):
     """
-    Computes the Fast Fourier Transform of a `data.matrixdata.MatrixData`
-    object.
+    Computes the Fast Fourier Transform of an array.
 
     Parameters
     ----------
-    ad : data.arrays.ArrayData
+    ad : `np.ndarray` or `ArrayData`
         The array data to be Fourier transformed.
-    mode : None or str
-        None: Saves full complex values of Fourier transform.
-        "abs": Saves spectrum (modulus of Fourier transform).
-        "phase": Saves phase of Fourier transform.
-        "re": Saves real part of Fourier transform.
-        "im": Saves imaginary part of Fourier transform.
+    mode : `None` or `str`
+        `None`: Saves full complex values of Fourier transform.
+        `"abs`": Saves spectrum (modulus of Fourier transform).
+        `"phase"`: Saves phase of Fourier transform.
+        `"re"`: Saves real part of Fourier transform.
+        `"im"`: Saves imaginary part of Fourier transform.
+    symmetric : `bool`
+        Whether to use symmetric Fourier transform.
 
     Returns
     -------
@@ -38,8 +39,20 @@ def fft_arraydata(ad, mode=None):
     FFT is implemented as asymmetric transform with respect to frequency and
     not angular frequency (i.e. 2πft, not ωt).
     """
+    # Parse data type
+    if isinstance(ad, np.ndarray):
+        ar = ad
+    elif isinstance(ad, ArrayData):
+        ar = ad.data
+    else:
+        raise ValueError(f"invalid data type {type(ad)}")
     # Perform FFT
-    ft_data = np.fft.fftshift(np.fft.fftn(ad.data))
+    ft_data = np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(ar)))
+    if symmetric is True:
+        if isinstance(ad, np.ndarray):
+            ft_data /= np.sqrt(np.prod(ft_data.shape))
+        elif isinstance(ad, ArrayData):
+            ft_data *= np.prod(ad.step)
     if mode is None:
         pass
     elif mode == "abs":
@@ -52,6 +65,9 @@ def fft_arraydata(ad, mode=None):
         ft_data = np.imag(ft_data)
     else:
         raise ValueError("invalid mode: {:s}".format(str(mode)))
+    # Return data if no metadata
+    if isinstance(ad, np.ndarray):
+        return ft_data
 
     # ++++++++++++++++++++++++++
     # Calculate variable scaling
@@ -72,53 +88,35 @@ def fft_arraydata(ad, mode=None):
     # Set variable quantity
     units = {}
     for q in ft.var_quantity:
-        q.name = "inverse " + q.name
+        if q.name[:8] == "inverse ":
+            q.name = q.name[8:]
+        else:
+            q.name = f"inverse {q.name}"
         if q.symbol is not None:
-            q.symbol = "1 / " + q.symbol
+            if q.symbol[:4] == "1 / ":
+                if q.symbol[4] == "(" and q.symbol[-1] == ")":
+                    q.symbol = q.symbol[5:-1]
+                else:
+                    q.symbol = q.symbol[4:]
+            else:
+                q.symbol = f"1 / ({q.symbol})"
         if q.unit is not None:
             if q.unit not in units:
                 units[q.unit] = 1
             else:
                 units[q.unit] += 1
-            q.unit = "1 / " + q.unit
+            if q.unit[:4] == "1 / ":
+                if q.unit[4] == "(" and q.unit[-1] == ")":
+                    q.unit = q.unit[5:-1]
+                else:
+                    q.unit = q.unit[4:]
+            else:
+                q.unit = f"1 / ({q.unit})"
     # Set data quantity
-    for unit, num in units.items():
-        if num > 1:
-            ft.data_quantity.unit += " {:s}^{:d}".format(unit, num)
-        else:
-            ft.data_quantity.unit += " {:s}".format(unit)
+    if ft.data_quantity.unit is not None:
+        for unit, num in units.items():
+            if num > 1:
+                ft.data_quantity.unit += " {:s}^{:d}".format(unit, num)
+            else:
+                ft.data_quantity.unit += f" {unit}"
     return ft
-
-
-###############################################################################
-
-
-if __name__ == "__main__":
-
-    # Test function
-    def f(x):
-        return np.cos(2 * np.pi * x) + np.sin(5 * np.pi * x)
-
-    # ----------
-    # Array data
-    # ----------
-    from libics.display import plotdefault, plot
-    pcfg = plotdefault.get_plotcfg_arraydata_1d()
-    fcfg = plotdefault.get_figurecfg()
-    # Setup array data
-    offset = 100
-    scale = 0.05
-    num = 1001
-    ar = np.linspace(offset, offset + scale * (num - 1), num=num)
-    ad = ArrayData()
-    ad.add_dim(offset=offset, scale=scale, name="time", unit="s", symbol="t")
-    ad.add_dim(name="amplitude", unit="V", symbol="A")
-    ad.data = f(ar)
-    fig = plot.Figure(fcfg, pcfg, data=ad)
-    fig.plot()
-    fig.show()
-    # FFT
-    ft_ad = fft_arraydata(ad, mode="abs")
-    fig = plot.Figure(fcfg, pcfg, data=ft_ad)
-    fig.plot()
-    fig.show()
