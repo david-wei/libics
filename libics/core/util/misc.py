@@ -919,6 +919,53 @@ def cv_array_points_to_bins(ar):
     return bins
 
 
+def cv_index_center_to_rect(center, size):
+    """
+    Converts center-size indices to min-max indices.
+
+    Parameters
+    ----------
+    center : `Iter[int]`
+        Index center in each dimension.
+    size : `Iter[int]` or `int`
+        (Full) size of rectangle in each dimension.
+        If `int`, the `size` is applied to each dimension.
+
+    Returns
+    -------
+    rect : `Iter[(int, int)]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+    """
+    size = len(center) * [size] if np.isscalar(size) else size
+    return tuple((max(0, c - size[i] // 2), c + size[i] // 2 + 1)
+                 for i, c in enumerate(center))
+
+
+def cv_index_rect_to_slice(rect):
+    """
+    Converts min-max indices to slices.
+
+    Parameters
+    ----------
+    rect : `Iter[(int, int) or slice]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+
+    Returns
+    -------
+    slices : `Iter[slice]`
+        Iterator of slices from index rectangle.
+    """
+    slices = []
+    for item in rect:
+        if isinstance(item, slice):
+            slices.append(item)
+        else:
+            slices.append(slice(*item))
+    return tuple(slices)
+
+
 def transpose_array(ar):
     """
     Transposes a rectangular array.
