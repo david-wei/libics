@@ -169,7 +169,10 @@ class FitGaussian1d(ModelBase):
         # Avoid standard deviation bias
         idx0 = np.argmin(np.abs(x - x0))
         idx_slice = None
-        if len(x) - idx0 > idx0:
+        # If insufficient statistics
+        if min(idx0, len(x) - idx0) < 5:
+            pass
+        elif len(x) - idx0 > idx0:
             idx_slice = slice(None, 2 * idx0 + 1)
         else:
             idx_slice = slice(2 * idx0 - len(x), None)
