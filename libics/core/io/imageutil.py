@@ -106,12 +106,26 @@ def parse_wct_to_numpy_array(file_path):
     # Verify pixel count
     header_shape = (header_data["pxcount_x"], header_data["pxcount_y"])
     if parsed_data.shape != header_shape:
-        # Handle bug in DataRay
+        # Handle bugs in DataRay
         if (
             parsed_data.shape[0] == header_shape[0] - 1
             and parsed_data.shape[1] == header_shape[1]
         ):
             header_data["pxcount_x"] = header_data["pxcount_x"] - 1
+        elif (
+            parsed_data.shape[0] == header_shape[1]
+            and parsed_data.shape[1] == header_shape[0]
+        ):
+            header_data["pxcount_x"], header_data["pxcount_y"] = (
+                header_data["pxcount_y"], header_data["pxcount_x"]
+            )
+        elif (
+            parsed_data.shape[0] == header_shape[1] - 1
+            and parsed_data.shape[1] == header_shape[0]
+        ):
+            header_data["pxcount_x"], header_data["pxcount_y"] = (
+                header_data["pxcount_y"] - 1, header_data["pxcount_x"]
+            )
         else:
             raise AttributeError(
                 f"invalid .wct pixel count "
