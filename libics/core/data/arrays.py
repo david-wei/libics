@@ -556,6 +556,9 @@ class ArrayData(object):
     def std(self):
         return np.std(self.data)
 
+    def sum(self):
+        return np.sum(self.data)
+
     def get_var_meshgrid(self, indexing="ij"):
         """
         Creates a `numpy` meshgrid for the variable dimensions.
