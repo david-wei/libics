@@ -840,50 +840,65 @@ def get_numpy_array_index(ar_or_ndim, dim, idx, default_idx=slice(None)):
     return tuple(slc)
 
 
-def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
+def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front", dtype=None):
     """
     Pads or shrinks a numpy array to a requested shape.
 
     Parameters
     ----------
-    ar : numpy.ndarray
+    ar : `np.ndarray`
         Numpy array to be resized.
-    shape : tuple(int)
-        Target shape of array. Must have same dimension as ar.
-    fill_value : ar.dtype
+    shape : `tuple(int)`
+        Target shape of array. Must have same dimension as `ar`.
+    fill_value : `ar.dtype`
         Pad value if array is increased.
-    mode_keep : "front", "back", "center"
-        Keeps the elements of ar at the <mode_keep> of the
+    mode_keep : `"front", "back", "center"`
+        Keeps the elements of `ar` at the front/back/center of the
         resized array.
+    dtype : `np.dtype` or `None`
+        Numpy data type to cast to. If `None`, uses dtype of `ar`.
 
     Returns
     -------
-    ar : numpy.ndarray
+    resized_ar : `np.ndarray`
         Resized numpy array.
     """
-    for dim in range(len(ar.shape)):
-        start, stop = 0, shape[dim]
-        if mode_keep == "front":
-            start, stop = 0, shape[dim]
-        elif mode_keep == "back":
-            start, stop = ar.shape[dim] - shape[dim], ar.shape[dim]
+    # Find resizing index rectangle
+    slice_new, slice_old = [], []
+    for dim in range(ar.ndim):
+        if mode_keep == "back":
+            stop_new, stop_old = None, None
+            if shape[dim] > ar.shape[dim]:
+                start_new, start_old = shape[dim] - ar.shape[dim], None
+            else:
+                start_new, start_old = None, ar.shape[dim] - shape[dim]
         elif mode_keep == "center":
-            diff = (ar.shape[dim] - shape[dim]) // 2
-            start, stop = diff, shape[dim] + diff
-        # reduce
-        if shape[dim] < ar.shape[dim]:
-            idx = [slice(None)] * dim + [slice(start, stop)]
-            ar = ar[tuple(idx)]
-        # expand
-        elif shape[dim] > ar.shape[dim]:
-            padl_shape = list(ar.shape)
-            padl_shape[dim] = start
-            padl = np.full(padl_shape, fill_value, dtype=ar.dtype)
-            padr_shape = list(ar.shape)
-            padr_shape[dim] = shape[dim] - stop
-            padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
-            ar = np.concatenate((padl, ar, padr), axis=dim)
-    return ar
+            center = shape[dim] // 2
+            if shape[dim] > ar.shape[dim]:
+                ldiff = ar.shape[dim] // 2
+                rdiff = ar.shape[dim] - ldiff
+                start_new, start_old = center - ldiff, None
+                stop_new, stop_old = center + rdiff, None
+            else:
+                ldiff = shape[dim] // 2
+                rdiff = shape[dim] - ldiff
+                start_new, start_old = None, center - ldiff
+                stop_new, stop_old = None, center + rdiff
+        else:  # front
+            start_new, start_old = None, None
+            if shape[dim] > ar.shape[dim]:
+                stop_new, stop_old = ar.shape[dim], None
+            else:
+                stop_new, stop_old = None, shape[dim]
+        # Set slice
+        slice_new.append(slice(start_new, stop_new))
+        slice_old.append(slice(start_old, stop_old))
+    # Resize
+    resized_ar = np.full(
+        shape, fill_value, dtype=ar.dtype if dtype is None else dtype
+    )
+    resized_ar[tuple(slice_new)] = ar[tuple(slice_old)]
+    return resized_ar
 
 
 def cv_array_points_to_bins(ar):
