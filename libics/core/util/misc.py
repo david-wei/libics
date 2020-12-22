@@ -9,7 +9,7 @@ import numpy as np
 
 
 ###############################################################################
-# Type Checks
+# Type Checks and Conversions
 ###############################################################################
 
 
@@ -18,6 +18,26 @@ def is_number(var):
     Returns whether given variable is of scalar, numeric type.
     """
     return isinstance(var, numbers.Number)
+
+
+def cv_float(text, dec_sep=[".", ","]):
+    """
+    Converts a string into a float.
+
+    Parameters
+    ----------
+    text : `str`
+        Numeric text.
+    dec_sep : `str` or `Iter[str]`
+        Single or multiple decimal separators.
+    """
+    if isinstance(dec_sep, str):
+        text = text.replace(dec_sep, ".")
+    else:
+        for ch in dec_sep:
+            if ch in text:
+                text = text.replace(ch, ".")
+    return float(text)
 
 
 ###############################################################################
@@ -653,6 +673,30 @@ def print_progress(
             end &= (subcount == subtotal)
     end = "\n" if end else ""
     print(s, end=end)
+
+
+###############################################################################
+# Regular Expressions
+###############################################################################
+
+
+def get_regex_number(sgn=True, dec_sep="."):
+    """
+    Gets the regular expression for a signed decimal floating point number.
+
+    Parameters
+    ----------
+    sgn : `bool`
+        Whether to allow sign before number.
+    dec_sep : `str`
+        Decimal separator character. Multiple separators can be used by
+        passing multiple characters, e.g. `".,"` for both point and comma as
+        separators.
+    """
+    regex = r"[+-]?" if sgn else ""
+    dec_sep = f"[{dec_sep}]?"
+    regex += f"\\d*{dec_sep}\\d*"
+    return regex
 
 
 ###############################################################################
