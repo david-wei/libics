@@ -675,6 +675,30 @@ def print_progress(
     print(s, end=end)
 
 
+def iter_progress(it, **kwargs):
+    """
+    Returns an iterator and prints a progress bar for each iteration.
+
+    Note that `it` must be sized (i.e. has a length).
+    `**kwargs` are passed to :py:func:`print_progress`.
+    """
+    try:
+        total = len(it)
+    except TypeError:
+        it = list(it)
+        total = len(it)
+    it = iter(it)
+    start_time = time.time()
+    counter = 0
+    try:
+        while True:
+            print_progress(counter, total, start_time=start_time, **kwargs)
+            yield next(it)
+            counter += 1
+    except StopIteration:
+        return
+
+
 ###############################################################################
 # Regular Expressions
 ###############################################################################
