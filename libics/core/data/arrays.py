@@ -780,6 +780,9 @@ class ArrayData(object):
         s += "{:s}".format(str(self.data))
         return s
 
+    def __repr__(self):
+        return f"<'{self.__class__.__name__}' at {hex(id(self))}>\n{str(self)}"
+
     # ++++++++++
     # Conversion
     # ++++++++++
@@ -1340,6 +1343,7 @@ class SeriesData(object):
         dim : `int`
             Variable dimension to be set.
         **kwargs
+            `quantity, name, symbol, unit`.
             See :py:func:`assume_quantity`.
         """
         _quantity = assume_quantity(**kwargs)
@@ -1456,7 +1460,7 @@ class SeriesData(object):
 ###############################################################################
 
 
-def assume_quantity(**kwargs):
+def assume_quantity(*args, **kwargs):
     """
     Generates a quantity object from keyword arguments.
 
@@ -1473,6 +1477,8 @@ def assume_quantity(**kwargs):
     quantity : `types.Quantity`
         Constructed object.
     """
+    if len(args) == 1 and isinstance(args[0], types.Quantity):
+        kwargs["quantity"] = args[0]
     if "quantity" in kwargs:
         _quantity = misc.assume_construct_obj(
             kwargs["quantity"], types.Quantity

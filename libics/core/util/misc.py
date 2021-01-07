@@ -606,7 +606,7 @@ def capitalize_first_char(s):
     s_cap : str
         Capitalized string.
     """
-    s_cap = re.sub("([a-zA-Z])", lambda x: x.groups()[0].upper(), s, 1)
+    s_cap = re.sub(r"(\S)", lambda x: x.groups()[0].upper(), s, 1)
     return s_cap
 
 

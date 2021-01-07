@@ -728,4 +728,7 @@ class AttrDict(dict):
         return self[key]
 
     def __setattr__(self, key, val):
-        self[key] = val
+        if key not in self and key[0] == "_":
+            self.__dict__[key] = val
+        else:
+            self[key] = val
