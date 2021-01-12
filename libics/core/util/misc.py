@@ -795,7 +795,28 @@ def get_first_elem_iter(ls):
         return ls
 
 
-def get_combinations(ls, dtype=None):
+def _gcrec(prev_comb, rem_ls):
+    """
+    Get combinations recursively.
+
+    Parameters
+    ----------
+    prev_comb
+        Previous combination.
+    rem_ls
+        Remaining list.
+    """
+    ls = []
+    if len(rem_ls) > 1:
+        for cur_val in rem_ls[0]:
+            ls += _gcrec(prev_comb + [cur_val], rem_ls[1:])
+    else:
+        for cur_val in rem_ls[0]:
+            ls.append(prev_comb + [cur_val])
+    return ls
+
+
+def get_combinations(ls, flatten=True, dtype=None):
     """
     Takes an iterable of iterables and returns a list with all possible
     mutual, ordered combinations.
@@ -804,6 +825,10 @@ def get_combinations(ls, dtype=None):
     ----------
     ls : `Iter[Any]`
         Iterable from which combinations are constructed.
+    flatten : `bool`
+        Whether to flatten the items in `ls`.
+        If `True`, the algorithm is faster but cannot work with e.g.
+        items in `ls` that are multi-dimensional arrays.
     dtype : `None` or `callable`
         Combinations are given as numpy array.
         If `callable`, `dtype` is called on the returned numpy array.
@@ -819,14 +844,21 @@ def get_combinations(ls, dtype=None):
     >>>> get_combinations(ls, dtype=list)
     [[1, 5, 7], [1, 5, 8], [2, 5, 7], [2, 5, 8]]
     """
-    comb = np.stack(np.meshgrid(*ls, indexing="ij"), axis=-1)
-    comb = comb.reshape(-1, len(ls))
-    if dtype == list:
-        return comb.tolist()
-    elif callable(dtype):
-        return dtype(dtype(x) for x in comb)
+    if flatten is True:
+        comb = np.stack(np.meshgrid(*ls, indexing="ij"), axis=-1)
+        comb = comb.reshape(-1, len(ls))
     else:
-        return comb
+        if dtype is None:
+            dtype = list
+        comb = _gcrec([], ls)
+    if dtype == list:
+        if isinstance(comb, np.ndarray):
+            comb = comb.tolist()
+    elif callable(dtype):
+        comb = dtype(dtype(x) for x in comb)
+    else:
+        comb = np.array(comb)
+    return comb
 
 
 ###############################################################################
