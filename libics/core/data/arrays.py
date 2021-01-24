@@ -53,7 +53,7 @@ class ArrayData(object):
 
     * Follow the convention to declare all instance attributes within the
       constructor.
-    * Remember to add these attribute names to :py:meth:`copy_var`.
+    * Remember to add these attribute names to :py:attr:`ATTR_NAMES_COPY_VAR`.
     """
 
     POINTS = "POINTS"
@@ -63,7 +63,7 @@ class ArrayData(object):
 
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
-    def __init__(self):
+    def __init__(self, *args):
         # -------------------
         # Instance attributes
         # -------------------
@@ -84,6 +84,22 @@ class ArrayData(object):
         # Mode: linspace
         self._low = []
         self._high = []
+        # Parse parameters
+        if len(args) != 0:
+            self.__set_init_args(*args)
+
+    def __set_init_args(self, *args):
+        if len(args) != 1:
+            raise ValueError("constructor only accepts one argument")
+        arg = args[0]
+        if isinstance(arg, ArrayData):
+            for attr_name in self.ATTR_NAMES_COPY_VAR:
+                setattr(self, attr_name, getattr(arg, attr_name))
+            self.data = arg.data
+        elif isinstance(arg, np.ndarray):
+            self.data = arg
+        else:
+            raise ValueError(f"constructor does not accept type `{type(arg)}`")
 
     __LIBICS_IO__ = True
     SER_KEYS = {
@@ -94,6 +110,11 @@ class ArrayData(object):
     def attributes(self):
         """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
         return {k: getattr(self, k) for k in self.SER_KEYS}
+
+    ATTR_NAMES_COPY_VAR = {
+        "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
+        "_points", "_offset", "_center", "_step", "_low", "_high"
+    }
 
     # ++++
     # Data
@@ -799,13 +820,7 @@ class ArrayData(object):
         which is copied by reference.
         """
         obj = self.__class__()
-        for attr_name in [
-            "data_quantity", "_placeholder_shape",
-            "var_quantity", "var_mode",
-            "_points",
-            "_offset", "_center", "_step",
-            "_low", "_high"
-        ]:
+        for attr_name in self.ATTR_NAMES_COPY_VAR:
             setattr(obj, attr_name, copy.deepcopy(getattr(self, attr_name)))
         obj.data = self.data
         return obj
