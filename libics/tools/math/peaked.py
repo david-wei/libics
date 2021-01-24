@@ -441,6 +441,10 @@ class FitGaussian2dTilt(ModelBase):
                         self.popt_for_fit = popt
                         self.pcov_for_fit = pcov
                 self.popt_for_fit[tilt_idx] = tilt
+            psuccess &= np.all([
+                getattr(self, f"{pname}_std") / getattr(self, pname) < 1
+                for pname in ["a", "wu", "wv"]
+            ])
         return psuccess
 
 
