@@ -120,7 +120,7 @@ class ArrayData(object):
     # Data
     # ++++
 
-    def set_data_quantity(self, **kwargs):
+    def set_data_quantity(self, *args, **kwargs):
         """
         Sets the data quantity object.
 
@@ -129,7 +129,7 @@ class ArrayData(object):
         **kwargs
             See :py:func:`assume_quantity`.
         """
-        _quantity = assume_quantity(**kwargs)
+        _quantity = assume_quantity(*args, **kwargs)
         self.data_quantity = _quantity
 
     # +++++++++++++++++++++++++++++++

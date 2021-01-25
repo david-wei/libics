@@ -238,10 +238,6 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
                 return obj
             else:
                 raise raise_exception
-        if raise_exception is None:
-            return obj
-        else:
-            raise raise_exception
 
 
 def cv_bitfield(n):
