@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from libics.core.data.arrays import ArrayData, SeriesData
+from libics.core.util import misc
 
 
 ###############################################################################
@@ -53,7 +54,10 @@ class DataSequence(pd.DataFrame):
         """
         return self.drop(columns=list(col_names), inplace=inplace)
 
-    def apply_func(self, func, col_names, ret_name=True, drop_cols=False):
+    def apply_func(
+        self, func, col_names, ret_name=True, drop_cols=False,
+        print_progress=False
+    ):
         """
         Applies a function to each row.
 
@@ -63,22 +67,35 @@ class DataSequence(pd.DataFrame):
             Call signature: `func(*col_names_values)->res`.
         col_names : `object` or `iter(object)`
             Column names whose values are passed to `func`.
-        ret_name : `str` or `bool`
+        ret_name : `str` or `Iter[str]` or `bool`
             Column name in which return value is stored.
+            If `Iter`, assumes that `func` returns an `Iter`. Each returned
+            value is assigned to the respective column in order. If a certain
+            value should not be assigned, pass `None` instead of `str`.
             If `True`, assigns return value to the row
             corresponding to the first item in `col_names`.
             If `False`, does not assign any return value.
         drop_cols : `bool`
             Flag whether to drop the columns used as `func` input.
+        print_progress : `bool`
+            Whether to print a progress bar.
         """
         if isinstance(col_names, str):
             col_names = [col_names]
         if ret_name is True:
             ret_name = col_names[0]
         args = self[list(col_names)]
-        ret = [func(*arg) for _, arg in args.iterrows()]
+        _iter = args.iterrows()
+        if print_progress:
+            _iter = misc.iter_progress(_iter)
+        ret = [func(*arg) for _, arg in _iter]
         if ret_name is not False:
-            self[ret_name] = ret
+            if isinstance(ret_name, str):
+                self[ret_name] = ret
+            else:
+                for i, name in enumerate(ret_name):
+                    if name is not None:
+                        self[name] = [item[i] for item in ret]
         if drop_cols:
             if ret_name in col_names:
                 col_names.remove(ret_name)
