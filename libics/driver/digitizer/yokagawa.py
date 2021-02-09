@@ -1,7 +1,6 @@
 import numpy as np
 
-from scipy import constants
-
+from libics.env import constants
 from libics.core.data.arrays import ArrayData
 from libics.driver.digitizer import SpectrumAnalyzer
 from libics.driver.digitizer import AVERAGE_MODE
