@@ -870,14 +870,17 @@ class ArrayData(object):
             ind = np.argmin(np.abs(self.get_points(dim) - val))
         else:
             val = max(val, self.get_offset(dim))
-            ind = round((val - self.offset[dim]) / self.scale[dim])
+            ind = round((val - self.offset[dim]) / self.step[dim])
         return ind
 
     # +++++++++++++
     # Interpolation
     # +++++++++++++
 
-    def __call__(self, var, mode="nearest", extrapolation=False):
+    def __call__(self, var, **kwargs):
+        return self.interpolate(var, **kwargs)
+
+    def interpolate(self, var, mode="nearest", extrapolation=False):
         """
         Acts as a function and interpolates for the given `var`.
 
