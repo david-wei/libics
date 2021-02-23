@@ -225,6 +225,19 @@ class FitGaussian1d(ModelBase):
         x0 = (1 - max_weight) * x_stat + max_weight * x_max
         return x0
 
+    def find_popt(self, *args, **kwargs):
+        psuccess = super().find_popt(*args, **kwargs)
+        if psuccess:
+            # Enforce positive width
+            for pname in ["wx"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = np.abs(self._popt[pidx])
+            psuccess &= np.all([
+                getattr(self, f"{pname}_std") / getattr(self, pname) < 1
+                for pname in ["a", "wx"]
+            ])
+        return psuccess
 
 def gaussian_nd(x,
                 amplitude, center, width, offset=0.0):
