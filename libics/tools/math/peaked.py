@@ -57,7 +57,7 @@ class FitExponentialDecay1d(ModelBase):
         return exponential_decay_1d(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         c = np.min(func_data) / 2
         a = np.max(func_data) - c
         x0 = 0
@@ -184,7 +184,7 @@ class FitGaussian1d(ModelBase):
         return p0
 
     def find_p0(self, *data):
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         self.p0 = self._find_p0_stat(var_data, func_data)
 
     @staticmethod
@@ -417,7 +417,7 @@ class FitGaussian2dTilt(ModelBase):
         algorithm : `str`
             `"linear", "fit1d"`.
         """
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         if algorithm == "linear":
             self.p0 = self._find_p0_linear(var_data, func_data)
         elif algorithm == "fit1d":
@@ -639,7 +639,7 @@ class FitBmGaussianParabolic1dInt2d(FitGaussian1d):
         -----
         Currently only works for positive data.
         """
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         fitg, fitp = FitGaussian1d(), FitParabolic1dInt2d()
         # Split data
         fitg.find_p0(var_data, func_data)
@@ -734,7 +734,7 @@ class FitBmGaussianParabolic2dInt1dTilt(FitGaussian2dTilt):
         return [ag, ap, x0, y0, wgx, wgy, wpx, wpy, tilt, c]
 
     def find_p0(self, *data):
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         self.p0 = self._find_p0_fit1d(var_data, func_data)
 
     def find_popt(self, *args, **kwargs):
@@ -838,7 +838,7 @@ class FitLorentzian1dAbs(ModelBase):
         """
         Algorithm: dummy max.
         """
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         idx_max = np.argmax(func_data)
         a = func_data[idx_max]
         x0 = var_data[idx_max]
@@ -903,7 +903,7 @@ class FitAiryDisk2d(ModelBase):
         """
         Algorithm: linear min/max approximation.
         """
-        var_data, func_data = self._split_fit_data(*data)
+        var_data, func_data, _ = self._split_fit_data(*data)
         c = func_data.min()
         xmin, xmax = var_data[0].min(), var_data[0].max()
         ymin, ymax = var_data[1].min(), var_data[1].max()

@@ -292,7 +292,9 @@ class ModelBase(abc.ABC):
 
         # Prepare fit data
         split_data = self._split_fit_data(*data)
-        var_data, func_data = self._ravel_data(*split_data)
+        var_data, func_data, err_data = self._ravel_data(*split_data)
+        if err_data is not None and "sigma" not in kwargs:
+            kwargs.update({"sigma": err_data})
         p0 = self.p0_for_fit
 
         # Optimize parameters
@@ -304,6 +306,26 @@ class ModelBase(abc.ABC):
             and np.all(np.isfinite(self.pcov_for_fit))
         )
         return self.psuccess
+
+    def find_chi2(self, *data):
+        """
+        Gets the chi squared statistic.
+        """
+        split_data = self._split_fit_data(*data)
+        var_data, func_data, err_data = self._ravel_data(*split_data)
+        if err_data is None:
+            raise ValueError("No error specified")
+        diff_data = func_data - self.__call__(var_data).ravel()
+        chi2 = np.sum(diff_data**2 / err_data**2)
+        return chi2
+
+    def find_chi2_red(self, *data):
+        """
+        Gets the reduced chi squared statistic.
+        """
+        chi2 = self.find_chi2(*data)
+        chi2_red = chi2 / (data[0].size - len(self.pfit))
+        return chi2_red        
 
     def __call__(self, var, *args, **kwargs):
         """
@@ -367,9 +389,10 @@ class ModelBase(abc.ABC):
         ----------
         *data : `ArrayData` or `SeriesData` or `np.ndarray`
             Data to be split.
-            FIXME: If two arrays are given, they are interpreted as
+            If two arrays are given, they are interpreted as
             `(var_data, func_data)`.
-            TODO: Add err_data support.
+            If three arrays are given, they are interpreted as
+            `(var_data, func_data, err_data)`.
         func_dim : `int`
             Only used for `SeriesData`.
             Dependent data dimension (index).
@@ -380,33 +403,46 @@ class ModelBase(abc.ABC):
             Independent data.
         func_data : `np.ndarray`
             Dependent data.
+        func_err : `np.ndarray` or `None`
+            Errors of dependent data (if available).
         """
-        # Parse arguments
+        var_data, func_data, err_data = None, None, None
+        # Single argument
         if len(data) == 1:
             data = data[0]
-        elif len(data) == 2:
-            # FIXME: check for types
-            return data
+            if isinstance(data, SeriesData):
+                func_data = data.data[func_dim]
+                var_data = np.concatenate(
+                    (data.data[0:func_dim], data.data[func_dim + 1:])
+                )
+            else:
+                if isinstance(data, ArrayData):
+                    func_data = data.data
+                    var_data = data.get_var_meshgrid()
+                else:
+                    func_data = np.array(data)
+                    var_data = np.indices(func_data.shape)
+        elif len(data) in [2, 3]:
+            if isinstance(data[0], ArrayData):
+                var_data = data[0].data
+            else:
+                var_data = np.array(data[0])
+            if isinstance(data[1], ArrayData):
+                func_data = data[1].data
+            else:
+                func_data = np.array(data[1])
+            if len(data) == 3:
+                if isinstance(data[2], ArrayData):
+                    err_data = data[2].data
+                elif err_data is not None:
+                    err_data = np.array(data[2])
         else:
             raise NotImplementedError
         # Split data
-        var_data, func_data = None, None
-        if isinstance(data, SeriesData):
-            func_data = data.data[func_dim]
-            var_data = np.concatenate(
-                (data.data[0:func_dim], data.data[func_dim + 1:])
-            )
-        else:
-            if isinstance(data, ArrayData):
-                func_data = data.data
-                var_data = data.get_var_meshgrid()
-            else:
-                func_data = np.array(data)
-                var_data = np.indices(func_data.shape)
-        return var_data, func_data
+        return var_data, func_data, err_data
 
     @staticmethod
-    def _ravel_data(var_data, func_data=None, _check_shape=True):
+    def _ravel_data(var_data, func_data=None, err_data=None, _check_shape=True):
         """
         Serializes array-like (nD) data into series-like (1D) data.
 
@@ -416,6 +452,8 @@ class ModelBase(abc.ABC):
             Array-like independent data.
         func_data : `np.ndarray`
             Array-like dependent data.
+        func_data : `np.ndarray`
+            Array-like dependent errors.
         _check_shape : `bool`
             Flag whether to check `var_data` and `func_data`
             shape overlap.
@@ -426,6 +464,8 @@ class ModelBase(abc.ABC):
             Serialized independent data.
         func_data : `np.ndarray`
             Serialized dependent data.
+        err_data : `np.ndarray`
+            Serialized dependent errors.
 
         Raises
         ------
@@ -445,8 +485,19 @@ class ModelBase(abc.ABC):
                     .format(var_data.shape, func_data.shape)
                 )
             func_data = func_data.ravel()
+        if err_data is not None:
+            err_data = np.array(err_data)
+            if (
+                _check_shape and
+                var_data.shape[var_data_ind:] != err_data.shape
+            ):
+                raise ValueError(
+                    "invalid fit data dimensions: {:s}, {:s}"
+                    .format(var_data.shape, err_data.shape)
+                )
+            err_data = err_data.ravel()
         if var_data_ind == 0:
             var_data = var_data.ravel()
         else:
             var_data = var_data.reshape((var_data.shape[0], -1))
-        return var_data, func_data
+        return var_data, func_data, err_data
