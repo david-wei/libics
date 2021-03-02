@@ -254,6 +254,8 @@ def plot(
     # Process normalization
     if xnorm is not None:
         x = np.array(x) / xnorm
+        if xerr is not None:
+            xerr = np.array(xerr) / xnorm
     if ynorm is not None:
         y = np.array(y) / ynorm
         if yerr is not None:

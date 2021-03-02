@@ -58,12 +58,27 @@ class FitLinear1d(ModelBase):
         var_data, func_data, _ = self._split_fit_data(*data)
         var_data = var_data.ravel()
         idx_min, idx_max = np.argmin(func_data), np.argmax(func_data)
-        fmin, fmax = func_data[idx_min], func_data[idx_max]
-        vmin, vmax = var_data[idx_min], var_data[idx_max]
-        a = (fmax - fmin) / (vmax - vmin)
-        c = fmax - a * vmax
-        self.p0 = [a, c]
+        if idx_min == idx_max:
+            self.p0 = [0, func_data[idx_min]]
+        else:
+            fmin, fmax = func_data[idx_min], func_data[idx_max]
+            vmin, vmax = var_data[idx_min], var_data[idx_max]
+            a = (fmax - fmin) / (vmax - vmin)
+            c = fmax - a * vmax
+            self.p0 = [a, c]
 
+    def find_popt(self, *data, **kwargs):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data = var_data.ravel()
+        if np.allclose(np.abs(self.__call__(var_data) - func_data), 0):
+            popt_for_fit = self.p0_for_fit
+            self.popt_for_fit = popt_for_fit
+            self.pcov_for_fit = np.zeros(
+                (len(popt_for_fit), len(popt_for_fit)), dtype=float
+            )
+            return True
+        else:
+            return super().find_popt(*data, **kwargs)
 
 
 def power_law_1d(x, amplitude, power, center=0, offset=0):
@@ -73,7 +88,10 @@ def power_law_1d(x, amplitude, power, center=0, offset=0):
     .. math::
         a (x - x_0)^p + c
     """
-    return amplitude * (x - center)**power + offset
+    dx = x - center
+    xpow = np.zeros_like(x)
+    np.power(dx, power, out=xpow, where=(dx != 0))
+    return amplitude * xpow + offset
 
 
 class FitPowerLaw1d(ModelBase):
@@ -109,4 +127,4 @@ class FitPowerLaw1d(ModelBase):
         if _fit.find_popt(var_log, func_log):
             a = np.exp(_fit.c)
             p = _fit.a
-            self.p0 = [a, p]
+            self.p0 = [a * sign, p]

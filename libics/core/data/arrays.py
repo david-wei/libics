@@ -180,7 +180,7 @@ class ArrayData(object):
         # Mode: points
         if "points" in kwargs:
             self.var_mode[dim] = self.POINTS
-            self._points[dim] = kwargs["points"]
+            self._points[dim] = np.array(kwargs["points"])
             self._offset[dim] = None
             self._center[dim] = None
             self._step[dim] = None
