@@ -101,7 +101,7 @@ class DataSequence(pd.DataFrame):
                 col_names.remove(ret_name)
             self.drop_column(*col_names)
 
-    def sort_rows(self, col_name, ascending=True, **kwargs):
+    def sort_rows(self, col_name, ascending=True, reset_index=True, **kwargs):
         """
         Sorts the rows by numerical values in a column.
 
@@ -111,8 +111,12 @@ class DataSequence(pd.DataFrame):
             Column name of values to be sorted by.
         ascending : `bool`
             Flag whether to sort ascending (or descending).
+        reset_index : `bool`
+            Flag whether to reset indices.
         """
         self.sort_values(col_name, ascending=ascending, inplace=True, **kwargs)
+        if reset_index is True:
+            self.reset_index()
 
     def reset_index(self, **kwargs):
         super().reset_index(drop=True, inplace=True, **kwargs)
