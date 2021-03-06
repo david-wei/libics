@@ -434,7 +434,7 @@ class ModelBase(abc.ABC):
             if len(data) == 3:
                 if isinstance(data[2], ArrayData):
                     err_data = data[2].data
-                elif err_data is not None:
+                elif data[2] is not None:
                     err_data = np.array(data[2])
         else:
             raise NotImplementedError
@@ -452,7 +452,7 @@ class ModelBase(abc.ABC):
             Array-like independent data.
         func_data : `np.ndarray`
             Array-like dependent data.
-        func_data : `np.ndarray`
+        err_data : `np.ndarray`
             Array-like dependent errors.
         _check_shape : `bool`
             Flag whether to check `var_data` and `func_data`
