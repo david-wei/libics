@@ -230,7 +230,8 @@ class ModelBase(abc.ABC):
             name = name[:-4]
         try:
             if get_std is True:
-                return self.pstd[self.pall[name]]
+                #return self.pstd[self.pall[name]]  # TODO: fix property pstd
+                return self.pstd[self.pfit[name]]
             else:
                 return self.popt[self.pall[name]]
         except KeyError:
