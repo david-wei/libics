@@ -1,4 +1,6 @@
 import numpy as np
+from numpy.core.fromnumeric import ndim
+import scipy
 
 from libics.env import logging
 from libics.tools.math.models import ModelBase
@@ -9,13 +11,85 @@ from libics.tools.math.models import ModelBase
 ###############################################################################
 
 
+def cosine_1d( var, amplitude, frequency, phase, offset=0.0):
+    return amplitude * np.cos(2 * np.pi * frequency * var + phase) + offset
+
+
+class FitCosine1d(ModelBase):
+
+    """
+    Fit class for :py:func:`cosine_1d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    f (frequency without 2π)
+    phi (additive phase)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitLinear1d")
+    P_ALL = ["a", "f", "phi", "c"]
+    P_DEFAULT = [1, 1, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return cosine_1d(var, *p)
+
+    def find_p0(self, *data, MAX_POINTS=1024):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data = var_data.ravel()
+        if len(var_data) > MAX_POINTS:
+            var_data, func_data = var_data[:MAX_POINTS], func_data[:MAX_POINTS]
+        var_diff = var_data[1:] - var_data[:-1]
+        # Zero data
+        c = np.mean(func_data)
+        func_data -= c
+        # Uniform spacing
+        if np.allclose(var_diff, var_diff[0]):
+            var_data = var_data[:-1:2]
+            func_data = (func_data[:-1:2] + func_data[1::2]) / 2
+        # Non-uniform spacing
+        else:
+            func_data_interp = scipy.interpolate.interp1d(var_data, func_data)
+            var_data = np.linspace(
+                var_data.min(), var_data.max(), num=(len(var_data)+1)//2
+            )
+            func_data = func_data_interp(var_data)
+        # FFT for frequency estimation
+        var_diff = var_data[1] - var_data[0]
+        freqs = np.fft.fftfreq(len(func_data), d=var_diff)
+        fft = abs(np.fft.fft(func_data))
+        f = abs(freqs[np.argmax(fft[1:]) + 1])  # removing DC
+        # Estimate amplitude
+        a = np.std(func_data) * np.sqrt(2)
+        # Estimate phase
+        var_max = var_data[np.argmax(func_data)]
+        var_min = var_data[np.argmin(func_data)]
+        phi_max = 2*np.pi * ((f * var_max + 0.5) % 1)
+        phi_min = 2*np.pi * ((f * var_min) % 1)
+        phi = np.mean([phi_max, phi_min])
+        # Set p0
+        self.p0 = [a, f, phi, c]
+
+    def find_popt(self, *data, **kwargs):
+        psuccess = super().find_popt(*data, **kwargs)
+        if psuccess:
+            # Enforce phase within [0, 2π)
+            for pname in ["phi"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = self._popt[pidx] % (2 * np.pi)
+        return psuccess
+
+
 def cosine_2d(
-    var, amplitude_x, amplitude_y, period_x, period_y, phase_x, phase_y,
+    var, amplitude_x, amplitude_y, frequency_x, frequency_y, phase_x, phase_y,
     offset=0.0
 ):
     return (
-        amplitude_x * np.cos(2 * np.pi * var[0] / period_x + phase_x)
-        + amplitude_y * np.cos(2 * np.pi * var[1] / period_y + phase_y)
+        amplitude_x * np.cos(2 * np.pi * frequency_x * var[0] + phase_x)
+        + amplitude_y * np.cos(2 * np.pi * frequency_y * var[1] + phase_y)
         + offset
     )
 
