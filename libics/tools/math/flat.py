@@ -11,7 +11,7 @@ from libics.tools.math.models import ModelBase
 ###############################################################################
 
 
-def cosine_1d( var, amplitude, frequency, phase, offset=0.0):
+def cosine_1d(var, amplitude, frequency, phase, offset=0.0):
     return amplitude * np.cos(2 * np.pi * frequency * var + phase) + offset
 
 
@@ -75,6 +75,13 @@ class FitCosine1d(ModelBase):
     def find_popt(self, *data, **kwargs):
         psuccess = super().find_popt(*data, **kwargs)
         if psuccess:
+            # Enforce positive amplitude
+            for pname, pcorrect in [["a", "phi"]]:
+                if np.all([x in self.pfit for x in [pname, pcorrect]]):
+                    nidx, cidx = self.pfit[pname], self.pfit[pcorrect]
+                    if self._popt[nidx] < 0:
+                        self._popt[nidx] = abs(self._popt[nidx])
+                        self._popt[cidx] = self._popt[cidx] + np.pi
             # Enforce phase within [0, 2π)
             for pname in ["phi"]:
                 if pname in self.pfit:
@@ -83,15 +90,91 @@ class FitCosine1d(ModelBase):
         return psuccess
 
 
-def cosine_2d(
-    var, amplitude_x, amplitude_y, frequency_x, frequency_y, phase_x, phase_y,
-    offset=0.0
-):
-    return (
-        amplitude_x * np.cos(2 * np.pi * frequency_x * var[0] + phase_x)
-        + amplitude_y * np.cos(2 * np.pi * frequency_y * var[1] + phase_y)
-        + offset
-    )
+def cosine_2d(var, amplitude, frequency_x, frequency_y, phase, offset=0.0):
+    return amplitude * np.cos(
+        2 * np.pi * (frequency_x * var[0] + frequency_y * var[1]) + phase
+    ) + offset
+
+
+class FitCosine2d(ModelBase):
+
+    """
+    Fit class for :py:func:`cosine_2d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    fx, fy (frequency without 2π)
+    phi (additive phase)
+    c (offset)
+
+    Properties
+    ----------
+    f : Vectorial frequency (fx, fy)
+    angle: Frequency angle arctan(fy/fx)
+    """
+
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitLinear2d")
+    P_ALL = ["a", "fx", "fy", "phi", "c"]
+    P_DEFAULT = [1, 1, 0, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return cosine_2d(var, *p)
+
+    @property
+    def f(self):
+        return np.array([self.fx, self.fy])
+    
+    @property
+    def angle(self):
+        if self.fx == 0:
+            return np.pi / 2
+        else:
+            return np.arctan(self.fy / self.fx)
+    
+    def find_p0(self, *data, MAX_LINES=5, MAX_POINTS=1024):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        # Perform 1D fits
+        _step = var_data.shape[1] // MAX_LINES, var_data.shape[2] // MAX_LINES
+        _step = [max(1, _x) for _x in _step]
+        v_data = [var_data[0][:, ::_step[0]].T, var_data[1][::_step[1]]]
+        f_data = [func_data[:, ::_step[0]].T, func_data[::_step[1]]]
+        a, f, phi, c = [[], []], [[], []], [[], []], [[], []]
+        for dim in range(2):
+            for _x, _f in zip(v_data[dim], f_data[dim]):
+                _fit = FitCosine1d()
+                _fit.find_p0(_x, _f, MAX_POINTS=MAX_POINTS)
+                if _fit.find_popt(_x, _f):
+                    a[dim].append(_fit.a)
+                    f[dim].append(_fit.f)
+                    phi[dim].append(_fit.phi)
+                    c[dim].append(_fit.c)
+                else:
+                    self.LOGGER.debug("find_p0: 1D fit did not converge")
+        # Set p0
+        a = np.max(a)
+        fx, fy = np.mean(f, axis=-1)
+        phi = np.sum(np.mean(phi, axis=-1))
+        c = np.mean(func_data)
+        self.p0 = [a, fx, fy, phi, c]
+
+    def find_popt(self, *data, **kwargs):
+        psuccess = super().find_popt(*data, **kwargs)
+        if psuccess:
+            # Enforce positive amplitude
+            for pname, pcorrect in [["a", "phi"]]:
+                if np.all([x in self.pfit for x in [pname, pcorrect]]):
+                    nidx, cidx = self.pfit[pname], self.pfit[pcorrect]
+                    if self._popt[nidx] < 0:
+                        self._popt[nidx] = abs(self._popt[nidx])
+                        self._popt[cidx] = self._popt[cidx] + np.pi
+            # Enforce phase within [0, 2π)
+            for pname in ["phi"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = self._popt[pidx] % (2 * np.pi)
+        return psuccess
 
 
 ###############################################################################
