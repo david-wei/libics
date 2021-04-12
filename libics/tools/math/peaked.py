@@ -10,13 +10,12 @@ from libics.tools.math.models import ModelBase
 ###############################################################################
 
 
-def exponential_decay_1d(x,
-                         amplitude, center, length, offset=0.0):
+def exponential_1d(x, amplitude, rate, offset=0.0):
     r"""
-    Exponential decay in one dimension.
+    Exponential function in one dimension.
 
     .. math::
-        A e^{-\frac{|x - c|}{\xi}} + C
+        A e^{\gamma x} + C
 
     Parameters
     ----------
@@ -24,45 +23,73 @@ def exponential_decay_1d(x,
         Variable :math:`x`.
     amplitude : `float`
         Amplitude :math:`A`.
-    center : `float`
-        Center :math:`c`.
-    length : `float`
-        Characteristic length :math:`\xi`.
+    rate : `float`
+        Rate of exponential :math:`\gamma`.
     offset : `float`, optional (default: 0)
         Offset :math:`C`
     """
-    exponent = -np.abs(x - center) / length
-    return amplitude * np.exp(exponent) + offset
+    return amplitude * np.exp(rate * x) + offset
 
 
-class FitExponentialDecay1d(ModelBase):
+class FitExponential1d(ModelBase):
 
     """
-    Fit class for :py:func:`exponential_decay_1d`.
+    Fit class for :py:func:`exponential_1d`.
 
     Parameters
     ----------
     a (amplitude)
-    x0 (center)
-    xi (length)
+    g (rate)
     c (offset)
+
+    Properties
+    ----------
+    x0 (variable offset, assuming unity amplitude)
+    xi (decay length, inverse rate)
     """
 
-    LOGGER = logging.get_logger("libics.math.peaked.FitExponentialDecay1d")
-    P_ALL = ["a", "x0", "xi", "c"]
-    P_DEFAULT = [1, 0, 1, 0]
+    LOGGER = logging.get_logger("libics.math.peaked.FitExponential1d")
+    P_ALL = ["a", "g", "c"]
+    P_DEFAULT = [1, 1, 0]
 
     @staticmethod
     def _func(var, *p):
-        return exponential_decay_1d(var, *p)
+        return exponential_1d(var, *p)
+
+    @property
+    def x0(self):
+        return -np.log(np.abs(self.a)) / self.g
+
+    @property
+    def xi(self):
+        return 1 / self.g
 
     def find_p0(self, *data):
         var_data, func_data, _ = self._split_fit_data(*data)
-        c = np.min(func_data) / 2
-        a = np.max(func_data) - c
-        x0 = 0
-        xi = (np.max(var_data) - np.min(var_data)) / np.log(np.abs(2 * c / a))
-        self.p0 = [a, x0, xi, c]
+        var_data = var_data.ravel()
+        # Smoothened derivatives
+        func_data_filter = ndimage.uniform_filter(
+            func_data, size=max(3, len(func_data) // 12)
+        )
+        first_derivative = np.gradient(func_data_filter, var_data)
+        second_derivative = np.gradient(
+            ndimage.uniform_filter(first_derivative, size=3), var_data
+        )
+        # Extract parameters
+        g = np.median(second_derivative / first_derivative)
+        _exp_gx = np.exp(g * var_data)
+        a = np.median(first_derivative / g / _exp_gx)
+        c = np.median(func_data_filter - a * _exp_gx)
+        self.p0 = [a, g, c]
+
+
+def exponential_decay_1d(*args, **kwargs):
+    raise RuntimeError("DEPRECATED: use function `exponential_1d`")
+
+
+class FitExponentialDecay1d:
+    def __init__(self, *args, **kwargs):
+        raise RuntimeError("DEPRECATED: use class `FitExponential1d`")
 
 
 def exponential_decay_nd(x,
@@ -238,6 +265,7 @@ class FitGaussian1d(ModelBase):
                 for pname in ["a", "wx"]
             ])
         return psuccess
+
 
 def gaussian_nd(x,
                 amplitude, center, width, offset=0.0):

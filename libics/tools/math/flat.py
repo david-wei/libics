@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.core.fromnumeric import ndim
 import scipy
 
 from libics.env import logging
@@ -114,7 +113,7 @@ class FitCosine2d(ModelBase):
     angle: Frequency angle arctan(fy/fx)
     """
 
-    LOGGER = logging.get_logger("libics.tools.math.flat.FitLinear2d")
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitCosine2d")
     P_ALL = ["a", "fx", "fy", "phi", "c"]
     P_DEFAULT = [1, 1, 0, 0, 0]
 
@@ -125,37 +124,68 @@ class FitCosine2d(ModelBase):
     @property
     def f(self):
         return np.array([self.fx, self.fy])
-    
+
     @property
     def angle(self):
         if self.fx == 0:
             return np.pi / 2
         else:
             return np.arctan(self.fy / self.fx)
-    
-    def find_p0(self, *data, MAX_LINES=5, MAX_POINTS=1024):
+
+    def find_p0(self, *data, MAX_LINES=16, MAX_POINTS=1024):
         var_data, func_data, _ = self._split_fit_data(*data)
         # Perform 1D fits
-        _step = var_data.shape[1] // MAX_LINES, var_data.shape[2] // MAX_LINES
+        _step = var_data.shape[2] // MAX_LINES, var_data.shape[1] // MAX_LINES
         _step = [max(1, _x) for _x in _step]
         v_data = [var_data[0][:, ::_step[0]].T, var_data[1][::_step[1]]]
         f_data = [func_data[:, ::_step[0]].T, func_data[::_step[1]]]
-        a, f, phi, c = [[], []], [[], []], [[], []], [[], []]
+        a, f, phi, c = [], [], [], []
         for dim in range(2):
-            for _x, _f in zip(v_data[dim], f_data[dim]):
+            _a, _freq, _phi, _c = [], [], [], []
+            for i, (_x, _f) in enumerate(zip(v_data[dim], f_data[dim])):
                 _fit = FitCosine1d()
                 _fit.find_p0(_x, _f, MAX_POINTS=MAX_POINTS)
                 if _fit.find_popt(_x, _f):
-                    a[dim].append(_fit.a)
-                    f[dim].append(_fit.f)
-                    phi[dim].append(_fit.phi)
-                    c[dim].append(_fit.c)
+                    _a.append(_fit.a)
+                    _freq.append(_fit.f)
+                    _phi.append(_fit.phi)
+                    _c.append(_fit.c)
                 else:
                     self.LOGGER.debug("find_p0: 1D fit did not converge")
+            # Analyze p0
+            a.append(np.max(_a))
+            phi.append(np.mean(_phi))
+            c.append(np.mean(_c))
+            if np.std(_freq) > np.mean(_freq) / 3:  # if consistent fits
+                f.append(0)
+            else:
+                f.append(np.mean(_freq))
+        # Set angular direction
+        _xmin, _xmax = var_data[0].min(), var_data[0].max()
+        _ymin, _ymax = var_data[1].min(), var_data[1].max()
+        _xc, _yc = np.mean([_xmin, _xmax]), np.mean([_ymin, _ymax])
+        _slope = f[1] / f[0]
+        _offset = _yc - _slope * _xc
+        _xmin = max(_xmin, (_ymin-_offset)/_slope)
+        _xmax = min(_xmax, (_ymax-_offset)/_slope)
+        _xinterp = np.linspace(_xmin, _xmax, num=16)
+        _yinterp_pos = _slope * _xinterp + _yc - _slope * _xc
+        _yinterp_neg = -_slope * _xinterp + _yc + _slope * _xc
+        _f_pos = scipy.interpolate.griddata(
+            (var_data[0].ravel(), var_data[1].ravel()), func_data.ravel(),
+            (_xinterp, _yinterp_pos)
+        )
+        _f_neg = scipy.interpolate.griddata(
+            (var_data[0].ravel(), var_data[1].ravel()), func_data.ravel(),
+            (_xinterp, _yinterp_neg)
+        )
         # Set p0
-        a = np.max(a)
-        fx, fy = np.mean(f, axis=-1)
-        phi = np.sum(np.mean(phi, axis=-1))
+        a = np.mean(a)
+        if np.std(_f_pos) >= np.std(_f_neg):
+            fx, fy = f[0], f[1]
+        else:
+            fx, fy = f[0], -f[1]
+        phi = sum(phi)
         c = np.mean(func_data)
         self.p0 = [a, fx, fy, phi, c]
 
