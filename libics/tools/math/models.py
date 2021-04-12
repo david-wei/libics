@@ -299,9 +299,12 @@ class ModelBase(abc.ABC):
         p0 = self.p0_for_fit
 
         # Optimize parameters
-        self.popt_for_fit, self.pcov_for_fit = scipy.optimize.curve_fit(
-            _fit_func, var_data, func_data, p0=p0, **kwargs
-        )
+        try:
+            self.popt_for_fit, self.pcov_for_fit = scipy.optimize.curve_fit(
+                _fit_func, var_data, func_data, p0=p0, **kwargs
+            )
+        except RuntimeError:
+            return False
         self.psuccess = (
             not np.any(np.isnan(self.pcov_for_fit))
             and np.all(np.isfinite(self.pcov_for_fit))
@@ -326,7 +329,7 @@ class ModelBase(abc.ABC):
         """
         chi2 = self.find_chi2(*data)
         chi2_red = chi2 / (data[0].size - len(self.pfit))
-        return chi2_red        
+        return chi2_red
 
     def __call__(self, var, *args, **kwargs):
         """
@@ -443,7 +446,9 @@ class ModelBase(abc.ABC):
         return var_data, func_data, err_data
 
     @staticmethod
-    def _ravel_data(var_data, func_data=None, err_data=None, _check_shape=True):
+    def _ravel_data(
+        var_data, func_data=None, err_data=None, _check_shape=True
+    ):
         """
         Serializes array-like (nD) data into series-like (1D) data.
 
