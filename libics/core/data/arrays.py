@@ -430,6 +430,11 @@ class ArrayData(object):
     # Getter
     # ++++++
 
+    def _check_mode_cv(self, dim):
+        _p = self._points[dim]
+        _dp = _p[1] - _p[0]
+        return np.allclose(_p[1:] - _p[:-1], _dp)
+
     def get_points(self, dim):
         """
         Gets the variable points for the specified dimension.
@@ -451,15 +456,17 @@ class ArrayData(object):
         else:
             raise ValueError("invalid mode: {:s}".format(str(self.var_mode)))
 
-    def get_offset(self, dim):
+    def get_offset(self, dim, check_mode=True):
         """
         Gets the variable offset for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable offset on a dimension in POINTS mode"
-            )
-            return np.min(self._points[dim])
+            _offset = np.min(self._points[dim])
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting variable offset on a dimension in POINTS mode"
+                )
+            return _offset
         elif self.var_mode[dim] == self.RANGE:
             if self._offset[dim] is not None:
                 return self._offset[dim]
@@ -471,14 +478,16 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return self._low[dim]
 
-    def get_center(self, dim):
+    def get_center(self, dim, check_mode=True):
         """
         Gets the variable center for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting mean as variable center on a dimension in POINTS mode"
-            )
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting mean as variable center "
+                    "on a dimension in POINTS mode"
+                )
             return np.mean(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             if self._center[dim] is not None:
@@ -491,15 +500,16 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return np.mean([self._low[dim], self._high[dim]])
 
-    def get_step(self, dim):
+    def get_step(self, dim, check_mode=True):
         """
         Gets the variable step for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting differential mean as variable step on a dimension "
-                + "in POINTS mode"
-            )
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting differential mean as variable step "
+                    "on a dimension in POINTS mode"
+                )
             _points = np.sort(self._points[dim])
             return np.mean(_points[1:] - _points[:-1])
         elif self.var_mode[dim] == self.RANGE:
@@ -514,9 +524,6 @@ class ArrayData(object):
         Gets the variable low for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable low on a dimension in POINTS mode"
-            )
             return np.min(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             if self._offset[dim] is not None:
@@ -534,10 +541,7 @@ class ArrayData(object):
         Gets the variable high for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable high on a dimension in POINTS mode"
-            )
-            return np.min(self._points[dim])
+            return np.max(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
             _range = self.var_shape[dim] * _step
