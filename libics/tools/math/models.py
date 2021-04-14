@@ -16,7 +16,16 @@ class ModelBase(abc.ABC):
     """
     Base class for functional models.
 
-    Supports fitting.
+    * Supports fitting.
+    * For convenience, fitting can be directly applied by passing the data
+      to the constructor.
+
+    Parameters
+    ----------
+    *data : `Any`
+        Data interpretable by :py:meth:`_split_fit_data`.
+    **kwargs
+        Keyword arguments passed to :py:func:`scipy.optimize.curve_fit`.
 
     Examples
     --------
@@ -48,6 +57,11 @@ class ModelBase(abc.ABC):
     >>> model(var_data)
     array([2., 3., 4.])
 
+    A direct fit is applied as:
+    >>> model = Model(var_data, func_data)
+    >>> model.psuccess
+    True
+
     Notes
     -----
     For subclassing, implement the following attributes and methods:
@@ -70,7 +84,7 @@ class ModelBase(abc.ABC):
     P_ALL = NotImplemented
     P_DEFAULT = NotImplemented
 
-    def __init__(self):
+    def __init__(self, *data, **kwargs):
         # Parameter names to be fitted (map to _popt index)
         self._pfit = None
         # Initial fit parameters
@@ -81,6 +95,11 @@ class ModelBase(abc.ABC):
         self._pcov = None
         # Flag whether fit succeeded
         self.psuccess = None
+
+        # Call fit functions if data is supplied
+        if len(data) > 0:
+            self.find_p0(*data)
+            self.find_popt(*data, **kwargs)
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

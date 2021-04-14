@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import ArtistAnimation
 import numpy as np
 import PIL
+import scipy
 
 import IPython
 from IPython.display import HTML, Markdown, Latex
