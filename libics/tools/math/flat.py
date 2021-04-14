@@ -292,7 +292,7 @@ class FitPowerLaw1d(ModelBase):
     p (power)
     """
 
-    LOGGER = logging.get_logger("libics.math.peaked.FitPowerLaw1d")
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1d")
     P_ALL = ["a", "p"]
     P_DEFAULT = [1, 1]
 
@@ -315,3 +315,66 @@ class FitPowerLaw1d(ModelBase):
             a = np.exp(_fit.c)
             p = _fit.a
             self.p0 = [a * sign, p]
+
+
+def error_function(x, amplitude, center, width, offset=0):
+    r"""
+    Error function in one dimension.
+
+    .. math::
+        a \mathrm{erf}((x - x_0) / w) + c
+    """
+    return amplitude * scipy.special.erf((x - center) / width) + offset
+
+
+class FitErrorFunction(ModelBase):
+
+    """
+    Fit class for :py:func:`error_function`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    w (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitErrorFunction")
+    P_ALL = ["a", "x0", "w", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return error_function(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data = var_data.ravel()
+        func_data = scipy.ndimage.uniform_filter(
+            func_data, size=max(3, len(func_data) // 12)
+        )
+        # Extract parameters from statistics
+        c = np.mean(func_data)
+        func_data -= c
+        x0 = var_data[np.argmin(np.abs(func_data))]
+        var_data -= x0
+        a = np.mean([np.max(func_data), -np.min(func_data)])
+        func_data /= a
+        w = 2 * np.mean([
+            -var_data[np.argmin(np.abs(func_data + 0.5))],
+            var_data[np.argmin(np.abs(func_data - 0.5))]
+        ])
+        self.p0 = [a, x0, w, c]
+
+    def find_popt(self, *data, **kwargs):
+        psuccess = super().find_popt(*data, **kwargs)
+        if psuccess:
+            # Enforce positive width
+            if "a" in self.pfit and "w" in self.pfit:
+                pidx = self.pfit["w"]
+                if self._popt[pidx] < 0:
+                    nidx = self.pfit["a"]
+                    self._popt[pidx] *= -1
+                    self._popt[nidx] *= -1
+        return psuccess
