@@ -976,7 +976,7 @@ class ArrayData(object):
         """
         if np.isscalar(rep):
             rep = self.ndim * (rep,)
-        if rep != self.ndim:
+        if len(rep) != self.ndim:
             raise ValueError("invalid dimensions")
         ad = self.copy()
         for i in range(self.ndim):
