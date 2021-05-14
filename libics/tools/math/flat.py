@@ -268,6 +268,9 @@ class FitLinear1d(ModelBase):
             return super().find_popt(*data, **kwargs)
 
 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 def power_law_1d(x, amplitude, power, center=0, offset=0):
     r"""
     Power law in one dimension.
@@ -317,6 +320,35 @@ class FitPowerLaw1d(ModelBase):
             self.p0 = [a * sign, p]
 
 
+class FitPowerLaw1dCenter(ModelBase):
+
+    """
+    Fit class for :py:func:`power_law_1d` with center as fit variable.
+
+    Parameters
+    ----------
+    a (amplitude)
+    p (power)
+    x0 (center)
+    """
+
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1dCenter")
+    P_ALL = ["a", "p", "x0"]
+    P_DEFAULT = [1, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return power_law_1d(var, *p)
+
+    def find_p0(self, *data):
+        _fit = FitPowerLaw1d()
+        _fit.find_p0(*data)
+        self.p0 = [_fit.a, _fit.p, 0]
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 def error_function(x, amplitude, center, width, offset=0):
     r"""
     Error function in one dimension.
@@ -347,6 +379,80 @@ class FitErrorFunction(ModelBase):
     @staticmethod
     def _func(var, *p):
         return error_function(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data = var_data.ravel()
+        func_data = scipy.ndimage.uniform_filter(
+            func_data, size=max(3, len(func_data) // 12)
+        )
+        # Extract parameters from statistics
+        c = np.mean(func_data)
+        func_data -= c
+        x0 = var_data[np.argmin(np.abs(func_data))]
+        var_data -= x0
+        a = np.mean([np.max(func_data), -np.min(func_data)])
+        func_data /= a
+        w = 2 * np.mean([
+            -var_data[np.argmin(np.abs(func_data + 0.5))],
+            var_data[np.argmin(np.abs(func_data - 0.5))]
+        ])
+        self.p0 = [a, x0, w, c]
+
+    def find_popt(self, *data, **kwargs):
+        psuccess = super().find_popt(*data, **kwargs)
+        if psuccess:
+            # Enforce positive width
+            if "a" in self.pfit and "w" in self.pfit:
+                pidx = self.pfit["w"]
+                if self._popt[pidx] < 0:
+                    nidx = self.pfit["a"]
+                    self._popt[pidx] *= -1
+                    self._popt[nidx] *= -1
+        return psuccess
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def linear_step_function(x, amplitude, center, width, offset=0):
+    r"""
+    Linearly interpolated step function in one dimension.
+
+    .. math::
+        c - a (for x < x_0 - w),
+        \frac{a}{w} (x - x_0) + c (for x_0 - w < x < x_0 + w),
+        c + a (for x > x_0 + w)
+    """
+    dx = (x - center)
+    if width < 0:
+        width = abs(width)
+        amplitude *= -1
+    return amplitude * np.piecewise(
+        dx, [dx <= -width, dx >= width], [-1, 1, lambda dx: dx / width]
+    ) + offset
+
+
+class FitLinearStepFunction(ModelBase):
+
+    """
+    Fit class for :py:func:`linear_step_function`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    w (width)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.tools.math.flat.FitLinearStepFunction")
+    P_ALL = ["a", "x0", "w", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return linear_step_function(var, *p)
 
     def find_p0(self, *data):
         var_data, func_data, _ = self._split_fit_data(*data)
