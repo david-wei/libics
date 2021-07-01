@@ -75,8 +75,9 @@ class FitExponential1d(ModelBase):
         second_derivative = np.gradient(
             ndimage.uniform_filter(first_derivative, size=3), var_data
         )
+        mask = first_derivative != 0
         # Extract parameters
-        g = np.median(second_derivative / first_derivative)
+        g = np.median(second_derivative[mask] / first_derivative[mask])
         _exp_gx = np.exp(g * var_data)
         a = np.median(first_derivative / g / _exp_gx)
         c = np.median(func_data_filter - a * _exp_gx)

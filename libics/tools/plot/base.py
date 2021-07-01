@@ -294,7 +294,7 @@ def pcolormesh(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
     xlabel=True, ylabel=True, title=None,
-    colorbar=None, cb_orientation="vertical", clabel=True,
+    colorbar=None, cb_orientation="vertical", clabel=True, cticks=None,
     aspect=None, ax=None, **kwargs
 ):
     """
@@ -327,6 +327,8 @@ def pcolormesh(
         If `Axes`, specifies the color bar axes.
     cb_orientation : `str`
         `"horizontal", "vertical"`.
+    cticks : `None` or `list(ticks)`
+        Colorbar ticks.
     aspect : `float`
         Axes data scale aspect ratio.
     ax : `matplotlib.axes.Axes`
@@ -367,10 +369,13 @@ def pcolormesh(
     if colorbar is not None and colorbar is not False:
         fig = ax.get_figure()
         if colorbar is True:
-            cb = fig.colorbar(art, ax=ax, orientation=cb_orientation)
+            cb = fig.colorbar(
+                art, ax=ax, orientation=cb_orientation, ticks=cticks
+            )
         else:
             cb = fig.colorbar(
-                art, ax=ax, cax=colorbar, orientation=cb_orientation
+                art, ax=ax, cax=colorbar, orientation=cb_orientation,
+                ticks=cticks
             )
         if isinstance(clabel, str):
             cb.set_label(misc.capitalize_first_char(clabel))
@@ -738,6 +743,6 @@ def _process_err_param(art, **kwargs):
         kwargs["solid_capstyle"] = mpl.rcParams["lines.solid_capstyle"]
     _, caplines, barlinecols = art
     for c in caplines:
-        caplines.set_solid_capstyle(kwargs["solid_capstyle"])
+        c.set_solid_capstyle(kwargs["solid_capstyle"])
     for b in barlinecols:
         b.set_capstyle(kwargs["solid_capstyle"])
