@@ -77,7 +77,7 @@ DIR_SRCROOT = os.path.dirname(os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())
 )))
 DIR_PKGROOT = os.path.dirname(DIR_SRCROOT)
-DIR_ASSETSROOT = os.path.join(DIR_PKGROOT, "assets")
+DIR_ASSETSROOT = os.path.join(DIR_SRCROOT, "assets")
 
 # User environment
 DIR_USER = (os.environ["USERPROFILE"] if sys.platform == "win32"
