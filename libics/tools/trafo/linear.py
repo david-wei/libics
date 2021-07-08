@@ -441,6 +441,20 @@ class AffineTrafo2d(AffineTrafo):
 
     # +++++++++++++++++++++++++++++++++++++++++
 
+    def __get_str_origin_axes(self):
+        m, th, b = self.get_origin_axes()
+        return f"M = {str(m)}, θ = {str(np.rad2deg(th))}, b = {str(b)}"
+
+    def __str__(self):
+        return f"AffineTrafo2d: origin_axes: {self.__get_str_origin_axes()}"
+
+    def __repr__(self):
+        s = f"<'{self.__class__.__name__}' at {hex(id(self))}>\n"
+        s += f"{self.__get_str_origin_axes()}"
+        return s
+
+    # +++++++++++++++++++++++++++++++++++++++++
+
     def fit_peak_coordinates(self, image, snr=1.5, max_sum_ratio=1/100**2):
         """
         Uses a Gaussian fit to obtain the peak coordinates of an image.
