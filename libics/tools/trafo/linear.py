@@ -289,6 +289,34 @@ class AffineTrafo(FileBase):
         else:
             return _to
 
+    # ++++ Operations on trafo ++++
+
+    def invert(self):
+        """
+        Returns the inverse `AffineTrafo` object.
+        """
+        return self.__class__(
+            matrix=self.matrix_to_origin, offset=self.offset_to_origin
+        )
+
+    def __invert__(self):
+        return self.invert()
+
+    def concatenate(self, other):
+        """
+        Returns an `AffineTrafo` object which concatenates two transformations.
+
+        First transform: `other`, second transform: `self`.
+        """
+        matrix = self.matrix @ other.matrix
+        offset = self.matrix @ other.offset + self.offset
+        return self.__class__(matrix=matrix, offset=offset)
+
+    def __matmul__(self, other):
+        return self.concatenate(other)
+
+    # ++++ Helper functions ++++
+
     @staticmethod
     def _append_dims(ar, dims=1):
         """Appends `dims` empty dimensions to the given numpy `ar`ray."""
@@ -588,6 +616,53 @@ class AffineTrafo2d(AffineTrafo):
         else:
             self.LOGGER.warning("not enough coordinates extracted from images")
             return False
+
+    # ++++ Operations on trafo ++++
+
+    def magnify(self, factor):
+        """
+        Returns an `AffineTrafo` object whose magnification is scaled.
+        """
+        _mag, _ang, _off = self.get_origin_axes()
+        trafo = self.__class__()
+        trafo.set_origin_axes(
+            magnification=_mag*factor, angle=_ang, offset=_off
+        )
+        return trafo
+
+    def __mul__(self, other):
+        return self.magnify(other)
+
+    def __rmul__(self, other):
+        return self.magnify(other)
+
+    def shift(self, offset):
+        """
+        Returns an `AffineTrafo` object whose offset is shifted.
+        """
+        _mag, _ang, _off = self.get_origin_axes()
+        trafo = self.__class__()
+        trafo.set_origin_axes(
+            magnification=_mag, angle=_ang, offset=_off+offset
+        )
+        return trafo
+
+    def __add__(self, other):
+        return self.shift(other)
+
+    def __radd__(self, other):
+        return self.shift(other)
+
+    def rotate(self, angle):
+        """
+        Returns an `AffineTrafo` object whose angle is shifted.
+        """
+        _mag, _ang, _off = self.get_origin_axes()
+        trafo = self.__class__()
+        trafo.set_origin_axes(
+            magnification=_mag, angle=_ang+angle, offset=_off
+        )
+        return trafo
 
 
 ###############################################################################
