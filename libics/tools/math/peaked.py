@@ -868,6 +868,7 @@ class FitLorentzian1dAbs(ModelBase):
         Algorithm: dummy max.
         """
         var_data, func_data, _ = self._split_fit_data(*data)
+        var_data = var_data[0]
         idx_max = np.argmax(func_data)
         a = func_data[idx_max]
         x0 = var_data[idx_max]
