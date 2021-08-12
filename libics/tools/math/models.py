@@ -156,6 +156,37 @@ class ModelBase(abc.ABC):
         else:
             self._pfit = misc.make_dict(val, range(len(val)))
 
+    def set_pfit(self, *opt, const=None, **const_p0):
+        """
+        Set which parameters to fit.
+
+        Parameters
+        ----------
+        *opt : `str`
+            Names of fit parameters to be optimized.
+            If any `opt` is given, `const` and `const_p0` will be ignored.
+        const : `Iter[str]`
+            Names of parameters not to be fitted.
+        **const_p0 : `str->float`
+            Same as `const`, `float` arguments are used to fix the
+            constant parameters.
+        """
+        if len(opt) > 0:
+            self.pfit = opt
+        else:
+            _pfit = self.pall.copy()
+            if len(const_p0) > 0:
+                self.set_p0(**const_p0)
+                for k in const_p0:
+                    if k in _pfit:
+                        del _pfit[k]
+            if const is not None:
+                if isinstance(const, str):
+                    const = [const]
+                for k in const:
+                    if k in _pfit:
+                        del _pfit[k]
+
     @property
     def p0(self):
         """All :py:attr:`p0`"""
@@ -167,7 +198,9 @@ class ModelBase(abc.ABC):
     @p0.setter
     def p0(self, val):
         if isinstance(val, dict):
-            val = [val[k] for k in self.pall]
+            _p0 = self.get_p0(as_dict=True)
+            _p0.update(val)
+            val = [_p0[k] for k in self.pall]
         self._p0 = np.array(val)
 
     def get_p0(self, as_dict=True):
@@ -175,6 +208,17 @@ class ModelBase(abc.ABC):
             return misc.make_dict(self.pall, self.p0)
         else:
             return self.p0
+
+    def set_p0(self, **p0):
+        """
+        Sets initial parameters.
+
+        Parameters
+        ----------
+        **p0 : `str->float`
+            Initial parameter name->value.
+        """
+        self.p0 = p0
 
     def p0_is_set(self):
         return self._p0 is not None
@@ -450,6 +494,8 @@ class ModelBase(abc.ABC):
                 var_data = data[0].data
             else:
                 var_data = np.array(data[0])
+            if var_data.ndim == 1:
+                var_data = var_data[np.newaxis, ...]
             if isinstance(data[1], ArrayData):
                 func_data = data[1].data
             else:
