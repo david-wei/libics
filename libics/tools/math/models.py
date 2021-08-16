@@ -186,6 +186,7 @@ class ModelBase(abc.ABC):
                 for k in const:
                     if k in _pfit:
                         del _pfit[k]
+            self.pfit = list(_pfit)
 
     @property
     def p0(self):
