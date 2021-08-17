@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import ndimage, special, stats
+from scipy import ndimage, special, signal, stats
 
 from libics.env import logging
 from libics.tools.math.models import ModelBase
@@ -495,7 +495,72 @@ class FitGaussian2dTilt(ModelBase):
 ###############################################################################
 
 
-def parabolic_1d(x, a, x0, wx, c=0):
+def parabolic_1d(x, a, x0, c=0):
+    r"""
+    Parabola in one dimension.
+
+    .. math::
+        A (x - x_0) + C
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    a : `float`
+        Amplitude :math:`A`.
+    x0 : `float`
+        Center :math:`x_0`.
+    c : `float`, optional (default: 0)
+        Offset :math:`C`.
+    """
+    return a * (x - x0)**2 + c
+
+
+class FitParabolic1d(ModelBase):
+
+    """
+    Fit class for :py:func:`parabolic_1d`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    c (offset)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitParabolic1d")
+    P_ALL = ["a", "x0", "c"]
+    P_DEFAULT = [1, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return parabolic_1d(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        x, y = var_data[0], func_data
+        # Smoothen data
+        _y_savgol = signal.savgol_filter(y, max(5, 2*(len(y)//5) + 1), 3)
+        # Find polarity via peak and edges
+        _y_med = np.median(_y_savgol)
+        _xl, _xr = x[0], x[-1]
+        _yl, _yr = _y_savgol[0], _y_savgol[-1]
+        _sgn = 1 if np.mean([_yl, _yr]) > _y_med else -1
+        if _sgn > 0:
+            _cidx = np.argmin(_y_savgol)
+        else:
+            _cidx = np.argmax(_y_savgol)
+        # Find p0
+        _x0 = x[_cidx]
+        _c = _y_savgol[_cidx]
+        _a = np.mean([
+            (_yl - _c) / (_xl - _x0)**2,
+            (_yr - _c) / (_xr - _x0)**2,
+        ])
+        self.p0 = [_a, _x0, _c]
+
+
+def parabolic_1d_finsup(x, a, x0, wx, c=0):
     r"""
     Parabola on finite support in one dimension.
 
@@ -875,6 +940,168 @@ class FitLorentzian1dAbs(ModelBase):
         wx = (np.max(var_data) - np.min(var_data)) / 4
         c = 0
         self.p0 = [a, x0, wx, c]
+
+
+def lorentzian_eit_1d_imag(
+    var, amplitude, center, width, shift, split, offset=0.0
+):
+    dx = var - center
+    denom = np.piecewise(
+        dx, [dx == shift],
+        [lambda _dx: np.inf,
+         lambda _dx: 1 + (_dx / width - split / (_dx - shift))**2]
+    )
+    return amplitude / denom + offset
+
+
+class FitLorentzianEit1dImag(ModelBase):
+
+    """
+    Fit class for :py:func:`lorentzian_eit_1d_imag`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    wx (width)
+    x1 (shift)
+    wx1 (split)
+    c (offset)
+
+    Properties
+    ----------
+    ge (excited state decay rate)
+    fc (control field Rabi frequency)
+    dc (control field detuning)
+    lmax (position of left maximum)
+    rmax (position of right maximum)
+    cmin (position of central minimum)
+    lwidth (width of left maximum)
+    rwidth (width of right maximum)
+    cwidth (width of central minimum)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitLorentzianEit1dImag")
+    P_ALL = ["a", "x0", "wx", "x1", "wx1", "c"]
+    P_DEFAULT = [1, 0, 1, 0, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return lorentzian_eit_1d_imag(var, *p)
+
+    @property
+    def ge(self):
+        return np.abs(self.wx)
+
+    @property
+    def fc(self):
+        return 2 * np.sqrt(np.abs(self.wx * self.wx1))
+
+    @property
+    def dp(self):
+        return self.x0
+
+    @property
+    def dc(self):
+        return -self.x1
+
+    def get_phys(self):
+        """
+        Gets parameters parametrized as physical quantities.
+
+        Returns
+        -------
+        phys : `dict(str->float)`
+            Parameters: amplitude `"a"`, probe resonance frequency `"dp"`,
+            control resonance frequency `"dc"`, control Rabi frequency: `"fc"`,
+            intermediate state decay rate "ge", offset `"c"`.
+        """
+        return {"a": self.a, "dp": self.dp, "dc": self.dc,
+                "fc": self.fc, "ge": self.ge, "c": self.c}
+
+    @property
+    def lmax(self):
+        return self.x1 / 2 - np.sqrt(
+            self.x1**2 / 4 + np.abs(self.wx * self.wx1)
+        ) + self.x0
+
+    @property
+    def rmax(self):
+        return self.x1 / 2 + np.sqrt(
+            self.x1**2 / 4 + np.abs(self.wx * self.wx1)
+        ) + self.x0
+
+    @property
+    def cmin(self):
+        return self.x1 + self.x0
+
+    @property
+    def lwidth(self):
+        _xr = self.rmax
+        return (self.wx * _xr**2 / np.abs(self.x1 - 2*_xr)
+                / np.sqrt(self.wx*self.wx1 + self.x1*_xr))
+
+    @property
+    def rwidth(self):
+        _xl = self.lmax
+        return (self.wx * _xl**2 / np.abs(self.x1 - 2*_xl)
+                / np.sqrt(self.wx*self.wx1 + self.x1*_xl))
+
+    @property
+    def cwidth(self):
+        return np.abs(self.wx1)
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self._split_fit_data(*data)
+        x, y_noisy = var_data[0], func_data
+        # Smoothen data
+        y_savgol = signal.savgol_filter(
+            y_noisy, max(5, 2*(len(y_noisy)//16)//2 + 1), 3
+        )
+        _ymin = np.percentile(y_savgol, 100*(1/16))
+        _ymax = np.percentile(y_savgol, 100*(1-1/32))
+        _a, _c = _ymax - _ymin, _ymin
+        # Peak detection (maxima)
+        _y_rescaled = (y_savgol - _c) / _a
+        _peak_max_idx, _peak_max_prominence = signal.find_peaks(
+            _y_rescaled, prominence=0.1
+        )
+        _order = np.flip(np.argsort(_peak_max_prominence["prominences"]))[:2]
+        _peak_max_idx = np.sort(_peak_max_idx[_order])
+        _peak_max_pos = x[_peak_max_idx]
+        # Peak detection (minimum)
+        _peak_min_idx, _peak_min_prominence = signal.find_peaks(
+            -_y_rescaled, prominence=0.1
+        )
+        _order = np.argmax(_peak_min_prominence["prominences"])
+        _peak_min_idx = _peak_min_idx[_order]
+        _peak_min_pos = x[_peak_min_idx]
+        # Estimation of x parameters
+        _xl, _xc, _xr = _peak_max_pos[0], _peak_min_pos, _peak_max_pos[1]
+        _x0 = _xl + _xr - _xc
+        _x1 = _xc - _x0
+        _w0w1 = 1/4 * np.abs((_xl - _xr)**2 - _x1**2)
+        # Fit parabola to widest peak
+        _dxl, _dxr = _xc - _xl, _xr - _xc
+        if _dxl > _dxr:
+            _xpeak = _xl
+            _dst = max(_dxr, _dxl / 5)
+        else:
+            _xpeak = _xr
+            _dst = max(_dxl, _dxr / 5)
+        _idx_range = slice(
+            np.argmin(np.abs(x - (_xpeak - _dst))),
+            np.argmin(np.abs(x - (_xpeak + _dst))) + 1
+        )
+        _fit = FitParabolic1d(x[_idx_range], y_savgol[_idx_range])
+        _peak_width = 1 / np.sqrt(-_fit.a)
+        # Estimation of w parameters
+        _w0 = (_peak_width / (_xpeak - _x0)**2 * np.abs(_x1 - 2*(_xpeak - _x0))
+               * np.sqrt(np.abs(_w0w1 + _x1*(_xpeak - _x0))))
+        _w1 = _w0w1 / _w0
+        self.p0 = [_a, _x0, _w0, _x1, _w1, _c]
 
 
 ###############################################################################
