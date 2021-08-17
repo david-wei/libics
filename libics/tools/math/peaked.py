@@ -941,6 +941,16 @@ class FitLorentzian1dAbs(ModelBase):
         c = 0
         self.p0 = [a, x0, wx, c]
 
+    def find_popt(self, *args, **kwargs):
+        psuccess = super().find_popt(*args, **kwargs)
+        if psuccess:
+            # Enforce positive width
+            for pname in ["wx"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = np.abs(self._popt[pidx])
+        return psuccess
+
 
 def lorentzian_eit_1d_imag(
     var, amplitude, center, width, shift, split, offset=0.0
@@ -1102,6 +1112,116 @@ class FitLorentzianEit1dImag(ModelBase):
                * np.sqrt(np.abs(_w0w1 + _x1*(_xpeak - _x0))))
         _w1 = _w0w1 / _w0
         self.p0 = [_a, _x0, _w0, _x1, _w1, _c]
+
+    def find_popt(self, *args, **kwargs):
+        psuccess = super().find_popt(*args, **kwargs)
+        if psuccess:
+            # Enforce positive width
+            for pname in ["wx", "wx1"]:
+                if pname in self.pfit:
+                    pidx = self.pfit[pname]
+                    self._popt[pidx] = np.abs(self._popt[pidx])
+        return psuccess
+
+
+def lorentzian_ryd_eit_1d_imag(
+    var, amplitude, center, width, shift, split, ratio, offset=0.0
+):
+    """
+    See :py:func:`lorentzian_eit_1d_imag`.
+
+    Parameters
+    ----------
+    ratio : `float`
+        Rydberg fraction (ratio of non-EIT).
+    """
+    return (
+        (1 - ratio) * lorentzian_eit_1d_imag(
+            var, amplitude, center, width, shift, split
+        ) + ratio * lorentzian_1d_abs(
+            var, amplitude, center, width,
+        ) + offset
+    )
+
+
+class FitLorentzianRydEit1dImag(FitLorentzianEit1dImag):
+
+    """
+    Fit class for :py:func:`lorentzian_ryd_eit_1d_imag`.
+
+    Parameters
+    ----------
+    a (amplitude)
+    x0 (center)
+    wx (width)
+    x1 (shift)
+    wx1 (split)
+    r (ratio)
+    c (offset)
+
+    Properties
+    ----------
+    ge (excited state decay rate)
+    fc (control field Rabi frequency)
+    dc (control field detuning)
+    lmax (position of left maximum)
+    rmax (position of right maximum)
+    cmin (position of central minimum)
+    lwidth (width of left maximum)
+    rwidth (width of right maximum)
+    cwidth (width of central minimum)
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitLorentzianRydEit1dImag")
+    P_ALL = ["a", "x0", "wx", "x1", "wx1", "r", "c"]
+    P_DEFAULT = [1, 0, 1, 0, 1, 0.5, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return lorentzian_ryd_eit_1d_imag(var, *p)
+
+    def find_p0(self, *data, const_p0=None):
+        """
+        Parameters
+        ----------
+        const_p0 : `dict(str->float)`
+            Constant parameters which should not be fitted when estimating
+            `p0` with `r == 0` fit.
+        """
+        var_data, func_data, _ = self._split_fit_data(*data)
+        x, y = var_data[0], func_data
+        # Find raw EIT
+        _fit = FitLorentzianEit1dImag()
+        _fit.find_p0(*data)
+        if const_p0:
+            _fit.set_pfit(**const_p0)
+        _fit.find_popt(*data)
+        _p0 = dict()
+        if const_p0:
+            _p0.update(const_p0)
+        _p0.update({k: _fit.popt[v] for k, v in _fit.pfit.items()})
+        # Fit central peak
+        _xc = _fit.cmin
+        _wc = _fit.cwidth
+        _xc_range = [_xc - _wc, _xc + _wc]
+        _cidx = [
+            np.argmin(np.abs(x - _xc_range[0])),
+            np.argmin(np.abs(x - _xc_range[1])) + 1
+        ]
+        if _cidx[1] - _cidx[0] < 5:
+            _cidx = [_cidx[0] - 2, _cidx[1] + 2]
+        if _cidx[0] < 0:
+            _cidx[0] = 0
+        _cidx_range = slice(*_cidx)
+        _fit_parabola = FitParabolic1d(x[_cidx_range], y[_cidx_range])
+        # Find ratio
+        _r = 1 - (_fit_parabola.c - _p0["c"]) / _p0["a"]
+        if _r > 1:
+            _r = 1
+        elif _r < 0:
+            _r = 0
+        _p0["r"] = _r
+        self.set_p0(**_p0)
 
 
 ###############################################################################
