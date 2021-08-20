@@ -436,6 +436,32 @@ def make_dict(key_list, val_list):
     return d
 
 
+def rename_dict_keys(d, key_map, in_place=True):
+    """
+    Renames keys of a dictionary.
+
+    Parameters
+    ----------
+    d : `dict`
+        Dictionary to be renamed.
+    key_map : `dict`
+        Mapping between old key and new key.
+    in_place : `bool`
+        If `True`, changes the dictionary in place;
+        if `False`, creates a copy of the dictionary.
+
+    Returns
+    -------
+    d_new : `dict`
+        Renamed dictionary.
+    """
+    d_new = d if in_place else d.copy()
+    for k, v in key_map.items():
+        if k in d_new:
+            d_new[v] = d_new.pop(k)
+    return d_new
+
+
 ###############################################################################
 # String Functions
 ###############################################################################
