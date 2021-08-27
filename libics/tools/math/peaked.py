@@ -1068,7 +1068,7 @@ class FitLorentzianEit1dImag(ModelBase):
         x, y_noisy = var_data[0], func_data
         # Smoothen data
         y_savgol = signal.savgol_filter(
-            y_noisy, max(5, 2*(len(y_noisy)//16)//2 + 1), 3
+            y_noisy, max(5, 2*(len(y_noisy)//16//2) + 1), 3
         )
         _ymin = np.percentile(y_savgol, 100*(1/16))
         _ymax = np.percentile(y_savgol, 100*(1-1/32))
