@@ -32,7 +32,7 @@ setup(name='libics',
             'matplotlib', 'numpy', 'scipy', 'pandas',
             'pyserial', 'pyusb', 'pymongo', 'Pillow'
       ],
-      python_requires='>=3',
+      python_requires='>=3.6',
       dependency_links=[
             'https://github.com/morefigs/pymba',
             'https://github.com/fujii-team/sif_reader'

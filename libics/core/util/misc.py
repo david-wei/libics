@@ -31,6 +31,8 @@ def cv_float(text, dec_sep=[".", ","]):
     dec_sep : `str` or `Iter[str]`
         Single or multiple decimal separators.
     """
+    if is_number(text):
+        return float(text)
     if isinstance(dec_sep, str):
         text = text.replace(dec_sep, ".")
     else:

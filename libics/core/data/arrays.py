@@ -99,7 +99,15 @@ class ArrayData(object):
         elif isinstance(arg, np.ndarray):
             self.data = arg
         else:
-            raise ValueError(f"constructor does not accept type `{type(arg)}`")
+            try:
+                arg = np.array(arg)
+                if arg.dtype == np.object_:
+                    raise ValueError
+                self.data = arg
+            except ValueError:
+                raise ValueError(
+                    f"constructor does not accept type `{type(arg)}`"
+                )
 
     __LIBICS_IO__ = True
     SER_KEYS = {
@@ -777,6 +785,9 @@ class ArrayData(object):
         returns `np.ndarray` iterator.
         """
         return iter(self.data)
+
+    def __array__(self, **kwargs):
+        return self.data.__array__(**kwargs)
 
     def __str__(self):
         s = f"{str(self.data_quantity)}\n"
