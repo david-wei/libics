@@ -1,61 +1,207 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.core.data &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.core.data &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
-      </ul>
-    </div>  
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.core.io" href="libics.core.io.html" />
+    <link rel="prev" title="libics.core.cfg" href="libics.core.cfg.html" /> 
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.core.html">libics.core</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.core.cfg.html">libics.core.cfg</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.core.data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.data.arrays">arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.data.conversion">conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.data.graphs">graphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.data.sequences">sequences</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.data.types">types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.io.html">libics.core.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.util.html">libics.core.util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.core.html">libics.core</a> &raquo;</li>
+        
+      <li>libics.core.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.core.data.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.core.data">
 <span id="libics-core-data"></span><h1>libics.core.data<a class="headerlink" href="#module-libics.core.data" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-libics.core.data.arrays">
 <span id="arrays"></span><h2>arrays<a class="headerlink" href="#module-libics.core.data.arrays" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.data.arrays.ArrayData">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">ArrayData</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.arrays.</span></span><span class="sig-name descname"><span class="pre">ArrayData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Stores a multidimensional array and its scaling information (linear
 scaling and physical quantity).</p>
 <p>Usage of this class is described below.</p>
 <p>Object creation:</p>
-<ol class="arabic simple">
+<ul class="simple">
 <li><p>Instantiate an <cite>ArrayData</cite> object.</p></li>
 <li><p>Optional: Define the dimensions of the data using <a class="reference internal" href="#libics.core.data.arrays.ArrayData.add_dim" title="libics.core.data.arrays.ArrayData.add_dim"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_dim()</span></code></a>
-by specifying the metadata and scaling behaviour.</p></li>
+by specifying the metadata and scaling behavior.</p></li>
 <li><p>Set the data using the <a class="reference internal" href="#libics.core.data.arrays.ArrayData.data" title="libics.core.data.arrays.ArrayData.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute. Default dimensions
 are added or removed if they are not commensurate.</p></li>
-</ol>
+<li><p>Alternative: This class can also be used to specify the variables
+(i.e. array indices) only, metadata and scaling behavior are set
+accordingly. Instead of setting the data, the attribute
+<a class="reference internal" href="#libics.core.data.arrays.ArrayData.var_shape" title="libics.core.data.arrays.ArrayData.var_shape"><code class="xref py py-attr docutils literal notranslate"><span class="pre">var_shape</span></code></a> can be set.</p></li>
+</ul>
 <p>Object modification:</p>
 <ul class="simple">
 <li><p>Metadata can be also added after data assignment. This is done using the
@@ -73,20 +219,43 @@ vectorized <cite>numpy</cite> ufuncs.</p></li>
 <li><p>Upon calling the object with some given variables, an interpolated
 result is returned.</p></li>
 </ul>
+<p>Subclassing or class modification:</p>
+<ul class="simple">
+<li><p>Follow the convention to declare all instance attributes within the
+constructor.</p></li>
+<li><p>Remember to add these attribute names to <a class="reference internal" href="#libics.core.data.arrays.ArrayData.ATTR_NAMES_COPY_VAR" title="libics.core.data.arrays.ArrayData.ATTR_NAMES_COPY_VAR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ATTR_NAMES_COPY_VAR</span></code></a>.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>center</strong></dt><dd></dd>
-<dt><strong>data</strong></dt><dd></dd>
-<dt><strong>high</strong></dt><dd></dd>
-<dt><strong>low</strong></dt><dd></dd>
-<dt><strong>ndim</strong></dt><dd></dd>
-<dt><strong>offset</strong></dt><dd></dd>
-<dt><strong>points</strong></dt><dd></dd>
-<dt><strong>shape</strong></dt><dd></dd>
-<dt><strong>step</strong></dt><dd></dd>
-<dt><strong>total_ndim</strong></dt><dd></dd>
-<dt><strong>var_ndim</strong></dt><dd></dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.bins" title="libics.core.data.arrays.ArrayData.bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bins</span></code></a></dt><dd><p>List of variable bins.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.center" title="libics.core.data.arrays.ArrayData.center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center</span></code></a></dt><dd><p>List of variable centers.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.data" title="libics.core.data.arrays.ArrayData.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></dt><dd><p>Data array.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.high" title="libics.core.data.arrays.ArrayData.high"><code class="xref py py-obj docutils literal notranslate"><span class="pre">high</span></code></a></dt><dd><p>List of variable maxima.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.low" title="libics.core.data.arrays.ArrayData.low"><code class="xref py py-obj docutils literal notranslate"><span class="pre">low</span></code></a></dt><dd><p>List of variable minima.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.ndim" title="libics.core.data.arrays.ArrayData.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></dt><dd><p>Data array ndim.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.offset" title="libics.core.data.arrays.ArrayData.offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">offset</span></code></a></dt><dd><p>List of variable offsets.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.points" title="libics.core.data.arrays.ArrayData.points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">points</span></code></a></dt><dd><p>List of variable points.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.shape" title="libics.core.data.arrays.ArrayData.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></dt><dd><p>Data array shape.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.size" title="libics.core.data.arrays.ArrayData.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></dt><dd><p>Data array size.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.step" title="libics.core.data.arrays.ArrayData.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a></dt><dd><p>List of variable steps.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.total_ndim" title="libics.core.data.arrays.ArrayData.total_ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">total_ndim</span></code></a></dt><dd><p>Total ndim (variable and data dimension).</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.var_ndim" title="libics.core.data.arrays.ArrayData.var_ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var_ndim</span></code></a></dt><dd><p>Variable ndim.</p>
+</dd>
+<dt><a class="reference internal" href="#libics.core.data.arrays.ArrayData.var_shape" title="libics.core.data.arrays.ArrayData.var_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var_shape</span></code></a></dt><dd><p>Variable (placeholder) shape.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -97,26 +266,32 @@ result is returned.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var[, mode, extrapolation])</p></td>
-<td><p>Acts as a function and interpolates for the given <cite>var</cite>.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var, \*\*kwargs)</p></td>
+<td><p>Call self as a function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.add_dim" title="libics.core.data.arrays.ArrayData.add_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_dim</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Appends variable dimension(s) to the object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="libics.core.data.arrays.ArrayData.cmp_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_quantity</span></code></a>(self, other)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.attributes" title="libics.core.data.arrays.ArrayData.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a>(self)</p></td>
+<td><p>Implements <code class="xref py py-meth docutils literal notranslate"><span class="pre">libics.core.io.FileBase.attributes()</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="libics.core.data.arrays.ArrayData.cmp_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_quantity</span></code></a>(self, other)</p></td>
 <td><p>Compares whether the quantities of two ArrayData objects are identical.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="libics.core.data.arrays.ArrayData.cmp_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_shape</span></code></a>(self, other)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="libics.core.data.arrays.ArrayData.cmp_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_shape</span></code></a>(self, other)</p></td>
 <td><p>Compares whether the shapes of two ArrayData objects are identical.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_var" title="libics.core.data.arrays.ArrayData.cmp_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_var</span></code></a>(self, other)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cmp_var" title="libics.core.data.arrays.ArrayData.cmp_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmp_var</span></code></a>(self, other)</p></td>
 <td><p>Compares whether the variables of two ArrayData objects are identical.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.comp_dim" title="libics.core.data.arrays.ArrayData.comp_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comp_dim</span></code></a>(self, dim, op[, other, rev])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.comp_dim" title="libics.core.data.arrays.ArrayData.comp_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comp_dim</span></code></a>(self, dim, op[, other, rev])</p></td>
 <td><p>Performs an arithmetic operation on the specified variable dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.copy" title="libics.core.data.arrays.ArrayData.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.copy" title="libics.core.data.arrays.ArrayData.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(self)</p></td>
 <td><p>Returns a deep copy of the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.copy_var" title="libics.core.data.arrays.ArrayData.copy_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_var</span></code></a>(self)</p></td>
+<td><p>Returns a deep copy of all objects except for <a class="reference internal" href="#libics.core.data.arrays.ArrayData.data" title="libics.core.data.arrays.ArrayData.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>, which is copied by reference.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cv_index_to_quantity" title="libics.core.data.arrays.ArrayData.cv_index_to_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_index_to_quantity</span></code></a>(self, ind, dim)</p></td>
 <td><p>Converts a variable array index to the corresponding variable physical quantity value.</p></td>
@@ -124,40 +299,52 @@ result is returned.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.cv_quantity_to_index" title="libics.core.data.arrays.ArrayData.cv_quantity_to_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_quantity_to_index</span></code></a>(self, val, dim)</p></td>
 <td><p>Converts a variable physical quantity value to the corresponding variable array index.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_center" title="libics.core.data.arrays.ArrayData.get_center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_center</span></code></a>(self, dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_bins" title="libics.core.data.arrays.ArrayData.get_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bins</span></code></a>(self, dim)</p></td>
+<td><p>Gets the bins of variable points for the specified dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_center" title="libics.core.data.arrays.ArrayData.get_center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_center</span></code></a>(self, dim[, check_mode])</p></td>
 <td><p>Gets the variable center for the specified dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="libics.core.data.arrays.ArrayData.get_common_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_common_obj</span></code></a>(self, other, op[, in_place, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="libics.core.data.arrays.ArrayData.get_common_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_common_obj</span></code></a>(self, other, op[, in_place, …])</p></td>
 <td><p>Creates the common result after operation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="libics.core.data.arrays.ArrayData.get_copy_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_copy_obj</span></code></a>(self, op[, raw])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="libics.core.data.arrays.ArrayData.get_copy_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_copy_obj</span></code></a>(self, op[, raw])</p></td>
 <td><p>Creates a copy of self object and applies given operation on it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_high" title="libics.core.data.arrays.ArrayData.get_high"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_high</span></code></a>(self, dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_high" title="libics.core.data.arrays.ArrayData.get_high"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_high</span></code></a>(self, dim)</p></td>
 <td><p>Gets the variable high for the specified dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_low" title="libics.core.data.arrays.ArrayData.get_low"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_low</span></code></a>(self, dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_low" title="libics.core.data.arrays.ArrayData.get_low"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_low</span></code></a>(self, dim)</p></td>
 <td><p>Gets the variable low for the specified dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_offset" title="libics.core.data.arrays.ArrayData.get_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_offset</span></code></a>(self, dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_offset" title="libics.core.data.arrays.ArrayData.get_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_offset</span></code></a>(self, dim[, check_mode])</p></td>
 <td><p>Gets the variable offset for the specified dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_points" title="libics.core.data.arrays.ArrayData.get_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_points</span></code></a>(self, dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_points" title="libics.core.data.arrays.ArrayData.get_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_points</span></code></a>(self, dim)</p></td>
 <td><p>Gets the variable points for the specified dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_step" title="libics.core.data.arrays.ArrayData.get_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step</span></code></a>(self, dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_step" title="libics.core.data.arrays.ArrayData.get_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step</span></code></a>(self, dim[, check_mode])</p></td>
 <td><p>Gets the variable step for the specified dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="libics.core.data.arrays.ArrayData.get_var_meshgrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_var_meshgrid</span></code></a>(self[, indexing])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="libics.core.data.arrays.ArrayData.get_var_meshgrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_var_meshgrid</span></code></a>(self[, indexing])</p></td>
 <td><p>Creates a <cite>numpy</cite> meshgrid for the variable dimensions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.mod_dim" title="libics.core.data.arrays.ArrayData.mod_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod_dim</span></code></a>(self, \*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid_bins" title="libics.core.data.arrays.ArrayData.get_var_meshgrid_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_var_meshgrid_bins</span></code></a>(self[, indexing])</p></td>
+<td><p>Creates a <cite>numpy</cite> meshgrid for the bins of the variable dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.interpolate" title="libics.core.data.arrays.ArrayData.interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code></a>(self, var[, mode, extrapolation])</p></td>
+<td><p>Acts as a function and interpolates for the given <cite>var</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.mod_dim" title="libics.core.data.arrays.ArrayData.mod_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod_dim</span></code></a>(self, \*args)</p></td>
 <td><p>Modifies the numeric variable description mode (if possible).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.pad" title="libics.core.data.arrays.ArrayData.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad</span></code></a>(self, shape[, val])</p></td>
+<td><p>Gets a resized <cite>ArrayData</cite> with the old data centered and padded.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.rmv_dim" title="libics.core.data.arrays.ArrayData.rmv_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmv_dim</span></code></a>(self, \*dims[, num])</p></td>
 <td><p>Removes variable dimension(s) from the object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="libics.core.data.arrays.ArrayData.set_data_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_quantity</span></code></a>(self, \*\*kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="libics.core.data.arrays.ArrayData.set_data_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_quantity</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Sets the data quantity object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_dim" title="libics.core.data.arrays.ArrayData.set_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dim</span></code></a>(self, dim, \*\*kwargs)</p></td>
@@ -166,36 +353,72 @@ result is returned.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.set_var_quantity" title="libics.core.data.arrays.ArrayData.set_var_quantity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_var_quantity</span></code></a>(self, dim, \*\*kwargs)</p></td>
 <td><p>Sets the data quantity object.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.data.arrays.ArrayData.supersample" title="libics.core.data.arrays.ArrayData.supersample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">supersample</span></code></a>(self, rep)</p></td>
+<td><p>Gets a supersampled <cite>ArrayData</cite> object.</p></td>
+</tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.core.data.arrays.ArrayData.LINSPACE">
-<code class="sig-name descname">LINSPACE</code><em class="property"> = 'LINSPACE'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LINSPACE" title="Permalink to this definition">¶</a></dt>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 44%" />
+<col style="width: 56%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>max</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>mean</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>min</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>std</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>sum</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.ATTR_NAMES_COPY_VAR">
+<span class="sig-name descname"><span class="pre">ATTR_NAMES_COPY_VAR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'_center',</span> <span class="pre">'_high',</span> <span class="pre">'_low',</span> <span class="pre">'_offset',</span> <span class="pre">'_placeholder_shape',</span> <span class="pre">'_points',</span> <span class="pre">'_step',</span> <span class="pre">'data_quantity',</span> <span class="pre">'var_mode',</span> <span class="pre">'var_quantity'}</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.ATTR_NAMES_COPY_VAR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.arrays.ArrayData.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.core.data.arrays.ArrayData (WARNING)&gt;</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.LINSPACE">
+<span class="sig-name descname"><span class="pre">LINSPACE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'LINSPACE'</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LINSPACE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.arrays.ArrayData.POINTS">
-<code class="sig-name descname">POINTS</code><em class="property"> = 'POINTS'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.POINTS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.core.data.arrays.ArrayData</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.arrays.ArrayData.RANGE">
-<code class="sig-name descname">RANGE</code><em class="property"> = 'RANGE'</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.RANGE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.POINTS">
+<span class="sig-name descname"><span class="pre">POINTS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'POINTS'</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.POINTS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.arrays.ArrayData.VAR_MODES">
-<code class="sig-name descname">VAR_MODES</code><em class="property"> = {'LINSPACE', 'POINTS', 'RANGE'}</em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.VAR_MODES" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.RANGE">
+<span class="sig-name descname"><span class="pre">RANGE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'RANGE'</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.RANGE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.add_dim">
-<code class="sig-name descname">add_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.add_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.SER_KEYS">
+<span class="sig-name descname"><span class="pre">SER_KEYS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'_center',</span> <span class="pre">'_high',</span> <span class="pre">'_low',</span> <span class="pre">'_offset',</span> <span class="pre">'_points',</span> <span class="pre">'_step',</span> <span class="pre">'data',</span> <span class="pre">'data_quantity',</span> <span class="pre">'var_mode',</span> <span class="pre">'var_quantity'}</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.SER_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.VAR_MODES">
+<span class="sig-name descname"><span class="pre">VAR_MODES</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'LINSPACE',</span> <span class="pre">'POINTS',</span> <span class="pre">'RANGE'}</span></em><a class="headerlink" href="#libics.core.data.arrays.ArrayData.VAR_MODES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.add_dim">
+<span class="sig-name descname"><span class="pre">add_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.add_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends variable dimension(s) to the object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -221,32 +444,45 @@ If any <cite>*args</cite> are given, <cite>**kwargs</cite> are ignored.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.center">
-<em class="property">property </em><code class="sig-name descname">center</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.center" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements <code class="xref py py-meth docutils literal notranslate"><span class="pre">libics.core.io.FileBase.attributes()</span></code>.</p>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.cmp_quantity">
-<code class="sig-name descname">cmp_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.bins">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bins</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable bins.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.center">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">center</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable centers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.cmp_quantity">
+<span class="sig-name descname"><span class="pre">cmp_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares whether the quantities of two ArrayData objects are identical.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.cmp_shape">
-<code class="sig-name descname">cmp_shape</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.cmp_shape">
+<span class="sig-name descname"><span class="pre">cmp_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares whether the shapes of two ArrayData objects are identical.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.cmp_var">
-<code class="sig-name descname">cmp_var</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_var" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.cmp_var">
+<span class="sig-name descname"><span class="pre">cmp_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cmp_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares whether the variables of two ArrayData objects are identical.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.comp_dim">
-<code class="sig-name descname">comp_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">op</em>, <em class="sig-param">other=None</em>, <em class="sig-param">rev=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.comp_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.comp_dim">
+<span class="sig-name descname"><span class="pre">comp_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.comp_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs an arithmetic operation on the specified variable dimension.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -276,15 +512,22 @@ Can also be a function having a binary or unary call signature.</p>
 that the operation is an affine transformation.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.copy">
-<code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.copy" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a deep copy of the object.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.cv_index_to_quantity">
-<code class="sig-name descname">cv_index_to_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">ind</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_index_to_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.copy_var">
+<span class="sig-name descname"><span class="pre">copy_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.copy_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a deep copy of all objects except for <a class="reference internal" href="#libics.core.data.arrays.ArrayData.data" title="libics.core.data.arrays.ArrayData.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>,
+which is copied by reference.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.cv_index_to_quantity">
+<span class="sig-name descname"><span class="pre">cv_index_to_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_index_to_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a variable array index to the corresponding variable
 physical quantity value.</p>
 <dl class="field-list">
@@ -305,9 +548,9 @@ physical quantity value.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.cv_quantity_to_index">
-<code class="sig-name descname">cv_quantity_to_index</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">val</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_quantity_to_index" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.cv_quantity_to_index">
+<span class="sig-name descname"><span class="pre">cv_quantity_to_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.cv_quantity_to_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a variable physical quantity value to the corresponding
 variable array index.</p>
 <dl class="field-list">
@@ -334,20 +577,31 @@ variable array index.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.data">
-<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data array.</p>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_center">
-<code class="sig-name descname">get_center</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_center" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_bins">
+<span class="sig-name descname"><span class="pre">get_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the bins of variable points for the specified dimension.</p>
+<p>The returned bins (array of size <cite>len(points) + 1</cite>) refer to the
+centers between adjacent points.
+Edge bins (where one side is undefined) use the other side to form
+symmetric bins around the edge points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_center">
+<span class="sig-name descname"><span class="pre">get_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable center for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_common_obj">
-<code class="sig-name descname">get_common_obj</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">other</em>, <em class="sig-param">op</em>, <em class="sig-param">in_place=False</em>, <em class="sig-param">rev=False</em>, <em class="sig-param">raw=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_common_obj">
+<span class="sig-name descname"><span class="pre">get_common_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_common_obj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the common result after operation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -374,9 +628,9 @@ the <cite>ArrayData</cite> container.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_copy_obj">
-<code class="sig-name descname">get_copy_obj</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">op</em>, <em class="sig-param">raw=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_copy_obj">
+<span class="sig-name descname"><span class="pre">get_copy_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_copy_obj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a copy of self object and applies given operation on it.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -398,39 +652,39 @@ the <cite>ArrayData</cite> container.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_high">
-<code class="sig-name descname">get_high</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_high" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_high">
+<span class="sig-name descname"><span class="pre">get_high</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_high" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable high for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_low">
-<code class="sig-name descname">get_low</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_low" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_low">
+<span class="sig-name descname"><span class="pre">get_low</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_low" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable low for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_offset">
-<code class="sig-name descname">get_offset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_offset" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_offset">
+<span class="sig-name descname"><span class="pre">get_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable offset for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_points">
-<code class="sig-name descname">get_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_points" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_points">
+<span class="sig-name descname"><span class="pre">get_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable points for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_step">
-<code class="sig-name descname">get_step</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_step" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_step">
+<span class="sig-name descname"><span class="pre">get_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the variable step for the specified dimension.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.get_var_meshgrid">
-<code class="sig-name descname">get_var_meshgrid</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indexing='ij'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_var_meshgrid">
+<span class="sig-name descname"><span class="pre">get_var_meshgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ij'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <cite>numpy</cite> meshgrid for the variable dimensions.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -448,19 +702,107 @@ the <cite>ArrayData</cite> container.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.high">
-<em class="property">property </em><code class="sig-name descname">high</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.high" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.get_var_meshgrid_bins">
+<span class="sig-name descname"><span class="pre">get_var_meshgrid_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ij'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.get_var_meshgrid_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>numpy</cite> meshgrid for the bins of the variable dimensions.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>indexing</strong><span class="classifier"><cite>“ij”</cite> or <cite>“xy”</cite></span></dt><dd><p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.meshgrid()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>mg</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Meshgrid of bins as <cite>numpy</cite> array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.high">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">high</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.high" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable maxima.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acts as a function and interpolates for the given <cite>var</cite>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>var</strong><span class="classifier"><cite>list(float)</cite> or <cite>list(np.ndarray(float))</cite></span></dt><dd><p>Requested variables for which the functional value is
+obtained. The variable format must be a list of each
+variable dimension (typically a flattened ij-indexed
+meshgrid). Supports higher dimensional meshgrids, but
+is discouraged because of index ambiguity.
+Shape:</p>
+<blockquote>
+<div><p>(data dimension, <a href="#id1"><span class="problematic" id="id2">*</span></a>) where * can be any scalar
+or array.</p>
+</div></blockquote>
+</dd>
+<dt><strong>mode</strong><span class="classifier"><cite>str</cite></span></dt><dd><p><cite>“nearest”</cite>: Value of nearest neighbour.
+<cite>“linear”</cite>: Linear interpolation.</p>
+</dd>
+<dt><strong>extrapolation</strong><span class="classifier"><cite>bool</cite> or <cite>float</cite></span></dt><dd><p><cite>True</cite>: Performs nearest/linear extrapolation.
+<cite>False</cite>: Raises ValueError if extrapolated value is</p>
+<blockquote>
+<div><p>requested.</p>
+</div></blockquote>
+<p><cite>float</cite>: Used as extrapolation fill value.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>func_val</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Functional values of given variables.
+Shape: <cite>var.shape[1:]</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>See parameter <cite>extrapolation</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>See also scipy.interpolate.interpn:
+&lt;<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn">https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn</a>&gt;`</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.low">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">low</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.low" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable minima.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.max">
+<span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.low">
-<em class="property">property </em><code class="sig-name descname">low</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.low" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.mean" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.mod_dim">
-<code class="sig-name descname">mod_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.mod_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.min">
+<span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.mod_dim">
+<span class="sig-name descname"><span class="pre">mod_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.mod_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies the numeric variable description mode (if possible).</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -488,24 +830,51 @@ If <cite>mode</cite> is invalid.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.ndim">
-<em class="property">property </em><code class="sig-name descname">ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.ndim" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.ndim">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ndim</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data array ndim.</p>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.offset">
-<em class="property">property </em><code class="sig-name descname">offset</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.offset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.offset">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">offset</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable offsets.</p>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.points">
-<em class="property">property </em><code class="sig-name descname">points</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.points" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.pad">
+<span class="sig-name descname"><span class="pre">pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.pad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a resized <cite>ArrayData</cite> with the old data centered and padded.</p>
+<p>Can also be used to obtain a centered slice.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>shape</strong><span class="classifier"><cite>tuple(int)</cite> or <cite>float</cite></span></dt><dd><p>Padded shape.
+If <cite>float</cite>, scales all dimensions by the factor <cite>shape</cite>.</p>
+</dd>
+<dt><strong>val</strong><span class="classifier"><cite>Any</cite></span></dt><dd><p>Padding value.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>ArrayData</cite></span></dt><dd><p>Padded array data with <cite>shape</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.rmv_dim">
-<code class="sig-name descname">rmv_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*dims</em>, <em class="sig-param">num=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.rmv_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.points">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.rmv_dim">
+<span class="sig-name descname"><span class="pre">rmv_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*dims</span></em>, <em class="sig-param"><span class="pre">num=None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.rmv_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes variable dimension(s) from the object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -520,9 +889,9 @@ if <cite>dims</cite> is not specified.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.set_data_quantity">
-<code class="sig-name descname">set_data_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.set_data_quantity">
+<span class="sig-name descname"><span class="pre">set_data_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_data_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the data quantity object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -534,9 +903,9 @@ if <cite>dims</cite> is not specified.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.set_dim">
-<code class="sig-name descname">set_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.set_dim">
+<span class="sig-name descname"><span class="pre">set_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">dim</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the numeric variable description for a dimension.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -572,9 +941,9 @@ if <cite>dims</cite> is not specified.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.set_var_quantity">
-<code class="sig-name descname">set_var_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_var_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.set_var_quantity">
+<span class="sig-name descname"><span class="pre">set_var_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">dim</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.set_var_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the data quantity object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -588,31 +957,78 @@ if <cite>dims</cite> is not specified.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.shape">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data array shape.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data array size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.std">
+<span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.std" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.step">
-<em class="property">property </em><code class="sig-name descname">step</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.step" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.step">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">step</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variable steps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.sum" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.total_ndim">
-<em class="property">property </em><code class="sig-name descname">total_ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.total_ndim" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.supersample">
+<span class="sig-name descname"><span class="pre">supersample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.supersample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a supersampled <cite>ArrayData</cite> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>rep</strong><span class="classifier"><cite>int</cite> or <cite>Iter[int]</cite></span></dt><dd><p>Supersampling repetitions (number of new indices per old index).
+If iterable, each value corresponds to the respective dimension.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>ArrayData</cite></span></dt><dd><p>Supersampled array data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.ArrayData.var_ndim">
-<em class="property">property </em><code class="sig-name descname">var_ndim</code><a class="headerlink" href="#libics.core.data.arrays.ArrayData.var_ndim" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.total_ndim">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">total_ndim</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.total_ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total ndim (variable and data dimension).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.var_ndim">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">var_ndim</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.var_ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable ndim.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.ArrayData.var_shape">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">var_shape</span></span><a class="headerlink" href="#libics.core.data.arrays.ArrayData.var_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable (placeholder) shape. Is updated upon setting <cite>data</cite>.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.data.arrays.SeriesData">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">SeriesData</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.arrays.</span></span><span class="sig-name descname"><span class="pre">SeriesData</span></span><a class="headerlink" href="#libics.core.data.arrays.SeriesData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -642,9 +1058,9 @@ if <cite>dims</cite> is not specified.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.add_dim">
-<code class="sig-name descname">add_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.add_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.add_dim">
+<span class="sig-name descname"><span class="pre">add_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.add_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends dimension(s) to the object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -666,19 +1082,19 @@ list of empty dictionaries.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.data">
-<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.data" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.ndim">
-<em class="property">property </em><code class="sig-name descname">ndim</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.ndim" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.ndim">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ndim</span></span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.ndim" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.rmv_dim">
-<code class="sig-name descname">rmv_dim</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*dims</em>, <em class="sig-param">num=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.rmv_dim" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.rmv_dim">
+<span class="sig-name descname"><span class="pre">rmv_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*dims</span></em>, <em class="sig-param"><span class="pre">num=None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.rmv_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes dimension(s) from the object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -693,37 +1109,38 @@ if <cite>dims</cite> is not specified.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.set_quantity">
-<code class="sig-name descname">set_quantity</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">dim</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.set_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.set_quantity">
+<span class="sig-name descname"><span class="pre">set_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">dim</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.set_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the quantity object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>dim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Variable dimension to be set.</p>
 </dd>
-<dt><strong>**kwargs</strong></dt><dd><p>See <a class="reference internal" href="#libics.core.data.arrays.assume_quantity" title="libics.core.data.arrays.assume_quantity"><code class="xref py py-func docutils literal notranslate"><span class="pre">assume_quantity()</span></code></a>.</p>
+<dt><strong>**kwargs</strong></dt><dd><p><cite>quantity, name, symbol, unit</cite>.
+See <a class="reference internal" href="#libics.core.data.arrays.assume_quantity" title="libics.core.data.arrays.assume_quantity"><code class="xref py py-func docutils literal notranslate"><span class="pre">assume_quantity()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.shape">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.shape" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.arrays.SeriesData.total_ndim">
-<em class="property">property </em><code class="sig-name descname">total_ndim</code><a class="headerlink" href="#libics.core.data.arrays.SeriesData.total_ndim" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.arrays.SeriesData.total_ndim">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">total_ndim</span></span><a class="headerlink" href="#libics.core.data.arrays.SeriesData.total_ndim" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.arrays.assume_quantity">
-<code class="sig-prename descclassname">libics.core.data.arrays.</code><code class="sig-name descname">assume_quantity</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.assume_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.arrays.assume_quantity">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.arrays.</span></span><span class="sig-name descname"><span class="pre">assume_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.arrays.assume_quantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a quantity object from keyword arguments.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -747,9 +1164,9 @@ over other methods.</p>
 </div>
 <div class="section" id="module-libics.core.data.conversion">
 <span id="conversion"></span><h2>conversion<a class="headerlink" href="#module-libics.core.data.conversion" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.data.conversion.Calibration">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">Calibration</code><span class="sig-paren">(</span><em class="sig-param">sd=None</em>, <em class="sig-param">sd_key_dim=0</em>, <em class="sig-param">sd_val_dim=-1</em>, <em class="sig-param">key_data=None</em>, <em class="sig-param">val_data=None</em>, <em class="sig-param">key_quantity=None</em>, <em class="sig-param">val_quantity=None</em>, <em class="sig-param">mode='linear'</em>, <em class="sig-param">extrapolation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.Calibration" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">Calibration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_key_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_val_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.Calibration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.core.data.arrays.SeriesData" title="libics.core.data.arrays.SeriesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.arrays.SeriesData</span></code></a></p>
 <p>Container class for storing calibration data mapping one quantity to
 another. Naming convention: key –map–&gt; val.</p>
@@ -826,67 +1243,67 @@ float: Uses given number as constant extrapolation.
 </tr>
 </tbody>
 </table>
-<dl class="class">
-<dt id="libics.core.data.conversion.Calibration.MODE">
-<em class="property">class </em><code class="sig-name descname">MODE</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MODE</span></span><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.CUBIC">
-<code class="sig-name descname">CUBIC</code><em class="property"> = 'cubic'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.CUBIC" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.CUBIC">
+<span class="sig-name descname"><span class="pre">CUBIC</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'cubic'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.CUBIC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.LINEAR">
-<code class="sig-name descname">LINEAR</code><em class="property"> = 'linear'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'linear'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.NEAREST">
-<code class="sig-name descname">NEAREST</code><em class="property"> = 'const'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEAREST" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.NEAREST">
+<span class="sig-name descname"><span class="pre">NEAREST</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'const'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEAREST" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.NEXT">
-<code class="sig-name descname">NEXT</code><em class="property"> = 'next'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEXT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.NEXT">
+<span class="sig-name descname"><span class="pre">NEXT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'next'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.NEXT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.PREVIOUS">
-<code class="sig-name descname">PREVIOUS</code><em class="property"> = 'previous'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.PREVIOUS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.PREVIOUS">
+<span class="sig-name descname"><span class="pre">PREVIOUS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'previous'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.PREVIOUS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.conversion.Calibration.MODE.QUADRATIC">
-<code class="sig-name descname">QUADRATIC</code><em class="property"> = 'quadratic'</em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.QUADRATIC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="method">
-<dt id="libics.core.data.conversion.Calibration.key_data">
-<em class="property">property </em><code class="sig-name descname">key_data</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="libics.core.data.conversion.Calibration.key_quantity">
-<em class="property">property </em><code class="sig-name descname">key_quantity</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_quantity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="libics.core.data.conversion.Calibration.val_data">
-<em class="property">property </em><code class="sig-name descname">val_data</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="libics.core.data.conversion.Calibration.val_quantity">
-<em class="property">property </em><code class="sig-name descname">val_quantity</code><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_quantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.MODE.QUADRATIC">
+<span class="sig-name descname"><span class="pre">QUADRATIC</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'quadratic'</span></em><a class="headerlink" href="#libics.core.data.conversion.Calibration.MODE.QUADRATIC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.conversion.apply_calibration">
-<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">apply_calibration</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">calibration</em>, <em class="sig-param">dim=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.apply_calibration" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.key_data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">key_data</span></span><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.key_quantity">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">key_quantity</span></span><a class="headerlink" href="#libics.core.data.conversion.Calibration.key_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.val_data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">val_data</span></span><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.data.conversion.Calibration.val_quantity">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">val_quantity</span></span><a class="headerlink" href="#libics.core.data.conversion.Calibration.val_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.conversion.apply_calibration">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">apply_calibration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.apply_calibration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a calibration to a data.seriesdata.SeriesData object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -914,9 +1331,9 @@ float: Uses given number as constant extrapolation.
 </ul>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.conversion.cv_arraydata_to_seriesdata">
-<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_arraydata_to_seriesdata</code><span class="sig-paren">(</span><em class="sig-param">ad</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_arraydata_to_seriesdata" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.conversion.cv_arraydata_to_seriesdata">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">cv_arraydata_to_seriesdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ad</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_arraydata_to_seriesdata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an <cite>ArrayData</cite> object to a <cite>SeriesData</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -934,9 +1351,9 @@ float: Uses given number as constant extrapolation.
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.conversion.cv_datasequence_to_list">
-<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_datasequence_to_list</code><span class="sig-paren">(</span><em class="sig-param">ds</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_datasequence_to_list" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.conversion.cv_datasequence_to_list">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">cv_datasequence_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_datasequence_to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the data stored in the <cite>DataSequence</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -954,9 +1371,9 @@ float: Uses given number as constant extrapolation.
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.conversion.cv_list_to_datasequence">
-<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_list_to_datasequence</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_list_to_datasequence" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.conversion.cv_list_to_datasequence">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">cv_list_to_datasequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_list_to_datasequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a data list into a <cite>DataSequence</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -978,9 +1395,9 @@ If conversion is unsuccessful, returns input.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.data.conversion.cv_seriesdata_to_arraydata">
-<code class="sig-prename descclassname">libics.core.data.conversion.</code><code class="sig-name descname">cv_seriesdata_to_arraydata</code><span class="sig-paren">(</span><em class="sig-param">sd</em>, <em class="sig-param">data_dim=-1</em>, <em class="sig-param">sampling_shape=None</em>, <em class="sig-param">algorithm='cubic'</em>, <em class="sig-param">fill=nan</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_seriesdata_to_arraydata" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.data.conversion.cv_seriesdata_to_arraydata">
+<span class="sig-prename descclassname"><span class="pre">libics.core.data.conversion.</span></span><span class="sig-name descname"><span class="pre">cv_seriesdata_to_arraydata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.conversion.cv_seriesdata_to_arraydata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a <cite>ArrayData</cite> object to a <cite>SeriesData</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1021,9 +1438,9 @@ is outside convex hull (i.e. needs extrapolation).</p>
 </div>
 <div class="section" id="module-libics.core.data.graphs">
 <span id="graphs"></span><h2>graphs<a class="headerlink" href="#module-libics.core.data.graphs" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.data.graphs.DirectedGraph">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.graphs.</code><code class="sig-name descname">DirectedGraph</code><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.graphs.</span></span><span class="sig-name descname"><span class="pre">DirectedGraph</span></span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A simple Python directed graph class.</p>
 <p>Stores the graph in a dictionary mapping vertex-&gt;set(vertex).</p>
@@ -1062,23 +1479,23 @@ is outside convex hull (i.e. needs extrapolation).</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.add_edge">
-<code class="sig-name descname">add_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.add_edge">
+<span class="sig-name descname"><span class="pre">add_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_to</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a directed edge from <cite>vertex_from</cite> to <cite>vertex_to</cite>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.add_vertex">
-<code class="sig-name descname">add_vertex</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_vertex" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.add_vertex">
+<span class="sig-name descname"><span class="pre">add_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.add_vertex" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the vertex <cite>vertex</cite> is not in <cite>self.__graph_dict</cite>,
 a key <cite>vertex</cite> with an empty list as a value is added
 to the dictionary. Otherwise nothing has to be done.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.find_connected_vertices">
-<code class="sig-name descname">find_connected_vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.find_connected_vertices" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.find_connected_vertices">
+<span class="sig-name descname"><span class="pre">find_connected_vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.find_connected_vertices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds all connected vertices.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -1091,20 +1508,20 @@ Vertices within a deque are mutually connected.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.get_edge_number">
-<code class="sig-name descname">get_edge_number</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.get_edge_number" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.get_edge_number">
+<span class="sig-name descname"><span class="pre">get_edge_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.get_edge_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the number of edges connected at the given <cite>vertex</cite>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.has_edge">
-<code class="sig-name descname">has_edge</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">vertex_from</em>, <em class="sig-param">vertex_to</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.has_edge" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.has_edge">
+<span class="sig-name descname"><span class="pre">has_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_to</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.has_edge" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.graphs.DirectedGraph.vertices">
-<code class="sig-name descname">vertices</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.vertices" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.graphs.DirectedGraph.vertices">
+<span class="sig-name descname"><span class="pre">vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.graphs.DirectedGraph.vertices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the vertices of a graph.</p>
 </dd></dl>
 
@@ -1113,9 +1530,9 @@ Vertices within a deque are mutually connected.</p>
 </div>
 <div class="section" id="module-libics.core.data.sequences">
 <span id="sequences"></span><h2>sequences<a class="headerlink" href="#module-libics.core.data.sequences" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.data.sequences.DataSequence">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.sequences.</code><code class="sig-name descname">DataSequence</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.sequences.</span></span><span class="sig-name descname"><span class="pre">DataSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.core.frame.DataFrame</span></code></p>
 <p>Stores a multiindex series as a pandas data frame.</p>
 <p>May contain arbitrary heterogeneous data, i.a. supports <cite>ArrayData</cite>.
@@ -1656,7 +2073,7 @@ particularly, includes the tabular data.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_index</span></code>(self[, axis, level, ascending, …])</p></td>
 <td><p>Sort object by labels (along an axis).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.sort_rows" title="libics.core.data.sequences.DataSequence.sort_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_rows</span></code></a>(self, col_name[, ascending])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.sequences.DataSequence.sort_rows" title="libics.core.data.sequences.DataSequence.sort_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_rows</span></code></a>(self, col_name[, ascending, …])</p></td>
 <td><p>Sorts the rows by numerical values in a column.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_values</span></code>(self, by[, axis, ascending, …])</p></td>
@@ -1802,9 +2219,9 @@ particularly, includes the tabular data.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.apply_func">
-<code class="sig-name descname">apply_func</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">func</em>, <em class="sig-param">col_names</em>, <em class="sig-param">ret_name=True</em>, <em class="sig-param">drop_cols=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.apply_func" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.apply_func">
+<span class="sig-name descname"><span class="pre">apply_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.apply_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function to each row.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1813,21 +2230,26 @@ particularly, includes the tabular data.</p>
 </dd>
 <dt><strong>col_names</strong><span class="classifier"><cite>object</cite> or <cite>iter(object)</cite></span></dt><dd><p>Column names whose values are passed to <cite>func</cite>.</p>
 </dd>
-<dt><strong>ret_name</strong><span class="classifier"><cite>str</cite> or <cite>bool</cite></span></dt><dd><p>Column name in which return value is stored.
+<dt><strong>ret_name</strong><span class="classifier"><cite>str</cite> or <cite>Iter[str]</cite> or <cite>bool</cite></span></dt><dd><p>Column name in which return value is stored.
+If <cite>Iter</cite>, assumes that <cite>func</cite> returns an <cite>Iter</cite>. Each returned
+value is assigned to the respective column in order. If a certain
+value should not be assigned, pass <cite>None</cite> instead of <cite>str</cite>.
 If <cite>True</cite>, assigns return value to the row
 corresponding to the first item in <cite>col_names</cite>.
 If <cite>False</cite>, does not assign any return value.</p>
 </dd>
 <dt><strong>drop_cols</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to drop the columns used as <cite>func</cite> input.</p>
 </dd>
+<dt><strong>print_progress</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to print a progress bar.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.average">
-<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">key_columns</em>, <em class="sig-param">col_name</em>, <em class="sig-param">add_std=False</em>, <em class="sig-param">add_num=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.average" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.average">
+<span class="sig-name descname"><span class="pre">average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.average" title="Permalink to this definition">¶</a></dt>
 <dd><p>Averages (unweighted mean) a column.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1856,28 +2278,28 @@ If <cite>None</cite>, performs average on all rows.</p>
 <p>Uses the <code class="xref py py-func docutils literal notranslate"><span class="pre">np.mean()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">np.std()</span></code> functions.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.drop_column">
-<code class="sig-name descname">drop_column</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*col_names</em>, <em class="sig-param">inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.drop_column" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.drop_column">
+<span class="sig-name descname"><span class="pre">drop_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*col_names</span></em>, <em class="sig-param"><span class="pre">inplace=True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.drop_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.drop(col=col_names)()</span></code>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.join">
-<code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">how='outer'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.join" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">how='outer'</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.join()</span></code> with a different
 default behavior for parameter <cite>how</cite>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.rename_column">
-<code class="sig-name descname">rename_column</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">old_name</em>, <em class="sig-param">new_name</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.rename_column" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.rename_column">
+<span class="sig-name descname"><span class="pre">rename_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.rename_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes the column name.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.reset_index">
-<code class="sig-name descname">reset_index</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.reset_index" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.reset_index">
+<span class="sig-name descname"><span class="pre">reset_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.reset_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the index, or a level of it.</p>
 <p>Reset the index of the DataFrame, and use the default one instead.
 If the DataFrame has a MultiIndex, this method can remove one or more
@@ -1921,7 +2343,7 @@ levels are named. If None then the index name is repeated.</p>
 </dl>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="mf">389.0</span><span class="p">),</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="mf">389.0</span><span class="p">),</span>
 <span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="mf">24.0</span><span class="p">),</span>
 <span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="mf">80.5</span><span class="p">),</span>
 <span class="gp">... </span>                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)],</span>
@@ -1937,7 +2359,7 @@ levels are named. If None then the index name is repeated.</p>
 </div>
 <p>When we reset the index, the old index is added as a column, and a
 new sequential index is used:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="go">    index   class  max_speed</span>
 <span class="go">0  falcon    bird      389.0</span>
 <span class="go">1  parrot    bird       24.0</span>
@@ -1947,7 +2369,7 @@ new sequential index is used:</p>
 </div>
 <p>We can use the <cite>drop</cite> parameter to avoid the old index being added as
 a column:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">    class  max_speed</span>
 <span class="go">0    bird      389.0</span>
 <span class="go">1    bird       24.0</span>
@@ -1956,7 +2378,7 @@ a column:</p>
 </pre></div>
 </div>
 <p>You can also use <cite>reset_index</cite> with <cite>MultiIndex</cite>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="s1">&#39;falcon&#39;</span><span class="p">),</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="s1">&#39;falcon&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;bird&#39;</span><span class="p">,</span> <span class="s1">&#39;parrot&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="s1">&#39;lion&#39;</span><span class="p">),</span>
 <span class="gp">... </span>                                   <span class="p">(</span><span class="s1">&#39;mammal&#39;</span><span class="p">,</span> <span class="s1">&#39;monkey&#39;</span><span class="p">)],</span>
@@ -1980,7 +2402,7 @@ a column:</p>
 </pre></div>
 </div>
 <p>If the index has multiple levels, we can reset a subset of them:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
 <span class="go">         class  speed species</span>
 <span class="go">                  max    type</span>
 <span class="go">name</span>
@@ -1992,7 +2414,7 @@ a column:</p>
 </div>
 <p>If we are not dropping the index, by default, it is placed in the top
 level. We can place it in another level:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">                speed species</span>
 <span class="go">         class    max    type</span>
 <span class="go">name</span>
@@ -2004,7 +2426,7 @@ level. We can place it in another level:</p>
 </div>
 <p>When the index is inserted under another level, we can specify under
 which one with the parameter <cite>col_fill</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">)</span>
 <span class="go">              species  speed species</span>
 <span class="go">                class    max    type</span>
 <span class="go">name</span>
@@ -2015,7 +2437,7 @@ which one with the parameter <cite>col_fill</cite>:</p>
 </pre></div>
 </div>
 <p>If we specify a nonexistent level for <cite>col_fill</cite>, it is created:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;genus&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_fill</span><span class="o">=</span><span class="s1">&#39;genus&#39;</span><span class="p">)</span>
 <span class="go">                genus  speed species</span>
 <span class="go">                class    max    type</span>
 <span class="go">name</span>
@@ -2027,9 +2449,9 @@ which one with the parameter <cite>col_fill</cite>:</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.sequences.DataSequence.sort_rows">
-<code class="sig-name descname">sort_rows</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">col_name</em>, <em class="sig-param">ascending=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.sort_rows" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.sequences.DataSequence.sort_rows">
+<span class="sig-name descname"><span class="pre">sort_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">col_name</span></em>, <em class="sig-param"><span class="pre">ascending=True</span></em>, <em class="sig-param"><span class="pre">reset_index=True</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.sequences.DataSequence.sort_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sorts the rows by numerical values in a column.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2037,6 +2459,8 @@ which one with the parameter <cite>col_fill</cite>:</p>
 <dt><strong>col_name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Column name of values to be sorted by.</p>
 </dd>
 <dt><strong>ascending</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to sort ascending (or descending).</p>
+</dd>
+<dt><strong>reset_index</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to reset indices.</p>
 </dd>
 </dl>
 </dd>
@@ -2048,49 +2472,41 @@ which one with the parameter <cite>col_fill</cite>:</p>
 </div>
 <div class="section" id="module-libics.core.data.types">
 <span id="types"></span><h2>types<a class="headerlink" href="#module-libics.core.data.types" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.data.types.Quantity">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">Quantity</code><span class="sig-paren">(</span><em class="sig-param">name='N/A'</em>, <em class="sig-param">symbol=None</em>, <em class="sig-param">unit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Data type for physical quantities (name and unit).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.types.AttrDict">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.types.</span></span><span class="sig-name descname"><span class="pre">AttrDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.AttrDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Dictionary container supporting recursive attribute access of items.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>name</strong><span class="classifier"><cite>str</cite>, optional</span></dt><dd><p>Name of physical quantity.</p>
-</dd>
-<dt><strong>symbol</strong><span class="classifier">str or None, optional</span></dt><dd><p>Symbol of variable.</p>
-</dd>
-<dt><strong>unit</strong><span class="classifier"><cite>str</cite> or <cite>None</cite>, optional</span></dt><dd><p>Unit of physical quantity. None is interpreted as
-unitless quantity.</p>
+<dt><strong>rec</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether given sub-dictionaries should be recursively converted
+to <cite>AttrDict</cite> objects.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p class="rubric">Methods</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 48%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><strong>mathstr</strong></p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="libics.core.data.types.Quantity.mathstr">
-<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.mathstr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="libics.core.data.types.Result">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">Result</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Result" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
-<p>Container class wrapping a dictionary and allowing access by attribute.</p>
-<p>Typical use case as a more complex results container.</p>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If a requested attribute does not exist, creates an empty <cite>AttrDict</cite>
+object to prevent empty attributes. This is only implemented for public
+attribute names, i.e. fails when the name starts with <cite>“_”</cite>.</p></li>
+<li><p>If multiple sequential dots (e.g. <cite>“abc..def”</cite>) are in a key, it
+is interpreted as single string (instead of attributes).
+This behavior was chosen to support ellipses (<cite>“…”</cite>) in strings.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_attrdict</span> <span class="o">=</span> <span class="n">AttrDict</span><span class="p">(</span><span class="n">my_dict</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_attrdict</span>
+<span class="go">{&#39;a&#39;: &#39;A&#39;, &#39;b&#39;: {&#39;c&#39;: &#39;C&#39;}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_attrdict</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">my_attrdict</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">c</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_attrdict</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="s2">&quot;nested_val&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_attrdict</span>
+<span class="go">{&#39;a&#39;: &#39;A&#39;, &#39;b&#39;: {&#39;c&#39;: &#39;C&#39;}, &#39;d&#39;: {&#39;e&#39;: {&#39;f&#39;: &#39;nested_val&#39;}}}</span>
+</pre></div>
+</div>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -2133,27 +2549,86 @@ unitless quantity.</p>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default">
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.types.</span></span><span class="sig-name descname"><span class="pre">Quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N/A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data type for physical quantities (name and unit).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><cite>str</cite>, optional</span></dt><dd><p>Name of physical quantity.</p>
+</dd>
+<dt><strong>symbol</strong><span class="classifier">str or None, optional</span></dt><dd><p>Symbol of variable.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier"><cite>str</cite> or <cite>None</cite>, optional</span></dt><dd><p>Unit of physical quantity. None is interpreted as
+unitless quantity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
 <colgroup>
-<col style="width: 58%" />
-<col style="width: 42%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>set_result</strong></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.data.types.Quantity.attributes" title="libics.core.data.types.Quantity.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a>(self)</p></td>
+<td><p>Implements <code class="xref py py-meth docutils literal notranslate"><span class="pre">libics.core.io.FileBase.attributes()</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>has_name</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>labelstr</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mathstr</strong></p></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.data.types.Result.set_result">
-<code class="sig-name descname">set_result</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Result.set_result" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity.SER_KEYS">
+<span class="sig-name descname"><span class="pre">SER_KEYS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'name',</span> <span class="pre">'symbol',</span> <span class="pre">'unit'}</span></em><a class="headerlink" href="#libics.core.data.types.Quantity.SER_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements <code class="xref py py-meth docutils literal notranslate"><span class="pre">libics.core.io.FileBase.attributes()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity.has_name">
+<span class="sig-name descname"><span class="pre">has_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.has_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity.labelstr">
+<span class="sig-name descname"><span class="pre">labelstr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">math=True</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.labelstr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.types.Quantity.mathstr">
+<span class="sig-name descname"><span class="pre">mathstr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">name=True</span></em>, <em class="sig-param"><span class="pre">symbol=True</span></em>, <em class="sig-param"><span class="pre">unit=True</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.Quantity.mathstr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.data.types.ValCheckDesc">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">ValCheckDesc</code><span class="sig-paren">(</span><em class="sig-param">allow_none=True</em>, <em class="sig-param">check_func=None</em>, <em class="sig-param">check_type=None</em>, <em class="sig-param">check_iter=None</em>, <em class="sig-param">check_min=None</em>, <em class="sig-param">check_max=None</em>, <em class="sig-param">assume_func=None</em>, <em class="sig-param">add_io_key=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValCheckDesc" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.types.ValCheckDesc">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.types.</span></span><span class="sig-name descname"><span class="pre">ValCheckDesc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_none</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_io_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValCheckDesc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Descriptor class for validity-checked attributes.</p>
 <p>Also provides an interface for data structure assumptions.
@@ -2186,9 +2661,9 @@ using the functions in <cite>libics.file.io</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.data.types.ValQuantity">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.data.types.</code><code class="sig-name descname">ValQuantity</code><span class="sig-paren">(</span><em class="sig-param">name='N/A'</em>, <em class="sig-param">symbol=None</em>, <em class="sig-param">unit=None</em>, <em class="sig-param">val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.data.types.</span></span><span class="sig-name descname"><span class="pre">ValQuantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N/A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.core.data.types.Quantity" title="libics.core.data.types.Quantity"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.types.Quantity</span></code></a></p>
 <p>Data type for physical quantities with values.</p>
 <p>Supports common arithmetic operations (<cite>+, -, *, /, //, %, **</cite>)
@@ -2211,55 +2686,77 @@ unitless quantity.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
-<col style="width: 52%" />
-<col style="width: 48%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>(self)</p></td>
+<td><p>Implements <code class="xref py py-meth docutils literal notranslate"><span class="pre">libics.core.io.FileBase.attributes()</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>has_name</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>labelstr</strong></p></td>
+<td></td>
+</tr>
 <tr class="row-odd"><td><p><strong>mathstr</strong></p></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.ALL_OPS">
-<code class="sig-name descname">ALL_OPS</code><em class="property"> = ['+', '-', '*', '/', '//', '%', '**', '&amp;']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.ALL_OPS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.ALL_OPS">
+<span class="sig-name descname"><span class="pre">ALL_OPS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['+',</span> <span class="pre">'-',</span> <span class="pre">'*',</span> <span class="pre">'/',</span> <span class="pre">'//',</span> <span class="pre">'%',</span> <span class="pre">'**',</span> <span class="pre">'&amp;']</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.ALL_OPS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.CANCEL_OPS">
-<code class="sig-name descname">CANCEL_OPS</code><em class="property"> = ['/', '//']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.CANCEL_OPS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.CANCEL_OPS">
+<span class="sig-name descname"><span class="pre">CANCEL_OPS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['/',</span> <span class="pre">'//']</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.CANCEL_OPS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.COMBINE_OPS">
-<code class="sig-name descname">COMBINE_OPS</code><em class="property"> = ['*']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.COMBINE_OPS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.COMBINE_OPS">
+<span class="sig-name descname"><span class="pre">COMBINE_OPS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['*']</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.COMBINE_OPS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.LINEAR_OPS">
-<code class="sig-name descname">LINEAR_OPS</code><em class="property"> = ['+', '-', '%', '&amp;']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.LINEAR_OPS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.LINEAR_OPS">
+<span class="sig-name descname"><span class="pre">LINEAR_OPS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['+',</span> <span class="pre">'-',</span> <span class="pre">'%',</span> <span class="pre">'&amp;']</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.LINEAR_OPS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.MATHSTR_OP">
-<code class="sig-name descname">MATHSTR_OP</code><em class="property"> = {'%': '\\mathrm{{mod}}', '&amp;': '&amp;', '*': '\\cdot', '**': '^', '+': '+', '-': '-', '/': '/', '//': '\\mathrm{{div}}'}</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.MATHSTR_OP" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.MATHSTR_OP">
+<span class="sig-name descname"><span class="pre">MATHSTR_OP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'%':</span> <span class="pre">'\\mathrm{{mod}}',</span> <span class="pre">'&amp;':</span> <span class="pre">'&amp;',</span> <span class="pre">'*':</span> <span class="pre">'\\cdot',</span> <span class="pre">'**':</span> <span class="pre">'^',</span> <span class="pre">'+':</span> <span class="pre">'+',</span> <span class="pre">'-':</span> <span class="pre">'-',</span> <span class="pre">'/':</span> <span class="pre">'/',</span> <span class="pre">'//':</span> <span class="pre">'\\mathrm{{div}}'}</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.MATHSTR_OP" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.NUMERIC_OPS">
-<code class="sig-name descname">NUMERIC_OPS</code><em class="property"> = ['**']</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.NUMERIC_OPS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.NUMERIC_OPS">
+<span class="sig-name descname"><span class="pre">NUMERIC_OPS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['**']</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.NUMERIC_OPS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.core.data.types.ValQuantity.STR_OP">
-<code class="sig-name descname">STR_OP</code><em class="property"> = {'%': '%', '&amp;': '&amp;', '*': '*', '**': '**', '+': '+', '-': '-', '/': '/', '//': '//'}</em><a class="headerlink" href="#libics.core.data.types.ValQuantity.STR_OP" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.SER_KEYS">
+<span class="sig-name descname"><span class="pre">SER_KEYS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'name',</span> <span class="pre">'symbol',</span> <span class="pre">'unit',</span> <span class="pre">'val'}</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.SER_KEYS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.data.types.ValQuantity.mathstr">
-<code class="sig-name descname">mathstr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name=True</em>, <em class="sig-param">symbol=True</em>, <em class="sig-param">unit=True</em>, <em class="sig-param">val=True</em>, <em class="sig-param">val_format=None</em>, <em class="sig-param">unit_math=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity.mathstr" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.STR_OP">
+<span class="sig-name descname"><span class="pre">STR_OP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'%':</span> <span class="pre">'%',</span> <span class="pre">'&amp;':</span> <span class="pre">'&amp;',</span> <span class="pre">'*':</span> <span class="pre">'*',</span> <span class="pre">'**':</span> <span class="pre">'**',</span> <span class="pre">'+':</span> <span class="pre">'+',</span> <span class="pre">'-':</span> <span class="pre">'-',</span> <span class="pre">'/':</span> <span class="pre">'/',</span> <span class="pre">'//':</span> <span class="pre">'//'}</span></em><a class="headerlink" href="#libics.core.data.types.ValQuantity.STR_OP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.data.types.ValQuantity.mathstr">
+<span class="sig-name descname"><span class="pre">mathstr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_math</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.data.types.ValQuantity.mathstr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2268,62 +2765,51 @@ unitless quantity.</p>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">libics.core.data</a><ul>
-<li><a class="reference internal" href="#module-libics.core.data.arrays">arrays</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-libics.core.data.conversion">conversion</a></li>
-<li><a class="reference internal" href="#module-libics.core.data.graphs">graphs</a></li>
-<li><a class="reference internal" href="#module-libics.core.data.sequences">sequences</a></li>
-<li><a class="reference internal" href="#module-libics.core.data.types">types</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.core.io.html" class="btn btn-neutral float-right" title="libics.core.io" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.core.cfg.html" class="btn btn-neutral float-left" title="libics.core.cfg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.core.data.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

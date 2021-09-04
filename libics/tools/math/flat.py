@@ -21,10 +21,14 @@ class FitCosine1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    f (frequency without 2π)
-    phi (additive phase)
-    c (offset)
+    a : `float`
+        amplitude
+    f : `float`
+        frequency without 2π
+    phi : `float`
+        additive phase
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitLinear1d")
@@ -102,15 +106,21 @@ class FitCosine2d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    fx, fy (frequency without 2π)
-    phi (additive phase)
-    c (offset)
+    a : `float`
+        amplitude
+    fx, fy : `float`
+        frequency without 2π
+    phi : `float`
+        additive phase
+    c : `float`
+        offset
 
-    Properties
+    Attributes
     ----------
-    f : Vectorial frequency (fx, fy)
-    angle: Frequency angle arctan(fy/fx)
+    f
+        Vectorial frequency (fx, fy)
+    angle
+        Frequency angle arctan(fy/fx)
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitCosine2d")
@@ -229,8 +239,10 @@ class FitLinear1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    c (offset)
+    a : `float`
+        amplitude
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitLinear1d")
@@ -291,8 +303,10 @@ class FitPowerLaw1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    p (power)
+    a : `float`
+        amplitude
+    p : `float`
+        power
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1d")
@@ -327,9 +341,12 @@ class FitPowerLaw1dCenter(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    p (power)
-    x0 (center)
+    a : `float`
+        amplitude
+    p : `float`
+        power
+    x0 : `float`
+        center
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1dCenter")
@@ -366,10 +383,14 @@ class FitErrorFunction(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    w (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    w : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitErrorFunction")
@@ -440,10 +461,14 @@ class FitLinearStepFunction(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    w (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    w : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitLinearStepFunction")

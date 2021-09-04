@@ -38,14 +38,19 @@ class FitExponential1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    g (rate)
-    c (offset)
+    a : `float`
+        amplitude
+    g : `float`
+        rate
+    c : `float`
+        offset
 
-    Properties
+    Attributes
     ----------
-    x0 (variable offset, assuming unity amplitude)
-    xi (decay length, inverse rate)
+    x0 : `float`
+        variable offset, assuming unity amplitude
+    xi : `float`
+        decay length, inverse rate
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitExponential1d")
@@ -155,10 +160,14 @@ class FitGaussian1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    wx (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitGaussian1d")
@@ -384,11 +393,16 @@ class FitGaussian2dTilt(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0, y0 (center)
-    wu, wv (width)
-    tilt (tilt in [-45°, 45°])
-    c (offset)
+    a : `float`
+        amplitude
+    x0, y0 : `float`
+        center
+    wu, wv : `float`
+        width
+    tilt : `float`
+        tilt in [-45°, 45°]
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitGaussian2dTilt")
@@ -523,9 +537,12 @@ class FitParabolic1d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    c  : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitParabolic1d")
@@ -606,10 +623,14 @@ class FitParabolic1dInt2d(FitGaussian1d):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    wx (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitParabolic1dInt2d")
@@ -647,11 +668,16 @@ class FitParabolic2dInt1dTilt(FitGaussian2dTilt):
 
     Parameters
     ----------
-    a (amplitude)
-    x0, y0 (center)
-    wu, wv (width)
-    tilt (tilt in [-45°, 45°])
-    c (offset)
+    a : `float`
+        amplitude
+    x0, y0 : `float`
+        center
+    wu, wv : `float`
+        width
+    tilt : `float`
+        tilt in [-45°, 45°]
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitParabolic2dInt1dTilt")
@@ -710,10 +736,14 @@ class FitBmGaussianParabolic1dInt2d(FitGaussian1d):
 
     Parameters
     ----------
-    ag, ap (amplitudes of Gaussian and parabola)
-    x0 (center)
-    wgx, wpx (width of Gaussian and parabola)
-    c (offset)
+    ag, ap : `float`
+        amplitudes of Gaussian and parabola
+    x0 : `float`
+        center
+    wgx, wpx : `float`
+        width of Gaussian and parabola
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitBmGaussianParabolic1d")
@@ -786,11 +816,16 @@ class FitBmGaussianParabolic2dInt1dTilt(FitGaussian2dTilt):
 
     Parameters
     ----------
-    ag, ap (amplitudes of Gaussian and parabola)
-    x0, y0 (center)
-    wgu, wgv, wpu, wpv (widths of Gaussian and parabola)
-    tilt (tilt in [-45°, 45°])
-    c (offset)
+    ag, ap : `float`
+        amplitudes of Gaussian and parabola
+    x0, y0 : `float`
+        center
+    wgu, wgv, wpu, wpv : `float`
+        widths of Gaussian and parabola
+    tilt : `float`
+        tilt in [-45°, 45°]
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger(
@@ -914,10 +949,14 @@ class FitLorentzian1dAbs(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    wx (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitLorentzian1dAbs")
@@ -971,24 +1010,37 @@ class FitLorentzianEit1dImag(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    wx (width)
-    x1 (shift)
-    wx1 (split)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    x1 : `float`
+        shift
+    wx1 : `float`
+        split
+    c : `float`
+        offset
 
-    Properties
+    Attributes
     ----------
-    ge (excited state decay rate)
-    fc (control field Rabi frequency)
-    dc (control field detuning)
-    lmax (position of left maximum)
-    rmax (position of right maximum)
-    cmin (position of central minimum)
-    lwidth (width of left maximum)
-    rwidth (width of right maximum)
-    cwidth (width of central minimum)
+    ge : `float`
+        excited state decay rate
+    fc : `float`
+        control field Rabi frequency
+    dc : `float`
+        control field detuning
+    lmax : `float`
+        position of left maximum
+    rmax : `float`
+        position of right maximum
+    cmin : `float`
+        position of central minimum
+    lwidth, rwidth : `float`
+        width of left/right maximum
+    cwidth : `float`
+        width of central minimum
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitLorentzianEit1dImag")
@@ -1151,25 +1203,37 @@ class FitLorentzianRydEit1dImag(FitLorentzianEit1dImag):
 
     Parameters
     ----------
-    a (amplitude)
-    x0 (center)
-    wx (width)
-    x1 (shift)
-    wx1 (split)
-    r (ratio)
-    c (offset)
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    x1 : `float`
+        shift
+    wx1 : `float`
+        split
+    r : `float`
+        ratio
+    c : `float`
+        offset
 
-    Properties
+    Attributes
     ----------
-    ge (excited state decay rate)
-    fc (control field Rabi frequency)
-    dc (control field detuning)
-    lmax (position of left maximum)
-    rmax (position of right maximum)
-    cmin (position of central minimum)
-    lwidth (width of left maximum)
-    rwidth (width of right maximum)
-    cwidth (width of central minimum)
+    ge : `float`
+        excited state decay rate
+    fc : `float`
+        control field Rabi frequency
+    dc : `float`
+        control field detuning
+    lmax, rmax : `float`
+        position of left/right maximum
+    cmin : `float`
+        position of central minimum
+    lwidth, rwidth : `float`
+        width of left/right maximum
+    cwidth : `float`
+        width of central minimum
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitLorentzianRydEit1dImag")
@@ -1239,9 +1303,16 @@ def airy_disk_2d(
 
     Parameters
     ----------
-    `var` :math:`(x, y)`, `amplitude` :math:`A`,
-    `center_(x, y)` :math:`(x_0, y_0), `width` :math:`w`,
-    `offset` :math:`C`.
+    var : `float`
+        :math:`(x, y)`
+    amplitude : `float`
+        :math:`A`
+    center_x, center_y : `float`
+        :math:`(x_0, y_0)
+    width : `float`
+        :math:`w`
+    offset : `float`
+        :math:`C`
 
     Notes
     -----
@@ -1262,10 +1333,14 @@ class FitAiryDisk2d(ModelBase):
 
     Parameters
     ----------
-    a (amplitude)
-    x0, y0 (center)
-    w (width)
-    c (offset)
+    a : `float`
+        amplitude
+    x0, y0 : `float`
+        center
+    w : `float`
+        width
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitAiryDisk2d")
@@ -1305,7 +1380,12 @@ def dsc_bloch_osc_1d(
 
     Parameters
     ----------
-    `var` :math:`(n, t)`, `hopping` :math:`J`, `gradient` :math:`\Delta`.
+    var : `float`
+        :math:`(n, t)`
+    hopping : `float`
+        :math:`J`
+    gradient : `float`
+        :math:`\Delta`
 
     Returns
     -------
@@ -1363,7 +1443,10 @@ def dsc_bloch_osc_2d(
     """
     See :py:func:`bloch_osc_1d`.
 
-    `var` :math:`(n_x, n_y, t)`
+    Parameters
+    ----------
+    var : `float`
+        :math:`(n_x, n_y, t)`
     """
     arg_x = np.abs(np.sin(gradient_x * var[-1] / 2))
     arg_y = np.abs(np.sin(gradient_y * var[-1] / 2))
@@ -1378,7 +1461,10 @@ def dsc_bloch_osc_3d(
     """
     See :py:func:`bloch_osc_1d`.
 
-    `var` :math:`(n_x, n_y, n_z, t)`
+    Parameters
+    ----------
+    var : `float`
+        :math:`(n_x, n_y, n_z, t)`
     """
     arg_x = np.abs(np.sin(gradient_x * var[-1] / 2))
     arg_y = np.abs(np.sin(gradient_y * var[-1] / 2))
@@ -1399,7 +1485,10 @@ def dsc_ballistic_1d(var, hopping):
 
     Parameters
     ----------
-    `var` :math:`(n, t)`, `hopping` :math:`J`.
+    var : `float`
+        :math:`(n, t)`
+    hopping : `float`
+        :math:`J`
 
     Returns
     -------
@@ -1458,7 +1547,10 @@ def dsc_diffusive_1d(var, diffusion):
 
     Parameters
     ----------
-    `var` :math:`(n, t)`, `hopping` :math:`J`.
+    var : `float`
+        :math:`(n, t)`
+    diffusion : `float`
+        :math:`D`
 
     Returns
     -------

@@ -10,6 +10,7 @@ libics.tools
    :maxdepth: 2
    :caption: Contents:
 
+   libics.tools.database.rst
    libics.tools.math.rst
    libics.tools.plot.rst
    libics.tools.trafo.rst

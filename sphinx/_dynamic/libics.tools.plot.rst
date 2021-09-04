@@ -18,11 +18,3 @@ colors
     :members:
     :undoc-members:
     :show-inheritance:
-
-default
--------
-
-.. automodule:: libics.tools.plot.default
-    :members:
-    :undoc-members:
-    :show-inheritance:

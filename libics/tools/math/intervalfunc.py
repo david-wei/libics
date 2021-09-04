@@ -169,6 +169,7 @@ def interval_func(*rescale_param):
     Examples
     --------
     To specify positional argument `p1`:
+
     >>> @interval_func(1)
     >>> def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2)`:
     ...     pass

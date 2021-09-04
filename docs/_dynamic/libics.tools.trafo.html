@@ -1,65 +1,201 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.tools.trafo &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.tools.trafo &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="libics.tools.plot" href="libics.tools.plot.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="libics.tools.plot.html" title="libics.tools.plot"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.tools.html" accesskey="U">libics.tools</a> &#187;</li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.database.html">libics.tools.database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.math.html">libics.tools.math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.plot.html">libics.tools.plot</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.trafo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.fourier">fourier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.linear">linear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.resize">resize</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.tools.html">libics.tools</a> &raquo;</li>
+        
+      <li>libics.tools.trafo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.tools.trafo.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.tools.trafo">
 <span id="libics-tools-trafo"></span><h1>libics.tools.trafo<a class="headerlink" href="#module-libics.tools.trafo" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-libics.tools.trafo.fourier">
 <span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.tools.trafo.fourier" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="libics.tools.trafo.fourier.fft_arraydata">
-<code class="sig-prename descclassname">libics.tools.trafo.fourier.</code><code class="sig-name descname">fft_arraydata</code><span class="sig-paren">(</span><em class="sig-param">ad</em>, <em class="sig-param">mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.fft_arraydata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Fast Fourier Transform of a <cite>data.matrixdata.MatrixData</cite>
-object.</p>
-<dl class="field-list simple">
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.fourier.fft">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.fourier.</span></span><span class="sig-name descname"><span class="pre">fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.fft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Fast Fourier Transform of an array.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>ad</strong><span class="classifier">data.arrays.ArrayData</span></dt><dd><p>The array data to be Fourier transformed.</p>
+<dd class="field-odd"><dl>
+<dt><strong>ad</strong><span class="classifier"><cite>np.ndarray</cite> or <cite>ArrayData</cite></span></dt><dd><p>The array data to be Fourier transformed.</p>
 </dd>
-<dt><strong>mode</strong><span class="classifier">None or str</span></dt><dd><p>None: Saves full complex values of Fourier transform.
-“abs”: Saves spectrum (modulus of Fourier transform).
-“phase”: Saves phase of Fourier transform.
-“re”: Saves real part of Fourier transform.
-“im”: Saves imaginary part of Fourier transform.</p>
+<dt><strong>mode</strong><span class="classifier"><cite>None</cite> or <cite>str</cite></span></dt><dd><p><cite>None</cite>: Saves full complex values of Fourier transform.
+<cite>“abs</cite>”: Saves spectrum (modulus of Fourier transform).
+<cite>“phase”</cite>: Saves phase of Fourier transform.
+<cite>“re”</cite>: Saves real part of Fourier transform.
+<cite>“im”</cite>: Saves imaginary part of Fourier transform.</p>
+</dd>
+<dt><strong>symmetric</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to use symmetric Fourier transform.</p>
 </dd>
 </dl>
 </dd>
@@ -84,19 +220,26 @@ not angular frequency (i.e. 2πft, not ωt).</p>
 </div>
 <div class="section" id="module-libics.tools.trafo.linear">
 <span id="linear"></span><h2>linear<a class="headerlink" href="#module-libics.tools.trafo.linear" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.tools.trafo.linear.AffineTrafo">
-<em class="property">class </em><code class="sig-prename descclassname">libics.tools.trafo.linear.</code><code class="sig-name descname">AffineTrafo</code><span class="sig-paren">(</span><em class="sig-param">matrix=array([[1., 0.],        [0., 1.]]), offset=array([0., 0.])</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.linear.</span></span><span class="sig-name descname"><span class="pre">AffineTrafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.0,</span> <span class="pre">0.0],</span> <span class="pre">[0.0,</span> <span class="pre">1.0]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
 <p>Defines an affine transformation in arbitrary dimensions.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>matrix</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Transformation matrix.</p>
+<dd class="field-odd"><dl>
+<dt><strong>matrix</strong><span class="classifier"><cite>np.ndarray(2, float)</cite></span></dt><dd><p>Transformation matrix.</p>
 </dd>
-<dt><strong>offset</strong><span class="classifier">np.ndarray(1, float)</span></dt><dd><p>Transformation offset.</p>
+<dt><strong>offset</strong><span class="classifier"><cite>np.ndarray(1, float)</cite></span></dt><dd><p>Transformation offset.</p>
 </dd>
-<dt><strong># TODO: transformation of array data.</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>matrix_to_origin</strong></dt><dd></dd>
+<dt><strong>matrix_to_target</strong></dt><dd></dd>
+<dt><strong>offset_to_origin</strong></dt><dd></dd>
+<dt><strong>offset_to_target</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -107,82 +250,142 @@ not angular frequency (i.e. 2πft, not ωt).</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, image, shape[, order, direction])</p></td>
-<td><p>Call self as a function.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, \*args[, direction])</p></td>
+<td><p>Performs a transformation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_origin" title="libics.tools.trafo.linear.AffineTrafo.cv_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code></a>(self, image, shape[, order])</p></td>
-<td><p>Convert an image in target coordinates to origin coordinates.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>(self)</p></td>
+<td><p>Default saved attributes getter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_target" title="libics.tools.trafo.linear.AffineTrafo.cv_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_target</span></code></a>(self, image, shape[, order])</p></td>
-<td><p>Convert an image in origin coordinates to target coordinates.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.concatenate" title="libics.tools.trafo.linear.AffineTrafo.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a>(self, other)</p></td>
+<td><p>Returns an <cite>AffineTrafo</cite> object which concatenates two transformations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_origin" title="libics.tools.trafo.linear.AffineTrafo.coord_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_origin</span></code></a>(self, target_coords)</p></td>
+<td><p>Transforms given target coordinates into origin coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_target" title="libics.tools.trafo.linear.AffineTrafo.coord_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_target</span></code></a>(self, origin_coords)</p></td>
+<td><p>Transforms given origin coordinates into target coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_origin" title="libics.tools.trafo.linear.AffineTrafo.cv_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code></a>(self, target_array, origin_shape)</p></td>
+<td><p>Convert an array in target coordinates to origin coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_target" title="libics.tools.trafo.linear.AffineTrafo.cv_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_target</span></code></a>(self, origin_array, target_shape)</p></td>
+<td><p>Convert an array in origin coordinates to target coordinates.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.fit_affine_transform" title="libics.tools.trafo.linear.AffineTrafo.fit_affine_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_affine_transform</span></code></a>(self, origin_coords, …)</p></td>
 <td><p>Fits the affine transform matrix and offset vector.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.invert" title="libics.tools.trafo.linear.AffineTrafo.invert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert</span></code></a>(self)</p></td>
+<td><p>Returns the inverse <cite>AffineTrafo</cite> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.tools.trafo.linear.AffineTrafo.cv_to_origin">
-<code class="sig-name descname">cv_to_origin</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">image</em>, <em class="sig-param">shape</em>, <em class="sig-param">order=3</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_origin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert an image in target coordinates to origin coordinates.</p>
-<dl class="field-list simple">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.SER_KEYS">
+<span class="sig-name descname"><span class="pre">SER_KEYS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'matrix',</span> <span class="pre">'offset'}</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.SER_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.concatenate">
+<span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.concatenate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <cite>AffineTrafo</cite> object which concatenates two transformations.</p>
+<p>First transform: <cite>other</cite>, second transform: <cite>self</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.coord_to_origin">
+<span class="sig-name descname"><span class="pre">coord_to_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms given target coordinates into origin coordinates.</p>
+<p>See <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_target" title="libics.tools.trafo.linear.AffineTrafo.coord_to_target"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coord_to_target()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.coord_to_target">
+<span class="sig-name descname"><span class="pre">coord_to_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms given origin coordinates into target coordinates.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in target coordinates.</p>
-</dd>
-<dt><strong>shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Shape of trafo_image.</p>
-</dd>
-<dt><strong>order</strong><span class="classifier">int</span></dt><dd><p>Spline interpolation order.</p>
+<dd class="field-odd"><dl>
+<dt><strong>origin_coords</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Coordinates in origin space. The different dimensions should be
+placed on the last axes (dimensions: […, ndim]).</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>trafo_image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in origin coordinates.</p>
+<dd class="field-even"><dl>
+<dt><strong>target_coords</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Transformed coordinates in target space.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.tools.trafo.linear.AffineTrafo.cv_to_target">
-<code class="sig-name descname">cv_to_target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">image</em>, <em class="sig-param">shape</em>, <em class="sig-param">order=3</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert an image in origin coordinates to target coordinates.</p>
-<dl class="field-list simple">
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.cv_to_origin">
+<span class="sig-name descname"><span class="pre">cv_to_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">target_array</span></em>, <em class="sig-param"><span class="pre">origin_shape</span></em>, <em class="sig-param"><span class="pre">centered=False</span></em>, <em class="sig-param"><span class="pre">supersample=None</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an array in target coordinates to origin coordinates.</p>
+<p>See <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_target" title="libics.tools.trafo.linear.AffineTrafo.cv_to_target"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cv_to_target()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.cv_to_target">
+<span class="sig-name descname"><span class="pre">cv_to_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">origin_array</span></em>, <em class="sig-param"><span class="pre">target_shape</span></em>, <em class="sig-param"><span class="pre">centered=False</span></em>, <em class="sig-param"><span class="pre">supersample=None</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an array in origin coordinates to target coordinates.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in origin coordinates.</p>
+<dd class="field-odd"><dl>
+<dt><strong>origin_array</strong><span class="classifier"><cite>np.ndarray(float)</cite> or <cite>ArrayData(float)</cite></span></dt><dd><p>Array in origin coordinates.</p>
 </dd>
-<dt><strong>shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Shape of trafo_image.</p>
+<dt><strong>target_shape</strong><span class="classifier"><cite>tuple(int)</cite> or <cite>ArrayData(float)</cite></span></dt><dd><p>Shape of target array.
+If <cite>ArrayData</cite>, loads the transformed array into this object.</p>
 </dd>
-<dt><strong>order</strong><span class="classifier">int</span></dt><dd><p>Spline interpolation order.</p>
+<dt><strong>centered</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Only relevant if <cite>target_shape</cite> is <cite>tuple(int)</cite>.
+If <cite>True</cite>, sets the origin zero to the center of the array.
+Otherwise assumes the center to be at index <cite>(0, 0)</cite>.</p>
+</dd>
+<dt><strong>supersample</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Origin array supersampling repetitions (for sharper edges).</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See scipy documentation for <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.map_coordinates</span></code>.
+Notable options: <cite>order : int</cite> (interpolation order).</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>trafo_image</strong><span class="classifier">np.ndarray(2, float)</span></dt><dd><p>Image in target coordinates.</p>
+<dd class="field-even"><dl>
+<dt><strong>target_array</strong><span class="classifier"><cite>np.ndarray(float)</cite> or <cite>ArrayData(float)</cite></span></dt><dd><p>Array transformed to target coordinates.
+Return type depends on <cite>target_shape</cite> type.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Performs subsequent transformations from image to origin to target
+coordinates.</p></li>
+<li><p>Interpolates into the requested target shape.</p></li>
+<li><p>For algorithm see <code class="xref py py-meth docutils literal notranslate"><span class="pre">_cv_array()</span></code>.</p></li>
+</ul>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.tools.trafo.linear.AffineTrafo.fit_affine_transform">
-<code class="sig-name descname">fit_affine_transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">origin_coords</em>, <em class="sig-param">target_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.fit_affine_transform" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.fit_affine_transform">
+<span class="sig-name descname"><span class="pre">fit_affine_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.fit_affine_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the affine transform matrix and offset vector.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>origin_coords, target_coords</strong><span class="classifier">list(np.ndarray(1, float))</span></dt><dd><p>List of (origin, target) coordinates in corresponding order.</p>
+<dd class="field-odd"><dl>
+<dt><strong>origin_coords, target_coords</strong><span class="classifier"><cite>list(np.ndarray(1, float))</cite></span></dt><dd><p>List of (origin, target) coordinates in corresponding order.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>success</strong><span class="classifier">bool</span></dt><dd><p>Whether transformation fit succeeded.
+<dd class="field-even"><dl>
+<dt><strong>success</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether transformation fit succeeded.
 Matrix and offset attributes are only written
 in the case of success.</p>
 </dd>
@@ -190,12 +393,306 @@ in the case of success.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Following H. Späth, Math. Com. 9 (1), 27-34.
-Variable naming convention:
-* q: origin coordinates.
-* p: target coordinates.
-* m: transform matrix.
-* b: transform offset.</p>
+<p>Following H. Späth, Math. Com. 9 (1), 27-34 (2004).
+Variable naming convention:</p>
+<ul class="simple">
+<li><p><cite>q</cite>: origin coordinates.</p></li>
+<li><p><cite>p</cite>: target coordinates.</p></li>
+<li><p><cite>m</cite>: transform matrix.</p></li>
+<li><p><cite>b</cite>: transform offset.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.invert">
+<span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.invert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the inverse <cite>AffineTrafo</cite> object.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.matrix_to_origin">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">matrix_to_origin</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.matrix_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.matrix_to_target">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">matrix_to_target</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.matrix_to_target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.offset_to_origin">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">offset_to_origin</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.offset_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.offset_to_target">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">offset_to_target</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.offset_to_target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.linear.</span></span><span class="sig-name descname"><span class="pre">AffineTrafo2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.0,</span> <span class="pre">0.0],</span> <span class="pre">[0.0,</span> <span class="pre">1.0]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo" title="libics.tools.trafo.linear.AffineTrafo"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.trafo.linear.AffineTrafo</span></code></a></p>
+<p>Maps origin pixel positions to target pixels positions.</p>
+<p>Convention: <code class="docutils literal notranslate"><span class="pre">target_coord</span> <span class="pre">=</span> <span class="pre">matrix</span> <span class="pre">*</span> <span class="pre">origin_coord</span> <span class="pre">+</span> <span class="pre">offset</span></code>.</p>
+<p>Usage:</p>
+<ul class="simple">
+<li><p>Take images for different single-pixel illuminations.</p></li>
+<li><p>Calculate transformation parameters with <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.calc_trafo" title="libics.tools.trafo.linear.AffineTrafo2d.calc_trafo"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_trafo()</span></code></a>.</p></li>
+<li><p>Perform transforms with call method
+(or <code class="xref py py-meth docutils literal notranslate"><span class="pre">cv_to_target()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">cv_to_origin()</span></code>).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>matrix_to_origin</strong></dt><dd></dd>
+<dt><strong>matrix_to_target</strong></dt><dd></dd>
+<dt><strong>offset_to_origin</strong></dt><dd></dd>
+<dt><strong>offset_to_target</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, \*args[, direction])</p></td>
+<td><p>Performs a transformation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>(self)</p></td>
+<td><p>Default saved attributes getter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.calc_trafo" title="libics.tools.trafo.linear.AffineTrafo2d.calc_trafo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_trafo</span></code></a>(self, origin, target[, …])</p></td>
+<td><p>Estimates the transformation parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code>(self, other)</p></td>
+<td><p>Returns an <cite>AffineTrafo</cite> object which concatenates two transformations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_origin</span></code>(self, target_coords)</p></td>
+<td><p>Transforms given target coordinates into origin coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_target</span></code>(self, origin_coords)</p></td>
+<td><p>Transforms given origin coordinates into target coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code>(self, target_array, origin_shape)</p></td>
+<td><p>Convert an array in target coordinates to origin coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_target</span></code>(self, origin_array, target_shape)</p></td>
+<td><p>Convert an array in origin coordinates to target coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.find_peak_coordinates" title="libics.tools.trafo.linear.AffineTrafo2d.find_peak_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_peak_coordinates</span></code></a>(self, origin, target)</p></td>
+<td><p>Finds peak coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_affine_transform</span></code>(self, origin_coords, …)</p></td>
+<td><p>Fits the affine transform matrix and offset vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates" title="libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_peak_coordinates</span></code></a>(self, image[, snr, …])</p></td>
+<td><p>Uses a Gaussian fit to obtain the peak coordinates of an image.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes" title="libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_origin_axes</span></code></a>(self)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.get_target_axes" title="libics.tools.trafo.linear.AffineTrafo2d.get_target_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_axes</span></code></a>(self)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert</span></code>(self)</p></td>
+<td><p>Returns the inverse <cite>AffineTrafo</cite> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.magnify" title="libics.tools.trafo.linear.AffineTrafo2d.magnify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">magnify</span></code></a>(self, factor)</p></td>
+<td><p>Returns an <cite>AffineTrafo</cite> object whose magnification is scaled.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.rotate" title="libics.tools.trafo.linear.AffineTrafo2d.rotate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate</span></code></a>(self, angle)</p></td>
+<td><p>Returns an <cite>AffineTrafo</cite> object whose angle is shifted.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(self, file_path, \*\*kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes" title="libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_origin_axes</span></code></a>(self[, magnification, …])</p></td>
+<td><p>Sets the origin coordinate system axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.set_target_axes" title="libics.tools.trafo.linear.AffineTrafo2d.set_target_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_target_axes</span></code></a>(self[, magnification, …])</p></td>
+<td><p>Sets the target coordinate system axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="libics.tools.trafo.linear.AffineTrafo2d.shift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code></a>(self, offset)</p></td>
+<td><p>Returns an <cite>AffineTrafo</cite> object whose offset is shifted.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.tools.trafo.linear.AffineTrafo2d</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.calc_trafo">
+<span class="sig-name descname"><span class="pre">calc_trafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">origin</span></em>, <em class="sig-param"><span class="pre">target</span></em>, <em class="sig-param"><span class="pre">algorithm='fit'</span></em>, <em class="sig-param"><span class="pre">print_progress=False</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.calc_trafo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates the transformation parameters.</p>
+<p>Wrapper for peak coordinate finding and transformation fitting.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>origin</strong><span class="classifier"><cite>list(np.ndarray(2, float) or (x, y))</cite></span></dt><dd><p>List of origin images or coordinates.</p>
+</dd>
+<dt><strong>target</strong><span class="classifier"><cite>list(np.ndarray(2, float) or (x, y))</cite></span></dt><dd><p>List of target images or coordinates.</p>
+</dd>
+<dt><strong>algorithm</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Algorithm to use to determine coordinates for given image.
+<cite>“fit”, “max”</cite>.</p>
+</dd>
+<dt><strong>print_progress</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to print a progress bar to console.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates" title="libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_peak_coordinates()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ret</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether calculation was successful.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Coordinate and image order must be identical.</p></li>
+<li><p>At least two images are required. Additional data is used to obtain
+a more accurate map.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.find_peak_coordinates">
+<span class="sig-name descname"><span class="pre">find_peak_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">origin</span></em>, <em class="sig-param"><span class="pre">target</span></em>, <em class="sig-param"><span class="pre">algorithm='fit'</span></em>, <em class="sig-param"><span class="pre">print_progress=False</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.find_peak_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds peak coordinates.</p>
+<p>See <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.calc_trafo" title="libics.tools.trafo.linear.AffineTrafo2d.calc_trafo"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_trafo()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates">
+<span class="sig-name descname"><span class="pre">fit_peak_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_sum_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses a Gaussian fit to obtain the peak coordinates of an image.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>image</strong><span class="classifier"><cite>np.ndarray(2, float)</cite> or <cite>ArrayData</cite></span></dt><dd><p>Image to be analyzed.</p>
+</dd>
+<dt><strong>snr</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Maximum-to-mean ratio required for fit.</p>
+</dd>
+<dt><strong>max_sum_ratio</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Maximum-to-sum ratio required for fit.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>x, y</strong><span class="classifier">float, None</span></dt><dd><p>(Fractional) image index coordinates of fit position.
+None: If fit failed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes">
+<span class="sig-name descname"><span class="pre">get_origin_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>magnification</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Length of unit vectors in target units.</p>
+</dd>
+<dt><strong>angle</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Angle of unit vectors with respect to target axes in radians (rad).</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Coordinate system zero position in target units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.get_target_axes">
+<span class="sig-name descname"><span class="pre">get_target_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.get_target_axes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>magnification</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Length of unit vectors in origin units.</p>
+</dd>
+<dt><strong>angle</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Angle of unit vectors with respect to origin axes in radians (rad).</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Coordinate system zero position in origin units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.magnify">
+<span class="sig-name descname"><span class="pre">magnify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.magnify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <cite>AffineTrafo</cite> object whose magnification is scaled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <cite>AffineTrafo</cite> object whose angle is shifted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes">
+<span class="sig-name descname"><span class="pre">set_origin_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnification</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([1.0,</span> <span class="pre">1.0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the origin coordinate system axes.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>magnification</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Length of unit vectors in target units.</p>
+</dd>
+<dt><strong>angle</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Angle of unit vectors with respect to target axes in radians (rad).</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Coordinate system zero position in target units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.set_target_axes">
+<span class="sig-name descname"><span class="pre">set_target_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnification</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([1.0,</span> <span class="pre">1.0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.0,</span> <span class="pre">0.0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.set_target_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the target coordinate system axes.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>magnification</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Length of unit vectors in origin units.</p>
+</dd>
+<dt><strong>angle</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Angle of unit vectors with respect to origin axes in radians (rad).</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>(float, float)</cite></span></dt><dd><p>Coordinate system zero position in origin units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.shift">
+<span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <cite>AffineTrafo</cite> object whose offset is shifted.</p>
 </dd></dl>
 
 </dd></dl>
@@ -203,9 +700,55 @@ Variable naming convention:
 </div>
 <div class="section" id="module-libics.tools.trafo.resize">
 <span id="resize"></span><h2>resize<a class="headerlink" href="#module-libics.tools.trafo.resize" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="libics.tools.trafo.resize.find_centroid">
-<code class="sig-prename descclassname">libics.tools.trafo.resize.</code><code class="sig-name descname">find_centroid</code><span class="sig-paren">(</span><em class="sig-param">np_array</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.find_centroid" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.center_crop">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">center_crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.center_crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Centers a crop index rectangle.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.crop_image">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">crop_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.crop_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crops to the smallest rectangle containing all non-masked indices.
+Returns the slice for cropping.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>mask</strong><span class="classifier"><cite>np.ndarray(2, bool)</cite></span></dt><dd><p>Mask where <cite>True</cite> corresponds to indices not to be cropped.
+TODO: generalize for multiple dimensions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>crop</strong><span class="classifier"><cite>tuple((int, int))</cite></span></dt><dd><p>Cropping index rectangle (min, max). Dimensions: <cite>[ar_ndim, 2]</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>From <cite>https://codereview.stackexchange.com/questions/132914</cite>.
+Use <a class="reference internal" href="libics.core.util.html#libics.core.util.misc.cv_index_rect_to_slice" title="libics.core.util.misc.cv_index_rect_to_slice"><code class="xref py py-func docutils literal notranslate"><span class="pre">libics.core.util.misc.cv_index_rect_to_slice()</span></code></a> to convert
+the index rectangle to slices.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="n">X</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Y</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="n">F</span> <span class="o">&lt;</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">crop</span> <span class="o">=</span> <span class="n">crop_image</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">crop</span>
+<span class="go">((2, 5), (2, 5))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span><span class="p">[</span><span class="n">misc</span><span class="o">.</span><span class="n">cv_index_rect_to_slice</span><span class="p">(</span><span class="n">crop</span><span class="p">)]</span>
+<span class="go">array([[2, 1, 2],</span>
+<span class="go">       [1, 0, 1],</span>
+<span class="go">       [2, 1, 2]], dtype=int32)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.find_centroid">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">find_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.find_centroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the centroid of a multi-dimensional numpy array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -223,9 +766,9 @@ Variable naming convention:
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.tools.trafo.resize.fit_to_aspect">
-<code class="sig-prename descclassname">libics.tools.trafo.resize.</code><code class="sig-name descname">fit_to_aspect</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">aspect_ratio</em>, <em class="sig-param">crop</em>, <em class="sig-param">center</em>, <em class="sig-param">fit_mode='enlarge'</em>, <em class="sig-param">center_mode='center'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.fit_to_aspect" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.fit_to_aspect">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">fit_to_aspect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'enlarge'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'center'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.fit_to_aspect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes a crop position to follow an aspect ratio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -257,9 +800,9 @@ the center of the fitted crop image.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.tools.trafo.resize.resize_on_condition">
-<code class="sig-prename descclassname">libics.tools.trafo.resize.</code><code class="sig-name descname">resize_on_condition</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">cond='cut_all'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_condition" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.resize_on_condition">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">resize_on_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">np_array</span></em>, <em class="sig-param"><span class="pre">cond='cut_all'</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_condition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the rectangle that contains/avoids all occurences of a given value.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -296,9 +839,9 @@ containing kwargs[“val”].</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.tools.trafo.resize.resize_on_filter_maximum">
-<code class="sig-prename descclassname">libics.tools.trafo.resize.</code><code class="sig-name descname">resize_on_filter_maximum</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">min_mass=None</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">aspect_ratio=None</em>, <em class="sig-param">zero=True</em>, <em class="sig-param">factor=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_filter_maximum" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.resize_on_filter_maximum">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">resize_on_filter_maximum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_filter_maximum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs maximum filters to obtain the area around a peak.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -328,9 +871,9 @@ None keeps the aspect ratio of the array</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.tools.trafo.resize.resize_on_mass">
-<code class="sig-prename descclassname">libics.tools.trafo.resize.</code><code class="sig-name descname">resize_on_mass</code><span class="sig-paren">(</span><em class="sig-param">np_array</em>, <em class="sig-param">center='auto'</em>, <em class="sig-param">total_mass=0.9</em>, <em class="sig-param">aspect_ratio='auto'</em>, <em class="sig-param">aspect_mode='enlarge'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_mass" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.resize.resize_on_mass">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">resize_on_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'enlarge'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.resize_on_mass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the crop coordinates of a given numpy array for which each axis’
 sum exceeds the given relative <cite>total_mass</cite> parameter.</p>
 <dl class="field-list simple">
@@ -366,64 +909,50 @@ crop.</p>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">libics.tools.trafo</a><ul>
-<li><a class="reference internal" href="#module-libics.tools.trafo.fourier">fourier</a></li>
-<li><a class="reference internal" href="#module-libics.tools.trafo.linear">linear</a></li>
-<li><a class="reference internal" href="#module-libics.tools.trafo.resize">resize</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.tools.plot.html" class="btn btn-neutral float-left" title="libics.tools.plot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="libics.tools.plot.html"
-                        title="previous chapter">libics.tools.plot</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.tools.trafo.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="libics.tools.plot.html" title="libics.tools.plot"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.tools.html" >libics.tools</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

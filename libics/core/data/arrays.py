@@ -30,7 +30,7 @@ class ArrayData(object):
     * Alternative: This class can also be used to specify the variables
       (i.e. array indices) only, metadata and scaling behavior are set
       accordingly. Instead of setting the data, the attribute
-      :py:attr`var_shape` can be set.
+      :py:attr:`var_shape` can be set.
 
     Object modification:
 

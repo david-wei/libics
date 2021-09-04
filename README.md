@@ -5,6 +5,7 @@ LibICS consists of three sub-libraries:
 * `driver` allows accessing drivers to communicate with external devices and
 * `tools` contains a set of analysis functions.
 
+The full documentation can be found [here](https://david-wei.github.io/libics).
 
 # Dependencies
 

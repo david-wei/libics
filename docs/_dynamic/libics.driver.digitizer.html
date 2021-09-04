@@ -1,73 +1,218 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.driver.digitizer &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.driver.digitizer &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.driver.html" accesskey="U">libics.driver</a> &#187;</li> 
-      </ul>
-    </div>  
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.driver.display" href="libics.driver.display.html" />
+    <link rel="prev" title="libics.driver.camera" href="libics.driver.camera.html" /> 
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.driver.html">libics.driver</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.camera.html">libics.driver.camera</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.driver.digitizer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#oscilloscopes">Oscilloscopes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fft-spectrum-analyzers">FFT Spectrum Analyzers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spectrum-analyzers">Spectrum Analyzers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optical-spectrum-analyzers">Optical Spectrum Analyzers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.display.html">libics.driver.display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.emulator.html">libics.driver.emulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.lightsource.html">libics.driver.lightsource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.piezo.html">libics.driver.piezo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.terminal.html">libics.driver.terminal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.waveformgenerator.html">libics.driver.waveformgenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.driver.html">libics.driver</a> &raquo;</li>
+        
+      <li>libics.driver.digitizer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.driver.digitizer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.driver.digitizer">
 <span id="libics-driver-digitizer"></span><h1>libics.driver.digitizer<a class="headerlink" href="#module-libics.driver.digitizer" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="libics.driver.digitizer.get_driver">
-<code class="sig-prename descclassname">libics.driver.digitizer.</code><code class="sig-name descname">get_driver</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.get_driver" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.driver.digitizer.get_driver">
+<span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.</span></span><span class="sig-name descname"><span class="pre">get_driver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.get_driver" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="libics.driver.digitizer.get_manufacturer">
-<code class="sig-prename descclassname">libics.driver.digitizer.</code><code class="sig-name descname">get_manufacturer</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.get_manufacturer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.driver.digitizer.get_manufacturer">
+<span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.</span></span><span class="sig-name descname"><span class="pre">get_manufacturer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.get_manufacturer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<span class="target" id="module-libics.driver.digitizer.base"></span><dl class="class">
-<dt id="libics.driver.digitizer.base.AVERAGE_MODE">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">AVERAGE_MODE</code><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.digitizer.base"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.AVERAGE_MODE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">AVERAGE_MODE</span></span><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.AVERAGE_MODE.EXPONENTIAL">
-<code class="sig-name descname">EXPONENTIAL</code><em class="property"> = 'EXPONENTIAL'</em><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE.EXPONENTIAL" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.AVERAGE_MODE.EXPONENTIAL">
+<span class="sig-name descname"><span class="pre">EXPONENTIAL</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'EXPONENTIAL'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE.EXPONENTIAL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.AVERAGE_MODE.LINEAR">
-<code class="sig-name descname">LINEAR</code><em class="property"> = 'LINEAR'</em><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.AVERAGE_MODE.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'LINEAR'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.AVERAGE_MODE.LINEAR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.DevSpectrum">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">DevSpectrum</code><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">DevSpectrum</span></span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.device.DevBase</span></code></p>
 <dl class="field-list">
 <dt class="field-odd">Attributes</dt>
@@ -161,95 +306,95 @@
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.is_running">
-<em class="property">abstract </em><code class="sig-name descname">is_running</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.is_running" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.is_running">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.is_running" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether measurement is on-going.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.read_average_count">
-<em class="property">abstract </em><code class="sig-name descname">read_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.read_average_count">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.read_average_mode">
-<em class="property">abstract </em><code class="sig-name descname">read_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.read_average_mode">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.read_frequency_bins">
-<em class="property">abstract </em><code class="sig-name descname">read_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.read_frequency_bins">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.read_frequency_range">
-<em class="property">abstract </em><code class="sig-name descname">read_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.read_frequency_range">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.read_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.run">
-<em class="property">abstract </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.run" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.run">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start measurement.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.stop">
-<em class="property">abstract </em><code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.stop" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.stop">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop measurement.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.write_average_count">
-<em class="property">abstract </em><code class="sig-name descname">write_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.write_average_count">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.write_average_mode">
-<em class="property">abstract </em><code class="sig-name descname">write_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.write_average_mode">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.write_frequency_bins">
-<em class="property">abstract </em><code class="sig-name descname">write_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.write_frequency_bins">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.DevSpectrum.write_frequency_range">
-<em class="property">abstract </em><code class="sig-name descname">write_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.DevSpectrum.write_frequency_range">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.DevSpectrum.write_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.FFT_WINDOW">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">FFT_WINDOW</code><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FFT_WINDOW">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">FFT_WINDOW</span></span><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.FFT_WINDOW.BLACKMAN_HARRIS">
-<code class="sig-name descname">BLACKMAN_HARRIS</code><em class="property"> = 'BLACKMAN_HARRIS'</em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.BLACKMAN_HARRIS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FFT_WINDOW.BLACKMAN_HARRIS">
+<span class="sig-name descname"><span class="pre">BLACKMAN_HARRIS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'BLACKMAN_HARRIS'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.BLACKMAN_HARRIS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.FFT_WINDOW.FLATTOP">
-<code class="sig-name descname">FLATTOP</code><em class="property"> = 'FLATTOP'</em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.FLATTOP" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FFT_WINDOW.FLATTOP">
+<span class="sig-name descname"><span class="pre">FLATTOP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'FLATTOP'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.FLATTOP" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.FFT_WINDOW.HANNING">
-<code class="sig-name descname">HANNING</code><em class="property"> = 'HANNING'</em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.HANNING" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FFT_WINDOW.HANNING">
+<span class="sig-name descname"><span class="pre">HANNING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'HANNING'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.HANNING" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.FFT_WINDOW.UNIFORM">
-<code class="sig-name descname">UNIFORM</code><em class="property"> = 'UNIFORM'</em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.UNIFORM" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FFT_WINDOW.UNIFORM">
+<span class="sig-name descname"><span class="pre">UNIFORM</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'UNIFORM'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.FFT_WINDOW.UNIFORM" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.FftAnalyzer">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">FftAnalyzer</code><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">FftAnalyzer</span></span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.device.DevBase</span></code></p>
 <dl class="field-list">
 <dt class="field-odd">Attributes</dt>
@@ -333,24 +478,24 @@ If <cite>None</cite>, sets value automatically.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.read_fft_window">
-<em class="property">abstract </em><code class="sig-name descname">read_fft_window</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_fft_window" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.read_fft_window">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_fft_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_fft_window" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.read_input_coupling">
-<em class="property">abstract </em><code class="sig-name descname">read_input_coupling</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_input_coupling" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.read_input_coupling">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_input_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_input_coupling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_max">
-<em class="property">abstract </em><code class="sig-name descname">read_voltage_max</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_max">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_voltage_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectral_density">
-<em class="property">abstract </em><code class="sig-name descname">read_voltage_spectral_density</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectral_density" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectral_density">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_voltage_spectral_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectral_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the frequency-normalized voltage spectral density.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -363,9 +508,9 @@ Dimensions: [frequency (Hz)]-&gt;voltage PSD (V/√Hz).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectrum">
-<em class="property">abstract </em><code class="sig-name descname">read_voltage_spectrum</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectrum" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectrum">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_voltage_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.read_voltage_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the voltage spectrum per frequency bin.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -378,42 +523,42 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.write_fft_window">
-<em class="property">abstract </em><code class="sig-name descname">write_fft_window</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_fft_window" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.write_fft_window">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_fft_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_fft_window" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.write_input_coupling">
-<em class="property">abstract </em><code class="sig-name descname">write_input_coupling</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_input_coupling" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.write_input_coupling">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_input_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_input_coupling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.FftAnalyzer.write_voltage_max">
-<em class="property">abstract </em><code class="sig-name descname">write_voltage_max</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_voltage_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.FftAnalyzer.write_voltage_max">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_voltage_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.FftAnalyzer.write_voltage_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.INPUT_COUPLING">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">INPUT_COUPLING</code><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.INPUT_COUPLING">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">INPUT_COUPLING</span></span><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.INPUT_COUPLING.AC">
-<code class="sig-name descname">AC</code><em class="property"> = 'AC'</em><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING.AC" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.INPUT_COUPLING.AC">
+<span class="sig-name descname"><span class="pre">AC</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'AC'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING.AC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.base.INPUT_COUPLING.DC">
-<code class="sig-name descname">DC</code><em class="property"> = 'DC'</em><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING.DC" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.INPUT_COUPLING.DC">
+<span class="sig-name descname"><span class="pre">DC</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'DC'</span></em><a class="headerlink" href="#libics.driver.digitizer.base.INPUT_COUPLING.DC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.Oscilloscope">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">Oscilloscope</code><a class="headerlink" href="#libics.driver.digitizer.base.Oscilloscope" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.Oscilloscope">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">Oscilloscope</span></span><a class="headerlink" href="#libics.driver.digitizer.base.Oscilloscope" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.device.DevBase</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -461,9 +606,9 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </table>
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.base.SpectrumAnalyzer">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.base.</code><code class="sig-name descname">SpectrumAnalyzer</code><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.SpectrumAnalyzer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">SpectrumAnalyzer</span></span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.digitizer.base.DevSpectrum" title="libics.driver.digitizer.base.DevSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.digitizer.base.DevSpectrum</span></code></a></p>
 <dl class="field-list">
 <dt class="field-odd">Attributes</dt>
@@ -563,14 +708,14 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_max">
-<em class="property">abstract </em><code class="sig-name descname">read_power_max</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_max">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_power_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectral_density">
-<em class="property">abstract </em><code class="sig-name descname">read_power_spectral_density</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectral_density" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectral_density">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_power_spectral_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectral_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the frequency-normalized power spectral density.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -583,9 +728,9 @@ Dimensions: [frequency (Hz)]-&gt;PSD (W/Hz).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectrum">
-<em class="property">abstract </em><code class="sig-name descname">read_power_spectrum</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectrum" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectrum">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_power_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.read_power_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the power spectrum per frequency bin.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -598,19 +743,69 @@ Dimensions: [frequency (Hz)]-&gt;power spectrum (W).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.base.SpectrumAnalyzer.write_power_max">
-<em class="property">abstract </em><code class="sig-name descname">write_power_max</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.write_power_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.SpectrumAnalyzer.write_power_max">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">write_power_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.base.SpectrumAnalyzer.write_power_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.base.Thermocouple">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.base.</span></span><span class="sig-name descname"><span class="pre">Thermocouple</span></span><a class="headerlink" href="#libics.driver.digitizer.base.Thermocouple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.device.DevBase</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>i</strong></dt><dd></dd>
+<dt><strong>p</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>(self)</p></td>
+<td><p>Closes connection to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure</span></code>(self, \*\*cfg)</p></td>
+<td><p>Configures the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(self)</p></td>
+<td><p>Connects to the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code>(self)</p></td>
+<td><p>Checks whether device is connected.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_set_up</span></code>(self)</p></td>
+<td><p>Checks whether device is instantiated.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recover</span></code>(self[, status])</p></td>
+<td><p>Recovers the device after an error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>(self)</p></td>
+<td><p>Instantiates the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code>(self)</p></td>
+<td><p>Destroys the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code>(self)</p></td>
+<td><p>Gets the status of the device.</p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div class="section" id="oscilloscopes">
 <h2>Oscilloscopes<a class="headerlink" href="#oscilloscopes" title="Permalink to this headline">¶</a></h2>
 <p><strong>tektronix</strong></p>
-<span class="target" id="module-libics.driver.digitizer.tektronix"></span><dl class="class">
-<dt id="libics.driver.digitizer.tektronix.TektronixTDS100X">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.tektronix.</code><code class="sig-name descname">TektronixTDS100X</code><a class="headerlink" href="#libics.driver.digitizer.tektronix.TektronixTDS100X" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.digitizer.tektronix"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.tektronix.TektronixTDS100X">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.tektronix.</span></span><span class="sig-name descname"><span class="pre">TektronixTDS100X</span></span><a class="headerlink" href="#libics.driver.digitizer.tektronix.TektronixTDS100X" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.digitizer.base.Oscilloscope" title="libics.driver.digitizer.base.Oscilloscope"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.digitizer.base.Oscilloscope</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -662,35 +857,35 @@ Dimensions: [frequency (Hz)]-&gt;power spectrum (W).</p>
 <div class="section" id="fft-spectrum-analyzers">
 <h2>FFT Spectrum Analyzers<a class="headerlink" href="#fft-spectrum-analyzers" title="Permalink to this headline">¶</a></h2>
 <p><strong>stanford</strong></p>
-<span class="target" id="module-libics.driver.digitizer.stanford"></span><dl class="class">
-<dt id="libics.driver.digitizer.stanford.SPECTRUM_UNIT">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.stanford.</code><code class="sig-name descname">SPECTRUM_UNIT</code><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.digitizer.stanford"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.SPECTRUM_UNIT">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.stanford.</span></span><span class="sig-name descname"><span class="pre">SPECTRUM_UNIT</span></span><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VPK">
-<code class="sig-name descname">DB_VPK</code><em class="property"> = 'DB_VPK'</em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VPK" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VPK">
+<span class="sig-name descname"><span class="pre">DB_VPK</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'DB_VPK'</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VPK" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VRMS">
-<code class="sig-name descname">DB_VRMS</code><em class="property"> = 'DB_VRMS'</em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VRMS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VRMS">
+<span class="sig-name descname"><span class="pre">DB_VRMS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'DB_VRMS'</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.DB_VRMS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.VPK">
-<code class="sig-name descname">VPK</code><em class="property"> = 'VPK'</em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.VPK" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.VPK">
+<span class="sig-name descname"><span class="pre">VPK</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'VPK'</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.VPK" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.VRMS">
-<code class="sig-name descname">VRMS</code><em class="property"> = 'VRMS'</em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.VRMS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.SPECTRUM_UNIT.VRMS">
+<span class="sig-name descname"><span class="pre">VRMS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'VRMS'</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.SPECTRUM_UNIT.VRMS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.stanford.</code><code class="sig-name descname">StanfordSR760</code><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.stanford.</span></span><span class="sig-name descname"><span class="pre">StanfordSR760</span></span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.digitizer.base.FftAnalyzer" title="libics.driver.digitizer.base.FftAnalyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.digitizer.base.FftAnalyzer</span></code></a></p>
 <dl class="field-list">
 <dt class="field-odd">Attributes</dt>
@@ -823,93 +1018,93 @@ Dimensions: [frequency (Hz)]-&gt;power spectrum (W).</p>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.driver.digitizer.stanford.StanfordSR760 (WARNING)&gt;</em><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.driver.digitizer.stanford.StanfordSR760</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.SPECTRUM_UNIT">
-<code class="sig-name descname">SPECTRUM_UNIT</code><em class="property"> = &lt;libics.driver.digitizer.stanford.SPECTRUM_UNIT object&gt;</em><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.SPECTRUM_UNIT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.SPECTRUM_UNIT">
+<span class="sig-name descname"><span class="pre">SPECTRUM_UNIT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;libics.driver.digitizer.stanford.SPECTRUM_UNIT</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.SPECTRUM_UNIT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.close" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes connection to the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.connect">
-<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.connect" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.is_connected">
-<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_connected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is connected.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.is_running">
-<code class="sig-name descname">is_running</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_running" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.is_running">
+<span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_running" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.is_set_up">
-<code class="sig-name descname">is_set_up</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_set_up" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.is_set_up">
+<span class="sig-name descname"><span class="pre">is_set_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.is_set_up" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is instantiated.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_average_count">
-<code class="sig-name descname">read_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_average_count">
+<span class="sig-name descname"><span class="pre">read_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_average_mode">
-<code class="sig-name descname">read_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_average_mode">
+<span class="sig-name descname"><span class="pre">read_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_device_name">
-<code class="sig-name descname">read_device_name</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_device_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_device_name">
+<span class="sig-name descname"><span class="pre">read_device_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_device_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_fft_window">
-<code class="sig-name descname">read_fft_window</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_fft_window" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_fft_window">
+<span class="sig-name descname"><span class="pre">read_fft_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_fft_window" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_frequency_bins">
-<code class="sig-name descname">read_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_frequency_bins">
+<span class="sig-name descname"><span class="pre">read_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_frequency_range">
-<code class="sig-name descname">read_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_frequency_range">
+<span class="sig-name descname"><span class="pre">read_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_input_coupling">
-<code class="sig-name descname">read_input_coupling</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_input_coupling" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_input_coupling">
+<span class="sig-name descname"><span class="pre">read_input_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_input_coupling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_spectrum_unit">
-<code class="sig-name descname">read_spectrum_unit</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_spectrum_unit" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_spectrum_unit">
+<span class="sig-name descname"><span class="pre">read_spectrum_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_spectrum_unit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_max">
-<code class="sig-name descname">read_voltage_max</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_max">
+<span class="sig-name descname"><span class="pre">read_voltage_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectral_density">
-<code class="sig-name descname">read_voltage_spectral_density</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectral_density" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectral_density">
+<span class="sig-name descname"><span class="pre">read_voltage_spectral_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectral_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the frequency-normalized voltage spectral density.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -922,9 +1117,9 @@ Dimensions: [frequency (Hz)]-&gt;voltage PSD (V/√Hz).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectrum">
-<code class="sig-name descname">read_voltage_spectrum</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectrum" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectrum">
+<span class="sig-name descname"><span class="pre">read_voltage_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.read_voltage_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the voltage spectrum per frequency bin.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -937,19 +1132,19 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.reset" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.run" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.setup" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><dl class="simple">
@@ -960,60 +1155,60 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.shutdown">
-<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.shutdown" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroys the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.stop" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_average_count">
-<code class="sig-name descname">write_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_average_count">
+<span class="sig-name descname"><span class="pre">write_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_average_mode">
-<code class="sig-name descname">write_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_average_mode">
+<span class="sig-name descname"><span class="pre">write_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_device_name">
-<code class="sig-name descname">write_device_name</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_device_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_device_name">
+<span class="sig-name descname"><span class="pre">write_device_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_device_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_fft_window">
-<code class="sig-name descname">write_fft_window</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_fft_window" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_fft_window">
+<span class="sig-name descname"><span class="pre">write_fft_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_fft_window" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_frequency_bins">
-<code class="sig-name descname">write_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_frequency_bins">
+<span class="sig-name descname"><span class="pre">write_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_frequency_range">
-<code class="sig-name descname">write_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_frequency_range">
+<span class="sig-name descname"><span class="pre">write_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_input_coupling">
-<code class="sig-name descname">write_input_coupling</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_input_coupling" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_input_coupling">
+<span class="sig-name descname"><span class="pre">write_input_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_input_coupling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_spectrum_unit">
-<code class="sig-name descname">write_spectrum_unit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_spectrum_unit" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_spectrum_unit">
+<span class="sig-name descname"><span class="pre">write_spectrum_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_spectrum_unit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.stanford.StanfordSR760.write_voltage_max">
-<code class="sig-name descname">write_voltage_max</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_voltage_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.stanford.StanfordSR760.write_voltage_max">
+<span class="sig-name descname"><span class="pre">write_voltage_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.stanford.StanfordSR760.write_voltage_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1022,9 +1217,9 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 <div class="section" id="spectrum-analyzers">
 <h2>Spectrum Analyzers<a class="headerlink" href="#spectrum-analyzers" title="Permalink to this headline">¶</a></h2>
 <p><strong>agilent</strong></p>
-<span class="target" id="module-libics.driver.digitizer.agilent"></span><dl class="class">
-<dt id="libics.driver.digitizer.agilent.AgilentN9320X">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.agilent.</code><code class="sig-name descname">AgilentN9320X</code><a class="headerlink" href="#libics.driver.digitizer.agilent.AgilentN9320X" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.digitizer.agilent"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.agilent.AgilentN9320X">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.agilent.</span></span><span class="sig-name descname"><span class="pre">AgilentN9320X</span></span><a class="headerlink" href="#libics.driver.digitizer.agilent.AgilentN9320X" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.digitizer.base.SpectrumAnalyzer" title="libics.driver.digitizer.base.SpectrumAnalyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.digitizer.base.SpectrumAnalyzer</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -1129,9 +1324,9 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 <div class="section" id="optical-spectrum-analyzers">
 <h2>Optical Spectrum Analyzers<a class="headerlink" href="#optical-spectrum-analyzers" title="Permalink to this headline">¶</a></h2>
 <p><strong>yokagawa</strong></p>
-<span class="target" id="module-libics.driver.digitizer.yokagawa"></span><dl class="class">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.digitizer.yokagawa.</code><code class="sig-name descname">YokagawaAQ6315</code><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.digitizer.yokagawa"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.digitizer.yokagawa.</span></span><span class="sig-name descname"><span class="pre">YokagawaAQ6315</span></span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.digitizer.base.SpectrumAnalyzer" title="libics.driver.digitizer.base.SpectrumAnalyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.digitizer.base.SpectrumAnalyzer</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -1246,64 +1441,64 @@ Dimensions: [frequency (Hz)]-&gt;voltage spectrum (V).</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.close" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes connection to the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.connect">
-<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.connect" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_connected">
-<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_connected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is connected.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_running">
-<code class="sig-name descname">is_running</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_running" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_running">
+<span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_running" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether measurement is on-going.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_set_up">
-<code class="sig-name descname">is_set_up</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_set_up" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_set_up">
+<span class="sig-name descname"><span class="pre">is_set_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.is_set_up" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is instantiated.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_count">
-<code class="sig-name descname">read_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_count">
+<span class="sig-name descname"><span class="pre">read_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_mode">
-<code class="sig-name descname">read_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_mode">
+<span class="sig-name descname"><span class="pre">read_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_bins">
-<code class="sig-name descname">read_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_bins">
+<span class="sig-name descname"><span class="pre">read_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_range">
-<code class="sig-name descname">read_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_range">
+<span class="sig-name descname"><span class="pre">read_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_max">
-<code class="sig-name descname">read_power_max</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_max">
+<span class="sig-name descname"><span class="pre">read_power_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectral_density">
-<code class="sig-name descname">read_power_spectral_density</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectral_density" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectral_density">
+<span class="sig-name descname"><span class="pre">read_power_spectral_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectral_density" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl>
@@ -1316,9 +1511,9 @@ Normalization by integral.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectrum">
-<code class="sig-name descname">read_power_spectrum</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectrum" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectrum">
+<span class="sig-name descname"><span class="pre">read_power_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.read_power_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl>
@@ -1331,9 +1526,9 @@ Normalization by discrete sum.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">single=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.run" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.run" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
@@ -1345,9 +1540,9 @@ Otherwise measures continuously.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.setup" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1358,41 +1553,41 @@ Otherwise measures continuously.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.shutdown">
-<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.shutdown" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroys the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.stop" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop measurement.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_count">
-<code class="sig-name descname">write_average_count</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_count" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_count">
+<span class="sig-name descname"><span class="pre">write_average_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_mode">
-<code class="sig-name descname">write_average_mode</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_mode" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_mode">
+<span class="sig-name descname"><span class="pre">write_average_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_average_mode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_bins">
-<code class="sig-name descname">write_frequency_bins</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_bins">
+<span class="sig-name descname"><span class="pre">write_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_bins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_range">
-<code class="sig-name descname">write_frequency_range</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_range">
+<span class="sig-name descname"><span class="pre">write_frequency_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_frequency_range" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_power_max">
-<code class="sig-name descname">write_power_max</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_power_max" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_power_max">
+<span class="sig-name descname"><span class="pre">write_power_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.digitizer.yokagawa.YokagawaAQ6315.write_power_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1401,59 +1596,51 @@ Otherwise measures continuously.</p>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">libics.driver.digitizer</a><ul>
-<li><a class="reference internal" href="#oscilloscopes">Oscilloscopes</a></li>
-<li><a class="reference internal" href="#fft-spectrum-analyzers">FFT Spectrum Analyzers</a></li>
-<li><a class="reference internal" href="#spectrum-analyzers">Spectrum Analyzers</a></li>
-<li><a class="reference internal" href="#optical-spectrum-analyzers">Optical Spectrum Analyzers</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.driver.display.html" class="btn btn-neutral float-right" title="libics.driver.display" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.driver.camera.html" class="btn btn-neutral float-left" title="libics.driver.camera" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.driver.digitizer.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.driver.html" >libics.driver</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

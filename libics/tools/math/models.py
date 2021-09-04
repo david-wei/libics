@@ -30,6 +30,7 @@ class ModelBase(abc.ABC):
     Examples
     --------
     Assumes a concrete model class (i.e. subclass of this base class).
+
     >>> class Model(ModelBase):
     ...     P_ALL = ["x0"]
     ...     P_DEFAULT = [1]
@@ -58,6 +59,7 @@ class ModelBase(abc.ABC):
     array([2., 3., 4.])
 
     A direct fit is applied as:
+
     >>> model = Model(var_data, func_data)
     >>> model.psuccess
     True

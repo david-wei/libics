@@ -1,55 +1,196 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.core.util &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.core.util &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
-      </ul>
-    </div>  
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.driver" href="libics.driver.html" />
+    <link rel="prev" title="libics.core.io" href="libics.core.io.html" /> 
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.core.html">libics.core</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.core.cfg.html">libics.core.cfg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.data.html">libics.core.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.io.html">libics.core.io</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.core.util</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.func">func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.misc">misc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.path">path</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.core.html">libics.core</a> &raquo;</li>
+        
+      <li>libics.core.util</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.core.util.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.core.util">
 <span id="libics-core-util"></span><h1>libics.core.util<a class="headerlink" href="#module-libics.core.util" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-libics.core.util.func">
 <span id="func"></span><h2>func<a class="headerlink" href="#module-libics.core.util.func" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.util.func.Memoize">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.util.func.</code><code class="sig-name descname">Memoize</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.Memoize" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.util.func.Memoize">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">Memoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.Memoize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Decorator. Caches a function’s return value each time it is called.
 If called later with the same arguments, the cached value is returned
 (not reevaluated).</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@Memoize</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@Memoize</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">example_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
 </pre></div>
@@ -68,9 +209,9 @@ If called later with the same arguments, the cached value is returned
 </table>
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.util.func.PeriodicTimer">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.util.func.</code><code class="sig-name descname">PeriodicTimer</code><span class="sig-paren">(</span><em class="sig-param">period</em>, <em class="sig-param">worker_func</em>, <em class="sig-param">*args</em>, <em class="sig-param">repetitions=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">PeriodicTimer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker_func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Periodic timer that runs a worker function after each period timeout.</p>
 <dl class="field-list">
@@ -131,19 +272,19 @@ Call signature: <cite>worker_func(*args, **kwargs)</cite> with
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.get_function">
-<code class="sig-name descname">get_function</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.get_function" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.get_function">
+<span class="sig-name descname"><span class="pre">get_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.get_function" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.get_period">
-<code class="sig-name descname">get_period</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.get_period" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.get_period">
+<span class="sig-name descname"><span class="pre">get_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.get_period" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.run" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Timer thread method that periodically calls a function.</p>
 <p>For starting a thread running this <cite>run</cite> method, call the <cite>start</cite>
 method.</p>
@@ -155,16 +296,16 @@ Timer has feedback, i.e. corrects runtime delays if delays are smaller
 than the period.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.set_args">
-<code class="sig-name descname">set_args</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.set_args" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.set_args">
+<span class="sig-name descname"><span class="pre">set_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.set_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the arguments with which the worker function is called.</p>
 <p>The worker function will be called as <cite>worker_func(*args, **kwargs)</cite>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.set_stop_action">
-<code class="sig-name descname">set_stop_action</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">stop_action</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.set_stop_action" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.set_stop_action">
+<span class="sig-name descname"><span class="pre">set_stop_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.set_stop_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the stop action.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -177,24 +318,24 @@ Call signature: <cite>stop_action()</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.start" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts a thread which runs the <cite>run</cite> method.</p>
 <p>Arguments are passed on to the <cite>Thread.start</cite> method.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.func.PeriodicTimer.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.stop" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stops the timer.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.util.func.StoppableThread">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.util.func.</code><code class="sig-name descname">StoppableThread</code><span class="sig-paren">(</span><em class="sig-param">target=None</em>, <em class="sig-param">args=()</em>, <em class="sig-param">kwargs={}</em>, <em class="sig-param">stop_action=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.util.func.StoppableThread">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">StoppableThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_action</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
 <p>Thread that ends on a stop event.</p>
 <p>To stop the thread, wait conditionally for the <cite>StoppableThread.stop_event</cite>
@@ -273,9 +414,9 @@ to trigger.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="libics.core.util.func.StoppableThread.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread.stop" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.StoppableThread.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stops the thread.</p>
 </dd></dl>
 
@@ -284,16 +425,17 @@ to trigger.</p>
 </div>
 <div class="section" id="module-libics.core.util.misc">
 <span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.core.util.misc" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="libics.core.util.misc.assume_construct_obj">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_construct_obj</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">cls_</em>, <em class="sig-param">raise_exception=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_construct_obj" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_construct_obj">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_construct_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_construct_obj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that the given object is of <cite>cls_</cite> class. If not and <cite>obj</cite> is a
 dictionary, an instance of the class is constructed with the dictionary
 as keyword arguments.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>obj</strong><span class="classifier"><cite>object</cite> or <cite>dict</cite></span></dt><dd><p>Object or keyword argument dictionary.</p>
+<dt><strong>obj</strong><span class="classifier"><cite>object</cite> or <cite>dict</cite></span></dt><dd><p>Object itself, keyword argument dictionary
+or single positional argument.</p>
 </dd>
 <dt><strong>cls_</strong><span class="classifier"><cite>class</cite></span></dt><dd><p>Class of instance to be constructed.</p>
 </dd>
@@ -324,9 +466,9 @@ as keyword arguments.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_dir">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_dir</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_dir" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_dir">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that the given path directory exists. If not, the path will be
 created. <cite>path</cite> is interpreted as file path if it does not end with <cite>“/”</cite>
 and has an extension <cite>*.*</cite>, otherwise it is interpreted as directory.</p>
@@ -348,9 +490,9 @@ directory path is returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_endswith">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_endswith</code><span class="sig-paren">(</span><em class="sig-param">string</em>, <em class="sig-param">suffix</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_endswith" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_endswith">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_endswith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_endswith" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that the passed <cite>string</cite> ends with with <cite>suffix</cite>. If it does not,
 the suffix is appended. The assumed result is returned.</p>
 <dl class="field-list">
@@ -377,9 +519,9 @@ the suffix is appended. The assumed result is returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_iter">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_iter</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_iter" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_iter">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is iterable. If the given data is iterable, it is
 returned. If it is not, a list with the data as single element is returned.</p>
 <dl class="field-list">
@@ -398,9 +540,9 @@ returned. If it is not, a list with the data as single element is returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_list">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_list</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_list" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_list">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is a list. If the given data is a tuple, it is cast to a
 list. If not, a list is created with the data as single item.</p>
 <dl class="field-list simple">
@@ -419,9 +561,9 @@ list. If not, a list is created with the data as single item.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_numpy_array">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_numpy_array">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is a <cite>numpy.ndarray</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -439,9 +581,9 @@ list. If not, a list is created with the data as single item.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.assume_tuple">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">assume_tuple</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_tuple" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_tuple">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is a tuple. If the given data is a list, it is cast to a
 tuple. If not, a tuple is created with the data as single item.</p>
 <dl class="field-list simple">
@@ -460,9 +602,9 @@ tuple. If not, a tuple is created with the data as single item.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.capitalize_first_char">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">capitalize_first_char</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.capitalize_first_char" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.capitalize_first_char">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">capitalize_first_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.capitalize_first_char" title="Permalink to this definition">¶</a></dt>
 <dd><p>Capitalizes the first character (if possible) and leaves the rest of the
 string invariant.</p>
 <dl class="field-list simple">
@@ -481,9 +623,9 @@ string invariant.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.char_range">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">char_range</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=1</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.char_range" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.char_range">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">char_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.char_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yield an alphabetic range of lowercase letters.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -508,9 +650,20 @@ If None: uses start as stop character</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.cv_bitfield">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">cv_bitfield</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_bitfield" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_array_points_to_bins">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_array_points_to_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_array_points_to_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a center point array to bin points.</p>
+<p>Dimensions: <cite>(ndim0, ndim1, …) -&gt; (ndim0 + 1, ndim1 + 1, …)</cite>.</p>
+<p class="rubric">Notes</p>
+<p>FIXME: Does not work for multiple dimensions.
+TODO: Does not apply proper dimensional averaging, only “diagonal”
+two-point average.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_bitfield">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_bitfield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_bitfield" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an integer to a list of booleans.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -528,24 +681,85 @@ If None: uses start as stop character</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.cv_coord_spherical_to_cartesian">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">cv_coord_spherical_to_cartesian</code><span class="sig-paren">(</span><em class="sig-param">radial</em>, <em class="sig-param">polar</em>, <em class="sig-param">azimuthal</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_coord_spherical_to_cartesian" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_coord_spherical_to_cartesian">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_coord_spherical_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuthal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_coord_spherical_to_cartesian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts 3D spherical (standard parametrization) to cartesian coordinates.</p>
 <p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial, <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span>
 is the polar, and <span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the azimuthal coordinate.
 Supports broadcasting.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.do_nothing">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">do_nothing</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.do_nothing" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_float">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['.',</span> <span class="pre">',']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a string into a float.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>text</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Numeric text.</p>
+</dd>
+<dt><strong>dec_sep</strong><span class="classifier"><cite>str</cite> or <cite>Iter[str]</cite></span></dt><dd><p>Single or multiple decimal separators.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_index_center_to_rect">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_center_to_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_center_to_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts center-size indices to min-max indices.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>center</strong><span class="classifier"><cite>Iter[int]</cite></span></dt><dd><p>Index center in each dimension.</p>
+</dd>
+<dt><strong>size</strong><span class="classifier"><cite>Iter[int]</cite> or <cite>int</cite></span></dt><dd><p>(Full) size of rectangle in each dimension.
+If <cite>int</cite>, the <cite>size</cite> is applied to each dimension.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>rect</strong><span class="classifier"><cite>Iter[(int, int)]</cite></span></dt><dd><p>Index rectangle where the outer iterator corresponds to the dimension
+and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_index_rect_to_slice">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_rect_to_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_rect_to_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts min-max indices to slices.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>rect</strong><span class="classifier"><cite>Iter[(int, int) or slice]</cite></span></dt><dd><p>Index rectangle where the outer iterator corresponds to the dimension
+and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>slices</strong><span class="classifier"><cite>Iter[slice]</cite></span></dt><dd><p>Iterator of slices from index rectangle.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.do_nothing">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">do_nothing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">\*args</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.do_nothing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes any arguments and keyword arguments and does nothing.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.extract">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">regex</em>, <em class="sig-param">group=1</em>, <em class="sig-param">cv_func=None</em>, <em class="sig-param">flags=0</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.extract" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.extract">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts part of a string.
 Serves as convenience function to re.search.</p>
 <dl class="field-list simple">
@@ -581,9 +795,9 @@ as defined by the <cite>group</cite> parameter.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.extract_index_nonunique_array">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">extract_index_nonunique_array</code><span class="sig-paren">(</span><em class="sig-param">vec</em>, <em class="sig-param">min_count=2</em>, <em class="sig-param">rtol=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.extract_index_nonunique_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.extract_index_nonunique_array">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">extract_index_nonunique_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.extract_index_nonunique_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters a vector for non-unique values and returns their indices.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -607,9 +821,9 @@ Only used for non-integer types.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.flatten_nested_dict">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">flatten_nested_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em>, <em class="sig-param">delim='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.flatten_nested_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.flatten_nested_dict">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.flatten_nested_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flattens a nested dictionary into a top-level dictionary. Levels are
 separated by the specified delimiter. Note that dictionary keys may
 only be of <cite>str</cite> type.</p>
@@ -631,9 +845,9 @@ only be of <cite>str</cite> type.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.flatten_nested_list">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">flatten_nested_list</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.flatten_nested_list" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.flatten_nested_list">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.flatten_nested_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flattens a nested list recursively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -653,9 +867,9 @@ only be of <cite>str</cite> type.</p>
 <p>Inefficient implementation.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.generate_fill_chars">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">generate_fill_chars</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">fill_char=' '</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.generate_fill_chars" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.generate_fill_chars">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">generate_fill_chars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.generate_fill_chars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates fill characters with the same length as <cite>s</cite>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -678,34 +892,41 @@ cut to a length defined by <cite>s</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.get_combinations">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">get_combinations</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_combinations" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_combinations">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_combinations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_combinations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes an iterable of iterables and returns a list with all possible
 mutual, ordered combinations.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>ls</strong><span class="classifier">iterable</span></dt><dd><p>Iterable from which combinations are constructed.</p>
+<dd class="field-odd"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>Iter[Any]</cite></span></dt><dd><p>Iterable from which combinations are constructed.</p>
+</dd>
+<dt><strong>flatten</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to flatten the items in <cite>ls</cite>.
+If <cite>True</cite>, the algorithm is faster but cannot work with e.g.
+items in <cite>ls</cite> that are multi-dimensional arrays.</p>
+</dd>
+<dt><strong>dtype</strong><span class="classifier"><cite>None</cite> or <cite>callable</cite></span></dt><dd><p>Combinations are given as numpy array.
+If <cite>callable</cite>, <cite>dtype</cite> is called on the returned numpy array.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>comb</strong><span class="classifier">list</span></dt><dd><p>Combinations list.</p>
+<dd class="field-even"><dl>
+<dt><strong>comb</strong><span class="classifier"><cite>np.ndarray</cite> or <cite>Any</cite></span></dt><dd><p>Combinations list.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <p>&gt;&gt;&gt;&gt; ls = [(1, 2), (5, ), (7, 8)]
-&gt;&gt;&gt;&gt; get_combinations(ls)
-[[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]</p>
+&gt;&gt;&gt;&gt; get_combinations(ls, dtype=list)
+[[1, 5, 7], [1, 5, 8], [2, 5, 7], [2, 5, 8]]</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.get_first_elem_iter">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">get_first_elem_iter</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_first_elem_iter" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_first_elem_iter">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_first_elem_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_first_elem_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the first element of a (nested) iterable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -723,9 +944,46 @@ mutual, ordered combinations.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.get_numpy_dtype_str">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">get_numpy_dtype_str</code><span class="sig-paren">(</span><em class="sig-param">dtype</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_numpy_dtype_str" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_numpy_array_index">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_numpy_array_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar_or_ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">slice(None,</span> <span class="pre">None,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_numpy_array_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the multidimensional index to slice an array.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar_or_ndim</strong><span class="classifier"><cite>np.ndarray</cite> or <cite>int</cite></span></dt><dd><p>Array or number of dimensions of targeted array.</p>
+</dd>
+<dt><strong>dim</strong><span class="classifier"><cite>int</cite> or <cite>Iterable[int]</cite></span></dt><dd><p>Index or indices of dimensions.</p>
+</dd>
+<dt><strong>idx</strong><span class="classifier"><cite>int</cite> or <cite>slice</cite> or <cite>Iterable[int or slice]</cite></span></dt><dd><p>Actual indices.
+If iterable is given, must be in the same order as <cite>dim</cite>.</p>
+</dd>
+<dt><strong>default_idx</strong><span class="classifier"><cite>int</cite> or <cite>slice</cite></span></dt><dd><p>Indices of dimensions not in <cite>dim</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>slc</strong><span class="classifier"><cite>tuple(int or slice)</cite></span></dt><dd><p>Slicing indices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slc0</span> <span class="o">=</span> <span class="n">get_numpy_array_index</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ar</span><span class="p">[</span><span class="n">slc0</span><span class="p">]</span> <span class="o">==</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slc1</span> <span class="o">=</span> <span class="n">get_numpy_array_index</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ar</span><span class="p">[</span><span class="n">slc1</span><span class="p">]</span> <span class="o">==</span> <span class="n">ar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_numpy_dtype_str">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_numpy_dtype_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_numpy_dtype_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the Python built-in type string corresponding to the given
 numpy dtype. If no matching built-in type is found, the numpy string
 representation of the dtype is returned.</p>
@@ -745,16 +1003,48 @@ representation of the dtype is returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.id_dict">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">id_dict</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.id_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_regex_number">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_regex_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sgn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_regex_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the regular expression for a signed decimal floating point number.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>sgn</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to allow sign before number.</p>
+</dd>
+<dt><strong>dec_sep</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Decimal separator character. Multiple separators can be used by
+passing multiple characters, e.g. <cite>“.,”</cite> for both point and comma as
+separators.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.id_dict">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">id_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.id_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes any iterable and returns a dictionary mapping the item values to
 themselves.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.make_dict">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">make_dict</code><span class="sig-paren">(</span><em class="sig-param">key_list</em>, <em class="sig-param">val_list</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.make_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.is_number">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">is_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.is_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether given variable is of scalar, numeric type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.iter_progress">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">iter_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">it</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.iter_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator and prints a progress bar for each iteration.</p>
+<p>Note that <cite>it</cite> must be sized (i.e. has a length).
+<cite>**kwargs</cite> are passed to <a class="reference internal" href="#libics.core.util.misc.print_progress" title="libics.core.util.misc.print_progress"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_progress()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.make_dict">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">make_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.make_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a dictionary from a key list and a value list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -780,9 +1070,9 @@ val_list as values.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.make_getitem_func">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">make_getitem_func</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.make_getitem_func" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.make_getitem_func">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">make_getitem_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.make_getitem_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes an object which implements <cite>__getitem__</cite> and accesses this method.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -802,9 +1092,9 @@ is invalid, the function returns identity.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.map_dicts">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">map_dicts</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">*arg_dicts</em>, <em class="sig-param">kwarg_dicts={}</em>, <em class="sig-param">pre_args=()</em>, <em class="sig-param">post_args=()</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.map_dicts" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.map_dicts">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">map_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">func</span></em>, <em class="sig-param"><span class="pre">\*arg_dicts</span></em>, <em class="sig-param"><span class="pre">kwarg_dicts={}</span></em>, <em class="sig-param"><span class="pre">pre_args=()</span></em>, <em class="sig-param"><span class="pre">post_args=()</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.map_dicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a new dictionary containing all common keys. Calls the given
 function with the key’s corresponding values and assigns the return value
 to the new dictionary.</p>
@@ -837,9 +1127,9 @@ values, i.e. <cite>func(*pre_args, *dict_vals, *post_args)</cite>.</p>
 keys common to both <cite>d1</cite> and <cite>d2</cite>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.nest_flattened_dict">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">nest_flattened_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em>, <em class="sig-param">delim='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.nest_flattened_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.nest_flattened_dict">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">nest_flattened_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.nest_flattened_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Nests (“unflattens”) a flattened dictionary. Levels are assumed to be
 separated by the specified delimiter.</p>
 <dl class="field-list simple">
@@ -860,9 +1150,9 @@ separated by the specified delimiter.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.order_list">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">order_list</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">order</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.order_list" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.order_list">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">order_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.order_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sorts a list according to a given index order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -882,47 +1172,74 @@ separated by the specified delimiter.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.print_progress">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">print_progress</code><span class="sig-paren">(</span><em class="sig-param">count</em>, <em class="sig-param">total</em>, <em class="sig-param">subcount=None</em>, <em class="sig-param">subtotal=None</em>, <em class="sig-param">start_time=None</em>, <em class="sig-param">prefix=''</em>, <em class="sig-param">fill='#'</em>, <em class="sig-param">empty='·'</em>, <em class="sig-param">bar_length=40</em>, <em class="sig-param">total_length=80</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.print_progress" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.print_progress">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">print_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subcount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtotal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'·'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.print_progress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.resize_numpy_array">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">resize_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em>, <em class="sig-param">shape</em>, <em class="sig-param">fill_value=0</em>, <em class="sig-param">mode_keep='front'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.resize_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pads or shrinks a numpy array to a requested shape.</p>
-<dl class="field-list simple">
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.rename_dict_keys">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">rename_dict_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.rename_dict_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames keys of a dictionary.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>ar</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Numpy array to be resized.</p>
+<dd class="field-odd"><dl>
+<dt><strong>d</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Dictionary to be renamed.</p>
 </dd>
-<dt><strong>shape</strong><span class="classifier">tuple(int)</span></dt><dd><p>Target shape of array. Must have same dimension as ar.</p>
+<dt><strong>key_map</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Mapping between old key and new key.</p>
 </dd>
-<dt><strong>fill_value</strong><span class="classifier">ar.dtype</span></dt><dd><p>Pad value if array is increased.</p>
-</dd>
-<dt><strong>mode_keep</strong><span class="classifier">“front”, “back”, “center”</span></dt><dd><p>Keeps the elements of ar at the &lt;mode_keep&gt; of the
-resized array.</p>
+<dt><strong>in_place</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>If <cite>True</cite>, changes the dictionary in place;
+if <cite>False</cite>, creates a copy of the dictionary.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>ar</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Resized numpy array.</p>
+<dd class="field-even"><dl>
+<dt><strong>d_new</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Renamed dictionary.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.ret_id">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">ret_id</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.ret_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.resize_numpy_array">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">resize_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'front'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.resize_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pads or shrinks a numpy array to a requested shape.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Numpy array to be resized.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier"><cite>tuple(int)</cite></span></dt><dd><p>Target shape of array. Must have same dimension as <cite>ar</cite>.</p>
+</dd>
+<dt><strong>fill_value</strong><span class="classifier"><cite>ar.dtype</cite></span></dt><dd><p>Pad value if array is increased.</p>
+</dd>
+<dt><strong>mode_keep</strong><span class="classifier"><cite>“front”, “back”, “center”</cite></span></dt><dd><p>Keeps the elements of <cite>ar</cite> at the front/back/center of the
+resized array.</p>
+</dd>
+<dt><strong>dtype</strong><span class="classifier"><cite>np.dtype</cite> or <cite>None</cite></span></dt><dd><p>Numpy data type to cast to. If <cite>None</cite>, uses dtype of <cite>ar</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>resized_ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Resized numpy array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.ret_id">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">ret_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.ret_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes any argument and returns the input.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.reverse_dict">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">reverse_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.reverse_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.reverse_dict">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">reverse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.reverse_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a value-to-key dictionary from the given dictionary. Does not
 check for duplicates, so duplicate mapping will be random.</p>
 <dl class="field-list">
@@ -941,9 +1258,9 @@ check for duplicates, so duplicate mapping will be random.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.split_strip">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">split_strip</code><span class="sig-paren">(</span><em class="sig-param">s</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">strip=' tnr'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_strip" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.split_strip">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">split_strip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">\t\n\r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_strip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a given string and strips each list element from given characters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -966,9 +1283,9 @@ parameter.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.split_unit">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">split_unit</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_unit" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.split_unit">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">split_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_unit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a given string into a tuple of numerical value and unit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -993,9 +1310,9 @@ If only a numerical value could be determined, unit is None and the
 given string is cast to numerical format.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.misc.transpose_array">
-<code class="sig-prename descclassname">libics.core.util.misc.</code><code class="sig-name descname">transpose_array</code><span class="sig-paren">(</span><em class="sig-param">ar</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.transpose_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.transpose_array">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">transpose_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.transpose_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transposes a rectangular array.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1016,9 +1333,9 @@ given string is cast to numerical format.</p>
 </div>
 <div class="section" id="module-libics.core.util.path">
 <span id="path"></span><h2>path<a class="headerlink" href="#module-libics.core.util.path" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.core.util.path.FolderContentsResult">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.util.path.</code><code class="sig-name descname">FolderContentsResult</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.util.path.FolderContentsResult">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.util.path.</span></span><span class="sig-name descname"><span class="pre">FolderContentsResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Results container for <a class="reference internal" href="#libics.core.util.path.get_folder_contents" title="libics.core.util.path.get_folder_contents"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_folder_contents()</span></code></a>.</p>
 <dl class="field-list">
@@ -1043,21 +1360,21 @@ given string is cast to numerical format.</p>
 </dl>
 </dd>
 </dl>
-<dl class="method">
-<dt id="libics.core.util.path.FolderContentsResult.files">
-<em class="property">property </em><code class="sig-name descname">files</code><a class="headerlink" href="#libics.core.util.path.FolderContentsResult.files" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.util.path.FolderContentsResult.files">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">files</span></span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult.files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.util.path.FolderContentsResult.folders">
-<em class="property">property </em><code class="sig-name descname">folders</code><a class="headerlink" href="#libics.core.util.path.FolderContentsResult.folders" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.core.util.path.FolderContentsResult.folders">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">folders</span></span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult.folders" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.path.assume_file_exists">
-<code class="sig-prename descclassname">libics.core.util.path.</code><code class="sig-name descname">assume_file_exists</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.assume_file_exists" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.path.assume_file_exists">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.path.</span></span><span class="sig-name descname"><span class="pre">assume_file_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.assume_file_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a file exists. Creates an empty file if not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1075,9 +1392,9 @@ given string is cast to numerical format.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.util.path.get_folder_contents">
-<code class="sig-prename descclassname">libics.core.util.path.</code><code class="sig-name descname">get_folder_contents</code><span class="sig-paren">(</span><em class="sig-param">folder</em>, <em class="sig-param">regex=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.get_folder_contents" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.path.get_folder_contents">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.path.</span></span><span class="sig-name descname"><span class="pre">get_folder_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.get_folder_contents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the files/subfolders in a folder.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1101,60 +1418,51 @@ given string is cast to numerical format.</p>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">libics.core.util</a><ul>
-<li><a class="reference internal" href="#module-libics.core.util.func">func</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-libics.core.util.misc">misc</a></li>
-<li><a class="reference internal" href="#module-libics.core.util.path">path</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.driver.html" class="btn btn-neutral float-right" title="libics.driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.core.io.html" class="btn btn-neutral float-left" title="libics.core.io" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.core.util.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>
