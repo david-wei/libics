@@ -864,8 +864,8 @@ def get_combinations(ls, flatten=True, dtype=None):
 
     Examples
     --------
-    >>>> ls = [(1, 2), (5, ), (7, 8)]
-    >>>> get_combinations(ls, dtype=list)
+    >>> ls = [(1, 2), (5, ), (7, 8)]
+    >>> get_combinations(ls, dtype=list)
     [[1, 5, 7], [1, 5, 8], [2, 5, 7], [2, 5, 8]]
     """
     if flatten is True:

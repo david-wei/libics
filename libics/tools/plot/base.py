@@ -50,7 +50,7 @@ def style_figure(
     Styles figure and contained axes properties.
 
     See matplotlib API:
-    `https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html`.
+    https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html.
 
     Parameters
     ----------
@@ -106,7 +106,7 @@ def style_axes(
     """
     Styles axes properties.
 
-    See matplotlib API: `<https://matplotlib.org/api/axes_api.html>`.
+    See matplotlib API: https://matplotlib.org/api/axes_api.html.
 
     Parameters
     ----------
@@ -172,7 +172,7 @@ def tick_params(
     Styles tick properties.
 
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.tick_params>`.
+    https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.tick_params.
 
     Parameters
     ----------
@@ -219,8 +219,8 @@ def plot(
     Supports scatter plots, line plots and 2D error bars.
     See matplotlib API:
 
-    * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot>`
-    * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar>`
+    * https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot
+    * https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar
 
     Parameters
     ----------
@@ -302,7 +302,7 @@ def pcolormesh(
 
     Uses the pcolormesh function.
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.pcolormesh.html>`
+    https://matplotlib.org/api/_as_gen/matplotlib.pyplot.pcolormesh.html
 
     Parameters
     ----------
@@ -403,7 +403,7 @@ def contourf(
 
     Uses the contourf function.
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.contourf.html>`
+    https://matplotlib.org/api/_as_gen/matplotlib.pyplot.contourf.html
 
     Parameters
     ----------

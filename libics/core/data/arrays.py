@@ -933,7 +933,7 @@ class ArrayData(object):
         Notes
         -----
         * See also scipy.interpolate.interpn:
-          <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn>`
+          https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn
         """
         # Convert to seriesdata-structure-like
         shape = None

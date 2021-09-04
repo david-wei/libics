@@ -151,13 +151,6 @@ def interval_func(*rescale_param):
     """
     Interval function factory.
 
-    Decorator
-    ---------
-    func : `callable`
-        Functions with call signature: `func(t, y0, y1, *args)`,
-        where `t` is the independent variable defined on the interval `[0, 1]`,
-        `y0` and `y1` are the functional values at `t = 0` and `t = 1`.
-
     Parameters
     ----------
     *rescale_param : `int` or `str`
@@ -166,16 +159,26 @@ def interval_func(*rescale_param):
         Use `int` to specify the indices of positional arguments.
         Use `str` to specify the keys of keyword arguments.
 
+    Returns
+    -------
+    _ivf_factory : `callable`
+        Decorator for function `func`.
+        Functions with call signature: `func(t, y0, y1, *args)`,
+        where `t` is the independent variable defined on the interval `[0, 1]`,
+        `y0` and `y1` are the functional values at `t = 0` and `t = 1`.
+
     Examples
     --------
     To specify positional argument `p1`:
 
     >>> @interval_func(1)
-    >>> def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2)`:
+    >>> def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2):
     ...     pass
+
     To specify keyword argument `"k2"`:
+
     >>> @interval_func("k2")
-    >>> def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2)`:
+    >>> def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2):
     ...     pass
     """
     rescale_args = tuple(filter(lambda x: isinstance(x, int), rescale_param))

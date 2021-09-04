@@ -3976,16 +3976,27 @@ Use <cite>str</cite> to specify the keys of keyword arguments.</p>
 </dd>
 </dl>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>_ivf_factory</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Decorator for function <cite>func</cite>.
+Functions with call signature: <cite>func(t, y0, y1, *args)</cite>,
+where <cite>t</cite> is the independent variable defined on the interval <cite>[0, 1]</cite>,
+<cite>y0</cite> and <cite>y1</cite> are the functional values at <cite>t = 0</cite> and <cite>t = 1</cite>.</p>
+</dd>
+</dl>
+</dd>
 </dl>
 <p class="rubric">Examples</p>
 <p>To specify positional argument <cite>p1</cite>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; @interval_func(1)
-&gt;&gt;&gt; def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2)`:
-...     pass
-To specify keyword argument `&quot;k2&quot;`:
-&gt;&gt;&gt; @interval_func(&quot;k2&quot;)
-&gt;&gt;&gt; def func(t, y0, y1, p0, p1, p2, k0=0, k1=1, k2=2)`:
-...     pass
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@interval_func</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">k0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">k1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">k2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>To specify keyword argument <cite>“k2”</cite>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@interval_func</span><span class="p">(</span><span class="s2">&quot;k2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">k0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">k1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">k2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -4653,7 +4664,7 @@ vector <span class="math notranslate nohighlight">\(x\)</span>.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.ortho_gram_schmidt">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">ortho_gram_schmidt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vectors</span></em>, <em class="sig-param"><span class="pre">norm_func=&lt;function</span> <span class="pre">norm</span> <span class="pre">at</span> <span class="pre">0x0000025067E2D730&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.ortho_gram_schmidt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">ortho_gram_schmidt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vectors</span></em>, <em class="sig-param"><span class="pre">norm_func=&lt;function</span> <span class="pre">norm</span> <span class="pre">at</span> <span class="pre">0x0000020923278730&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.ortho_gram_schmidt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Naive Gram-Schmidt orthogonalization.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
