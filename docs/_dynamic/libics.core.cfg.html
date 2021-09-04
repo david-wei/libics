@@ -1,51 +1,182 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.core.cfg &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.core.cfg &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.core.data" href="libics.core.data.html" />
     <link rel="prev" title="libics.core" href="libics.core.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="libics.core.html" title="libics.core"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" accesskey="U">libics.core</a> &#187;</li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.core.html">libics.core</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.core.cfg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.data.html">libics.core.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.io.html">libics.core.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.core.util.html">libics.core.util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.core.html">libics.core</a> &raquo;</li>
+        
+      <li>libics.core.cfg</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.core.cfg.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.core.cfg">
 <span id="libics-core-cfg"></span><h1>libics.core.cfg<a class="headerlink" href="#module-libics.core.cfg" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="libics.core.cfg.CfgBase">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">CfgBase</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.cfg.</span></span><span class="sig-name descname"><span class="pre">CfgBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
 <p>Configuration file base class.</p>
 <p>Attributes must be of built-in/primitive types or (subclasses of)
@@ -80,14 +211,14 @@
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.core.cfg.CfgBase.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.core.cfg.CfgBase (WARNING)&gt;</em><a class="headerlink" href="#libics.core.cfg.CfgBase.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.core.cfg.CfgBase</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.core.cfg.CfgBase.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.core.cfg.CfgBase.get_items">
-<code class="sig-name descname">get_items</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">use_all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.get_items" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase.get_items">
+<span class="sig-name descname"><span class="pre">get_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.get_items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets configuration attributes.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -101,9 +232,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.cfg.CfgBase.load_cfg">
-<code class="sig-name descname">load_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">preserve_case=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.load_cfg" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase.load_cfg">
+<span class="sig-name descname"><span class="pre">load_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">file_path</span></em>, <em class="sig-param"><span class="pre">fmt=None</span></em>, <em class="sig-param"><span class="pre">preserve_case=True</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.load_cfg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a configuration text file to object.</p>
 <p>In contrast to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code> method, this method assumes no
 stored metadata.</p>
@@ -127,9 +258,9 @@ stored metadata.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.cfg.CfgBase.map_recursive">
-<code class="sig-name descname">map_recursive</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">item_func=None</em>, <em class="sig-param">cfg_func=None</em>, <em class="sig-param">use_all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.map_recursive" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase.map_recursive">
+<span class="sig-name descname"><span class="pre">map_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.map_recursive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function recursively on all configuration items.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -154,9 +285,9 @@ ones stated in <cite>SER_KEYS</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.core.cfg.CfgBase.save_cfg">
-<code class="sig-name descname">save_cfg</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file_path</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">serialize_all=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.save_cfg" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.cfg.CfgBase.save_cfg">
+<span class="sig-name descname"><span class="pre">save_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">file_path</span></em>, <em class="sig-param"><span class="pre">fmt=None</span></em>, <em class="sig-param"><span class="pre">serialize_all=False</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.CfgBase.save_cfg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the configuration object to a text file.</p>
 <p>In contrast to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code> method, this method does not
 save any metadata.</p>
@@ -180,9 +311,9 @@ ones stated in <cite>SER_KEYS</cite>.</p>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.cfg.NamedTuple">
-<code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">NamedTuple</code><span class="sig-paren">(</span><em class="sig-param">mapping</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.NamedTuple" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.cfg.NamedTuple">
+<span class="sig-prename descclassname"><span class="pre">libics.core.cfg.</span></span><span class="sig-name descname"><span class="pre">NamedTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.NamedTuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively converts mappings to nested named tuples.</p>
 <p>Named tuples are mapping objects (dicts) whose key-value pairs are
 accessible with attribute notation (e.g. object.attr_lvl0.attr_lvl1.key).
@@ -203,9 +334,9 @@ Warning: converts all numeric keys to strings!</p>
 </dl>
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.core.cfg.ProtectedDict">
-<em class="property">class </em><code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">ProtectedDict</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.ProtectedDict" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.core.cfg.ProtectedDict">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.core.cfg.</span></span><span class="sig-name descname"><span class="pre">ProtectedDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.ProtectedDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.UserDict</span></code></p>
 <p>Dictionary wrapper to make <a class="reference internal" href="#libics.core.cfg.NamedTuple" title="libics.core.cfg.NamedTuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></a> not convert it to
 a named tuple (to keep it as <cite>dict</cite>).</p>
@@ -261,63 +392,60 @@ a named tuple (to keep it as <cite>dict</cite>).</p>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="libics.core.cfg.cv_mapping_to_namedtuple">
-<code class="sig-prename descclassname">libics.core.cfg.</code><code class="sig-name descname">cv_mapping_to_namedtuple</code><span class="sig-paren">(</span><em class="sig-param">mapping</em>, <em class="sig-param">name='NamedTuple'</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.cv_mapping_to_namedtuple" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.cfg.cv_mapping_to_namedtuple">
+<span class="sig-prename descclassname"><span class="pre">libics.core.cfg.</span></span><span class="sig-name descname"><span class="pre">cv_mapping_to_namedtuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NamedTuple'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.cfg.cv_mapping_to_namedtuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a mapping to a named tuple (non-recursively).</p>
 </dd></dl>
 
 </div>
 
 
+           </div>
+           
           </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.core.data.html" class="btn btn-neutral float-right" title="libics.core.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.core.html" class="btn btn-neutral float-left" title="libics.core" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="libics.core.html"
-                        title="previous chapter">libics.core</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.core.cfg.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="libics.core.html" title="libics.core"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.core.html" >libics.core</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

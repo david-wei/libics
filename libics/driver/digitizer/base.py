@@ -34,7 +34,7 @@ class DevSpectrum(DevBase):
     """
     Attributes
     ----------
-    
+
     **Properties**
 
     frequency_range : `(float, float)`
@@ -176,7 +176,7 @@ class FftAnalyzer(DevBase):
     """
     Attributes
     ----------
-    
+
     **Properties**
 
     input_coupling : `INPUT_COUPLING`
@@ -255,6 +255,13 @@ class FftAnalyzer(DevBase):
 
 
 class Oscilloscope(DevBase):
+
+    def __init__(self):
+        super().__init__()
+        raise NotImplementedError
+
+
+class Thermocouple(DevBase):
 
     def __init__(self):
         super().__init__()

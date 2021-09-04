@@ -1,5 +1,6 @@
-# System Imports
+import base64
 import copy
+from io import BytesIO
 import numpy as np
 import os
 import PIL
@@ -158,6 +159,60 @@ def load_png_to_arraydata(file_path, ad=None):
     image = np.array(PIL.Image.open(file_path).convert("I"))
     ad.data = image.T
     return ad
+
+
+def compress_numpy_array_as_png(ar, encode=None):
+    """
+    Compresses an integer array with png.
+
+    Parameters
+    ----------
+    ar : `np.ndarray(int)`
+        Integer numpy array.
+    encode : `None` or `str`
+        If `str`, converts the bytes object into a string.
+        Available formats: `"base64"`.
+
+    Returns
+    -------
+    im_data : `str`
+        (Encoded) png-compressed array.
+    """
+    im = PIL.Image.fromarray(ar)
+    im_data = BytesIO()
+    im.save(im_data, format="png")
+    im_data = im_data.getvalue()
+    if encode == "base64":
+        prefix = "data:image/png;base64"
+        im_data = prefix + "," + base64.b64encode(im_data).decode("utf8")
+    return im_data
+
+
+def decompress_numpy_array_from_png(im_data):
+    """
+    Decompresses an integer array compressed with png.
+
+    Parameters
+    ----------
+    im_data : `bytes` or `str`
+        If `bytes`, assumes the png data.
+        If `str`, assumes an encoding with header describing encoding
+        scheme, e.g. `"data:image/png;base64,"`.
+
+    Returns
+    -------
+    ar : `np.ndarray(int)`
+        Decompressed integer numpy array.
+    """
+    if isinstance(im_data, str):
+        prefix = None
+        try:
+            prefix, im_data = im_data.split(",")
+        except TypeError:
+            pass
+        if prefix == "data:image/png;base64":
+            im_data = base64.b64decode(im_data)
+    return np.array(PIL.Image.open(BytesIO(im_data)))
 
 
 ###############################################################################

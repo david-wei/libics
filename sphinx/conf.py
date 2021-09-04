@@ -20,13 +20,13 @@ sys.path.insert(0, os.path.abspath('../libics'))
 # -- Project information -----------------------------------------------------
 
 project = 'libics'
-copyright = '2019-2020, David Wei'
+copyright = '2019-2021, David Wei'
 author = 'David Wei'
 
 # The short X.Y version
 version = '1.0'
 # The full version, including alpha/beta/rc tags
-release = '1.0dev'
+release = '1.0a'
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,13 +37,13 @@ release = '1.0dev'
 extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.githubpages',
-    #'sphinx.ext.napoleon'
+    # 'sphinx.ext.napoleon',
     'numpydoc.numpydoc'
 ]
-#numpydoc_show_class_members = False
-#napoleon_google_docstring = False
-#napoleon_use_param = False
-#napoleon_use_ivar = True
+# numpydoc_show_class_members = False
+# napoleon_google_docstring = False
+# napoleon_use_param = False
+# napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -77,7 +77,7 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'classic'
+html_theme = 'sphinx_rtd_theme'  # 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

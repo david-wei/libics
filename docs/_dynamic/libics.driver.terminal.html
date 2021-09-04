@@ -1,47 +1,192 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>libics.driver.terminal &#8212; libics 1.0dev documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>libics.driver.terminal &mdash; libics 1.0a documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.driver.html" accesskey="U">libics.driver</a> &#187;</li> 
-      </ul>
-    </div>  
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.driver.waveformgenerator" href="libics.driver.waveformgenerator.html" />
+    <link rel="prev" title="libics.driver.piezo" href="libics.driver.piezo.html" /> 
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.driver.html">libics.driver</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.camera.html">libics.driver.camera</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.digitizer.html">libics.driver.digitizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.display.html">libics.driver.display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.emulator.html">libics.driver.emulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.lightsource.html">libics.driver.lightsource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.piezo.html">libics.driver.piezo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.driver.terminal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.driver.terminal.ethernet">ethernet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.driver.terminal.gpib">gpib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.driver.terminal.serial">serial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.driver.terminal.usb">usb</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libics.driver.waveformgenerator.html">libics.driver.waveformgenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="libics.driver.html">libics.driver</a> &raquo;</li>
+        
+      <li>libics.driver.terminal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/libics.driver.terminal.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-libics.driver.terminal">
 <span id="libics-driver-terminal"></span><h1>libics.driver.terminal<a class="headerlink" href="#module-libics.driver.terminal" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-libics.driver.terminal.base"></span><dl class="class">
-<dt id="libics.driver.terminal.base.ItfTerminal">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.base.</code><code class="sig-name descname">ItfTerminal</code><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-libics.driver.terminal.base"></span><dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.base.</span></span><span class="sig-name descname"><span class="pre">ItfTerminal</span></span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.interface.ItfBase</span></code></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -139,51 +284,51 @@
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.ADDRESS">
-<code class="sig-name descname">ADDRESS</code><em class="property"> = ''</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.ADDRESS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.ADDRESS">
+<span class="sig-name descname"><span class="pre">ADDRESS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.ADDRESS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.BUFFER_SIZE">
-<code class="sig-name descname">BUFFER_SIZE</code><em class="property"> = 1024</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.BUFFER_SIZE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.BUFFER_SIZE">
+<span class="sig-name descname"><span class="pre">BUFFER_SIZE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1024</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.BUFFER_SIZE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.RECV_TERMCHAR">
-<code class="sig-name descname">RECV_TERMCHAR</code><em class="property"> = '\r\n'</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.RECV_TERMCHAR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.RECV_TERMCHAR">
+<span class="sig-name descname"><span class="pre">RECV_TERMCHAR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'\r\n'</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.RECV_TERMCHAR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.RECV_TIMEOUT">
-<code class="sig-name descname">RECV_TIMEOUT</code><em class="property"> = 1.0</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.RECV_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.RECV_TIMEOUT">
+<span class="sig-name descname"><span class="pre">RECV_TIMEOUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1.0</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.RECV_TIMEOUT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.SEND_TERMCHAR">
-<code class="sig-name descname">SEND_TERMCHAR</code><em class="property"> = '\r\n'</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.SEND_TERMCHAR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.SEND_TERMCHAR">
+<span class="sig-name descname"><span class="pre">SEND_TERMCHAR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'\r\n'</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.SEND_TERMCHAR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.base.ItfTerminal.SEND_TIMEOUT">
-<code class="sig-name descname">SEND_TIMEOUT</code><em class="property"> = 1.0</em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.SEND_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.SEND_TIMEOUT">
+<span class="sig-name descname"><span class="pre">SEND_TIMEOUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1.0</span></em><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.SEND_TIMEOUT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.flush_in">
-<em class="property">abstract </em><code class="sig-name descname">flush_in</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.flush_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.flush_in">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">flush_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.flush_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the input buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.flush_out">
-<em class="property">abstract </em><code class="sig-name descname">flush_out</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.flush_out" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.flush_out">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">flush_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.flush_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the output buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.query">
-<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.query" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends and receives a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -201,9 +346,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.recv">
-<em class="property">abstract </em><code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.recv" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.recv">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">recv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.recv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -215,9 +360,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.send">
-<em class="property">abstract </em><code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.send" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.send">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -229,9 +374,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.base.ItfTerminal.validate">
-<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">msg</em>, <em class="sig-param">val</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.validate" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.base.ItfTerminal.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.base.ItfTerminal.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message and checks for validation response.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -255,20 +400,20 @@
 
 <div class="section" id="module-libics.driver.terminal.ethernet">
 <span id="ethernet"></span><h2>ethernet<a class="headerlink" href="#module-libics.driver.terminal.ethernet" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.driver.terminal.ethernet.FAMILY">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.ethernet.</code><code class="sig-name descname">FAMILY</code><a class="headerlink" href="#libics.driver.terminal.ethernet.FAMILY" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.FAMILY">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.ethernet.</span></span><span class="sig-name descname"><span class="pre">FAMILY</span></span><a class="headerlink" href="#libics.driver.terminal.ethernet.FAMILY" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.FAMILY.AF_INET">
-<code class="sig-name descname">AF_INET</code><em class="property"> = 2</em><a class="headerlink" href="#libics.driver.terminal.ethernet.FAMILY.AF_INET" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.FAMILY.AF_INET">
+<span class="sig-name descname"><span class="pre">AF_INET</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.FAMILY.AF_INET" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.ethernet.</code><code class="sig-name descname">ItfEthernet</code><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.ethernet.</span></span><span class="sig-name descname"><span class="pre">ItfEthernet</span></span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.terminal.base.ItfTerminal" title="libics.driver.terminal.base.ItfTerminal"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.terminal.base.ItfTerminal</span></code></a></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -370,24 +515,24 @@
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.BLOCKING">
-<code class="sig-name descname">BLOCKING</code><em class="property"> = True</em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.BLOCKING" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.BLOCKING">
+<span class="sig-name descname"><span class="pre">BLOCKING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.BLOCKING" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.driver.terminal.ethernet.ItfEthernet (WARNING)&gt;</em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.driver.terminal.ethernet.ItfEthernet</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.PORT">
-<code class="sig-name descname">PORT</code><em class="property"> = None</em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.PORT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.PORT">
+<span class="sig-name descname"><span class="pre">PORT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.PORT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.close" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes connection to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -399,9 +544,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.connect">
-<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.connect" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -413,9 +558,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.discover">
-<code class="sig-name descname">discover</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.discover" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.discover">
+<span class="sig-name descname"><span class="pre">discover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.discover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discovers devices using the interface.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -427,32 +572,32 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.flush_in">
-<code class="sig-name descname">flush_in</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.flush_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.flush_in">
+<span class="sig-name descname"><span class="pre">flush_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.flush_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the input buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.flush_out">
-<code class="sig-name descname">flush_out</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.flush_out" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.flush_out">
+<span class="sig-name descname"><span class="pre">flush_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.flush_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the output buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.is_connected">
-<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.is_connected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is connected.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.is_setup">
-<code class="sig-name descname">is_setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.is_setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.is_setup">
+<span class="sig-name descname"><span class="pre">is_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.is_setup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.recv">
-<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.recv" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.recv">
+<span class="sig-name descname"><span class="pre">recv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.recv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -464,9 +609,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.send">
-<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.send" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -478,21 +623,21 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.shutdown">
-<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.shutdown" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroys the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.ethernet.ItfEthernet.status">
-<code class="sig-name descname">status</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.status" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.ItfEthernet.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.ethernet.ItfEthernet.status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the status of the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -513,24 +658,24 @@ might need to be reset), check the error type.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.ethernet.SHUTDOWN">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.ethernet.</code><code class="sig-name descname">SHUTDOWN</code><a class="headerlink" href="#libics.driver.terminal.ethernet.SHUTDOWN" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.SHUTDOWN">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.ethernet.</span></span><span class="sig-name descname"><span class="pre">SHUTDOWN</span></span><a class="headerlink" href="#libics.driver.terminal.ethernet.SHUTDOWN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.SHUTDOWN.SHUT_RDWR">
-<code class="sig-name descname">SHUT_RDWR</code><em class="property"> = 2</em><a class="headerlink" href="#libics.driver.terminal.ethernet.SHUTDOWN.SHUT_RDWR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.SHUTDOWN.SHUT_RDWR">
+<span class="sig-name descname"><span class="pre">SHUT_RDWR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.SHUTDOWN.SHUT_RDWR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.ethernet.TYPE">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.ethernet.</code><code class="sig-name descname">TYPE</code><a class="headerlink" href="#libics.driver.terminal.ethernet.TYPE" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.TYPE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.ethernet.</span></span><span class="sig-name descname"><span class="pre">TYPE</span></span><a class="headerlink" href="#libics.driver.terminal.ethernet.TYPE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.ethernet.TYPE.SOCK_STREAM">
-<code class="sig-name descname">SOCK_STREAM</code><em class="property"> = 1</em><a class="headerlink" href="#libics.driver.terminal.ethernet.TYPE.SOCK_STREAM" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.ethernet.TYPE.SOCK_STREAM">
+<span class="sig-name descname"><span class="pre">SOCK_STREAM</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#libics.driver.terminal.ethernet.TYPE.SOCK_STREAM" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -538,9 +683,9 @@ might need to be reset), check the error type.</p>
 </div>
 <div class="section" id="module-libics.driver.terminal.gpib">
 <span id="gpib"></span><h2>gpib<a class="headerlink" href="#module-libics.driver.terminal.gpib" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.driver.terminal.gpib.ItfGpib">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.gpib.</code><code class="sig-name descname">ItfGpib</code><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.ItfGpib">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.gpib.</span></span><span class="sig-name descname"><span class="pre">ItfGpib</span></span><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.terminal.base.ItfTerminal" title="libics.driver.terminal.base.ItfTerminal"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.terminal.base.ItfTerminal</span></code></a></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -630,24 +775,24 @@ might need to be reset), check the error type.</p>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.terminal.gpib.ItfGpib.ADDRESS">
-<code class="sig-name descname">ADDRESS</code><em class="property"> = 1</em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.ADDRESS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.ItfGpib.ADDRESS">
+<span class="sig-name descname"><span class="pre">ADDRESS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.ADDRESS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.gpib.ItfGpib.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.driver.terminal.ethernet.ItfGpib (WARNING)&gt;</em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.ItfGpib.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.driver.terminal.ethernet.ItfGpib</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.gpib.ItfGpib.MODE">
-<code class="sig-name descname">MODE</code><em class="property"> = 'CONTROLLER'</em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.MODE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.ItfGpib.MODE">
+<span class="sig-name descname"><span class="pre">MODE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'CONTROLLER'</span></em><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.MODE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.gpib.ItfGpib.configure">
-<code class="sig-name descname">configure</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">itf=None</em>, <em class="sig-param">**cfg</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.configure" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.ItfGpib.configure">
+<span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">itf=None</span></em>, <em class="sig-param"><span class="pre">\*\*cfg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.gpib.ItfGpib.configure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Configures the device.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -661,18 +806,18 @@ might need to be reset), check the error type.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.gpib.MODE">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.gpib.</code><code class="sig-name descname">MODE</code><a class="headerlink" href="#libics.driver.terminal.gpib.MODE" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.MODE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.gpib.</span></span><span class="sig-name descname"><span class="pre">MODE</span></span><a class="headerlink" href="#libics.driver.terminal.gpib.MODE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.gpib.MODE.CONTROLLER">
-<code class="sig-name descname">CONTROLLER</code><em class="property"> = 'CONTROLLER'</em><a class="headerlink" href="#libics.driver.terminal.gpib.MODE.CONTROLLER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.MODE.CONTROLLER">
+<span class="sig-name descname"><span class="pre">CONTROLLER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'CONTROLLER'</span></em><a class="headerlink" href="#libics.driver.terminal.gpib.MODE.CONTROLLER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.gpib.MODE.DEVICE">
-<code class="sig-name descname">DEVICE</code><em class="property"> = 'DEVICE'</em><a class="headerlink" href="#libics.driver.terminal.gpib.MODE.DEVICE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.gpib.MODE.DEVICE">
+<span class="sig-name descname"><span class="pre">DEVICE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'DEVICE'</span></em><a class="headerlink" href="#libics.driver.terminal.gpib.MODE.DEVICE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -680,35 +825,35 @@ might need to be reset), check the error type.</p>
 </div>
 <div class="section" id="module-libics.driver.terminal.serial">
 <span id="serial"></span><h2>serial<a class="headerlink" href="#module-libics.driver.terminal.serial" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.driver.terminal.serial.BYTESIZE">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.serial.</code><code class="sig-name descname">BYTESIZE</code><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.BYTESIZE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.serial.</span></span><span class="sig-name descname"><span class="pre">BYTESIZE</span></span><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.BYTESIZE.EIGHTBITS">
-<code class="sig-name descname">EIGHTBITS</code><em class="property"> = 8</em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.EIGHTBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.BYTESIZE.EIGHTBITS">
+<span class="sig-name descname"><span class="pre">EIGHTBITS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.EIGHTBITS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.BYTESIZE.FIVEBITS">
-<code class="sig-name descname">FIVEBITS</code><em class="property"> = 5</em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.FIVEBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.BYTESIZE.FIVEBITS">
+<span class="sig-name descname"><span class="pre">FIVEBITS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.FIVEBITS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.BYTESIZE.SEVENBITS">
-<code class="sig-name descname">SEVENBITS</code><em class="property"> = 7</em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.SEVENBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.BYTESIZE.SEVENBITS">
+<span class="sig-name descname"><span class="pre">SEVENBITS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.SEVENBITS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.BYTESIZE.SIXBITS">
-<code class="sig-name descname">SIXBITS</code><em class="property"> = 6</em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.SIXBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.BYTESIZE.SIXBITS">
+<span class="sig-name descname"><span class="pre">SIXBITS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#libics.driver.terminal.serial.BYTESIZE.SIXBITS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.serial.ItfSerial">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.serial.</code><code class="sig-name descname">ItfSerial</code><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.serial.</span></span><span class="sig-name descname"><span class="pre">ItfSerial</span></span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.terminal.base.ItfTerminal" title="libics.driver.terminal.base.ItfTerminal"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.terminal.base.ItfTerminal</span></code></a></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -813,29 +958,29 @@ might need to be reset), check the error type.</p>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.ItfSerial.BAUDRATE">
-<code class="sig-name descname">BAUDRATE</code><em class="property"> = 115200</em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.BAUDRATE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.BAUDRATE">
+<span class="sig-name descname"><span class="pre">BAUDRATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">115200</span></em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.BAUDRATE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.ItfSerial.BYTESIZE">
-<code class="sig-name descname">BYTESIZE</code><em class="property"> = 8</em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.BYTESIZE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.BYTESIZE">
+<span class="sig-name descname"><span class="pre">BYTESIZE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.BYTESIZE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.ItfSerial.PARITY">
-<code class="sig-name descname">PARITY</code><em class="property"> = 'N'</em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.PARITY" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.PARITY">
+<span class="sig-name descname"><span class="pre">PARITY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'N'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.PARITY" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.ItfSerial.STOPBITS">
-<code class="sig-name descname">STOPBITS</code><em class="property"> = 1</em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.STOPBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.STOPBITS">
+<span class="sig-name descname"><span class="pre">STOPBITS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.STOPBITS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.close" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes connection to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -847,9 +992,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.connect">
-<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.connect" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -861,9 +1006,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.discover">
-<code class="sig-name descname">discover</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.discover" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.discover">
+<span class="sig-name descname"><span class="pre">discover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.discover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discovers devices using the interface.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -875,32 +1020,32 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.flush_in">
-<code class="sig-name descname">flush_in</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.flush_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.flush_in">
+<span class="sig-name descname"><span class="pre">flush_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.flush_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the input buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.flush_out">
-<code class="sig-name descname">flush_out</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.flush_out" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.flush_out">
+<span class="sig-name descname"><span class="pre">flush_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.flush_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the output buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.is_connected">
-<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.is_connected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is connected.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.is_setup">
-<code class="sig-name descname">is_setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.is_setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.is_setup">
+<span class="sig-name descname"><span class="pre">is_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.is_setup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.recv">
-<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.recv" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.recv">
+<span class="sig-name descname"><span class="pre">recv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.recv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -912,9 +1057,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.send">
-<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.send" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -926,21 +1071,21 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.shutdown">
-<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.shutdown" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroys the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.serial.ItfSerial.status">
-<code class="sig-name descname">status</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.status" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.ItfSerial.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.serial.ItfSerial.status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the status of the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -961,54 +1106,54 @@ might need to be reset), check the error type.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.serial.PARITY">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.serial.</code><code class="sig-name descname">PARITY</code><a class="headerlink" href="#libics.driver.terminal.serial.PARITY" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.serial.</span></span><span class="sig-name descname"><span class="pre">PARITY</span></span><a class="headerlink" href="#libics.driver.terminal.serial.PARITY" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.PARITY.EVEN">
-<code class="sig-name descname">EVEN</code><em class="property"> = 'E'</em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.EVEN" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY.EVEN">
+<span class="sig-name descname"><span class="pre">EVEN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'E'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.EVEN" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.PARITY.MARK">
-<code class="sig-name descname">MARK</code><em class="property"> = 'M'</em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.MARK" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY.MARK">
+<span class="sig-name descname"><span class="pre">MARK</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'M'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.MARK" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.PARITY.NONE">
-<code class="sig-name descname">NONE</code><em class="property"> = 'N'</em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.NONE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'N'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.NONE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.PARITY.ODD">
-<code class="sig-name descname">ODD</code><em class="property"> = 'O'</em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.ODD" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY.ODD">
+<span class="sig-name descname"><span class="pre">ODD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'O'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.ODD" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.PARITY.SPACE">
-<code class="sig-name descname">SPACE</code><em class="property"> = 'S'</em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.SPACE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.PARITY.SPACE">
+<span class="sig-name descname"><span class="pre">SPACE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'S'</span></em><a class="headerlink" href="#libics.driver.terminal.serial.PARITY.SPACE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.serial.STOPBITS">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.serial.</code><code class="sig-name descname">STOPBITS</code><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.STOPBITS">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.serial.</span></span><span class="sig-name descname"><span class="pre">STOPBITS</span></span><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.STOPBITS.ONE">
-<code class="sig-name descname">ONE</code><em class="property"> = 1</em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.ONE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.STOPBITS.ONE">
+<span class="sig-name descname"><span class="pre">ONE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.ONE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.STOPBITS.ONE_POINT_FIVE">
-<code class="sig-name descname">ONE_POINT_FIVE</code><em class="property"> = 1.5</em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.ONE_POINT_FIVE" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.STOPBITS.ONE_POINT_FIVE">
+<span class="sig-name descname"><span class="pre">ONE_POINT_FIVE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1.5</span></em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.ONE_POINT_FIVE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.serial.STOPBITS.TWP">
-<code class="sig-name descname">TWP</code><em class="property"> = 2</em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.TWP" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.serial.STOPBITS.TWP">
+<span class="sig-name descname"><span class="pre">TWP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#libics.driver.terminal.serial.STOPBITS.TWP" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1016,25 +1161,25 @@ might need to be reset), check the error type.</p>
 </div>
 <div class="section" id="module-libics.driver.terminal.usb">
 <span id="usb"></span><h2>usb<a class="headerlink" href="#module-libics.driver.terminal.usb" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="libics.driver.terminal.usb.ENDPOINT">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.usb.</code><code class="sig-name descname">ENDPOINT</code><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ENDPOINT">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.usb.</span></span><span class="sig-name descname"><span class="pre">ENDPOINT</span></span><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="libics.driver.terminal.usb.ENDPOINT.IN">
-<code class="sig-name descname">IN</code><em class="property"> = 128</em><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT.IN" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ENDPOINT.IN">
+<span class="sig-name descname"><span class="pre">IN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">128</span></em><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT.IN" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.usb.ENDPOINT.OUT">
-<code class="sig-name descname">OUT</code><em class="property"> = 0</em><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT.OUT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ENDPOINT.OUT">
+<span class="sig-name descname"><span class="pre">OUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#libics.driver.terminal.usb.ENDPOINT.OUT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="libics.driver.terminal.usb.ItfUsb">
-<em class="property">class </em><code class="sig-prename descclassname">libics.driver.terminal.usb.</code><code class="sig-name descname">ItfUsb</code><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.driver.terminal.usb.</span></span><span class="sig-name descname"><span class="pre">ItfUsb</span></span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libics.driver.terminal.base.ItfTerminal" title="libics.driver.terminal.base.ItfTerminal"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.driver.terminal.base.ItfTerminal</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1135,24 +1280,24 @@ might need to be reset), check the error type.</p>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="libics.driver.terminal.usb.ItfUsb.ID_PRODUCT">
-<code class="sig-name descname">ID_PRODUCT</code><em class="property"> = 0</em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.ID_PRODUCT" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.ID_PRODUCT">
+<span class="sig-name descname"><span class="pre">ID_PRODUCT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.ID_PRODUCT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.usb.ItfUsb.ID_VENDOR">
-<code class="sig-name descname">ID_VENDOR</code><em class="property"> = 0</em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.ID_VENDOR" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.ID_VENDOR">
+<span class="sig-name descname"><span class="pre">ID_VENDOR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.ID_VENDOR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="libics.driver.terminal.usb.ItfUsb.LOGGER">
-<code class="sig-name descname">LOGGER</code><em class="property"> = &lt;Logger libics.driver.terminal.ethernet.ItfUsb (WARNING)&gt;</em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.driver.terminal.ethernet.ItfUsb</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.LOGGER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.close" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes connection to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1164,9 +1309,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.connect">
-<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.connect" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1178,9 +1323,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.discover">
-<code class="sig-name descname">discover</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.discover" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.discover">
+<span class="sig-name descname"><span class="pre">discover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.discover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discovers devices using the interface.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -1192,32 +1337,32 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.flush_in">
-<code class="sig-name descname">flush_in</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.flush_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.flush_in">
+<span class="sig-name descname"><span class="pre">flush_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.flush_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the input buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.flush_out">
-<code class="sig-name descname">flush_out</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.flush_out" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.flush_out">
+<span class="sig-name descname"><span class="pre">flush_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.flush_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the output buffer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.is_connected">
-<code class="sig-name descname">is_connected</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.is_connected" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether device is connected.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.is_setup">
-<code class="sig-name descname">is_setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.is_setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.is_setup">
+<span class="sig-name descname"><span class="pre">is_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.is_setup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.recv">
-<code class="sig-name descname">recv</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.recv" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.recv">
+<span class="sig-name descname"><span class="pre">recv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.recv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -1229,9 +1374,9 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.send">
-<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s_data</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.send" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1243,21 +1388,21 @@ might need to be reset), check the error type.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.setup">
-<code class="sig-name descname">setup</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.shutdown">
-<code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.shutdown" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroys the device.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libics.driver.terminal.usb.ItfUsb.status">
-<code class="sig-name descname">status</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.status" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.driver.terminal.usb.ItfUsb.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.driver.terminal.usb.ItfUsb.status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the status of the device.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -1282,59 +1427,51 @@ might need to be reset), check the error type.</p>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">libics.driver.terminal</a><ul>
-<li><a class="reference internal" href="#module-libics.driver.terminal.ethernet">ethernet</a></li>
-<li><a class="reference internal" href="#module-libics.driver.terminal.gpib">gpib</a></li>
-<li><a class="reference internal" href="#module-libics.driver.terminal.serial">serial</a></li>
-<li><a class="reference internal" href="#module-libics.driver.terminal.usb">usb</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libics.driver.waveformgenerator.html" class="btn btn-neutral float-right" title="libics.driver.waveformgenerator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.driver.piezo.html" class="btn btn-neutral float-left" title="libics.driver.piezo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_dynamic/libics.driver.terminal.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2021, David Wei.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">libics 1.0dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="libics.driver.html" >libics.driver</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019-2020, David Wei.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

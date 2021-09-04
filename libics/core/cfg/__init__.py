@@ -87,6 +87,13 @@ class CfgBase(io.FileBase):
                     max_depth = _depth
         return max_depth
 
+    def __getitem__(self, key):
+        keys = str.split(key, ".")
+        obj = getattr(self, keys[0])
+        if len(keys) > 1:
+            obj = obj[".".join(keys[1:])]
+        return obj
+
     def _to_dict(self, serialize_all=False):
         """
         Serializes the serializable attributes to a dict.
@@ -136,11 +143,7 @@ class CfgBase(io.FileBase):
         return s
 
     def __repr__(self):
-        d = self._to_dict(serialize_all=False)
-        if len(d) == 0:
-            d = self._to_dict(serialize_all=True)
-        s = repr(d)
-        return s
+        return f"<'{self.__class__.__name__}' at {hex(id(self))}>\n{str(self)}"
 
     def map_recursive(self, item_func=None, cfg_func=None, use_all=False):
         """

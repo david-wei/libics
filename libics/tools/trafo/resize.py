@@ -6,6 +6,70 @@ import scipy.ndimage
 ###############################################################################
 
 
+def crop_image(mask):
+    """
+    Crops to the smallest rectangle containing all non-masked indices.
+    Returns the slice for cropping.
+
+    Parameters
+    ----------
+    mask : `np.ndarray(2, bool)`
+        Mask where `True` corresponds to indices not to be cropped.
+        TODO: generalize for multiple dimensions.
+
+    Returns
+    -------
+    crop : `tuple((int, int))`
+        Cropping index rectangle (min, max). Dimensions: `[ar_ndim, 2]`.
+
+    Notes
+    -----
+    From `https://codereview.stackexchange.com/questions/132914`.
+    Use :py:func:`libics.core.util.misc.cv_index_rect_to_slice()` to convert
+    the index rectangle to slices.
+
+    Examples
+    --------
+    >>> x = y = np.arange(7) - 3
+    >>> X, Y = np.meshgrid(x, y, indexing="ij")
+    >>> F = X**2 + Y**2
+    >>> mask = F < 4
+    >>> crop = crop_image(mask)
+    >>> crop
+    ((2, 5), (2, 5))
+    >>> F[misc.cv_index_rect_to_slice(crop)]
+    array([[2, 1, 2],
+           [1, 0, 1],
+           [2, 1, 2]], dtype=int32)
+    """
+    if mask.ndim != 2:
+        raise ValueError("'mask' has to be two-dimensional")
+    m, n = mask.shape
+    mask0, mask1 = mask.any(0), mask.any(1)
+    col_start, col_end = mask0.argmax(), n - mask0[::-1].argmax()
+    row_start, row_end = mask1.argmax(), m - mask1[::-1].argmax()
+    return ((row_start, row_end), (col_start, col_end))
+
+
+def center_crop(center, crop_rect, shape=None):
+    """
+    Centers a crop index rectangle.
+    """
+    center = np.array(center)
+    crop_rect = np.array(crop_rect).T
+    crop_rect[-1] += 1
+    half_size = np.max(np.abs(crop_rect.T - center), axis=0)
+    lower, upper = center - half_size + 1, center + half_size
+    lower[lower < 0] = 0
+    if shape is not None:
+        shape = np.array(shape)
+        upper[upper > shape] = shape[upper > shape]
+    return tuple((lower[i], upper[i]) for i in range(len(center)))
+
+
+###############################################################################
+
+
 def find_centroid(np_array):
     """
     Finds the centroid of a multi-dimensional numpy array.

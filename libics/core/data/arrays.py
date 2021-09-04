@@ -22,11 +22,15 @@ class ArrayData(object):
 
     Object creation:
 
-    1. Instantiate an `ArrayData` object.
-    2. Optional: Define the dimensions of the data using :py:meth:`add_dim`
-       by specifying the metadata and scaling behaviour.
-    3. Set the data using the :py:attr:`data` attribute. Default dimensions
-       are added or removed if they are not commensurate.
+    * Instantiate an `ArrayData` object.
+    * Optional: Define the dimensions of the data using :py:meth:`add_dim`
+      by specifying the metadata and scaling behavior.
+    * Set the data using the :py:attr:`data` attribute. Default dimensions
+      are added or removed if they are not commensurate.
+    * Alternative: This class can also be used to specify the variables
+      (i.e. array indices) only, metadata and scaling behavior are set
+      accordingly. Instead of setting the data, the attribute
+      :py:attr:`var_shape` can be set.
 
     Object modification:
 
@@ -44,6 +48,12 @@ class ArrayData(object):
     * Numeric metadata can be extracted (depending on the metadata mode).
     * Upon calling the object with some given variables, an interpolated
       result is returned.
+
+    Subclassing or class modification:
+
+    * Follow the convention to declare all instance attributes within the
+      constructor.
+    * Remember to add these attribute names to :py:attr:`ATTR_NAMES_COPY_VAR`.
     """
 
     POINTS = "POINTS"
@@ -53,10 +63,15 @@ class ArrayData(object):
 
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
-    def __init__(self):
+    def __init__(self, *args):
+        # -------------------
+        # Instance attributes
+        # -------------------
         # Data
         self.data_quantity = None
+        self.set_data_quantity()
         self._data = np.empty(0)
+        self._placeholder_shape = tuple()
         # Variable
         self.var_quantity = []
         self.var_mode = []
@@ -69,12 +84,51 @@ class ArrayData(object):
         # Mode: linspace
         self._low = []
         self._high = []
+        # Parse parameters
+        if len(args) != 0:
+            self.__set_init_args(*args)
+
+    def __set_init_args(self, *args):
+        if len(args) != 1:
+            raise ValueError("constructor only accepts one argument")
+        arg = args[0]
+        if isinstance(arg, ArrayData):
+            for attr_name in self.ATTR_NAMES_COPY_VAR:
+                setattr(self, attr_name, getattr(arg, attr_name))
+            self.data = arg.data
+        elif isinstance(arg, np.ndarray):
+            self.data = arg
+        else:
+            try:
+                arg = np.array(arg)
+                if arg.dtype == np.object_:
+                    raise ValueError
+                self.data = arg
+            except ValueError:
+                raise ValueError(
+                    f"constructor does not accept type `{type(arg)}`"
+                )
+
+    __LIBICS_IO__ = True
+    SER_KEYS = {
+        "data_quantity", "data", "var_quantity", "var_mode",
+        "_points", "_offset", "_center", "_step", "_low", "_high"
+    }
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
+    ATTR_NAMES_COPY_VAR = {
+        "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
+        "_points", "_offset", "_center", "_step", "_low", "_high"
+    }
 
     # ++++
     # Data
     # ++++
 
-    def set_data_quantity(self, **kwargs):
+    def set_data_quantity(self, *args, **kwargs):
         """
         Sets the data quantity object.
 
@@ -83,7 +137,7 @@ class ArrayData(object):
         **kwargs
             See :py:func:`assume_quantity`.
         """
-        _quantity = assume_quantity(**kwargs)
+        _quantity = assume_quantity(*args, **kwargs)
         self.data_quantity = _quantity
 
     # +++++++++++++++++++++++++++++++
@@ -134,7 +188,7 @@ class ArrayData(object):
         # Mode: points
         if "points" in kwargs:
             self.var_mode[dim] = self.POINTS
-            self._points[dim] = kwargs["points"]
+            self._points[dim] = np.array(kwargs["points"])
             self._offset[dim] = None
             self._center[dim] = None
             self._step[dim] = None
@@ -384,6 +438,11 @@ class ArrayData(object):
     # Getter
     # ++++++
 
+    def _check_mode_cv(self, dim):
+        _p = self._points[dim]
+        _dp = _p[1] - _p[0]
+        return np.allclose(_p[1:] - _p[:-1], _dp)
+
     def get_points(self, dim):
         """
         Gets the variable points for the specified dimension.
@@ -392,7 +451,7 @@ class ArrayData(object):
             return self._points[dim]
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = (self.shape[dim] - 0.9) * _step
+            _range = (self.var_shape[dim] - 1) * _step
             if self._offset[dim] is not None:
                 _offset = self._offset[dim]
             else:
@@ -400,20 +459,22 @@ class ArrayData(object):
             _stop = _offset + _range + 0.1 * _step
             return np.arange(_offset, _stop, _step)
         elif self.var_mode[dim] == self.LINSPACE:
-            _num = self.shape[dim]
+            _num = self.var_shape[dim]
             return np.linspace(self._low[dim], self._high[dim], num=_num)
         else:
             raise ValueError("invalid mode: {:s}".format(str(self.var_mode)))
 
-    def get_offset(self, dim):
+    def get_offset(self, dim, check_mode=True):
         """
         Gets the variable offset for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable offset on a dimension in POINTS mode"
-            )
-            return np.min(self._points[dim])
+            _offset = np.min(self._points[dim])
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting variable offset on a dimension in POINTS mode"
+                )
+            return _offset
         elif self.var_mode[dim] == self.RANGE:
             if self._offset[dim] is not None:
                 return self._offset[dim]
@@ -425,14 +486,16 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return self._low[dim]
 
-    def get_center(self, dim):
+    def get_center(self, dim, check_mode=True):
         """
         Gets the variable center for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting mean as variable center on a dimension in POINTS mode"
-            )
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting mean as variable center "
+                    "on a dimension in POINTS mode"
+                )
             return np.mean(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             if self._center[dim] is not None:
@@ -445,37 +508,37 @@ class ArrayData(object):
         elif self.var_mode[dim] == self.LINSPACE:
             return np.mean([self._low[dim], self._high[dim]])
 
-    def get_step(self, dim):
+    def get_step(self, dim, check_mode=True):
         """
         Gets the variable step for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting differential mean as variable step on a dimension "
-                + "in POINTS mode"
-            )
+            if check_mode and not self._check_mode_cv(dim):
+                self.LOGGER.warning(
+                    "getting differential mean as variable step "
+                    "on a dimension in POINTS mode"
+                )
             _points = np.sort(self._points[dim])
             return np.mean(_points[1:] - _points[:-1])
         elif self.var_mode[dim] == self.RANGE:
             return self._step[dim]
         elif self.var_mode[dim] == self.LINSPACE:
-            return (self._high[dim] - self._low[dim]) / (self.shape[dim] - 1)
+            return (
+                (self._high[dim] - self._low[dim]) / (self.var_shape[dim] - 1)
+            )
 
     def get_low(self, dim):
         """
         Gets the variable low for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable low on a dimension in POINTS mode"
-            )
             return np.min(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             if self._offset[dim] is not None:
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = self.var_shape[dim] * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -486,13 +549,10 @@ class ArrayData(object):
         Gets the variable high for the specified dimension.
         """
         if self.var_mode[dim] == self.POINTS:
-            self.LOGGER.warning(
-                "getting variable high on a dimension in POINTS mode"
-            )
-            return np.min(self._points[dim])
+            return np.max(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = self.shape[dim] * _step
+            _range = self.var_shape[dim] * _step
             if self._offset[dim] is not None:
                 return self._offset[dim] + _range
             else:
@@ -500,6 +560,37 @@ class ArrayData(object):
                 return _center + _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
             return self._high[dim]
+
+    def get_bins(self, dim):
+        """
+        Gets the bins of variable points for the specified dimension.
+
+        The returned bins (array of size `len(points) + 1`) refer to the
+        centers between adjacent points.
+        Edge bins (where one side is undefined) use the other side to form
+        symmetric bins around the edge points.
+        """
+        _points = self.get_points(dim)
+        _bins = np.empty(len(_points) + 1, dtype=float)
+        _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
+        _bins[0] = 2 * _points[0] - _bins[1]
+        _bins[-1] = 2 * _points[-1] - _bins[-2]
+        return _bins
+
+    def max(self):
+        return np.max(self.data)
+
+    def min(self):
+        return np.min(self.data)
+
+    def mean(self):
+        return np.mean(self.data)
+
+    def std(self):
+        return np.std(self.data)
+
+    def sum(self):
+        return np.sum(self.data)
 
     def get_var_meshgrid(self, indexing="ij"):
         """
@@ -517,55 +608,108 @@ class ArrayData(object):
         """
         return np.array(np.meshgrid(*self.points, indexing=indexing))
 
+    def get_var_meshgrid_bins(self, indexing="ij"):
+        """
+        Creates a `numpy` meshgrid for the bins of the variable dimensions.
+
+        Parameters
+        ----------
+        indexing : `"ij"` or `"xy"`
+            See :py:func:`numpy.meshgrid`.
+
+        Returns
+        -------
+        mg : `np.ndarray`
+            Meshgrid of bins as `numpy` array.
+        """
+        return np.array(np.meshgrid(*self.bins, indexing=indexing))
+
     # ++++++++++
     # Properties
     # ++++++++++
 
     @property
+    def size(self):
+        """Data array size."""
+        return self._data.size
+
+    @property
     def ndim(self):
-        return self._data.ndim
+        """Data array ndim."""
+        if self._data.shape == (0,):
+            return 0
+        else:
+            return self._data.ndim
 
     @property
     def var_ndim(self):
+        """Variable ndim."""
         return len(self.var_mode)
 
     @property
     def total_ndim(self):
+        """Total ndim (variable and data dimension)."""
         return self.ndim + 1
 
     @property
     def shape(self):
+        """Data array shape."""
         return self._data.shape
 
+    @property
+    def var_shape(self):
+        """Variable (placeholder) shape. Is updated upon setting `data`."""
+        if self.ndim == self.var_ndim:
+            return self.shape
+        else:
+            return self._placeholder_shape
+
+    @var_shape.setter
+    def var_shape(self, val):
+        self._placeholder_shape = tuple(val)
+
     def __len__(self):
+        """Length of data."""
         return len(self._data)
 
     @property
     def points(self):
-        return [self.get_points(dim) for dim in range(self.ndim)]
+        """List of variable points."""
+        return [self.get_points(dim) for dim in range(self.var_ndim)]
 
     @property
     def offset(self):
-        return [self.get_offset(dim) for dim in range(self.ndim)]
+        """List of variable offsets."""
+        return [self.get_offset(dim) for dim in range(self.var_ndim)]
 
     @property
     def center(self):
-        return [self.get_center(dim) for dim in range(self.ndim)]
+        """List of variable centers."""
+        return [self.get_center(dim) for dim in range(self.var_ndim)]
 
     @property
     def step(self):
-        return [self.get_step(dim) for dim in range(self.ndim)]
+        """List of variable steps."""
+        return [self.get_step(dim) for dim in range(self.var_ndim)]
 
     @property
     def low(self):
-        return [self.get_low(dim) for dim in range(self.ndim)]
+        """List of variable minima."""
+        return [self.get_low(dim) for dim in range(self.var_ndim)]
 
     @property
     def high(self):
-        return [self.get_high(dim) for dim in range(self.ndim)]
+        """List of variable maxima."""
+        return [self.get_high(dim) for dim in range(self.var_ndim)]
+
+    @property
+    def bins(self):
+        """List of variable bins."""
+        return [self.get_bins(dim) for dim in range(self.var_ndim)]
 
     @property
     def data(self):
+        """Data array."""
         return self._data
 
     @data.setter
@@ -576,15 +720,77 @@ class ArrayData(object):
             self.add_dim(diff_ndim)
         elif diff_ndim < 0:
             self.rmv_dim(num=np.abs(diff_ndim))
+        self.var_shape = self.shape
 
     def __getitem__(self, key):
-        return self.data[key]
+        """Get sliced `ArrayData` object. Supports variable change."""
+        if np.isscalar(key) or isinstance(key, slice):
+            key = (key,)
+        # If single item
+        if (len(key) == self.ndim and np.all([np.isscalar(k) for k in key])):
+            return self.data[key]
+        # Else (slice in at least one dimension)
+        obj = self.copy_var()
+        kdim = len(key)
+        for i, k in enumerate(reversed(key)):
+            dim = kdim - i - 1
+            # If single entry
+            if np.isscalar(k):
+                obj.rmv_dim(dim)
+            # If slice
+            elif isinstance(k, slice):
+                _var_mode = obj.var_mode[dim]
+                _size = obj.shape[dim]
+                # Normalize slice
+                _kstart, _kstop, _kstep = 0, _size, 1
+                if k.start is not None:
+                    _kstart = k.start if k.start >= 0 else k.start % _size
+                if k.step is not None:
+                    _kstep = k.step
+                if k.stop is not None:
+                    _kstop = k.stop if k.stop >= 0 else k.stop % _size
+                    _kstop = (((_kstop - _kstart) // _kstep - 1) * _kstep
+                              + _kstart + 1)
+                if _kstop < _kstart:
+                    continue
+                # Slice variable
+                if _var_mode == self.POINTS:
+                    _points = obj.get_points(dim)
+                    obj.set_dim(dim, points=_points[k])
+                elif _var_mode == self.RANGE:
+                    _offset, _step = obj.get_offset(dim), obj.get_step(dim)
+                    _offset += _kstart * _step
+                    _step *= _kstep
+                    obj.set_dim(dim, offset=_offset, step=_step)
+                elif _var_mode == self.LINSPACE:
+                    _low, _step = obj.get_low(dim), obj.get_step(dim)
+                    _low += _kstart * _step
+                    _high = _low + (_kstop - _kstart - 1) * _kstep * _step
+                    obj.set_dim(dim, low=_low, high=_high)
+                else:
+                    raise ValueError(f"invalid mode: {_var_mode}")
+            # Else (error)
+            else:
+                raise ValueError(f"invalid key type ({k} of type {type(k)})")
+        obj.data = self.data[key]
+        return obj
 
     def __setitem__(self, key, val):
+        """Set data array item by index."""
         self.data[key] = val
 
+    def __iter__(self):
+        """
+        To prevent slow iteration with :py:meth:`__getitem__`,
+        returns `np.ndarray` iterator.
+        """
+        return iter(self.data)
+
+    def __array__(self, **kwargs):
+        return self.data.__array__(**kwargs)
+
     def __str__(self):
-        s = str(self.data_quantity)
+        s = f"{str(self.data_quantity)}\n"
         s += "Quantity:\n["
         for i in range(self.ndim):
             if i > 0:
@@ -592,6 +798,7 @@ class ArrayData(object):
             s += str(self.var_quantity[i])
             if i < self.ndim - 1:
                 s += ",\n"
+        s += "]\n"
         s += "Var:\n["
         for i in range(self.ndim):
             if i > 0:
@@ -609,6 +816,9 @@ class ArrayData(object):
         s += "{:s}".format(str(self.data))
         return s
 
+    def __repr__(self):
+        return f"<'{self.__class__.__name__}' at {hex(id(self))}>\n{str(self)}"
+
     # ++++++++++
     # Conversion
     # ++++++++++
@@ -618,6 +828,17 @@ class ArrayData(object):
         Returns a deep copy of the object.
         """
         return copy.deepcopy(self)
+
+    def copy_var(self):
+        """
+        Returns a deep copy of all objects except for :py:attr:`data`,
+        which is copied by reference.
+        """
+        obj = self.__class__()
+        for attr_name in self.ATTR_NAMES_COPY_VAR:
+            setattr(obj, attr_name, copy.deepcopy(getattr(self, attr_name)))
+        obj.data = self.data
+        return obj
 
     def cv_index_to_quantity(self, ind, dim):
         """
@@ -664,14 +885,17 @@ class ArrayData(object):
             ind = np.argmin(np.abs(self.get_points(dim) - val))
         else:
             val = max(val, self.get_offset(dim))
-            ind = round((val - self.offset[dim]) / self.scale[dim])
+            ind = round((val - self.offset[dim]) / self.step[dim])
         return ind
 
     # +++++++++++++
     # Interpolation
     # +++++++++++++
 
-    def __call__(self, var, mode="nearest", extrapolation=False):
+    def __call__(self, var, **kwargs):
+        return self.interpolate(var, **kwargs)
+
+    def interpolate(self, var, mode="nearest", extrapolation=False):
         """
         Acts as a function and interpolates for the given `var`.
 
@@ -746,6 +970,104 @@ class ArrayData(object):
             func_val = func_val.reshape(shape)
         return func_val
 
+    def supersample(self, rep):
+        """
+        Gets a supersampled `ArrayData` object.
+
+        Parameters
+        ----------
+        rep : `int` or `Iter[int]`
+            Supersampling repetitions (number of new indices per old index).
+            If iterable, each value corresponds to the respective dimension.
+
+        Returns
+        -------
+        ad : `ArrayData`
+            Supersampled array data.
+        """
+        if np.isscalar(rep):
+            rep = self.ndim * (rep,)
+        if len(rep) != self.ndim:
+            raise ValueError("invalid dimensions")
+        ad = self.copy()
+        for i in range(self.ndim):
+            _rep = int(round(rep[i]))
+            if _rep > 1:
+                ad.data = ad.data.repeat(_rep, axis=i)
+                _new_step = ad.get_step(i) / _rep
+                if ad.var_mode[i] == self.RANGE:
+                    ad._step[i] = _new_step
+                    if ad._offset[i] is not None:
+                        ad._offset[i] -= _new_step * (_rep - 1) / 2
+                elif ad.var_mode[i] == self.LINSPACE:
+                    ad._low[i] -= _new_step * (_rep - 1) / 2
+                    ad._high[i] += _new_step * (_rep - 1) / 2
+                elif ad.var_mode[i] == self.POINTS:
+                    raise NotImplementedError("POINTS mode not implemented")
+        return ad
+
+    def pad(self, shape, val=0):
+        """
+        Gets a resized `ArrayData` with the old data centered and padded.
+
+        Can also be used to obtain a centered slice.
+
+        Parameters
+        ----------
+        shape : `tuple(int)` or `float`
+            Padded shape.
+            If `float`, scales all dimensions by the factor `shape`.
+        val : `Any`
+            Padding value.
+
+        Returns
+        -------
+        ad : `ArrayData`
+            Padded array data with `shape`.
+        """
+        # Parse arguments
+        if shape is None:
+            return self.copy()
+        if np.isscalar(shape):
+            shape = tuple(np.round(shape * np.array(self.shape)).astype(int))
+        if len(shape) != self.ndim:
+            raise ValueError("invalid dimensions")
+        # Setup array data
+        ad = self.copy_var()
+        ad.data = np.full(shape, val, dtype=self.data.dtype)
+        # Find lower indices
+        shape_half_diff = [
+            (shape[i] - self.shape[i]) // 2 for i in range(self.ndim)
+        ]
+        # Find slices for old and new array
+        slice_old, slice_new = [], []
+        for i in range(self.ndim):
+            # New shape is larger
+            if shape_half_diff[i] >= 0:
+                slice_old.append(slice(None))
+                slice_new.append(slice(
+                    shape_half_diff[i], shape_half_diff[i] + self.shape[i]
+                ))
+            # Old shape is larger
+            else:
+                slice_old.append(slice(
+                    -shape_half_diff[i], -shape_half_diff[i] + ad.shape[i]
+                ))
+                slice_new.append(slice(None))
+        slice_old, slice_new = tuple(slice_old), tuple(slice_new)
+        ad.data[slice_new] = self.data[slice_old]
+        # Change variable data
+        for i in range(self.ndim):
+            if ad.var_mode[i] == self.RANGE:
+                if ad._offset[i] is not None:
+                    ad._offset[i] -= shape_half_diff[i] * ad.get_step(i)
+            elif ad.var_mode[i] == self.LINSPACE:
+                ad._low[i] -= shape_half_diff[i] * ad.get_step(i)
+                ad._high[i] += shape_half_diff[i] * ad.get_step(i)
+            elif ad.var_mode[i] == self.POINTS:
+                raise NotImplementedError("POINTS mode not implemented")
+        return ad
+
     # ++++++++++++++++++++++
     # Combination operations
     # ++++++++++++++++++++++
@@ -773,7 +1095,7 @@ class ArrayData(object):
         """
         return np.all([
             np.allclose(self.get_points(dim), other.get_points(dim))
-            for dim in self.ndim
+            for dim in range(self.ndim)
         ])
 
     def get_common_obj(self, other, op, in_place=False, rev=False, raw=False):
@@ -1006,6 +1328,8 @@ class ArrayData(object):
 
     def __array_ufunc__(self, ufunc, method, i, *inputs, **kwargs):
         # Convert ArrayData inputs into np.ndarray inputs
+        if isinstance(i, ArrayData):
+            i = i.data
         inputs = tuple([(it.data if isinstance(it, ArrayData) else it)
                         for it in inputs])
         # Declare output object
@@ -1019,10 +1343,14 @@ class ArrayData(object):
             self.data.__array_ufunc__(ufunc, method, i, *inputs, **kwargs)
         # Construct new object
         else:
-            obj = copy.deepcopy(self)
-            obj.data = self.data.__array_ufunc__(
+            res = self.data.__array_ufunc__(
                 ufunc, method, i, *inputs, **kwargs
             )
+            if np.isscalar(res):
+                obj = res
+            else:
+                obj = copy.deepcopy(self)
+                obj.data = res
         # Return ArrayData object with data as calculated by the ufunc
         return obj
 
@@ -1048,6 +1376,7 @@ class SeriesData(object):
         dim : `int`
             Variable dimension to be set.
         **kwargs
+            `quantity, name, symbol, unit`.
             See :py:func:`assume_quantity`.
         """
         _quantity = assume_quantity(**kwargs)
@@ -1164,7 +1493,7 @@ class SeriesData(object):
 ###############################################################################
 
 
-def assume_quantity(**kwargs):
+def assume_quantity(*args, **kwargs):
     """
     Generates a quantity object from keyword arguments.
 
@@ -1181,6 +1510,8 @@ def assume_quantity(**kwargs):
     quantity : `types.Quantity`
         Constructed object.
     """
+    if len(args) == 1 and isinstance(args[0], types.Quantity):
+        kwargs["quantity"] = args[0]
     if "quantity" in kwargs:
         _quantity = misc.assume_construct_obj(
             kwargs["quantity"], types.Quantity

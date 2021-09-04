@@ -1,10 +1,45 @@
 import math
+import numbers
 import operator
 import os
 import re
 import time
 
 import numpy as np
+
+
+###############################################################################
+# Type Checks and Conversions
+###############################################################################
+
+
+def is_number(var):
+    """
+    Returns whether given variable is of scalar, numeric type.
+    """
+    return isinstance(var, numbers.Number)
+
+
+def cv_float(text, dec_sep=[".", ","]):
+    """
+    Converts a string into a float.
+
+    Parameters
+    ----------
+    text : `str`
+        Numeric text.
+    dec_sep : `str` or `Iter[str]`
+        Single or multiple decimal separators.
+    """
+    if is_number(text):
+        return float(text)
+    if isinstance(dec_sep, str):
+        text = text.replace(dec_sep, ".")
+    else:
+        for ch in dec_sep:
+            if ch in text:
+                text = text.replace(ch, ".")
+    return float(text)
 
 
 ###############################################################################
@@ -166,7 +201,8 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
     Parameters
     ----------
     obj : `object` or `dict`
-        Object or keyword argument dictionary.
+        Object itself, keyword argument dictionary
+        or single positional argument.
     cls_ : `class`
         Class of instance to be constructed.
     raise_exception : `Exception` or `None`
@@ -197,10 +233,13 @@ def assume_construct_obj(obj, cls_, raise_exception=None):
             else:
                 raise raise_exception
     else:
-        if raise_exception is None:
-            return obj
-        else:
-            raise raise_exception
+        try:
+            return cls_(obj)
+        except TypeError:
+            if raise_exception is None:
+                return obj
+            else:
+                raise raise_exception
 
 
 def cv_bitfield(n):
@@ -399,6 +438,32 @@ def make_dict(key_list, val_list):
     return d
 
 
+def rename_dict_keys(d, key_map, in_place=True):
+    """
+    Renames keys of a dictionary.
+
+    Parameters
+    ----------
+    d : `dict`
+        Dictionary to be renamed.
+    key_map : `dict`
+        Mapping between old key and new key.
+    in_place : `bool`
+        If `True`, changes the dictionary in place;
+        if `False`, creates a copy of the dictionary.
+
+    Returns
+    -------
+    d_new : `dict`
+        Renamed dictionary.
+    """
+    d_new = d if in_place else d.copy()
+    for k, v in key_map.items():
+        if k in d_new:
+            d_new[v] = d_new.pop(k)
+    return d_new
+
+
 ###############################################################################
 # String Functions
 ###############################################################################
@@ -565,7 +630,7 @@ def capitalize_first_char(s):
     s_cap : str
         Capitalized string.
     """
-    s_cap = re.sub("([a-zA-Z])", lambda x: x.groups()[0].upper(), s, 1)
+    s_cap = re.sub(r"(\S)", lambda x: x.groups()[0].upper(), s, 1)
     return s_cap
 
 
@@ -632,6 +697,54 @@ def print_progress(
             end &= (subcount == subtotal)
     end = "\n" if end else ""
     print(s, end=end)
+
+
+def iter_progress(it, **kwargs):
+    """
+    Returns an iterator and prints a progress bar for each iteration.
+
+    Note that `it` must be sized (i.e. has a length).
+    `**kwargs` are passed to :py:func:`print_progress`.
+    """
+    try:
+        total = len(it)
+    except TypeError:
+        it = list(it)
+        total = len(it)
+    it = iter(it)
+    start_time = time.time()
+    counter = 0
+    try:
+        while True:
+            print_progress(counter, total, start_time=start_time, **kwargs)
+            yield next(it)
+            counter += 1
+    except StopIteration:
+        return
+
+
+###############################################################################
+# Regular Expressions
+###############################################################################
+
+
+def get_regex_number(sgn=True, dec_sep="."):
+    """
+    Gets the regular expression for a signed decimal floating point number.
+
+    Parameters
+    ----------
+    sgn : `bool`
+        Whether to allow sign before number.
+    dec_sep : `str`
+        Decimal separator character. Multiple separators can be used by
+        passing multiple characters, e.g. `".,"` for both point and comma as
+        separators.
+    """
+    regex = r"[+-]?" if sgn else ""
+    dec_sep = f"[{dec_sep}]?"
+    regex += f"\\d*{dec_sep}\\d*"
+    return regex
 
 
 ###############################################################################
@@ -727,28 +840,49 @@ def _gcrec(prev_comb, rem_ls):
     return ls
 
 
-def get_combinations(ls):
+def get_combinations(ls, flatten=True, dtype=None):
     """
     Takes an iterable of iterables and returns a list with all possible
     mutual, ordered combinations.
 
     Parameters
     ----------
-    ls : iterable
+    ls : `Iter[Any]`
         Iterable from which combinations are constructed.
+    flatten : `bool`
+        Whether to flatten the items in `ls`.
+        If `True`, the algorithm is faster but cannot work with e.g.
+        items in `ls` that are multi-dimensional arrays.
+    dtype : `None` or `callable`
+        Combinations are given as numpy array.
+        If `callable`, `dtype` is called on the returned numpy array.
 
     Returns
     -------
-    comb : list
+    comb : `np.ndarray` or `Any`
         Combinations list.
 
     Examples
     --------
     >>>> ls = [(1, 2), (5, ), (7, 8)]
-    >>>> get_combinations(ls)
-    [[1, 5, 7], [2, 5, 7], [1, 5, 8], [2, 5, 8]]
+    >>>> get_combinations(ls, dtype=list)
+    [[1, 5, 7], [1, 5, 8], [2, 5, 7], [2, 5, 8]]
     """
-    return _gcrec([], ls)
+    if flatten is True:
+        comb = np.stack(np.meshgrid(*ls, indexing="ij"), axis=-1)
+        comb = comb.reshape(-1, len(ls))
+    else:
+        if dtype is None:
+            dtype = list
+        comb = _gcrec([], ls)
+    if dtype == list:
+        if isinstance(comb, np.ndarray):
+            comb = comb.tolist()
+    elif callable(dtype):
+        comb = dtype(dtype(x) for x in comb)
+    else:
+        comb = np.array(comb)
+    return comb
 
 
 ###############################################################################
@@ -780,50 +914,184 @@ def get_numpy_dtype_str(dtype):
     return str(dtype)
 
 
-def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front"):
+def get_numpy_array_index(ar_or_ndim, dim, idx, default_idx=slice(None)):
+    """
+    Gets the multidimensional index to slice an array.
+
+    Parameters
+    ----------
+    ar_or_ndim : `np.ndarray` or `int`
+        Array or number of dimensions of targeted array.
+    dim : `int` or `Iterable[int]`
+        Index or indices of dimensions.
+    idx : `int` or `slice` or `Iterable[int or slice]`
+        Actual indices.
+        If iterable is given, must be in the same order as `dim`.
+    default_idx : `int` or `slice`
+        Indices of dimensions not in `dim`.
+
+    Returns
+    -------
+    slc : `tuple(int or slice)`
+        Slicing indices.
+
+    Examples
+    --------
+    >>> ar = np.arange(2 * 3 * 4).reshape((2, 3, 4))
+    >>> slc0 = get_numpy_array_index(ar, (0, 2), (0, 0))
+    >>> np.all(ar[slc0] == ar[0, :, 0])
+    True
+    >>> slc1 = get_numpy_array_index(ar.ndim, (1, 2), (0, slice(0, 2)))
+    >>> np.all(ar[slc1] == ar[:, 0, 0:2])
+    True
+    """
+    ndim = ar_or_ndim if np.isscalar(ar_or_ndim) else ar_or_ndim.ndim
+    dim, idx = assume_iter(dim), assume_iter(idx)
+    slc = ndim * [default_idx]
+    for i, d in enumerate(dim):
+        slc[d] = idx[i]
+    return tuple(slc)
+
+
+def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front", dtype=None):
     """
     Pads or shrinks a numpy array to a requested shape.
 
     Parameters
     ----------
-    ar : numpy.ndarray
+    ar : `np.ndarray`
         Numpy array to be resized.
-    shape : tuple(int)
-        Target shape of array. Must have same dimension as ar.
-    fill_value : ar.dtype
+    shape : `tuple(int)`
+        Target shape of array. Must have same dimension as `ar`.
+    fill_value : `ar.dtype`
         Pad value if array is increased.
-    mode_keep : "front", "back", "center"
-        Keeps the elements of ar at the <mode_keep> of the
+    mode_keep : `"front", "back", "center"`
+        Keeps the elements of `ar` at the front/back/center of the
         resized array.
+    dtype : `np.dtype` or `None`
+        Numpy data type to cast to. If `None`, uses dtype of `ar`.
 
     Returns
     -------
-    ar : numpy.ndarray
+    resized_ar : `np.ndarray`
         Resized numpy array.
     """
-    for dim in range(len(ar.shape)):
-        start, stop = 0, shape[dim]
-        if mode_keep == "front":
-            start, stop = 0, shape[dim]
-        elif mode_keep == "back":
-            start, stop = ar.shape[dim] - shape[dim], ar.shape[dim]
+    # Find resizing index rectangle
+    slice_new, slice_old = [], []
+    for dim in range(ar.ndim):
+        if mode_keep == "back":
+            stop_new, stop_old = None, None
+            if shape[dim] > ar.shape[dim]:
+                start_new, start_old = shape[dim] - ar.shape[dim], None
+            else:
+                start_new, start_old = None, ar.shape[dim] - shape[dim]
         elif mode_keep == "center":
-            diff = (ar.shape[dim] - shape[dim]) // 2
-            start, stop = diff, shape[dim] + diff
-        # reduce
-        if shape[dim] < ar.shape[dim]:
-            idx = [slice(None)] * dim + [slice(start, stop)]
-            ar = ar[tuple(idx)]
-        # expand
-        elif shape[dim] > ar.shape[dim]:
-            padl_shape = list(ar.shape)
-            padl_shape[dim] = start
-            padl = np.full(padl_shape, fill_value, dtype=ar.dtype)
-            padr_shape = list(ar.shape)
-            padr_shape[dim] = shape[dim] - stop
-            padr = np.full(padr_shape, fill_value, dtype=ar.dtype)
-            ar = np.concatenate((padl, ar, padr), axis=dim)
-    return ar
+            center = shape[dim] // 2
+            if shape[dim] > ar.shape[dim]:
+                ldiff = ar.shape[dim] // 2
+                rdiff = ar.shape[dim] - ldiff
+                start_new, start_old = center - ldiff, None
+                stop_new, stop_old = center + rdiff, None
+            else:
+                ldiff = shape[dim] // 2
+                rdiff = shape[dim] - ldiff
+                start_new, start_old = None, center - ldiff
+                stop_new, stop_old = None, center + rdiff
+        else:  # front
+            start_new, start_old = None, None
+            if shape[dim] > ar.shape[dim]:
+                stop_new, stop_old = ar.shape[dim], None
+            else:
+                stop_new, stop_old = None, shape[dim]
+        # Set slice
+        slice_new.append(slice(start_new, stop_new))
+        slice_old.append(slice(start_old, stop_old))
+    # Resize
+    resized_ar = np.full(
+        shape, fill_value, dtype=ar.dtype if dtype is None else dtype
+    )
+    resized_ar[tuple(slice_new)] = ar[tuple(slice_old)]
+    return resized_ar
+
+
+def cv_array_points_to_bins(ar):
+    """
+    Converts a center point array to bin points.
+
+    Dimensions: `(ndim0, ndim1, ...) -> (ndim0 + 1, ndim1 + 1, ...)`.
+
+    Notes
+    -----
+    FIXME: Does not work for multiple dimensions.
+    TODO: Does not apply proper dimensional averaging, only "diagonal"
+    two-point average.
+    """
+    ar = np.array(ar)
+    bins = np.zeros(np.array(ar.shape) + 1,
+                    dtype=complex if ar.dtype == complex else float)
+    slice_center = tuple(ar.ndim * [slice(1, -1)])
+    slice_front = tuple(ar.ndim * [slice(None, -1)])
+    slice_back = tuple(ar.ndim * [slice(1, None)])
+    bins[slice_center] = (ar[slice_front] + ar[slice_back]) / 2
+    print(bins)
+    _gnai = get_numpy_array_index
+    for dim in range(ar.ndim):
+        bins[_gnai(bins, dim, 0, default_idx=slice(None, -1))] = (
+            2 * ar[_gnai(ar, dim, 0)]
+            - bins[_gnai(bins, dim, 1, default_idx=slice(None, -1))]
+        )
+        bins[_gnai(bins, dim, -1, default_idx=slice(1, None))] = (
+            2 * ar[_gnai(ar, dim, -1)]
+            - bins[_gnai(bins, dim, -2, default_idx=slice(1, None))]
+        )
+    return bins
+
+
+def cv_index_center_to_rect(center, size):
+    """
+    Converts center-size indices to min-max indices.
+
+    Parameters
+    ----------
+    center : `Iter[int]`
+        Index center in each dimension.
+    size : `Iter[int]` or `int`
+        (Full) size of rectangle in each dimension.
+        If `int`, the `size` is applied to each dimension.
+
+    Returns
+    -------
+    rect : `Iter[(int, int)]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+    """
+    size = len(center) * [size] if np.isscalar(size) else size
+    return tuple((max(0, c - size[i] // 2), c + size[i] // 2 + 1)
+                 for i, c in enumerate(center))
+
+
+def cv_index_rect_to_slice(rect):
+    """
+    Converts min-max indices to slices.
+
+    Parameters
+    ----------
+    rect : `Iter[(int, int) or slice]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+
+    Returns
+    -------
+    slices : `Iter[slice]`
+        Iterator of slices from index rectangle.
+    """
+    slices = []
+    for item in rect:
+        if isinstance(item, slice):
+            slices.append(item)
+        else:
+            slices.append(slice(*item))
+    return tuple(slices)
 
 
 def transpose_array(ar):

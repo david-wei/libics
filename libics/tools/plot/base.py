@@ -5,6 +5,7 @@ import os
 
 from libics import env
 from libics.core.data.arrays import ArrayData, SeriesData
+from libics.core.data.types import Quantity, ValQuantity
 from libics.core.util import misc
 from libics.tools.plot import colors
 
@@ -27,6 +28,11 @@ def use_style(name="libics"):
         name = os.path.join(
             env.DIR_MPL, misc.assume_endswith(name, ".mplstyle")
         )
+        if not os.path.exists(name):
+            raise FileNotFoundError(
+                f"Matplotlib style file not found. "
+                f"Put the .mplstyle file in the folder {env.DIR_MPL}"
+            )
     plt.style.use(name)
 
 
@@ -151,8 +157,11 @@ def style_axes(
             ax.minorticks_off()
     tick_params(ax=ax, axis="both", **ticks)
     # Legend
-    if legend is not None:
-        ax.legend(legend)
+    if legend is not None and legend is not False:
+        if legend is True:
+            ax.legend()
+        else:
+            ax.legend(legend)
 
 
 def tick_params(
@@ -200,7 +209,7 @@ def tick_params(
 
 def plot(
     *data, x=None, y=None, xerr=None, yerr=None,
-    marker=None,
+    xnorm=None, ynorm=None, marker=None,
     xlabel=True, ylabel=True, label=None, title=None,
     ax=None, **kwargs
 ):
@@ -221,6 +230,9 @@ def plot(
     x, y, xerr, yerr : `array-like, ArrayData, SeriesData`
         Explicitly given plot data (or error) for each axis.
         Overwrites `*data`.
+    xnorm, ynorm : `float, ValQuantity`
+        Normalization value for plot data.
+        If `Quantity`, sets an automatic label.
     marker : `str` or `object`
         Matplotlib markers.
         Additionally supports `"O"` (larger circle with darker edge color).
@@ -234,9 +246,20 @@ def plot(
     """
     ax = plt.gca() if ax is None else ax
     # Interpret arguments
+    xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
+    ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
     p = _get_xy_from_data(*data, xlabel=xlabel, ylabel=ylabel)
     x, y, xlabel, ylabel = p["x"], p["y"], p["xlabel"], p["ylabel"]
     xerr, yerr = _get_array(xerr, yerr)
+    # Process normalization
+    if xnorm is not None:
+        x = np.array(x) / xnorm
+        if xerr is not None:
+            xerr = np.array(xerr) / xnorm
+    if ynorm is not None:
+        y = np.array(y) / ynorm
+        if yerr is not None:
+            yerr = np.array(yerr) / ynorm
     # Process marker style
     if "color" not in kwargs:
         kwargs["color"] = ax._get_lines.get_next_color()
@@ -258,10 +281,20 @@ def plot(
     return art
 
 
+def scatter(*args, marker="O", linestyle="None", **kwargs):
+    """
+    Wrapper for :py:func:`plot`.
+
+    Defaults to markers instead of lines.
+    """
+    return plot(*args, linestyle=linestyle, marker=marker, **kwargs)
+
+
 def pcolormesh(
     *data, x=None, y=None, c=None,
+    xnorm=None, ynorm=None, cnorm=None,
     xlabel=True, ylabel=True, title=None,
-    colorbar=None, cb_orientation="vertical", clabel=True,
+    colorbar=None, cb_orientation="vertical", clabel=True, cticks=None,
     aspect=None, ax=None, **kwargs
 ):
     """
@@ -282,15 +315,20 @@ def pcolormesh(
     c : `array-like, ArrayData`
         Explicitly given color plot data.
         Overwrites `*data`.
+    xnorm, ynorm, cnorm : `float, ValQuantity`
+        Normalization value for plot data.
+        If `Quantity`, sets an automatic label.
+    xlabel, ylabel, clabel, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
     colorbar : `bool` or `matplotlib.axes.Axes`
         Flag whether to show color bar.
         If `bool`, specifies the parent axes.
         If `Axes`, specifies the color bar axes.
     cb_orientation : `str`
         `"horizontal", "vertical"`.
-    xlabel, ylabel, clabel, title : `str` or `bool`
-        Labels for the various properties.
-        If `True`, tries to automatically set a label.
+    cticks : `None` or `list(ticks)`
+        Colorbar ticks.
     aspect : `float`
         Axes data scale aspect ratio.
     ax : `matplotlib.axes.Axes`
@@ -300,9 +338,21 @@ def pcolormesh(
     """
     ax = plt.gca() if ax is None else ax
     # Interpret arguments
-    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
+    ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
+    cnorm, clabel = _process_norm_param(cnorm, label=clabel)
+    p = _get_xyc_from_data(
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+    )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
+    # Process normalization
+    if xnorm is not None:
+        x = np.array(x) / xnorm
+    if ynorm is not None:
+        y = np.array(y) / ynorm
+    if cnorm is not None:
+        c = np.array(c) / cnorm
     # Perform pcolormesh
     art = ax.pcolormesh(x, y, c, **kwargs)
     # Set labels
@@ -319,18 +369,31 @@ def pcolormesh(
     if colorbar is not None and colorbar is not False:
         fig = ax.get_figure()
         if colorbar is True:
-            cb = fig.colorbar(art, ax=ax, orientation=cb_orientation)
+            cb = fig.colorbar(
+                art, ax=ax, orientation=cb_orientation, ticks=cticks
+            )
         else:
             cb = fig.colorbar(
-                art, ax=ax, cax=colorbar, orientation=cb_orientation
+                art, ax=ax, cax=colorbar, orientation=cb_orientation,
+                ticks=cticks
             )
         if isinstance(clabel, str):
-            cb.set_label(clabel)
+            cb.set_label(misc.capitalize_first_char(clabel))
     return art
+
+
+def pcolorim(*args, aspect=1, **kwargs):
+    """
+    Wrapper for :py:func:`pcolormesh`.
+
+    Defaults to a common aspect ratio.
+    """
+    return pcolormesh(*args, aspect=aspect, **kwargs)
 
 
 def contourf(
     *data, x=None, y=None, c=None,
+    xnorm=None, ynorm=None, cnorm=None,
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True,
     aspect=None, ax=None, **kwargs
@@ -353,15 +416,18 @@ def contourf(
     c : `array-like, ArrayData`
         Explicitly given color plot data.
         Overwrites `*data`.
+    xnorm, ynorm, cnorm : `float, ValQuantity`
+        Normalization value for plot data.
+        If `Quantity`, sets an automatic label.
+    xlabel, ylabel, clabel, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
     colorbar : `bool` or `matplotlib.axes.Axes`
         Flag whether to show color bar.
         If `bool`, specifies the parent axes.
         If `Axes`, specifies the color bar axes.
     cb_orientation : `str`
         `"horizontal", "vertical"`.
-    xlabel, ylabel, clabel, title : `str` or `bool`
-        Labels for the various properties.
-        If `True`, tries to automatically set a label.
     aspect : `float`
         Axes data scale aspect ratio.
     ax : `matplotlib.axes.Axes`
@@ -371,10 +437,22 @@ def contourf(
     """
     ax = plt.gca() if ax is None else ax
     # Interpret arguments
-    p = _get_xyc_from_data(*data, xlabel=xlabel, ylabel=ylabel, clabel=clabel)
+    xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
+    ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
+    cnorm, clabel = _process_norm_param(cnorm, label=clabel)
+    p = _get_xyc_from_data(
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+    )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
-    # Perform pcolormesh
+    # Process normalization
+    if xnorm is not None:
+        x = np.array(x) / xnorm
+    if ynorm is not None:
+        y = np.array(y) / ynorm
+    if cnorm is not None:
+        c = np.array(c) / cnorm
+    # Perform contourf
     art = ax.contourf(x, y, c, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
@@ -396,7 +474,7 @@ def contourf(
                 art, ax=ax, cax=colorbar, orientation=cb_orientation
             )
         if isinstance(clabel, str):
-            cb.set_label(clabel)
+            cb.set_label(misc.capitalize_first_char(clabel))
     return art
 
 
@@ -433,14 +511,14 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].get_points(0)
             data_dict["y"] = data[0].data
-            data_dict["xlabel"] = data[0].var_quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].var_quantity[0].labelstr(val=False)
+            data_dict["ylabel"] = data[0].data_quantity.labelstr(val=False)
         # (SD)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
             data_dict["y"] = data[0].data[1]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].quantity[1].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr(val=False)
+            data_dict["ylabel"] = data[0].quantity[1].labelstr(val=False)
         # (AR)
         else:
             data_dict["x"] = np.arange(len(data[0]))
@@ -450,18 +528,18 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
         # (AD, ...)
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].data
-            data_dict["xlabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].data_quantity.labelstr(val=False)
         # (SD, ...)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr(val=False)
         # (AR, ...):
         else:
             data_dict["x"] = data[0]
         # (..., AD)
         if isinstance(data[1], ArrayData):
             data_dict["y"] = data[1].data
-            data_dict["ylabel"] = data[1].data_quantity.mathstr()
+            data_dict["ylabel"] = data[1].data_quantity.labelstr(val=False)
         # (..., SD)
         elif isinstance(data[1], SeriesData):
             data_dict["y"] = data[1].data[0]
@@ -479,7 +557,9 @@ def _get_xy_from_data(*data, xlabel=True, ylabel=True):
     return data_dict
 
 
-def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
+def _get_xyc_from_data(
+    *data, xlabel=True, ylabel=True, clabel=True, use_bins=True
+):
     """
     Parameters
     ----------
@@ -489,6 +569,9 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
         If `True`, uses interpreted labels.
         If `False`, does not use labels.
         If `str`, uses string as label.
+    use_bins : `bool` or `None`
+        Whether to get bins instead of points.
+        TODO: Only works for single-parameter `data`.
 
     Returns
     -------
@@ -507,48 +590,55 @@ def _get_xyc_from_data(*data, xlabel=True, ylabel=True, clabel=True):
     elif len(data) == 1:
         # (AD)
         if isinstance(data[0], ArrayData):
-            data_dict["x"], data_dict["y"] = data[0].get_var_meshgrid()
+            data_dict["x"], data_dict["y"] = (
+                data[0].get_var_meshgrid_bins() if use_bins is True
+                else data[0].get_var_meshgrid()
+            )
             data_dict["c"] = data[0].data
-            data_dict["xlabel"] = data[0].var_quantity[0].mathstr()
-            data_dict["ylabel"] = data[0].var_quantity[1].mathstr()
-            data_dict["clabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].var_quantity[0].labelstr(val=False)
+            data_dict["ylabel"] = data[0].var_quantity[1].labelstr(val=False)
+            data_dict["clabel"] = data[0].data_quantity.labelstr(val=False)
         # (AR)
         else:
             _data0 = np.array(data[0])
-            data_dict["x"] = np.arange(_data0.shape[0])
-            data_dict["y"] = np.arange(_data0.shape[1])
+            _x = (np.arange(-0.5, _data0.shape[0] + 0.5) if use_bins is True
+                  else np.arange(_data0.shape[0]))
+            _y = (np.arange(-0.5, _data0.shape[1] + 0.5) if use_bins is True
+                  else np.arange(_data0.shape[1]))
+            _meshgrid0 = np.meshgrid(_x, _y, indexing="ij")
+            data_dict["x"], data_dict["y"] = _meshgrid0
             data_dict["c"] = _data0
     # Three parameters
     elif len(data) == 3:
         # (AD, ...)
         if isinstance(data[0], ArrayData):
             data_dict["x"] = data[0].data
-            data_dict["xlabel"] = data[0].data_quantity.mathstr()
+            data_dict["xlabel"] = data[0].data_quantity.labelstr(val=False)
         # (SD, ...)
         elif isinstance(data[0], SeriesData):
             data_dict["x"] = data[0].data[0]
-            data_dict["xlabel"] = data[0].quantity[0].mathstr()
+            data_dict["xlabel"] = data[0].quantity[0].labelstr(val=False)
         # (AR, ...):
         else:
-            data_dict["x"] = data[0]
+            data_dict["x"] = np.array(data[0])
         # (..., AD, ...)
         if isinstance(data[1], ArrayData):
             data_dict["y"] = data[1].data
-            data_dict["ylabel"] = data[1].data_quantity.mathstr()
+            data_dict["ylabel"] = data[1].data_quantity.labelstr(val=False)
         # (..., SD, ...)
         elif isinstance(data[1], SeriesData):
             data_dict["y"] = data[1].data[0]
-            data_dict["ylabel"] = data[1].quantity[0].mathstr()
+            data_dict["ylabel"] = data[1].quantity[0].labelstr(val=False)
         # (..., AR, ...):
         else:
-            data_dict["y"] = data[1]
+            data_dict["y"] = np.array(data[1])
         # (..., AD)
         if isinstance(data[2], ArrayData):
             data_dict["c"] = data[2].data
-            data_dict["clabel"] = data[2].data_quantity.mathstr()
+            data_dict["clabel"] = data[2].data_quantity.labelstr(val=False)
         # (..., AR)
         else:
-            data_dict["c"] = data[2]
+            data_dict["c"] = np.array(data[2])
     # Invalid arguments
     else:
         raise TypeError("wrong number of arguments ({:d})".format(len(data)))
@@ -592,6 +682,18 @@ def _get_array(*data, nd=None):
         return [_get_array(_d, nd=nd) for _d in data]
 
 
+def _process_norm_param(
+    norm, label=True
+):
+    if norm is not None:
+        if label is True:
+            if isinstance(norm, Quantity):
+                label = norm.labelstr(val=False)
+        if isinstance(norm, ValQuantity):
+            norm = norm.val
+    return norm, label
+
+
 def _process_marker_param(
     marker, **kwargs
 ):
@@ -619,12 +721,16 @@ def _process_marker_param(
             if "markerfacecolor" not in kwargs:
                 kwargs["markeredgecolor"] = kwargs["color"]
             kwargs["markerfacecolor"] = colors.lighten_rgb(
-                colors.hex_to_rgb(kwargs["markeredgecolor"])
+                colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
+                    kwargs["markeredgecolor"]
+                ))
             )
         else:
             if "markerfacecolor" not in kwargs:
                 kwargs["markerfacecolor"] = colors.lighten_rgb(
-                    colors.hex_to_rgb(kwargs["markerfacecolor"])
+                    colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
+                        kwargs["markerfacecolor"]
+                    ))
                 )
         kwargs["marker"] = "o"
     else:
@@ -637,6 +743,6 @@ def _process_err_param(art, **kwargs):
         kwargs["solid_capstyle"] = mpl.rcParams["lines.solid_capstyle"]
     _, caplines, barlinecols = art
     for c in caplines:
-        caplines.set_solid_capstyle(kwargs["solid_capstyle"])
+        c.set_solid_capstyle(kwargs["solid_capstyle"])
     for b in barlinecols:
         b.set_capstyle(kwargs["solid_capstyle"])

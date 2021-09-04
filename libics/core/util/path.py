@@ -31,7 +31,7 @@ class FolderContentsResult(object):
     """
 
     def __init__(self, **kwargs):
-        self.regex = ""
+        self.regex = None
         self.path = ""
         self.folders_matched = []
         self.files_matched = []
@@ -58,6 +58,19 @@ class FolderContentsResult(object):
     def __getitem__(self, key):
         return list(self)[key]
 
+    def __repr__(self):
+        s = f"<{self.__class__.__name__} at {hex(id(self))}>\n"
+        s += f" * path: {self.path}\n"
+        if self.regex is None:
+            names = ["folders", "files"]
+        else:
+            s += f" * regex: {self.regex}\n"
+            names = ["folders_matched", "files_matched",
+                     "folders_unmatched", "files_unmatched"]
+        for name in names:
+            s += f" * {name}: {getattr(self, name)}\n"
+        return s[:-1]
+
 
 def get_folder_contents(folder, regex=None):
     """
@@ -79,23 +92,24 @@ def get_folder_contents(folder, regex=None):
         regex = None
     folders_matched, folders_unmatched = [], []
     files_matched, files_unmatched = [], []
-    for item in os.listdir(folder):
-        if os.path.isfile(os.path.join(folder, item)):
-            try:
-                if regex is not None and re.search(regex, item):
-                    files_matched.append(item)
-                else:
+    if os.path.exists(folder):
+        for item in os.listdir(folder):
+            if os.path.isfile(os.path.join(folder, item)):
+                try:
+                    if regex is not None and re.search(regex, item):
+                        files_matched.append(item)
+                    else:
+                        files_unmatched.append(item)
+                except re.error:
                     files_unmatched.append(item)
-            except re.error:
-                files_unmatched.append(item)
-        else:
-            try:
-                if regex is not None and re.search(regex, item):
-                    folders_matched.append(item)
-                else:
+            else:
+                try:
+                    if regex is not None and re.search(regex, item):
+                        folders_matched.append(item)
+                    else:
+                        folders_unmatched.append(item)
+                except re.error:
                     folders_unmatched.append(item)
-            except re.error:
-                folders_unmatched.append(item)
     return FolderContentsResult(
         regex=regex, path=folder,
         folders_matched=folders_matched, files_matched=files_matched,

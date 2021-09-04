@@ -61,6 +61,13 @@ class Quantity(object):
         self.symbol = symbol
         self.unit = unit
 
+    __LIBICS_IO__ = True
+    SER_KEYS = {"name", "symbol", "unit"}
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
     # ++++++++++++++++
     # Unary operations
     # ++++++++++++++++
@@ -85,6 +92,18 @@ class Quantity(object):
         if unit and self.unit is not None:
             s += r" ($\mathregular{" + self.unit + r"}$)"
         return s
+
+    def labelstr(self, math=True, **kwargs):
+        if self.has_name():
+            if math is True:
+                return self.mathstr(**kwargs)
+            else:
+                return str(self)
+        else:
+            return None
+
+    def has_name(self):
+        return self.name != NO_NAME
 
     # +++++++++++++++++
     # Binary operations
@@ -131,6 +150,8 @@ class ValQuantity(Quantity):
         Value of physical quantity.
     """
 
+    SER_KEYS = Quantity.SER_KEYS | {"val"}
+
     def __init__(self, name=NO_NAME, symbol=None, unit=None, val=None):
         super().__init__(name=name, symbol=symbol, unit=unit)
         self.val = val
@@ -153,7 +174,7 @@ class ValQuantity(Quantity):
             if self.val is not None:
                 s += " " + self.unit
             else:
-                s += " [" + self.unit + "]"
+                s += " (" + self.unit + ")"
         return s
 
     def mathstr(self, name=True, symbol=True, unit=True,
@@ -175,7 +196,7 @@ class ValQuantity(Quantity):
             if val and self.val is not None:
                 s += " " + str_unit
             else:
-                s += " [" + str_unit + "]"
+                s += " (" + str_unit + ")"
         return s
 
     def __int__(self):
@@ -624,25 +645,90 @@ class ValCheckDesc:
 ###############################################################################
 
 
-class Result(dict):
+class AttrDict(dict):
 
     """
-    Container class wrapping a dictionary and allowing access by attribute.
+    Dictionary container supporting recursive attribute access of items.
 
-    Typical use case as a more complex results container.
+    Parameters
+    ----------
+    rec : `bool`
+        Whether given sub-dictionaries should be recursively converted
+        to `AttrDict` objects.
+
+    Notes
+    -----
+    * If a requested attribute does not exist, creates an empty `AttrDict`
+      object to prevent empty attributes. This is only implemented for public
+      attribute names, i.e. fails when the name starts with `"_"`.
+    * If multiple sequential dots (e.g. `"abc..def"`) are in a key, it
+      is interpreted as single string (instead of attributes).
+      This behavior was chosen to support ellipses (`"..."`) in strings.
+
+    Examples
+    --------
+    >>> my_dict = {"a": "A", "b": {"c": "C"}}
+    >>> my_attrdict = AttrDict(my_dict)
+    >>> my_attrdict
+    {'a': 'A', 'b': {'c': 'C'}}
+    >>> my_attrdict["b"]["c"] == my_attrdict.b.c
+    True
+    >>> my_attrdict.d.e.f = "nested_val"
+    >>> my_attrdict
+    {'a': 'A', 'b': {'c': 'C'}, 'd': {'e': {'f': 'nested_val'}}}
     """
 
-    def __init__(self, **kwargs):
-        self.update(kwargs)
+    def __init__(self, *args, rec=True, **kwargs):
+        # Update constructor dict by kwarg items
+        if len(kwargs) > 0:
+            if len(args) == 0:
+                args = ({},)
+            args[0].update(kwargs)
+        # Recursive constructor
+        if rec is True:
+            super().__init__()
+            if len(args) > 0:
+                d = args[0]
+                for k, v in d.items():
+                    if isinstance(v, dict):
+                        self[k] = AttrDict(v)
+                    else:
+                        self[k] = v
+        # Non-recursive constructor
+        else:
+            super().__init__(*args, **kwargs)
 
-    def set_result(self, **kwargs):
-        self.update(kwargs)
+    def __getitem__(self, key):
+        if not isinstance(key, str):
+            raise KeyError(f"invalid key type {repr(key)} (must be str)")
+        if ("." not in key) or (".." in key):
+            return super().__getitem__(key)
+        else:
+            key, subkey = key.split(".", 1)
+            return super().__getitem__(key)[subkey]
 
-    def __setattr__(self, name, value):
-        self[name] = value
+    def __setitem__(self, key, val):
+        if not isinstance(key, str):
+            raise KeyError(f"invalid key type {repr(key)} (must be str)")
+        if ("." not in key) or (".." in key):
+            super().__setitem__(key, val)
+        else:
+            key, subkey = key.split(".", 1)
+            if key not in self:
+                super().__setitem__(key, AttrDict())
+            super().__getitem__(key)[subkey] = val
 
-    def __getattr__(self, name):
-        if name not in self:
-            raise AttributeError("'{:s}' object has no attribute '{:s}'"
-                                 .format(self.__class__.__name__, name))
-        return self[name]
+    def __getattr__(self, key):
+        if key not in self and key[0] != "_":
+            self[key] = AttrDict()
+        elif key not in self:
+            raise AttributeError(
+                f"'{self.__class__.__name__}' object has no attribute '{key}'"
+            )
+        return self[key]
+
+    def __setattr__(self, key, val):
+        if key not in self and key[0] == "_":
+            self.__dict__[key] = val
+        else:
+            self[key] = val

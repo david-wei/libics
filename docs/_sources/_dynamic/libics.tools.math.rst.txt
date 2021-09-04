@@ -6,10 +6,10 @@ libics.tools.math
     :undoc-members:
     :show-inheritance:
 
-fit
----
+models
+------
 
-.. automodule:: libics.tools.math.fit
+.. automodule:: libics.tools.math.models
     :members:
     :undoc-members:
     :show-inheritance:
@@ -26,6 +26,14 @@ peaked
 ------
 
 .. automodule:: libics.tools.math.peaked
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+intervalfunc
+------------
+
+.. automodule:: libics.tools.math.intervalfunc
     :members:
     :undoc-members:
     :show-inheritance:
