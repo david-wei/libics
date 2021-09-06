@@ -786,8 +786,8 @@ class ArrayData(object):
         """
         return iter(self.data)
 
-    def __array__(self, **kwargs):
-        return self.data.__array__(**kwargs)
+    def __array__(self, *args, **kwargs):
+        return self.data.__array__(*args, **kwargs)
 
     def __str__(self):
         s = f"{str(self.data_quantity)}\n"
