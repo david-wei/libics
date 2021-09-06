@@ -269,10 +269,12 @@ class InfluxDB(object):
                 continue
             elif isinstance(v, str) or np.isscalar(v):
                 v = [v]
+            _qfilter_per_tag = []
             for vv in v:
                 if isinstance(vv, str):
                     vv = f'"{vv}"'
-                _qfilter.append(f'(r.{k} == {vv})')
+                _qfilter_per_tag.append(f'(r.{k} == {vv})')
+            _qfilter.append(f" or ".join(_qfilter_per_tag))
         if len(_qfilter) == 0:
             q = ""
         else:
@@ -430,7 +432,7 @@ class InfluxDB(object):
         else:
             q = f"""
             import "influxdata/influxdb/schema"
-            schema.tagValues(
+            schema.measurementTagValues(
                 bucket: "{bucket}",
                 tag: "{tag}",
                 measurement: "{measurement}"
@@ -498,10 +500,27 @@ class InfluxDB(object):
         for d in data:
             self.write_point(bucket=bucket, **d)
 
+    def _check_read_points_param(self, **kwargs):
+        """Checks for user errors in parameters."""
+        param_map = {
+            "fields": "field", "measurements": "measurement", "func": "funcs"
+        }
+        for k, v in param_map.items():
+            if k in kwargs:
+                self.LOGGER.warning(
+                    f"Did you mean to use parameter '{v}' instead of '{k}'?"
+                )
+        for k in ["tag", "tags"]:
+            if k in kwargs:
+                self.LOGGER.warning(
+                    f"Did you mean to filter by tag values? "
+                    f"Then pass them as keyword arguments, i.e. `**{k}`."
+                )
+
     def read_points(
         self, bucket=None, start="-1d", stop=None,
         window=None, function=None, rmv_nan=True, funcs=None,
-        measurement=None, field=None, **tags
+        measurement=None, field=None, _check_params=True, **tags
     ):
         """
         Queries the database.
@@ -540,6 +559,8 @@ class InfluxDB(object):
         bucket = bucket if bucket else self.default_bucket
         if isinstance(funcs, (type(None), str)):
             funcs = [funcs]
+        if _check_params:
+            self._check_read_points_param(**tags)
         # Construct query
         q = self._get_query_bucket(bucket)
         q += self._get_query_range(start, stop)
