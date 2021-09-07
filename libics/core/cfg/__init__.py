@@ -74,15 +74,15 @@ class CfgBase(io.FileBase):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def _get_cfg_depth(self):
+    def _get_cfg_depth(self, serialize_all=False):
         """
         Gets the configuration nest level.
         """
         max_depth = 0
-        for k in self.SER_KEYS:
+        for k in self.__dict__.keys() if serialize_all else self.SER_KEYS:
             v = getattr(self, k)
             if isinstance(v, CfgBase):
-                _depth = v._get_cfg_depth()
+                _depth = 1 + v._get_cfg_depth(serialize_all=serialize_all)
                 if max_depth < _depth:
                     max_depth = _depth
         return max_depth
@@ -209,7 +209,7 @@ class CfgBase(io.FileBase):
             with open(file_path, "w") as f:
                 json.dump(d, f, **kwargs)
         elif "ini" in fmt:
-            _cfg_depth = self._get_cfg_depth()
+            _cfg_depth = self._get_cfg_depth(serialize_all=serialize_all)
             if _cfg_depth > 1:
                 raise ValueError("maximum ini file depth exceeded ({:d})"
                                  .format(_cfg_depth))
@@ -224,7 +224,7 @@ class CfgBase(io.FileBase):
                 del d[INI_DEFAULT_SECTION]
             # Write ini file
             cp = configparser.ConfigParser(**kwargs)
-            cp.read_dict(self._to_dict())
+            cp.read_dict(d)
             with open(file_path, "w") as f:
                 cp.write(f)
         elif "yml" in fmt:

@@ -274,7 +274,7 @@ class InfluxDB(object):
                 if isinstance(vv, str):
                     vv = f'"{vv}"'
                 _qfilter_per_tag.append(f'(r.{k} == {vv})')
-            _qfilter.append(f" or ".join(_qfilter_per_tag))
+            _qfilter.append(" or ".join(_qfilter_per_tag))
         if len(_qfilter) == 0:
             q = ""
         else:
@@ -518,7 +518,7 @@ class InfluxDB(object):
                 )
 
     def read_points(
-        self, bucket=None, start="-1d", stop=None,
+        self, bucket=None, start="-1d", stop=None, group=None,
         window=None, function=None, rmv_nan=True, funcs=None,
         measurement=None, field=None, _check_params=True, **tags
     ):
@@ -531,6 +531,8 @@ class InfluxDB(object):
             Bucket name.
         start, stop : `str`
             Extracted time range.
+        group : `list(str)`
+            Groups by the given tags.
         window : `str`
             Time window per extracted point.
             E.g.: `"1m", "2h", ...`
@@ -567,6 +569,7 @@ class InfluxDB(object):
         q += self._get_query_filter(operation="or", _measurement=measurement)
         q += self._get_query_filter(operation="and", **tags)
         q += self._get_query_filter(operation="or", _field=field)
+        q += self._get_query_group(group)
         q += self._get_query_aggregate_window(window, function, rmv_nan)
         for func in funcs:
             q += self._get_query_func(func=func)
