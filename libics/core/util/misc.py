@@ -47,6 +47,18 @@ def cv_float(text, dec_sep=[".", ","]):
 ###############################################################################
 
 
+def assume_even_int(val):
+    """Asserts that val is a scalar even integer."""
+    val = int(val)
+    return (val//2) * 2
+
+
+def assume_odd_int(val):
+    """Asserts that val is a scalar odd integer."""
+    val = int(val)
+    return (val//2) * 2 + 1
+
+
 def assume_iter(data):
     """
     Asserts that data is iterable. If the given data is iterable, it is

@@ -289,6 +289,41 @@ class AffineTrafo(FileBase):
         else:
             return _to
 
+    def cv_offset_shift_to_target(self, shift):
+        """Converts an offset shift from origin to target space."""
+        return self._cv_offset_shift(shift, self.matrix_to_target)
+
+    def cv_offset_shift_to_origin(self, shift):
+        """Converts an offset shift from target to origin space."""
+        return self._cv_offset_shift(shift, self.matrix_to_origin)
+
+    @staticmethod
+    def _cv_offset_shift(shift, matrix):
+        """
+        Converts an offset shift between origin and target space.
+
+        Parameters
+        ----------
+        shift : `Array[1, float]`
+            Offset shift in initial space.
+        matrix : `Array[2, float]`
+            Transformation matrix.
+
+        Returns
+        -------
+        shift_cv : `Array[1, float]`
+            Offset shift in transformed space.
+        """
+        ar_shift = np.array(shift, dtype=float)
+        ar_matrix = np.array(matrix, dtype=float)
+        ar_shift_cv = ar_matrix @ ar_shift
+        if isinstance(shift, ArrayData):
+            shift_cv = shift.copy_var()
+            shift_cv.data = ar_shift_cv
+        else:
+            shift_cv = ar_shift_cv
+        return shift_cv
+
     # ++++ Operations on trafo ++++
 
     def invert(self):
