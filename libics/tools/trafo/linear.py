@@ -25,6 +25,7 @@ class AffineTrafo(FileBase):
         Transformation offset.
     """
 
+    LOGGER = logging.get_logger("libics.tools.trafo.linear.AffineTrafo")
     SER_KEYS = FileBase.SER_KEYS | {"matrix", "offset"}
 
     def __init__(
@@ -251,6 +252,7 @@ class AffineTrafo(FileBase):
         _from = from_array.data
 
         if supersample is not None:
+            AffineTrafo.LOGGER.error("TODO: Supersampling seems to have bugs!")
             supersample = round(supersample)
             _step = _step / supersample
             _low = _low - _step / supersample / 2
