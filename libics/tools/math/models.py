@@ -575,3 +575,450 @@ class ModelBase(abc.ABC):
         else:
             var_data = var_data.reshape((var_data.shape[0], -1))
         return var_data, func_data, err_data
+
+
+###############################################################################
+# Tensorial parameters
+###############################################################################
+
+
+class TensorModelBase(abc.ABC):
+
+    LOGGER = logging.get_logger("libics.math.models.TensorModelBase")
+
+    P_TENS = "ptens"
+    P_VECT = NotImplemented
+    P_SCAL = NotImplemented
+
+    P_DEFAULT = NotImplemented
+
+    def __init__(self, *data, **kwargs):
+        self.LOGGER.warning("Class is untested!")
+        # Initial fit parameters
+        self._p0_tens = None
+        self._p0_vect = None
+        self._p0_scal = None
+        # Optimized fit parameters
+        self._popt_tens = None
+        self._popt_vect = None
+        self._popt_scal = None
+        # Covariance matrix of fit parameters
+        self._pcov = None
+        # Flag whether fit succeeded
+        self.psuccess = None
+
+        # Call fit functions if data is supplied
+        if len(data) > 0:
+            self.find_p0(*data)
+            self.find_popt(*data, **kwargs)
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if cls.P_VECT is NotImplemented:
+            raise NotImplementedError("Class attribute `P_VECT` is missing")
+        if cls.P_SCAL is NotImplemented:
+            raise NotImplementedError("Class attribute `P_SCAL` is missing")
+        if cls.P_DEFAULT is NotImplemented:
+            raise NotImplementedError("Class attribute `P_DEFAULT` is missing")
+
+    @staticmethod
+    @abc.abstractmethod
+    def _func(var, *p):
+        """
+        Model function with signature `func(var, tens, *vect, *scal)`.
+        """
+        raise NotImplementedError
+
+    # +++++++++++++++++++++++++++++++++++++++
+    # Properties API
+    # +++++++++++++++++++++++++++++++++++++++
+
+    @property
+    def pall_vect(self):
+        """dict(name->index) for vector parameters"""
+        return misc.make_dict(self.P_VECT, range(len(self.P_VECT)))
+
+    @property
+    def pall_scal(self):
+        """dict(name->index) for scalar parameters"""
+        return misc.make_dict(self.P_SCAL, range(len(self.P_SCAL)))
+
+    @property
+    def p0(self):
+        if self.p0_is_set():
+            return self._p0_tens, self._p0_vect, self._p0_scal
+        else:
+            return (
+                np.array([self.P_DEFAULT[0]]),
+                np.array(self.P_DEFAULT[1:1+len(self.P_VECT)], dtype=float),
+                np.array(self.P_DEFAULT[1+len(self.P_VECT):], dtype=float)
+            )
+
+    @p0.setter
+    def p0(self, val):
+        self._p0_tens = np.array(val[0]) if val[0] is not None else val[0]
+        self._p0_vect = np.array(val[1]) if val[1] is not None else val[1]
+        self._p0_scal = np.array(val[2]) if val[2] is not None else val[2]
+
+    def p0_is_set(self):
+        return (
+            self._p0_tens is not None
+            and (self._p0_vect is not None or len(self.P_VECT) == 0)
+            and (self._p0_scal is not None or len(self.P_SCAL) == 0)
+        )
+
+    @property
+    def popt(self):
+        """All :py:attr:`popt` (non-fitted ones use :py:attr:`p0`)"""
+        if self.popt_is_set():
+            return self._popt_tens, self._popt_vect, self._popt_scal
+        else:
+            return self.p0
+
+    def popt_is_set(self):
+        return (
+            self._popt_tens is not None
+            and (self._popt_vect is not None or len(self.P_VECT) == 0)
+            and (self._popt_scal is not None or len(self.P_SCAL) == 0)
+        )
+
+    def get_popt(self, as_dict=True):
+        tens_popt, vect_popt, scal_popt = self.popt
+        if as_dict:
+            d = {self.P_TENS: tens_popt}
+
+            d.update(misc.make_dict(self.P_VECT, vect_popt))
+            d.update(misc.make_dict(self.P_SCAL, scal_popt))
+            return d
+        else:
+            return self.popt
+
+    @property
+    def pcov(self):
+        return self._pcov
+
+    @property
+    def pstd(self):
+        return np.sqrt(np.diag(self.pcov))
+
+    def __getattr__(self, name):
+        get_std = False
+        if name[-4:] == "_std":
+            get_std = True
+            name = name[:-4]
+        try:
+            if get_std:
+                raise NotImplementedError(f"{name}_std not implemented")
+            if name == self.P_TENS:
+                return self.popt[0]
+            elif name in self.P_VECT:
+                return self.popt[1][self.pall_vect[name]]
+            elif name in self.P_SCAL:
+                return self.popt[2][self.pall_scal[name]]
+            else:
+                return super().__getattribute__(name)
+        except KeyError:
+            return super().__getattribute__(name)
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            if key[-4:] == "_std":
+                return self.pstd[self.pall[key[:-4]]]
+            else:
+                return self.popt[self.pall[key]]
+        else:
+            return self.popt[key]
+
+    def _str(self, join_str="\n → "):
+        d = self.get_popt(as_dict=True)
+        ptens = d.pop(self.P_TENS)
+        pvect = {k: d[k] for k in self.P_VECT}
+        pscal = {k: d[k] for k in self.P_SCAL}
+        s = [f"{self.P_TENS}: shape: {ptens.shape}, vmean: {ptens.mean()}, "
+             f"vmin: {ptens.min()}, vmax: {ptens.max()}"]
+        for k, v in pvect.items():
+            s.append(f"{k}: {v}")
+        if len(self.P_SCAL) > 0:
+            s.append(f"{pscal}")
+        return join_str.join(s)
+
+    def __str__(self):
+        s = " → " + self._str(join_str="\n → ")
+        return f"{self.__class__.__name__}:\n{s}"
+
+    def __repr__(self):
+        s = self._str(join_str='\n')
+        return f"<'{self.__class__.__name__}' at {hex(id(self))}>\n{s}"
+
+    # +++++++++++++++++++++++++++++++++++++++
+    # Methods API
+    # +++++++++++++++++++++++++++++++++++++++
+
+    def find_p0(self):
+        """
+        Routine for initial fit parameter finding.
+
+        Should return whether this succeeded.
+        """
+        raise NotImplementedError
+
+    def find_popt(self, *data, **kwargs):
+        """
+        Fits the model function to the given data.
+
+        Parameters
+        ----------
+        *data : `Any`
+            Data interpretable by :py:meth:`_split_fit_data`.
+        **kwargs
+            Keyword arguments passed to :py:func:`scipy.optimize.curve_fit`.
+
+        Returns
+        -------
+        psuccess : `bool`
+            Whether fit succeeded.
+        """
+        # Find data structure
+        var_data, func_data, err_data = self._split_fit_data(*data)
+        # var_ndim = len(var_data)
+        var_shape = var_data.shape
+        # func_shape = func_data.shape
+        # func_size = np.prod(func_shape)
+        tens_shape = func_data.shape[1:]
+        tens_size = np.prod(tens_shape)
+        vect_num = len(func_data)
+        vect_shape = (len(self.P_VECT), vect_num)
+        vect_size = np.prod(vect_shape)
+        scal_num = len(self.P_SCAL)
+        # scal_shape = (scal_num,)
+        scal_size = scal_num
+
+        # Define (reduced) fit function
+        def _fit_func(var, *p):
+            # Structure of variables:
+            # 2D: [[*var_data[0]], [*var_data[1]], ...]
+            var = var.reshape(var_shape)
+            # Structure of parameters:
+            # 1D: [*array, *vect0, *vect1, ..., scal0, scal1, ...]
+            p = np.array(p)
+            tens = p[0:tens_size].reshape(tens_shape)
+            vect = p[tens_size:tens_size+vect_size].reshape(vect_shape)
+            scal = p[tens_size+vect_size:]
+            # Call fit function
+            res = self._func(var, tens, *vect, *scal)
+            return res.ravel()
+
+        # Prepare fit data
+        var_data, func_data, err_data = self._ravel_data(
+            var_data, func_data, err_data
+        )
+        if err_data is not None and "sigma" not in kwargs:
+            kwargs.update({"sigma": err_data})
+        p0 = np.concatenate([_p0.ravel() for _p0 in self.p0])
+
+        # Optimize parameters
+        try:
+            popt, pcov = scipy.optimize.curve_fit(
+                _fit_func, var_data, func_data, p0=p0, **kwargs
+            )
+        except RuntimeError:
+            return False
+        self.psuccess = (
+            not np.any(np.isnan(pcov))
+            and np.all(np.isfinite(pcov))
+        )
+
+        # Reshape parameters
+        popt = (
+            popt[0:tens_size].reshape(tens_shape),
+            popt[tens_size:tens_size+vect_size].reshape(vect_shape),
+            popt[-scal_size:]
+        )
+        pcov = (
+            pcov[0:tens_size, 0:tens_size].reshape(tens_shape + tens_shape),
+            popt[tens_size:tens_size+vect_size, tens_size:tens_size+vect_size]
+            .reshape(vect_shape + vect_shape),
+            popt[-scal_size:, -scal_size:]
+        )
+        self.popt_for_fit = popt
+        self.pcov_for_fit = pcov
+        return self.psuccess
+
+    def __call__(self, var, *args, **kwargs):
+        """
+        Calls the model function with current parameters.
+
+        Parameters
+        ----------
+        var : `np.ndarray` or `ArrayData`
+            Variables.
+            If `ArrayData`, uses its `var_meshgrid` as variables
+            and overwrites its data.
+        *args : `Any`
+            Model function positional arguments after the parameters.
+        **kwargs : `Any`
+            Parameters or model function keyword arguments.
+            If a parameter is given, the respective parameter is overwritten
+            for the call.
+
+        Returns
+        -------
+        res : `np.ndarray` or `ArrayData`
+            Model function return value.
+            If applicable, is wrapped in an `ArrayData`.
+        """
+        # Parse arguments
+        ad = None
+        if isinstance(var, ArrayData):
+            ad = var
+            var = ad.get_var_meshgrid()
+        # Get current parameters
+        ptens, pvect, pscal = self.popt
+        # Overwrite parameters with external arguments
+        for k, v in kwargs.items():
+            if k == self.P_TENS:
+                ptens = v
+            elif k in self.P_VECT:
+                pvect[self.pall_vect[k]] = v
+                del kwargs[k]
+            elif k in self.P_SCAL:
+                pscal[self.pall_scal[k]] = v
+                del kwargs[k]
+        # Set return value depending on arguments
+        res = self._func(var, ptens, *pvect, *pscal, *args, **kwargs)
+        if ad is None:
+            return res
+        else:
+            ad.data = res
+            return ad
+
+    # +++++++++++++++++++++++++++++++++++++++
+    # Helper functions
+    # +++++++++++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _split_fit_data(*data, func_dim=-1):
+        """
+        Splits the given data into independent and dependent data, as required
+        by the fit class.
+
+        Parameters
+        ----------
+        *data : `ArrayData` or `SeriesData` or `np.ndarray`
+            Data to be split.
+            If two arrays are given, they are interpreted as
+            `(var_data, func_data)`.
+            If three arrays are given, they are interpreted as
+            `(var_data, func_data, err_data)`.
+        func_dim : `int`
+            Only used for `SeriesData`.
+            Dependent data dimension (index).
+
+        Returns
+        -------
+        var_data : `np.ndarray`
+            Independent data.
+        func_data : `np.ndarray`
+            Dependent data.
+        func_err : `np.ndarray` or `None`
+            Errors of dependent data (if available).
+        """
+        var_data, func_data, err_data = None, None, None
+        # Single argument
+        if len(data) == 1:
+            data = data[0]
+            if isinstance(data, SeriesData):
+                func_data = data.data[func_dim]
+                var_data = np.concatenate(
+                    (data.data[0:func_dim], data.data[func_dim + 1:])
+                )
+            else:
+                if isinstance(data, ArrayData):
+                    func_data = data.data
+                    var_data = data.get_var_meshgrid()
+                else:
+                    func_data = np.array(data)
+                    var_data = np.indices(func_data.shape)
+        elif len(data) in [2, 3]:
+            if isinstance(data[0], ArrayData):
+                var_data = data[0].data
+            else:
+                var_data = np.array(data[0])
+            if var_data.ndim == 1:
+                var_data = var_data[np.newaxis, ...]
+            if isinstance(data[1], ArrayData):
+                func_data = data[1].data
+            else:
+                func_data = np.array(data[1])
+            if len(data) == 3:
+                if isinstance(data[2], ArrayData):
+                    err_data = data[2].data
+                elif data[2] is not None:
+                    err_data = np.array(data[2])
+        else:
+            raise NotImplementedError
+        # Split data
+        return var_data, func_data, err_data
+
+    @staticmethod
+    def _ravel_data(
+        var_data, func_data=None, err_data=None, _check_shape=True
+    ):
+        """
+        Serializes array-like (nD) data into series-like (1D) data.
+
+        Parameters
+        ----------
+        var_data : `np.ndarray`
+            Array-like independent data.
+        func_data : `np.ndarray`
+            Array-like dependent data.
+        err_data : `np.ndarray`
+            Array-like dependent errors.
+        _check_shape : `bool`
+            Flag whether to check `var_data` and `func_data`
+            shape overlap.
+
+        Returns
+        -------
+        var_data : `np.ndarray`
+            Serialized independent data.
+        func_data : `np.ndarray`
+            Serialized dependent data.
+        err_data : `np.ndarray`
+            Serialized dependent errors.
+
+        Raises
+        ------
+        ValueError
+            If data dimensions are invalid.
+        """
+        var_data = np.array(var_data)
+        var_data_ind = 1 if var_data.ndim > 1 else 0
+        if func_data is not None:
+            func_data = np.array(func_data)
+            if (
+                _check_shape and
+                var_data.shape[var_data_ind:] != func_data.shape
+            ):
+                raise ValueError(
+                    "invalid fit data dimensions: {:s}, {:s}"
+                    .format(var_data.shape, func_data.shape)
+                )
+            func_data = func_data.ravel()
+        if err_data is not None:
+            err_data = np.array(err_data)
+            if (
+                _check_shape and
+                var_data.shape[var_data_ind:] != err_data.shape
+            ):
+                raise ValueError(
+                    "invalid fit data dimensions: {:s}, {:s}"
+                    .format(var_data.shape, err_data.shape)
+                )
+            err_data = err_data.ravel()
+        if var_data_ind == 0:
+            var_data = var_data.ravel()
+        else:
+            var_data = var_data.reshape((var_data.shape[0], -1))
+        return var_data, func_data, err_data
