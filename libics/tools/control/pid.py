@@ -32,7 +32,7 @@ def get_dif_image(act_image, trg_image, offset=None, scale=None):
     return dif_image
 
 
-def get_err_image(dif_images, kernel, vmin=None, vmax=None):
+def get_err_image(dif_images, kernel, vmin=None, vmax=None, mask=None):
     """
     Calculates the error signal from a history of difference images.
 
@@ -46,6 +46,8 @@ def get_err_image(dif_images, kernel, vmin=None, vmax=None):
         Can be used to implement PI control.
     vmin, vmax : `float`
         Clipping values.
+    mask : `Array[2, bool]`
+        Error mask.
 
     Returns
     -------
@@ -63,11 +65,17 @@ def get_err_image(dif_images, kernel, vmin=None, vmax=None):
         err_image[err_image < vmin] = vmin
     if vmax:
         err_image[err_image > vmax] = vmax
+    if mask is not None:
+        err_image[~mask] = 0
     return err_image
 
 
-def get_ctrl_image(old_ctrl_image, err_image):
+def get_ctrl_image(old_ctrl_image, err_image, vmin=None, vmax=None):
     ctrl_image = old_ctrl_image - err_image
+    if vmin:
+        ctrl_image[ctrl_image < vmin] = vmin
+    if vmax:
+        ctrl_image[ctrl_image > vmax] = vmax
     return ctrl_image
 
 
@@ -88,8 +96,11 @@ class ImageControlLoop(object):
         self.ctrl_kernels = []
         self.ctrl_images = [init_ctrl_image]
         # Control loop
+        self.ctrl_mask = None
         self.ctrl_kernel = None
         self.ctrl_gain_integr_unlim = None
+        self.ctrl_min = None
+        self.ctrl_max = None
         # Parse args
         if len(args) != 0:
             raise ValueError
@@ -169,7 +180,7 @@ class ImageControlLoop(object):
         self.dif_images.append(get_dif_image(act_image, self.trg_image))
         self.ctrl_kernels.append(self.get_ctrl_kernel())
         self.err_images.append(get_err_image(
-            self.dif_images, self.ctrl_kernels[-1]
+            self.dif_images, self.ctrl_kernels[-1], mask=self.ctrl_mask
         ))
         self.ctrl_images.append(get_ctrl_image(
             self.ctrl_images[-1], self.err_images[-1],
