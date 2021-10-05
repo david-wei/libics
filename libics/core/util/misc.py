@@ -1106,6 +1106,13 @@ def cv_index_rect_to_slice(rect):
     return tuple(slices)
 
 
+def cv_index_center_to_slice(center, size):
+    """
+    Shorthand for applying `cv_index_rect_to_slice(cv_index_center_to_rect())`.
+    """
+    return cv_index_rect_to_slice(cv_index_center_to_rect(center, size))
+
+
 def transpose_array(ar):
     """
     Transposes a rectangular array.

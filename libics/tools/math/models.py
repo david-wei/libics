@@ -296,7 +296,7 @@ class ModelBase(abc.ABC):
             name = name[:-4]
         try:
             if get_std is True:
-                #return self.pstd[self.pall[name]]  # TODO: fix property pstd
+                # return self.pstd[self.pall[name]]  # TODO: fix property pstd
                 return self.pstd[self.pfit[name]]
             else:
                 return self.popt[self.pall[name]]
@@ -380,6 +380,8 @@ class ModelBase(abc.ABC):
     def find_chi2(self, *data):
         """
         Gets the chi squared statistic.
+
+        This is the sum of the squared residuals.
         """
         split_data = self._split_fit_data(*data)
         var_data, func_data, err_data = self._ravel_data(*split_data)
@@ -392,10 +394,45 @@ class ModelBase(abc.ABC):
     def find_chi2_red(self, *data):
         """
         Gets the reduced chi squared statistic.
+
+        This is the sum of the squared residuals divided by the degrees of
+        freedom (data points minus number of fit parameters).
         """
         chi2 = self.find_chi2(*data)
         chi2_red = chi2 / (data[0].size - len(self.pfit))
         return chi2_red
+
+    def find_chi2_significance(self, *data):
+        """
+        Gets the chi squared confindence quantile for the fit.
+
+        Example: For a 2-sigma-quality fit, `0.95` is returned.
+        """
+        chi2_red = self.find_chi2_red(*data)
+        dof = data[0].size - len(self.pfit)
+        if dof > 50:
+            quantile = scipy.stats.normal.cdf(chi2_red, np.sqrt(2 / dof))
+        else:
+            quantile = scipy.stats.chi2.cdf(chi2_red * dof, dof)
+        return quantile
+
+    def test_hypothesis_chi2(self, *data, p_value=0.05):
+        """
+        Tests the whether the fit is valid.
+
+        Parameters
+        ----------
+        p_value : `float`
+            Critical confidence level ("alpha-value"),
+            e.g. `0.05` for 2-sigma.
+        """
+        chi2_red = self.find_chi2_red(*data)
+        dof = data[0].size - len(self.pfit)
+        if dof > 50:
+            crit = scipy.stats.normal.ppf(1 - p_value, np.sqrt(2 / dof))
+        else:
+            crit = scipy.stats.chi2.ppf(1 - p_value, dof) / dof
+        return chi2_red <= crit
 
     def __call__(self, var, *args, **kwargs):
         """
@@ -789,9 +826,9 @@ class TensorModelBase(abc.ABC):
         vect_num = len(func_data)
         vect_shape = (len(self.P_VECT), vect_num)
         vect_size = np.prod(vect_shape)
-        scal_num = len(self.P_SCAL)
+        # scal_num = len(self.P_SCAL)
         # scal_shape = (scal_num,)
-        scal_size = scal_num
+        # scal_size = scal_num
 
         # Define (reduced) fit function
         def _fit_func(var, *p):
@@ -832,16 +869,16 @@ class TensorModelBase(abc.ABC):
         popt = (
             popt[0:tens_size].reshape(tens_shape),
             popt[tens_size:tens_size+vect_size].reshape(vect_shape),
-            popt[-scal_size:]
+            popt[tens_size+vect_size:]
         )
         pcov = (
             pcov[0:tens_size, 0:tens_size].reshape(tens_shape + tens_shape),
-            popt[tens_size:tens_size+vect_size, tens_size:tens_size+vect_size]
-            .reshape(vect_shape + vect_shape),
-            popt[-scal_size:, -scal_size:]
+            (pcov[tens_size:tens_size+vect_size, tens_size:tens_size+vect_size]
+             .reshape(vect_shape + vect_shape)),
+            pcov[tens_size+vect_size:, tens_size+vect_size:]
         )
-        self.popt_for_fit = popt
-        self.pcov_for_fit = pcov
+        self.popt = popt
+        self.pcov = pcov
         return self.psuccess
 
     def __call__(self, var, *args, **kwargs):
