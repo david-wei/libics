@@ -347,11 +347,13 @@ class FitPowerLaw1dCenter(ModelBase):
         power
     x0 : `float`
         center
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1dCenter")
-    P_ALL = ["a", "p", "x0"]
-    P_DEFAULT = [1, 1, 0]
+    P_ALL = ["a", "p", "x0", "c"]
+    P_DEFAULT = [1, 1, 0, 0]
 
     @staticmethod
     def _func(var, *p):
@@ -360,7 +362,7 @@ class FitPowerLaw1dCenter(ModelBase):
     def find_p0(self, *data):
         _fit = FitPowerLaw1d()
         _fit.find_p0(*data)
-        self.p0 = [_fit.a, _fit.p, 0]
+        self.p0 = [_fit.a, _fit.p, 0, 0]
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

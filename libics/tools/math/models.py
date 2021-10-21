@@ -411,9 +411,9 @@ class ModelBase(abc.ABC):
         chi2_red = self.find_chi2_red(*data)
         dof = data[0].size - len(self.pfit)
         if dof > 50:
-            quantile = scipy.stats.normal.cdf(chi2_red, np.sqrt(2 / dof))
+            quantile = 1 - scipy.stats.normal.cdf(chi2_red, np.sqrt(2 / dof))
         else:
-            quantile = scipy.stats.chi2.cdf(chi2_red * dof, dof)
+            quantile = 1 - scipy.stats.chi2.cdf(chi2_red * dof, dof)
         return quantile
 
     def test_hypothesis_chi2(self, *data, p_value=0.05):

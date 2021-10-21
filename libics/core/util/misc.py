@@ -724,6 +724,8 @@ def iter_progress(it, **kwargs):
         it = list(it)
         total = len(it)
     it = iter(it)
+    if total == 0:
+        return it
     start_time = time.time()
     counter = 0
     try:
