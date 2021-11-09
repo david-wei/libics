@@ -514,16 +514,16 @@ def split_strip(s, delim=",", strip=" \t\n\r"):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be split.
-    delim : str or None
+    delim : `str` or `None`
         String delimiter. If None, string will not be split.
-    strip : str
+    strip : `str`
         Strip characters.
 
     Returns
     -------
-    ls : list(str) or str
+    ls : `list(str)` or `str`
         Returns stripped (list of) string depending on delim
         parameter.
     """
@@ -540,14 +540,14 @@ def split_unit(s):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be split.
 
     Returns
     -------
-    val : int or float or str
+    val : `int` or `float` or `str`
         Numerical value or unchanged string.
-    unit : str
+    unit : `str`
         Unit.
 
     Notes
@@ -581,17 +581,17 @@ def extract(s, regex, group=1, cv_func=None, flags=0):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String from which to extract.
-    regex : str
+    regex : `str`
         Regular expression defining search function.
         Search findings should be enclosed in parentheses `()`.
-    group : int or list(int) or tuple(int) or np.ndarray(1, int)
+    group : `int` or `list(int)` or `tuple(int)` or `np.ndarray(1, int)`
         Group index of search results.
         If list, returns corresponding list of search results.
-    cv_func : callable or None
+    cv_func : `callable` or `None`
         Conversion function applied to search results (e.g. float).
-    flags : int
+    flags : `int`
         Flags parameter passed to re.search.
 
     Returns
@@ -634,16 +634,49 @@ def capitalize_first_char(s):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be capitalized.
 
     Returns
     -------
-    s_cap : str
+    s_cap : `str`
         Capitalized string.
     """
     s_cap = re.sub(r"(\S)", lambda x: x.groups()[0].upper(), s, 1)
     return s_cap
+
+
+REGEX_UPPERCASE_EUROPE = "[A-ZÀÁÂÄÆÇÈÉÊËÌÍÎÏÑÒÓÔÖÙÚÛÜŒŸẞ]"
+REGEX_LOWERCASE_EUROPE = "[a-zàáâäæçèéêëìíîïñòóôöùúûüœÿß]"
+
+
+def cv_camel_to_snake_case(s, snake_char="_"):
+    """
+    Converts CamelCase to snake_case.
+
+    Parameters
+    ----------
+    s : `str`
+        String in CamelCase
+    snake_char : `str`
+        Snake case concatenation character.
+
+    Returns
+    -------
+    s : `str`
+        String in snake_case.
+    """
+    # Lower body of multi-upper-case strings
+    s = re.sub(
+        f"({REGEX_UPPERCASE_EUROPE})({REGEX_UPPERCASE_EUROPE}+)",
+        lambda x: x.group(1) + x.group(2).lower(), s
+    )
+    # Add snake_char between lower and upper case characters
+    s = re.sub(
+        f"({REGEX_LOWERCASE_EUROPE}|\\d)({REGEX_UPPERCASE_EUROPE})",
+        lambda x: x.group(1) + snake_char + x.group(2).lower(), s
+    )
+    return s
 
 
 def char_range(start, stop=None, step=1):
@@ -1080,7 +1113,7 @@ def cv_index_center_to_rect(center, size):
         and the inner tuple corresponds to the slice `(min, max)`.
     """
     size = len(center) * [size] if np.isscalar(size) else size
-    return tuple((max(0, c - size[i] // 2), c + size[i] // 2 + 1)
+    return tuple((max(0, c - size[i] // 2), c + (size[i] + 1) // 2)
                  for i, c in enumerate(center))
 
 
