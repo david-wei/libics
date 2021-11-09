@@ -9,7 +9,7 @@ from libics.core.util import misc
 ###############################################################################
 
 
-def fft(data, axes=None, time_range=None, frequency_start=None):
+def fft(data, axes=None, time_range=None, frequency_start=None, norm=None):
     """
     Computes the Fast Fourier Transform of an array.
 
@@ -39,6 +39,9 @@ def fft(data, axes=None, time_range=None, frequency_start=None):
         `float`: specifies the frequency-range start value.
         `None` or `"zero"`: uses `0`.
         `"center": uses `-(N//2) * df`.
+    norm : `str`
+        If `data` is `np.ndarray`, `norm` specifies DFT normalization.
+        FFT: `"forward"`: 1/N, `"ortho"`: 1/√N, `"backward"`: 1.
 
     Returns
     -------
@@ -56,13 +59,15 @@ def fft(data, axes=None, time_range=None, frequency_start=None):
     """
     # Parse data type
     is_ad = isinstance(data, ArrayData)
+    if is_ad:
+        norm = "backward"
     ad = ArrayData(data)
     ar = np.array(data, dtype="complex")
     # Parse active axes
     if axes is None:
         axes = np.arange(ad.ndim)
     else:
-        axes = np.array(misc.assume_iter(axes))
+        axes = np.array(misc.assume_iter(axes)) % ad.ndim
     # Parse time and frequency domain
     _dom = _get_fft_domains(ad, axes, time_range, frequency_start)
     t_phase_correction = _get_fft_domain_phase_correction(
@@ -72,11 +77,11 @@ def fft(data, axes=None, time_range=None, frequency_start=None):
         _dom["ns"], _dom["tas"]/_dom["tts"], ad.ndim, axes,
         scalar=np.sum(_dom["fas"] * _dom["tas"])
     )
-    data_scaling = np.prod(_dom["dts"])
+    data_scaling = np.prod(_dom["dts"]) if is_ad else 1
     # Perform FFT
     if t_phase_correction is not None:
         ar *= np.exp(-1j * 2 * np.pi * t_phase_correction)
-    ft_ar = data_scaling * np.fft.fftn(ar, axes=axes, norm="backward")
+    ft_ar = data_scaling * np.fft.fftn(ar, axes=axes, norm=norm)
     if f_phase_correction is not None:
         ft_ar *= np.exp(-1j * 2 * np.pi * f_phase_correction)
     # Return data
@@ -92,7 +97,7 @@ def fft(data, axes=None, time_range=None, frequency_start=None):
         return ft_ad
 
 
-def ifft(data, axes=None, frequency_range=None, time_start=None):
+def ifft(data, axes=None, frequency_range=None, time_start=None, norm=None):
     """
     Computes the inverse Fast Fourier Transform of an array.
 
@@ -103,16 +108,24 @@ def ifft(data, axes=None, frequency_range=None, time_start=None):
         g (t) = \\int_{-\\inf}^{\\inf} \\tilde{g} (f) e^{i 2 \\pi f t} df
 
     For parameters and return values, see :py:meth:`fft`.
+
+    Notes
+    -----
+    norm : `str`
+        If `data` is `np.ndarray`, `norm` specifies DFT normalization.
+        Inv. FFT: `"forward"`: 1, `"ortho"`: 1/√N, `"backward"`: 1/N.
     """
     # Parse data type
     is_ad = isinstance(data, ArrayData)
+    if is_ad:
+        norm = "forward"
     ad = ArrayData(data)
     ar = np.array(data, dtype="complex")
     # Parse active axes
     if axes is None:
         axes = np.arange(ad.ndim)
     else:
-        axes = np.array(misc.assume_iter(axes))
+        axes = np.array(misc.assume_iter(axes)) % ad.ndim
     # Parse time and frequency domain
     _dom = _get_fft_domains(ad, axes, frequency_range, time_start)
     f_phase_correction = _get_fft_domain_phase_correction(
@@ -122,11 +135,11 @@ def ifft(data, axes=None, frequency_range=None, time_start=None):
         _dom["ns"], _dom["tas"]/_dom["tts"], ad.ndim, axes,
         scalar=np.sum(_dom["fas"] * _dom["tas"])
     )
-    data_scaling = np.prod(_dom["dts"])
+    data_scaling = np.prod(_dom["dts"]) if is_ad else 1
     # Perform FFT
     if f_phase_correction is not None:
         ar *= np.exp(1j * 2 * np.pi * f_phase_correction)
-    ft_ar = data_scaling * np.fft.ifftn(ar, axes=axes, norm="forward")
+    ft_ar = data_scaling * np.fft.ifftn(ar, axes=axes, norm=norm)
     if t_phase_correction is not None:
         ft_ar *= np.exp(1j * 2 * np.pi * t_phase_correction)
     # Return data
