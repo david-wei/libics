@@ -875,17 +875,13 @@ class ArrayData(object):
         -------
         ind : `int`
             Index associated with given quantity.
-
-        Raises
-        ------
-        IndexError:
-            If `dim` is out of bounds.
         """
         if self.var_mode[dim] == self.POINTS:
             ind = np.argmin(np.abs(self.get_points(dim) - val))
         else:
             val = max(val, self.get_offset(dim))
             ind = round((val - self.offset[dim]) / self.step[dim])
+            ind = min(ind, self.shape[dim] - 1)
         return ind
 
     # +++++++++++++
