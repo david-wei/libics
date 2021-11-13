@@ -318,7 +318,7 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_points">
-<span class="sig-name descname"><span class="pre">read_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">bucket=None</span></em>, <em class="sig-param"><span class="pre">start='-1d'</span></em>, <em class="sig-param"><span class="pre">stop=None</span></em>, <em class="sig-param"><span class="pre">window=None</span></em>, <em class="sig-param"><span class="pre">function=None</span></em>, <em class="sig-param"><span class="pre">rmv_nan=True</span></em>, <em class="sig-param"><span class="pre">funcs=None</span></em>, <em class="sig-param"><span class="pre">measurement=None</span></em>, <em class="sig-param"><span class="pre">field=None</span></em>, <em class="sig-param"><span class="pre">\*\*tags</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_points" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">read_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">bucket=None</span></em>, <em class="sig-param"><span class="pre">start='-1d'</span></em>, <em class="sig-param"><span class="pre">stop=None</span></em>, <em class="sig-param"><span class="pre">group=None</span></em>, <em class="sig-param"><span class="pre">window=None</span></em>, <em class="sig-param"><span class="pre">function=None</span></em>, <em class="sig-param"><span class="pre">rmv_nan=True</span></em>, <em class="sig-param"><span class="pre">funcs=None</span></em>, <em class="sig-param"><span class="pre">measurement=None</span></em>, <em class="sig-param"><span class="pre">field=None</span></em>, <em class="sig-param"><span class="pre">_check_params=True</span></em>, <em class="sig-param"><span class="pre">\*\*tags</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Queries the database.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -326,6 +326,8 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 <dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Bucket name.</p>
 </dd>
 <dt><strong>start, stop</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Extracted time range.</p>
+</dd>
+<dt><strong>group</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Groups by the given tags.</p>
 </dd>
 <dt><strong>window</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Time window per extracted point.
 E.g.: <cite>“1m”, “2h”, …</cite></p>

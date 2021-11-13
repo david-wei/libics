@@ -35,6 +35,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -182,39 +183,71 @@
 <span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.tools.trafo.fourier" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.trafo.fourier.fft">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.fourier.</span></span><span class="sig-name descname"><span class="pre">fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.fft" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.fourier.</span></span><span class="sig-name descname"><span class="pre">fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.fft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Fast Fourier Transform of an array.</p>
+<p>Computes the forward (time-&gt;frequency) transformation and interpretes
+the data transformation as continuous Fourier transform.</p>
+<div class="math notranslate nohighlight">
+\[\tilde{g} (f) = \int_{-\inf}^{\inf} g (t) e^{-i 2 \pi f t} dt\]</div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>ad</strong><span class="classifier"><cite>np.ndarray</cite> or <cite>ArrayData</cite></span></dt><dd><p>The array data to be Fourier transformed.</p>
+<dt><strong>data</strong><span class="classifier"><cite>Array[complex or float]</cite></span></dt><dd><p>The array data to be Fourier transformed.</p>
 </dd>
-<dt><strong>mode</strong><span class="classifier"><cite>None</cite> or <cite>str</cite></span></dt><dd><p><cite>None</cite>: Saves full complex values of Fourier transform.
-<cite>“abs</cite>”: Saves spectrum (modulus of Fourier transform).
-<cite>“phase”</cite>: Saves phase of Fourier transform.
-<cite>“re”</cite>: Saves real part of Fourier transform.
-<cite>“im”</cite>: Saves imaginary part of Fourier transform.</p>
+<dt><strong>axes</strong><span class="classifier"><cite>int</cite> or <cite>Iter[int]</cite></span></dt><dd><p>Indices of dimensions to be transformed.
+If <cite>None</cite>, transforms all.</p>
 </dd>
-<dt><strong>symmetric</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to use symmetric Fourier transform.</p>
+<dt><strong>time_range</strong><span class="classifier"><cite>tuple(float)|str|None</cite> or <cite>Iter[thereof]</cite></span></dt><dd><p>Time range which <cite>data</cite> represents.
+If <cite>Iter[…]</cite>, specifies the time range per transformed axis.
+<cite>tuple(float)</cite>: specifies the time range <cite>(ta, tb)</cite>.
+<cite>None</cite>: If <cite>data</cite> is <cite>ArrayData</cite> infers time range, otherwise <cite>“zero”</cite>.
+<cite>“zero”</cite>: uses time range <cite>(0, N-1)</cite>. <cite>N</cite> is data size in resp. dim.
+<cite>“center”</cite>: uses time range <cite>(-(N//2), (N+1)//2 - 1)</cite>.</p>
+</dd>
+<dt><strong>frequency_start</strong><span class="classifier"><cite>float|str|None</cite> or <cite>Iter[thereof]</cite></span></dt><dd><p>Frequency range start of returned data.
+If <cite>Iter[…]</cite>, uses the respective value in each axis.
+<cite>float</cite>: specifies the frequency-range start value.
+<cite>None</cite> or <cite>“zero”</cite>: uses <cite>0</cite>.
+<cite>“center”: uses `-(N//2) * df</cite>.</p>
+</dd>
+<dt><strong>norm</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>If <cite>data</cite> is <cite>np.ndarray</cite>, <cite>norm</cite> specifies DFT normalization.
+FFT: <cite>“forward”</cite>: 1/N, <cite>“ortho”</cite>: 1/√N, <cite>“backward”</cite>: 1.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>ft</strong><span class="classifier">data.arrays.ArrayData</span></dt><dd><p>Fourier transformed data.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If parameters are invalid.</p>
+<dd class="field-even"><dl>
+<dt><strong>ft</strong><span class="classifier"><cite>Array[complex]</cite></span></dt><dd><p>Fourier transformed data. Returns same data type as <cite>data</cite>.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>FFT is implemented as asymmetric transform with respect to frequency and
-not angular frequency (i.e. 2πft, not ωt).</p>
+<ul class="simple">
+<li><p>Variable notation:
+data range <cite>(ta, tb)</cite>, data steps <cite>dt</cite>, data span <cite>tt</cite> for time domain.
+<cite>(fa, fb), df, ff</cite> analogously for frequency domain.</p></li>
+<li><p>Setting explicit time ranges and frequency ranges are important to
+obtain correct Fourier transformed phases and correct assignment of
+frequencies.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.fourier.ifft">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.fourier.</span></span><span class="sig-name descname"><span class="pre">ifft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.ifft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the inverse Fast Fourier Transform of an array.</p>
+<p>Computes the backward (frequency-&gt;time) transformation and interpretes
+the data transformation as continuous Fourier transform.</p>
+<div class="math notranslate nohighlight">
+\[g (t) = \int_{-\inf}^{\inf} \tilde{g} (f) e^{i 2 \pi f t} df\]</div>
+<p>For parameters and return values, see <a class="reference internal" href="#libics.tools.trafo.fourier.fft" title="libics.tools.trafo.fourier.fft"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fft()</span></code></a>.</p>
+<p class="rubric">Notes</p>
+<dl>
+<dt>norm<span class="classifier"><cite>str</cite></span></dt><dd><p>If <cite>data</cite> is <cite>np.ndarray</cite>, <cite>norm</cite> specifies DFT normalization.
+Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite>“backward”</cite>: 1/N.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -265,6 +298,12 @@ not angular frequency (i.e. 2πft, not ωt).</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.coord_to_target" title="libics.tools.trafo.linear.AffineTrafo.coord_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_target</span></code></a>(self, origin_coords)</p></td>
 <td><p>Transforms given origin coordinates into target coordinates.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_origin" title="libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_offset_shift_to_origin</span></code></a>(self, shift)</p></td>
+<td><p>Converts an offset shift from target to origin space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_target" title="libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_offset_shift_to_target</span></code></a>(self, shift)</p></td>
+<td><p>Converts an offset shift from origin to target space.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.cv_to_origin" title="libics.tools.trafo.linear.AffineTrafo.cv_to_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code></a>(self, target_array, origin_shape)</p></td>
 <td><p>Convert an array in target coordinates to origin coordinates.</p></td>
 </tr>
@@ -285,6 +324,11 @@ not angular frequency (i.e. 2πft, not ωt).</p>
 </tr>
 </tbody>
 </table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.tools.trafo.linear.AffineTrafo</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.SER_KEYS">
 <span class="sig-name descname"><span class="pre">SER_KEYS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'matrix',</span> <span class="pre">'offset'}</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.SER_KEYS" title="Permalink to this definition">¶</a></dt>
@@ -323,6 +367,18 @@ placed on the last axes (dimensions: […, ndim]).</p>
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_origin">
+<span class="sig-name descname"><span class="pre">cv_offset_shift_to_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an offset shift from target to origin space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_target">
+<span class="sig-name descname"><span class="pre">cv_offset_shift_to_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an offset shift from origin to target space.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -478,6 +534,12 @@ Variable naming convention:</p>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord_to_target</span></code>(self, origin_coords)</p></td>
 <td><p>Transforms given origin coordinates into target coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_offset_shift_to_origin</span></code>(self, shift)</p></td>
+<td><p>Converts an offset shift from target to origin space.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_offset_shift_to_target</span></code>(self, shift)</p></td>
+<td><p>Converts an offset shift from origin to target space.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cv_to_origin</span></code>(self, target_array, origin_shape)</p></td>
 <td><p>Convert an array in target coordinates to origin coordinates.</p></td>

@@ -520,6 +520,12 @@ the suffix is appended. The assumed result is returned.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_even_int">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_even_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_even_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that val is a scalar even integer.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_iter">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is iterable. If the given data is iterable, it is
@@ -582,6 +588,12 @@ list. If not, a list is created with the data as single item.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_odd_int">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_odd_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_odd_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that val is a scalar odd integer.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_tuple">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that data is a tuple. If the given data is a list, it is cast to a
@@ -607,16 +619,16 @@ tuple. If not, a tuple is created with the data as single item.</p>
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">capitalize_first_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.capitalize_first_char" title="Permalink to this definition">¶</a></dt>
 <dd><p>Capitalizes the first character (if possible) and leaves the rest of the
 string invariant.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be capitalized.</p>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String to be capitalized.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>s_cap</strong><span class="classifier">str</span></dt><dd><p>Capitalized string.</p>
+<dd class="field-even"><dl>
+<dt><strong>s_cap</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Capitalized string.</p>
 </dd>
 </dl>
 </dd>
@@ -682,6 +694,28 @@ two-point average.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_camel_to_snake_case">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_camel_to_snake_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snake_char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_camel_to_snake_case" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts CamelCase to snake_case.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String in CamelCase</p>
+</dd>
+<dt><strong>snake_char</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Snake case concatenation character.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String in snake_case.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.cv_coord_spherical_to_cartesian">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_coord_spherical_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuthal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_coord_spherical_to_cartesian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts 3D spherical (standard parametrization) to cartesian coordinates.</p>
@@ -731,6 +765,12 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_index_center_to_slice">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_center_to_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_center_to_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shorthand for applying <cite>cv_index_rect_to_slice(cv_index_center_to_rect())</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.cv_index_rect_to_slice">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_rect_to_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_rect_to_slice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts min-max indices to slices.</p>
@@ -762,20 +802,20 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts part of a string.
 Serves as convenience function to re.search.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String from which to extract.</p>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String from which to extract.</p>
 </dd>
-<dt><strong>regex</strong><span class="classifier">str</span></dt><dd><p>Regular expression defining search function.
+<dt><strong>regex</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Regular expression defining search function.
 Search findings should be enclosed in parentheses <cite>()</cite>.</p>
 </dd>
-<dt><strong>group</strong><span class="classifier">int or list(int) or tuple(int) or np.ndarray(1, int)</span></dt><dd><p>Group index of search results.
+<dt><strong>group</strong><span class="classifier"><cite>int</cite> or <cite>list(int)</cite> or <cite>tuple(int)</cite> or <cite>np.ndarray(1, int)</cite></span></dt><dd><p>Group index of search results.
 If list, returns corresponding list of search results.</p>
 </dd>
-<dt><strong>cv_func</strong><span class="classifier">callable or None</span></dt><dd><p>Conversion function applied to search results (e.g. float).</p>
+<dt><strong>cv_func</strong><span class="classifier"><cite>callable</cite> or <cite>None</cite></span></dt><dd><p>Conversion function applied to search results (e.g. float).</p>
 </dd>
-<dt><strong>flags</strong><span class="classifier">int</span></dt><dd><p>Flags parameter passed to re.search.</p>
+<dt><strong>flags</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Flags parameter passed to re.search.</p>
 </dd>
 </dl>
 </dd>
@@ -1264,20 +1304,20 @@ check for duplicates, so duplicate mapping will be random.</p>
 <dt class="sig sig-object py" id="libics.core.util.misc.split_strip">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">split_strip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">\t\n\r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_strip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a given string and strips each list element from given characters.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be split.</p>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String to be split.</p>
 </dd>
-<dt><strong>delim</strong><span class="classifier">str or None</span></dt><dd><p>String delimiter. If None, string will not be split.</p>
+<dt><strong>delim</strong><span class="classifier"><cite>str</cite> or <cite>None</cite></span></dt><dd><p>String delimiter. If None, string will not be split.</p>
 </dd>
-<dt><strong>strip</strong><span class="classifier">str</span></dt><dd><p>Strip characters.</p>
+<dt><strong>strip</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Strip characters.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>ls</strong><span class="classifier">list(str) or str</span></dt><dd><p>Returns stripped (list of) string depending on delim
+<dd class="field-even"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>list(str)</cite> or <cite>str</cite></span></dt><dd><p>Returns stripped (list of) string depending on delim
 parameter.</p>
 </dd>
 </dl>
@@ -1289,18 +1329,18 @@ parameter.</p>
 <dt class="sig sig-object py" id="libics.core.util.misc.split_unit">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">split_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.split_unit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a given string into a tuple of numerical value and unit.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">str</span></dt><dd><p>String to be split.</p>
+<dd class="field-odd"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String to be split.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>val</strong><span class="classifier">int or float or str</span></dt><dd><p>Numerical value or unchanged string.</p>
+<dd class="field-even"><dl>
+<dt><strong>val</strong><span class="classifier"><cite>int</cite> or <cite>float</cite> or <cite>str</cite></span></dt><dd><p>Numerical value or unchanged string.</p>
 </dd>
-<dt><strong>unit</strong><span class="classifier">str</span></dt><dd><p>Unit.</p>
+<dt><strong>unit</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Unit.</p>
 </dd>
 </dl>
 </dd>

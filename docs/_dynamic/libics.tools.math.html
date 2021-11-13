@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.math.flat">flat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.math.peaked">peaked</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.math.intervalfunc">intervalfunc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.math.calculus">calculus</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.math.tensor">tensor</a></li>
 </ul>
 </li>
@@ -292,17 +293,23 @@ should be interpretable by <code class="xref py py-meth docutils literal notrans
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_chi2_red" title="libics.tools.math.models.ModelBase.find_chi2_red"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code></a>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_p0" title="libics.tools.math.models.ModelBase.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_chi2_significance" title="libics.tools.math.models.ModelBase.find_chi2_significance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code></a>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_p0" title="libics.tools.math.models.ModelBase.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_popt" title="libics.tools.math.models.ModelBase.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.find_popt" title="libics.tools.math.models.ModelBase.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.set_p0" title="libics.tools.math.models.ModelBase.set_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code></a>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.set_p0" title="libics.tools.math.models.ModelBase.set_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code></a>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.set_pfit" title="libics.tools.math.models.ModelBase.set_pfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code></a>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.set_pfit" title="libics.tools.math.models.ModelBase.set_pfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code></a>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.ModelBase.test_hypothesis_chi2" title="libics.tools.math.models.ModelBase.test_hypothesis_chi2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code></a>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -345,12 +352,22 @@ should be interpretable by <code class="xref py py-meth docutils literal notrans
 <dt class="sig sig-object py" id="libics.tools.math.models.ModelBase.find_chi2">
 <span class="sig-name descname"><span class="pre">find_chi2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.find_chi2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the chi squared statistic.</p>
+<p>This is the sum of the squared residuals.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.math.models.ModelBase.find_chi2_red">
 <span class="sig-name descname"><span class="pre">find_chi2_red</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.find_chi2_red" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the reduced chi squared statistic.</p>
+<p>This is the sum of the squared residuals divided by the degrees of
+freedom (data points minus number of fit parameters).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.ModelBase.find_chi2_significance">
+<span class="sig-name descname"><span class="pre">find_chi2_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.find_chi2_significance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the chi squared confindence quantile for the fit.</p>
+<p>Example: For a 2-sigma-quality fit, <cite>0.95</cite> is returned.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -492,6 +509,179 @@ constant parameters.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.ModelBase.test_hypothesis_chi2">
+<span class="sig-name descname"><span class="pre">test_hypothesis_chi2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*data</span></em>, <em class="sig-param"><span class="pre">p_value=0.05</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.test_hypothesis_chi2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the whether the fit is valid.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>p_value</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Critical confidence level (“alpha-value”),
+e.g. <cite>0.05</cite> for 2-sigma.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">TensorModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>p0</strong></dt><dd></dd>
+<dt><a class="reference internal" href="#libics.tools.math.models.TensorModelBase.pall_scal" title="libics.tools.math.models.TensorModelBase.pall_scal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pall_scal</span></code></a></dt><dd><p>dict(name-&gt;index) for scalar parameters</p>
+</dd>
+<dt><a class="reference internal" href="#libics.tools.math.models.TensorModelBase.pall_vect" title="libics.tools.math.models.TensorModelBase.pall_vect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pall_vect</span></code></a></dt><dd><p>dict(name-&gt;index) for vector parameters</p>
+</dd>
+<dt><strong>pcov</strong></dt><dd></dd>
+<dt><a class="reference internal" href="#libics.tools.math.models.TensorModelBase.popt" title="libics.tools.math.models.TensorModelBase.popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popt</span></code></a></dt><dd><p>All <a class="reference internal" href="#libics.tools.math.models.TensorModelBase.popt" title="libics.tools.math.models.TensorModelBase.popt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">popt</span></code></a> (non-fitted ones use <a class="reference internal" href="#libics.tools.math.models.TensorModelBase.p0" title="libics.tools.math.models.TensorModelBase.p0"><code class="xref py py-attr docutils literal notranslate"><span class="pre">p0</span></code></a>)</p>
+</dd>
+<dt><strong>pstd</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(self, var, \*args, \*\*kwargs)</p></td>
+<td><p>Calls the model function with current parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.TensorModelBase.find_p0" title="libics.tools.math.models.TensorModelBase.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self)</p></td>
+<td><p>Routine for initial fit parameter finding.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.TensorModelBase.find_popt" title="libics.tools.math.models.TensorModelBase.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<td><p>Fits the model function to the given data.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 60%" />
+<col style="width: 40%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>get_popt</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>p0_is_set</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>popt_is_set</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.math.models.TensorModelBase</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.P_DEFAULT">
+<span class="sig-name descname"><span class="pre">P_DEFAULT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">NotImplemented</span></em><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.P_DEFAULT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.P_SCAL">
+<span class="sig-name descname"><span class="pre">P_SCAL</span></span><em class="property"> <span class="pre">=</span> <span class="pre">NotImplemented</span></em><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.P_SCAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.P_TENS">
+<span class="sig-name descname"><span class="pre">P_TENS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'ptens'</span></em><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.P_TENS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.P_VECT">
+<span class="sig-name descname"><span class="pre">P_VECT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">NotImplemented</span></em><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.P_VECT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.find_p0">
+<span class="sig-name descname"><span class="pre">find_p0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.find_p0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routine for initial fit parameter finding.</p>
+<p>Should return whether this succeeded.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.find_popt">
+<span class="sig-name descname"><span class="pre">find_popt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">\*data</span></em>, <em class="sig-param"><span class="pre">\*\*kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.find_popt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the model function to the given data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*data</strong><span class="classifier"><cite>Any</cite></span></dt><dd><p>Data interpretable by <code class="xref py py-meth docutils literal notranslate"><span class="pre">_split_fit_data()</span></code>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>psuccess</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether fit succeeded.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.get_popt">
+<span class="sig-name descname"><span class="pre">get_popt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.get_popt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.p0">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">p0</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.p0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.p0_is_set">
+<span class="sig-name descname"><span class="pre">p0_is_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.p0_is_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.pall_scal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pall_scal</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.pall_scal" title="Permalink to this definition">¶</a></dt>
+<dd><p>dict(name-&gt;index) for scalar parameters</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.pall_vect">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pall_vect</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.pall_vect" title="Permalink to this definition">¶</a></dt>
+<dd><p>dict(name-&gt;index) for vector parameters</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.pcov">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pcov</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.pcov" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.popt">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">popt</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.popt" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a class="reference internal" href="#libics.tools.math.models.TensorModelBase.popt" title="libics.tools.math.models.TensorModelBase.popt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">popt</span></code></a> (non-fitted ones use <a class="reference internal" href="#libics.tools.math.models.TensorModelBase.p0" title="libics.tools.math.models.TensorModelBase.p0"><code class="xref py py-attr docutils literal notranslate"><span class="pre">p0</span></code></a>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.popt_is_set">
+<span class="sig-name descname"><span class="pre">popt_is_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.popt_is_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase.pstd">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pstd</span></span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase.pstd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -552,17 +742,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine1d.find_p0" title="libics.tools.math.flat.FitCosine1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, MAX_POINTS])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine1d.find_p0" title="libics.tools.math.flat.FitCosine1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, MAX_POINTS])</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine1d.find_popt" title="libics.tools.math.flat.FitCosine1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine1d.find_popt" title="libics.tools.math.flat.FitCosine1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -675,17 +871,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine2d.find_p0" title="libics.tools.math.flat.FitCosine2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, MAX_LINES, MAX_POINTS])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine2d.find_p0" title="libics.tools.math.flat.FitCosine2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, MAX_LINES, MAX_POINTS])</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine2d.find_popt" title="libics.tools.math.flat.FitCosine2d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitCosine2d.find_popt" title="libics.tools.math.flat.FitCosine2d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -820,17 +1022,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitErrorFunction.find_p0" title="libics.tools.math.flat.FitErrorFunction.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitErrorFunction.find_p0" title="libics.tools.math.flat.FitErrorFunction.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitErrorFunction.find_popt" title="libics.tools.math.flat.FitErrorFunction.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitErrorFunction.find_popt" title="libics.tools.math.flat.FitErrorFunction.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -951,17 +1159,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinear1d.find_p0" title="libics.tools.math.flat.FitLinear1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinear1d.find_p0" title="libics.tools.math.flat.FitLinear1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinear1d.find_popt" title="libics.tools.math.flat.FitLinear1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinear1d.find_popt" title="libics.tools.math.flat.FitLinear1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1086,17 +1300,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinearStepFunction.find_p0" title="libics.tools.math.flat.FitLinearStepFunction.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinearStepFunction.find_p0" title="libics.tools.math.flat.FitLinearStepFunction.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinearStepFunction.find_popt" title="libics.tools.math.flat.FitLinearStepFunction.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitLinearStepFunction.find_popt" title="libics.tools.math.flat.FitLinearStepFunction.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1217,17 +1437,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitPowerLaw1d.find_p0" title="libics.tools.math.flat.FitPowerLaw1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitPowerLaw1d.find_p0" title="libics.tools.math.flat.FitPowerLaw1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1289,6 +1515,8 @@ constant parameters.</p>
 </dd>
 <dt><strong>x0</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>center</p>
 </dd>
+<dt><strong>c</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>offset</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Attributes</dt>
@@ -1328,17 +1556,23 @@ constant parameters.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitPowerLaw1dCenter.find_p0" title="libics.tools.math.flat.FitPowerLaw1dCenter.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.flat.FitPowerLaw1dCenter.find_p0" title="libics.tools.math.flat.FitPowerLaw1dCenter.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1369,12 +1603,12 @@ constant parameters.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitPowerLaw1dCenter.P_ALL">
-<span class="sig-name descname"><span class="pre">P_ALL</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['a',</span> <span class="pre">'p',</span> <span class="pre">'x0']</span></em><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1dCenter.P_ALL" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">P_ALL</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['a',</span> <span class="pre">'p',</span> <span class="pre">'x0',</span> <span class="pre">'c']</span></em><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1dCenter.P_ALL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitPowerLaw1dCenter.P_DEFAULT">
-<span class="sig-name descname"><span class="pre">P_DEFAULT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">0]</span></em><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1dCenter.P_DEFAULT" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">P_DEFAULT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0]</span></em><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1dCenter.P_DEFAULT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1488,17 +1722,23 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitAiryDisk2d.find_p0" title="libics.tools.math.peaked.FitAiryDisk2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitAiryDisk2d.find_p0" title="libics.tools.math.peaked.FitAiryDisk2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Algorithm: linear min/max approximation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1600,23 +1840,29 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.find_p0" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.find_p0" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Algorithm: find_p0 of Gaussian -&gt; split data at width -&gt; fit tails with Gaussian, center with parabola.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_gaussian_1d" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_gaussian_1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_gaussian_1d</span></code></a>(self)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_gaussian_1d" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_gaussian_1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_gaussian_1d</span></code></a>(self)</p></td>
 <td><p>Gets a fit object only modelling the Gaussian part.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_parabolic_1d_int2d" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_parabolic_1d_int2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_parabolic_1d_int2d</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_parabolic_1d_int2d" title="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d.get_fit_parabolic_1d_int2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_parabolic_1d_int2d</span></code></a>(self)</p></td>
 <td><p>Gets a fit object only modelling the parabolic part.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1735,27 +1981,33 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_p0" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_p0" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_popt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_popt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_gaussian_2d_tilt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_gaussian_2d_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_gaussian_2d_tilt</span></code></a>(self)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_gaussian_2d_tilt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_gaussian_2d_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_gaussian_2d_tilt</span></code></a>(self)</p></td>
 <td><p>Gets a fit object only modelling the Gaussian part.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_parabolic_2d_int1d_tilt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_parabolic_2d_int1d_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_parabolic_2d_int1d_tilt</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_parabolic_2d_int1d_tilt" title="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt.get_fit_parabolic_2d_int1d_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_parabolic_2d_int1d_tilt</span></code></a>(self)</p></td>
 <td><p>Gets a fit object only modelling the parabolic part.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1884,17 +2136,23 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitExponential1d.find_p0" title="libics.tools.math.peaked.FitExponential1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitExponential1d.find_p0" title="libics.tools.math.peaked.FitExponential1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2013,17 +2271,23 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d.find_p0" title="libics.tools.math.peaked.FitGaussian1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d.find_p0" title="libics.tools.math.peaked.FitGaussian1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d.find_popt" title="libics.tools.math.peaked.FitGaussian1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d.find_popt" title="libics.tools.math.peaked.FitGaussian1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2150,21 +2414,27 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt.find_p0" title="libics.tools.math.peaked.FitGaussian2dTilt.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, algorithm])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt.find_p0" title="libics.tools.math.peaked.FitGaussian2dTilt.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, algorithm])</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt.find_popt" title="libics.tools.math.peaked.FitGaussian2dTilt.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt.find_popt" title="libics.tools.math.peaked.FitGaussian2dTilt.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2295,17 +2565,23 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzian1dAbs.find_p0" title="libics.tools.math.peaked.FitLorentzian1dAbs.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzian1dAbs.find_p0" title="libics.tools.math.peaked.FitLorentzian1dAbs.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Algorithm: dummy max.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzian1dAbs.find_popt" title="libics.tools.math.peaked.FitLorentzian1dAbs.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzian1dAbs.find_popt" title="libics.tools.math.peaked.FitLorentzian1dAbs.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2433,20 +2709,26 @@ c + a (for x &gt; x_0 + w)\]</div>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.find_p0" title="libics.tools.math.peaked.FitLorentzianEit1dImag.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.find_p0" title="libics.tools.math.peaked.FitLorentzianEit1dImag.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.find_popt" title="libics.tools.math.peaked.FitLorentzianEit1dImag.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.find_popt" title="libics.tools.math.peaked.FitLorentzianEit1dImag.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.get_phys" title="libics.tools.math.peaked.FitLorentzianEit1dImag.get_phys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_phys</span></code></a>(self)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag.get_phys" title="libics.tools.math.peaked.FitLorentzianEit1dImag.get_phys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_phys</span></code></a>(self)</p></td>
 <td><p>Gets parameters parametrized as physical quantities.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2641,24 +2923,30 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianRydEit1dImag.find_p0" title="libics.tools.math.peaked.FitLorentzianRydEit1dImag.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, const_p0])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianRydEit1dImag.find_p0" title="libics.tools.math.peaked.FitLorentzianRydEit1dImag.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data[, const_p0])</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_phys</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_phys</span></code>(self)</p></td>
 <td><p>Gets parameters parametrized as physical quantities.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2766,17 +3054,23 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitParabolic1d.find_p0" title="libics.tools.math.peaked.FitParabolic1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitParabolic1d.find_p0" title="libics.tools.math.peaked.FitParabolic1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*data, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2879,17 +3173,23 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitParabolic1dInt2d.find_p0" title="libics.tools.math.peaked.FitParabolic1dInt2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitParabolic1dInt2d.find_p0" title="libics.tools.math.peaked.FitParabolic1dInt2d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(self, \*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2994,21 +3294,27 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(self, \*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code>(self, \*data[, algorithm])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(self, \*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code>(self, \*data[, algorithm])</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(self, \*\*p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(self, \*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(self, \*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -4094,6 +4400,75 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-libics.tools.math.calculus">
+<span id="calculus"></span><h2>calculus<a class="headerlink" href="#module-libics.tools.math.calculus" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.calculus.differentiate_array">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">differentiate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.differentiate_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Differentiates an array.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>Array</cite></span></dt><dd><p>Function represented by an array.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier"><cite>Array(1, float)</cite></span></dt><dd><p>Coordinates to differentiate along. Overwrites <cite>dx</cite>.
+If not given, deduces <cite>x</cite> from <cite>ar</cite>.</p>
+</dd>
+<dt><strong>dx</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Coordinate steps to differentiate along.</p>
+</dd>
+<dt><strong>axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Array dimension to differentiate along.</p>
+</dd>
+<dt><strong>edge_order</strong><span class="classifier"><cite>1</cite> or <cite>2</cite></span></dt><dd><p>Numerical differentiation using first/second-order-accurate
+differences at the boundaries.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar_dif</strong><span class="classifier"><cite>Array</cite></span></dt><dd><p>Differentiated array of same type as <cite>ar</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.calculus.integrate_array">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">integrate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.integrate_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a definite or indefinite 1D integral of an array.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>Array</cite></span></dt><dd><p>Function represented by an array.</p>
+</dd>
+<dt><strong>bounds</strong><span class="classifier"><cite>bool</cite> or <cite>tuple(float)</cite></span></dt><dd><p><cite>False</cite>: performs indefinite integral.
+<cite>True</cite>: performs definite integral over full array.
+<cite>tuple(float)</cite>: integration bounds <cite>[xmin, xmax]</cite>.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier"><cite>Array(1, float)</cite></span></dt><dd><p>Coordinates to integrate along. Overwrites <cite>dx</cite>.
+If not given, deduces <cite>x</cite> from <cite>ar</cite>.</p>
+</dd>
+<dt><strong>dx</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Coordinate steps to integrate along.</p>
+</dd>
+<dt><strong>x0</strong><span class="classifier"><cite>None</cite> or <cite>float</cite></span></dt><dd><p>Used only for indefinite integration, where
+<span class="math notranslate nohighlight">\(F(x) = \int_{x_0}^{x} f(x') dx'\)</span>.
+If <cite>None</cite>, sets the integration constant to zero.</p>
+</dd>
+<dt><strong>axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Array dimension to integrate along.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar_int</strong><span class="classifier"><cite>Array</cite> or <cite>Number</cite></span></dt><dd><p>If indefinite integration, returns same type as <cite>ar</cite>.
+If definite integration, removes one dimension of <cite>ar</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-libics.tools.math.tensor">
 <span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-libics.tools.math.tensor" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -4617,6 +4992,39 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.tensor.calc_op_outer">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">calc_op_outer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ar2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\\*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_ndim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.calc_op_outer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform elementwise operation with broadcasting.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar1, ar2</strong><span class="classifier"><cite>Array</cite></span></dt><dd><p>Arrays as first and second operators with dimensions:
+<cite>[{non_ar1/2_dims}, {red_dims}]</cite>.</p>
+</dd>
+<dt><strong>op</strong><span class="classifier"><cite>str</cite> or <cite>callable</cite></span></dt><dd><p>Binary operator as function or from <code class="xref py py-attr docutils literal notranslate"><span class="pre">BINARY_OPS_NUMPY</span></code>.</p>
+</dd>
+<dt><strong>reduce_ndim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of dimensions (from the last axis) to perform the operation
+elementwise. Other dimensions are broadcasted by outer product.</p>
+</dd>
+<dt><strong>ret_dims</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to return the number of non-positional
+dimensions of the vectors <cite>ar1</cite> and <cite>ar2</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>Array</cite></span></dt><dd><p>Reduced operator result with dimensions:
+<cite>[{non_ar1_dims}, {non_ar2_dims}, {red_dims}]</cite>.</p>
+</dd>
+<dt><strong>non_ar1_dims, non_ar2_dims</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of non-reduced dimensions of respective axes.
+Only returned if <cite>ret_dims is True</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.complex_norm">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">complex_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.complex_norm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the pseudonorm <span class="math notranslate nohighlight">\(\sqrt{x^T x}\)</span> on the complex (tensorial)
@@ -4663,8 +5071,57 @@ vector <span class="math notranslate nohighlight">\(x\)</span>.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.tensor.get_dirac_delta">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">get_dirac_delta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">\*shape</span></em>, <em class="sig-param"><span class="pre">dtype=None</span></em>, <em class="sig-param"><span class="pre">order='abab'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.get_dirac_delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a multi-dimensional Dirac delta tensor.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*shape</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Entries per dimension.</p>
+</dd>
+<dt><strong>dtype</strong><span class="classifier"><cite>np.dtype</cite></span></dt><dd><p>Data type of generated array.</p>
+</dd>
+<dt><strong>order</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Dimensional order of Dirac delta.
+<cite>“abab”</cite>, <cite>“aabb”</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>dirac_delta</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Multi-dimensional Dirac delta tensor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.tensor.insert_dims">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">insert_dims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.insert_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands the dimensions of an array.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ar</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Array to be expanded.</p>
+</dd>
+<dt><strong>ndim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of dimensions to be inserted.</p>
+</dd>
+<dt><strong>axis</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Dimensional index of insertion.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">insert_dims</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 3, 1, 1, 1, 4)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.ortho_gram_schmidt">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">ortho_gram_schmidt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vectors</span></em>, <em class="sig-param"><span class="pre">norm_func=&lt;function</span> <span class="pre">norm</span> <span class="pre">at</span> <span class="pre">0x0000028B5DCCE8C8&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.ortho_gram_schmidt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">ortho_gram_schmidt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vectors</span></em>, <em class="sig-param"><span class="pre">norm_func=&lt;function</span> <span class="pre">norm</span> <span class="pre">at</span> <span class="pre">0x000002B454CA8950&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.ortho_gram_schmidt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Naive Gram-Schmidt orthogonalization.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>

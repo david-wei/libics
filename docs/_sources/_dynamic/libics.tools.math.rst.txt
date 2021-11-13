@@ -38,6 +38,14 @@ intervalfunc
     :undoc-members:
     :show-inheritance:
 
+calculus
+--------
+
+.. automodule:: libics.tools.math.calculus
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tensor
 ------
 

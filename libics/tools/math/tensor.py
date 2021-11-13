@@ -1,6 +1,7 @@
 import numpy as np
 
 from libics.core.util import misc
+from libics.core.data.types import BINARY_OPS_NUMPY
 
 
 ###############################################################################
@@ -101,6 +102,109 @@ def tensorize_numpy_array(
     ar = ar.reshape(ar.shape[:-1] + tensor_shape)
     ar = np.moveaxis(ar, np.arange(-vec_dims, 0), tensor_axes)
     return ar
+
+
+def insert_dims(ar, ndim, axis=-1):
+    """
+    Expands the dimensions of an array.
+
+    Parameters
+    ----------
+    ar : `np.ndarray`
+        Array to be expanded.
+    ndim : `int`
+        Number of dimensions to be inserted.
+    axis : `int`
+        Dimensional index of insertion.
+
+    Return
+    ------
+    ar : `np.ndarray`
+        Expanded array.
+
+    Examples
+    --------
+    >>> ar = np.arange(2 * 3 * 4).reshape((2, 3, 4))
+    >>> insert_dims(ar, 3, axis=-2).shape
+    (2, 3, 1, 1, 1, 4)
+    """
+    for _ in range(ndim):
+        ar = np.expand_dims(ar, axis)
+    return ar
+
+
+def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False):
+    """
+    Perform elementwise operation with broadcasting.
+
+    Parameters
+    ----------
+    ar1, ar2 : `Array`
+        Arrays as first and second operators with dimensions:
+        `[{non_ar1/2_dims}, {red_dims}]`.
+    op : `str` or `callable`
+        Binary operator as function or from :py:attr:`BINARY_OPS_NUMPY`.
+    reduce_ndim : `int`
+        Number of dimensions (from the last axis) to perform the operation
+        elementwise. Other dimensions are broadcasted by outer product.
+    ret_dims : `bool`
+        Flag whether to return the number of non-positional
+        dimensions of the vectors `ar1` and `ar2`.
+
+    Returns
+    -------
+    ar : `Array`
+        Reduced operator result with dimensions:
+        `[{non_ar1_dims}, {non_ar2_dims}, {red_dims}]`.
+    non_ar1_dims, non_ar2_dims : `int`
+        Number of non-reduced dimensions of respective axes.
+        Only returned if `ret_dims is True`.
+    """
+    if isinstance(op, str):
+        op = BINARY_OPS_NUMPY[op]
+    non_ar1_dims = ar1.ndim - reduce_ndim
+    non_ar2_dims = ar2.ndim - reduce_ndim
+    ar1 = insert_dims(ar1, non_ar2_dims, axis=-1-reduce_ndim)
+    ar2 = insert_dims(ar2, non_ar1_dims, axis=0)
+    ar = op(ar1, ar2)
+    if ret_dims:
+        return ar, non_ar1_dims, non_ar2_dims
+    else:
+        return ar
+
+
+def get_dirac_delta(*shape, dtype=None, order="abab"):
+    """
+    Gets a multi-dimensional Dirac delta tensor.
+
+    Parameters
+    ----------
+    *shape : `int`
+        Entries per dimension.
+    dtype : `np.dtype`
+        Data type of generated array.
+    order : `str`
+        Dimensional order of Dirac delta.
+        `"abab"`, `"aabb"`.
+
+    Returns
+    -------
+    dirac_delta : `np.ndarray`
+        Multi-dimensional Dirac delta tensor.
+    """
+    dirac_delta = None
+    if order == "aabb":
+        raise NotImplementedError
+        # TODO: Code below works only for len(shape) == 2.
+        dirac_delta = np.kron([np.identity(i, dtype=dtype) for i in shape])
+    elif order == "abab":
+        dirac_delta = np.diag(np.ones(np.prod(shape), dtype=dtype))
+        dirac_delta = _unmatricize_numpy_array(
+            dirac_delta, shape, shape,
+            tuple(range(0, len(shape))),
+            tuple(range(len(shape), 2 * len(shape)))
+        )
+    return dirac_delta
 
 
 def _generate_einstr(idx):
