@@ -676,7 +676,7 @@ def cv_camel_to_snake_case(s, snake_char="_"):
         f"({REGEX_LOWERCASE_EUROPE}|\\d)({REGEX_UPPERCASE_EUROPE})",
         lambda x: x.group(1) + snake_char + x.group(2).lower(), s
     )
-    return s
+    return s.lower()
 
 
 def char_range(start, stop=None, step=1):
