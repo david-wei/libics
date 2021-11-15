@@ -1561,6 +1561,7 @@ def get_coordinate_meshgrid(*coords):
     Examples
     --------
     Create a standard 2D meshgrid:
+
     >>> x = get_coordinate_meshgrid(
     ...     np.arange(-2, 3),
     ...     np.arange(10, 11)
@@ -1571,6 +1572,7 @@ def get_coordinate_meshgrid(*coords):
     array([[-2, 10]])
 
     Create a 1D meshgrid in 2D space with constant second dimension:
+
     >>> x = get_coordinate_meshgrid(
     ...     np.arange(-2, 3),
     ...     10

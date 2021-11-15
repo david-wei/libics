@@ -1099,24 +1099,28 @@ Last axis contains the coordinates.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<p>Create a standard 2D meshgrid:
-&gt;&gt;&gt; x = get_coordinate_meshgrid(
-…     np.arange(-2, 3),
-…     np.arange(10, 11)
-… )
-&gt;&gt;&gt; x.shape
-(5, 1, 2)
-&gt;&gt;&gt; np.array(x[0])
-array([[-2, 10]])</p>
-<p>Create a 1D meshgrid in 2D space with constant second dimension:
-&gt;&gt;&gt; x = get_coordinate_meshgrid(
-…     np.arange(-2, 3),
-…     10
-… )
-&gt;&gt;&gt; x.shape
-(5, 2)
-&gt;&gt;&gt; np.array(x[0])
-array([-2, 10])</p>
+<p>Create a standard 2D meshgrid:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">get_coordinate_meshgrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(5, 1, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">array([[-2, 10]])</span>
+</pre></div>
+</div>
+<p>Create a 1D meshgrid in 2D space with constant second dimension:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">get_coordinate_meshgrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="mi">10</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(5, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">array([-2, 10])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
