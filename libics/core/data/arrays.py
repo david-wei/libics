@@ -63,6 +63,13 @@ class ArrayData(object):
 
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
+    # Maps constructor argument type to function
+    _CONSTRUCTOR_MAP = [
+        # For future class extension, use the format
+        # (object_type, "name_of_constructor_method")
+        # e.g.: (np.ndarray, "from_array")
+    ]
+
     def __init__(self, *args):
         # -------------------
         # Instance attributes
@@ -92,22 +99,34 @@ class ArrayData(object):
         if len(args) != 1:
             raise ValueError("constructor only accepts one argument")
         arg = args[0]
+        # Constructor for ArrayData
         if isinstance(arg, ArrayData):
-            for attr_name in self.ATTR_NAMES_COPY_VAR:
-                setattr(self, attr_name, getattr(arg, attr_name))
-            self.data = arg.data
-        elif isinstance(arg, np.ndarray):
-            self.data = arg
+            return self.from_ArrayData(arg)
         else:
+            # Constructor for registered types
+            for _type, _constructor in self._CONSTRUCTOR_MAP:
+                if isinstance(arg, _type):
+                    return getattr(self, _constructor)(arg)
+            # Try to convert argument to numpy array
             try:
-                arg = np.array(arg)
-                if arg.dtype == np.object_:
-                    raise ValueError
-                self.data = arg
+                return self.from_array(arg)
             except ValueError:
                 raise ValueError(
                     f"constructor does not accept type `{type(arg)}`"
                 )
+
+    def from_ArrayData(self, *args):
+        arg = args[0]
+        for attr_name in self.ATTR_NAMES_COPY_VAR:
+            setattr(self, attr_name, getattr(arg, attr_name))
+        self.data = arg.data
+        return self
+
+    def from_array(self, *args):
+        arg = np.array(args[0])
+        if arg.dtype == np.object_:
+            raise ValueError("could not construct numeric array")
+        self.data = arg
 
     __LIBICS_IO__ = True
     SER_KEYS = {
@@ -1521,3 +1540,65 @@ def assume_quantity(*args, **kwargs):
         if "unit" in kwargs:
             _quantity.unit = kwargs["unit"]
     return _quantity
+
+
+def get_coordinate_meshgrid(*coords):
+    """
+    Constructs a coordinate ArrayData parametrized by coordinates.
+
+    Parameters
+    ----------
+    *coords : `Array[1, float]` or `float`
+        `Array`: Ordered 1D arrays representing coordinate axis.
+        `float`: Constant coordinate not used for parametrization.
+
+    Returns
+    -------
+    ad : `ArrayData[float]`
+        Coordinate array with a dimension of (number_of_vectors + 1).
+        Last axis contains the coordinates.
+
+    Examples
+    --------
+    Create a standard 2D meshgrid:
+    >>> x = get_coordinate_meshgrid(
+    ...     np.arange(-2, 3),
+    ...     np.arange(10, 11)
+    ... )
+    >>> x.shape
+    (5, 1, 2)
+    >>> np.array(x[0])
+    array([[-2, 10]])
+
+    Create a 1D meshgrid in 2D space with constant second dimension:
+    >>> x = get_coordinate_meshgrid(
+    ...     np.arange(-2, 3),
+    ...     10
+    ... )
+    >>> x.shape
+    (5, 2)
+    >>> np.array(x[0])
+    array([-2, 10])
+    """
+    scalar_dims = []
+    vector_dims = []
+    vectors = []
+    for i, _ar in enumerate(coords):
+        if np.isscalar(_ar):
+            scalar_dims.append(i)
+            vectors.append([_ar])
+        else:
+            vector_dims.append(i)
+            vectors.append(_ar)
+    mg = np.array(np.meshgrid(*vectors, indexing="ij"))
+    for dim in reversed(scalar_dims):
+        mg = mg[dim * (slice(None),) + (0,)]
+    ad = ArrayData(np.moveaxis(mg, 0, -1))
+    ad.set_data_quantity(name="coordinate")
+    for i, dim in enumerate(vector_dims):
+        _c = coords[dim]
+        ad.set_dim(i, points=np.array(_c))
+        if isinstance(_c, ArrayData):
+            ad.set_var_quantity(i, quantity=_c.data_quantity)
+    ad.set_var_quantity(len(vector_dims), name="coordinate")
+    return ad
