@@ -1594,7 +1594,7 @@ def get_coordinate_meshgrid(*coords):
             vectors.append(_ar)
     mg = np.array(np.meshgrid(*vectors, indexing="ij"))
     for dim in reversed(scalar_dims):
-        mg = mg[dim * (slice(None),) + (0,)]
+        mg = mg[(dim+1) * (slice(None),) + (0,)]
     ad = ArrayData(np.moveaxis(mg, 0, -1))
     ad.set_data_quantity(name="coordinate")
     for i, dim in enumerate(vector_dims):
