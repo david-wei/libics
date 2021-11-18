@@ -173,6 +173,63 @@ def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False):
         return ar
 
 
+def make_diag(tensorized_vector):
+    """
+    Creates a diagonal tensor.
+
+    Parameters
+    ----------
+    tensorized_vector : `np.ndarray`
+        "Vector" with dimensions: `[{vec_dims}]`.
+
+    Returns
+    -------
+    tensorized_matrix : `np.ndarray`
+        Diagonal "matrix" with dimensions: `[{vec_dims}, {vec_dims}]`.
+        Contains the `tensorized_vector` elements on its diagonal.
+
+    Notes
+    -----
+    Inverse operation of :py:func:`extract_diag`.
+    """
+    shape = tensorized_vector.shape
+    vector = np.ravel(tensorized_vector)
+    matrix = np.diag(vector)
+    tensorized_matrix = np.reshape(matrix, shape + shape)
+    return tensorized_matrix
+
+
+def extract_diag(tensorized_matrix):
+    """
+    Extracts a diagonal tensor.
+
+    Parameters
+    ----------
+    tensorized_matrix : `np.ndarray`
+        "Matrix" with dimensions: `[{vec_dims}, {vec_dims}]`.
+
+    Returns
+    -------
+    tensorized_vector : `np.ndarray`
+        "Vector" with dimensions: `[{vec_dims}]`.
+        Contains the multi-dimensional diagonal elements of
+        `tensorized_matrix`.
+
+    Notes
+    -----
+    Inverse operation of :py:func:`make_diag`.
+    """
+    _shape = tensorized_matrix.shape
+    shape = _shape[:len(_shape)//2]
+    if shape != _shape[len(_shape)//2:]:
+        raise ValueError(f"Invalid shape: {tensorized_matrix.shape}")
+    size = np.prod(shape)
+    matrix = np.reshape(tensorized_matrix, (size, size))
+    vector = np.diag(matrix)
+    tensorized_vector = np.reshape(vector, shape)
+    return tensorized_vector
+
+
 def get_dirac_delta(*shape, dtype=None, order="abab"):
     """
     Gets a multi-dimensional Dirac delta tensor.
