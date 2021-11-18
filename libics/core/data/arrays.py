@@ -903,6 +903,82 @@ class ArrayData(object):
             ind = min(ind, self.shape[dim] - 1)
         return ind
 
+    def cv_multi_index_to_quantity(self, *indices):
+        """
+        Converts indices to variable quantity values.
+
+        Parameters
+        ----------
+        *indices : `int` or `Iter[int]` or `slice` or `None`
+            Indices to be converted.
+            Order of arguments corresponds to dimensions.
+
+        Returns
+        -------
+        quantities : `float` or `tuple(float)` or `slice` or `None`
+            Indices converted to quantities.
+            If multiple `indices` given, returns tuple of elements.
+        """
+        quantities = []
+        for dim, ind in enumerate(indices):
+            if ind is None:
+                _q = None
+            elif isinstance(ind, slice):
+                _start = (None if ind.start is None
+                          else self.cv_index_to_quantity(ind.start, dim))
+                _stop = (None if ind.stop is None
+                         else self.cv_index_to_quantity(ind.stop - 1, dim))
+                _step = (None if ind.step is None
+                         else ind.step * self.get_step(dim))
+                _q = slice(_start, _stop, _step)
+            elif np.isscalar(ind):
+                _q = self.cv_index_to_quantity(ind, dim)
+            else:
+                _q = tuple(self.cv_index_to_quantity(it, dim) for it in ind)
+            quantities.append(_q)
+        if len(quantities) == 1:
+            return quantities[0]
+        else:
+            return tuple(quantities)
+
+    def cv_multi_quantity_to_index(self, *quantities):
+        """
+        Converts variable quantity values to indices.
+
+        Parameters
+        ----------
+        *quantities : `float` or `Iter[float]` or `slice` or `None`
+            Quantities to be converted.
+            Order of arguments corresponds to dimensions.
+
+        Returns
+        -------
+        indices : `int` or `tuple(int)` or `slice` or `None`
+            Converted indices.
+            If multiple `quantities` given, returns tuple of elements.
+        """
+        indices = []
+        for dim, qty in enumerate(quantities):
+            if qty is None:
+                _idx = None
+            elif isinstance(qty, slice):
+                _sta = (None if qty.start is None else
+                        int(round(self.cv_quantity_to_index(qty.start, dim))))
+                _sto = (None if qty.stop is None else
+                        int(round(self.cv_quantity_to_index(qty.stop, dim))))+1
+                _ste = (None if qty.step is None else
+                        int(round(self.get_step(dim) / qty.step)))
+                _idx = slice(_sta, _sto, _ste)
+            elif np.isscalar(qty):
+                _idx = self.cv_quantity_to_index(qty, dim)
+            else:
+                _idx = tuple(self.cv_quantity_to_index(it, dim) for it in qty)
+            indices.append(_idx)
+        if len(indices) == 1:
+            return indices[0]
+        else:
+            return tuple(indices)
+
     # +++++++++++++
     # Interpolation
     # +++++++++++++
