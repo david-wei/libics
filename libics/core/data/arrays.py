@@ -3,7 +3,9 @@ import numpy as np
 from scipy import interpolate
 
 from libics.env import logging
-from libics.core.data import types
+from libics.core.data.types import (
+    AttrHashBase, Quantity, UNARY_OPS_NUMPY, BINARY_OPS_NUMPY
+)
 from libics.core.util import misc
 
 
@@ -12,7 +14,7 @@ from libics.core.util import misc
 ###############################################################################
 
 
-class ArrayData(object):
+class ArrayData(AttrHashBase):
 
     """
     Stores a multidimensional array and its scaling information (linear
@@ -71,6 +73,7 @@ class ArrayData(object):
     ]
 
     def __init__(self, *args):
+        super().__init__()
         # -------------------
         # Instance attributes
         # -------------------
@@ -142,6 +145,8 @@ class ArrayData(object):
         "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
         "_points", "_offset", "_center", "_step", "_low", "_high"
     }
+
+    HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
 
     # ++++
     # Data
@@ -335,7 +340,7 @@ class ArrayData(object):
         # Unary operations
         if other is None:
             if isinstance(op, str):
-                op = types.UNARY_OPS_NUMPY[op]
+                op = UNARY_OPS_NUMPY[op]
             if self.var_mode[dim] == self.POINTS:
                 self._points[dim] = op(self._points[dim])
             elif self.var_mode[dim] == self.RANGE:
@@ -354,7 +359,7 @@ class ArrayData(object):
         # Binary operations
         else:
             if isinstance(op, str):
-                op = types.BINARY_OPS_NUMPY[op]
+                op = BINARY_OPS_NUMPY[op]
             if rev:
                 def _op(x, y):
                     return op(y, x)
@@ -807,6 +812,9 @@ class ArrayData(object):
 
     def __array__(self, *args, **kwargs):
         return self.data.__array__(*args, **kwargs)
+
+    def __hash__(self):
+        return super().__hash__()
 
     def __str__(self):
         s = f"{str(self.data_quantity)}\n"
@@ -1601,14 +1609,14 @@ def assume_quantity(*args, **kwargs):
     quantity : `types.Quantity`
         Constructed object.
     """
-    if len(args) == 1 and isinstance(args[0], types.Quantity):
+    if len(args) == 1 and isinstance(args[0], Quantity):
         kwargs["quantity"] = args[0]
     if "quantity" in kwargs:
         _quantity = misc.assume_construct_obj(
-            kwargs["quantity"], types.Quantity
+            kwargs["quantity"], Quantity
         )
     else:
-        _quantity = types.Quantity()
+        _quantity = Quantity()
         if "name" in kwargs:
             _quantity.name = kwargs["name"]
         if "symbol" in kwargs:
