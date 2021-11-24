@@ -1,11 +1,18 @@
+import collections
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import ASYNCHRONOUS, SYNCHRONOUS
 import numpy as np
+import os
 import requests
 
-from libics.env import logging
+from libics.env import logging, DIR_LIBICS
+from libics.core import io
 from libics.core.data.sequences import DataSequence
-from libics.core.util import misc
+from libics.core.util import misc, path
+
+__all__ = [
+    "InfluxDB"
+]
 
 
 ###############################################################################
@@ -18,6 +25,9 @@ class InfluxDB(object):
 
     Parameters
     ----------
+    config : `str` or `dict`
+        Configuration file path or dictionary specifying below parameters.
+        Duplicate parameters overwrite the `config` parameters.
     host : `str`
         Database server IP.
     port : `int`
@@ -47,8 +57,18 @@ class InfluxDB(object):
     """
 
     LOGGER = logging.get_logger("libics.tools.database.influx.InfluxDB")
+    CONFIG_PATH = os.path.join(DIR_LIBICS, "tools", "database", "influx")
 
-    def __init__(self, **kwargs):
+    @staticmethod
+    def find_configs(config_path=None):
+        """
+        Returns a list of all file names within the default configuration path.
+        """
+        if config_path is None:
+            config_path = InfluxDB.CONFIG_PATH
+        return path.get_folder_contents(config_path).files
+
+    def __init__(self, config=None, **kwargs):
         # Parameters
         self.host = "localhost"
         self.port = 8086
@@ -58,6 +78,19 @@ class InfluxDB(object):
         self.asynchr = False
         self._default_bucket = None
         self._default_measurement = None
+        if config is not None:
+            _kwargs = kwargs
+            if isinstance(config, str):
+                if not os.path.exists(config):
+                    config = os.path.join(self.CONFIG_PATH, config)
+                if not os.path.exists(config):
+                    raise ValueError("Invalid `config`")
+                kwargs = io.load(config)
+            elif isinstance(config, collections.Mapping):
+                kwargs = config
+            else:
+                raise ValueError("Invalid `config`")
+            kwargs.update(_kwargs)
         for k, v in kwargs.items():
             if k[0] != "_":
                 setattr(self, k, v)
