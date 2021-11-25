@@ -69,11 +69,11 @@ def hash_libics(val):
     if isinstance(val, np.ndarray):
         if val.dtype == complex:
             return hash_combine_ordered(
-                xxh64_intdigest(np.real(val)),
-                xxh64_intdigest(np.imag(val))
+                xxh64_intdigest(np.ascontiguousarray(np.real(val))),
+                xxh64_intdigest(np.ascontiguousarray(np.imag(val)))
             )
         else:
-            return xxh64_intdigest(val)
+            return xxh64_intdigest(np.ascontiguousarray(val))
     elif isinstance(val, AttrHashBase):
         return val._hash_libics()
     elif isinstance(val, collections.Mapping):

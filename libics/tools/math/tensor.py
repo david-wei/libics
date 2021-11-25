@@ -133,7 +133,7 @@ def insert_dims(ar, ndim, axis=-1):
     return ar
 
 
-def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False):
+def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False, dtype=None):
     """
     Perform elementwise operation with broadcasting.
 
@@ -150,6 +150,8 @@ def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False):
     ret_dims : `bool`
         Flag whether to return the number of non-positional
         dimensions of the vectors `ar1` and `ar2`.
+    dtype : `type`
+        Numpy dtype of return value.
 
     Returns
     -------
@@ -166,7 +168,7 @@ def calc_op_outer(ar1, ar2, op="*", reduce_ndim=1, ret_dims=False):
     non_ar2_dims = ar2.ndim - reduce_ndim
     ar1 = insert_dims(ar1, non_ar2_dims, axis=-1-reduce_ndim)
     ar2 = insert_dims(ar2, non_ar1_dims, axis=0)
-    ar = op(ar1, ar2)
+    ar = op(ar1, ar2, dtype=dtype)
     if ret_dims:
         return ar, non_ar1_dims, non_ar2_dims
     else:

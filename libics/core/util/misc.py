@@ -42,6 +42,13 @@ def cv_float(text, dec_sep=[".", ","]):
     return float(text)
 
 
+def hex_positive(number, nbits=64):
+    """
+    Returns the `hex` of an integer without sign with given number of bits.
+    """
+    return hex(number & (2**nbits - 1))
+
+
 ###############################################################################
 # Assumption Functions
 ###############################################################################
