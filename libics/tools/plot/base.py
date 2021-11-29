@@ -203,6 +203,11 @@ def tick_params(
                 i._marker._capstyle = capstyle
 
 
+def savefig(fp, *args, **kwargs):
+    plt.savefig(fp, *args, **kwargs)
+    return fp
+
+
 ###############################################################################
 # Artists
 ###############################################################################
