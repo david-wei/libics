@@ -581,6 +581,74 @@ def split_unit(s):
     return val, unit
 
 
+SI_PREFIX_MAP = {
+    3: "k", 6: "M", 9: "G", 12: "T", 15: "P", 18: "E", 21: "Z", 24: "Y",
+    -3: "m", -6: "µ", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+}
+
+
+def get_si_prefix(val, cutoff=1):
+    """
+    Gets value and SI unit prefix.
+
+    Parameters
+    ----------
+    val : `float`
+        Value in base SI unit.
+    cutoff : `float`
+        Numerical value, at which the next SI prefix is chosen.
+
+    Returns
+    -------
+    val : `float`
+        Value in prefixed SI unit.
+    prefix : `str`
+        SI prefix.
+    """
+    sgn = 1 if val >= 0 else -1
+    val = abs(val)
+    exp = int(3 * (np.log10(val / cutoff) // 3))
+    if exp in SI_PREFIX_MAP:
+        prefix = SI_PREFIX_MAP[exp]
+    else:
+        if exp == 0:
+            prefix = ""
+        else:
+            prefix = f"1e{exp:d}"
+    val /= sgn * 10**exp
+    return val, prefix, exp
+
+
+def str_si_prefix(val, unit="", precision=3, cutoff=1):
+    """
+    String formatting for :py:func:`get_si_prefix`.
+
+    Parameters
+    ----------
+    val : `float`
+        Value in base SI unit.
+    unit : `str`
+        Base unit.
+    precision : `int`
+        Number of decimal digits.
+    cutoff : `float`
+        Numerical value, at which the next SI prefix is chosen.
+
+    Examples
+    --------
+    >>> str_si_prefix(1e-5, "W")
+    10.000µW
+    >>> str_si_prefix(1e-10, "W", precision=0)
+    100pW
+
+    """
+    _val, _prefix, _exp = get_si_prefix(val, cutoff=cutoff)
+    precision -= int(np.log10(abs(val))) - 1 - _exp
+    precision = max(0, precision)
+    fmt = "{0:." + f"{precision:d}" + "f}{1:s}"
+    return fmt.format(_val, _prefix + unit)
+
+
 def extract(s, regex, group=1, cv_func=None, flags=0):
     """
     Extracts part of a string.
