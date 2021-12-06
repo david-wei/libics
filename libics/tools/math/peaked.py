@@ -202,7 +202,7 @@ class FitGaussian1d(ModelBase):
         _pdf[_pdf < 0] = 0
         _pdf /= np.sum(_pdf)
         # Initial parameters
-        x0 = FitGaussian1d._get_center(x, f)
+        x0 = FitGaussian1d._get_center(x, _pdf)
         # Avoid standard deviation bias
         idx0 = np.argmin(np.abs(x - x0))
         idx_slice = None
