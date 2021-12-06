@@ -59,8 +59,12 @@ def find_peaks_1d(
         Peak positions and uncertainties.
     width
         Peak width.
+    fit
+        Fit object.
     """
     # Parse parameters
+    if isinstance(ret_vals, str):
+        ret_vals = [ret_vals]
     ret_vals = set(misc.assume_iter(ret_vals))
     result = {"center": [], "center_err": []}
     if "width" in ret_vals:
@@ -147,6 +151,24 @@ def find_peaks_1d(
             plot.fill_between([_c-_e, _c+_e], *ylim, color=color, alpha=0.2)
         plot.ylim(*ylim)
     return result
+
+
+def find_peak_1d(data):
+    """
+    Single-peak wrapper for :py:func:`find_peaks_1d`.
+
+    Parameters
+    ----------
+    data : `Array[1, float]`
+        1D data containing single peak.
+
+    Returns
+    -------
+    center, center_err : `float`
+        Peak position and uncertainty.
+    """
+    result = find_peaks_1d(data, npeaks=1, check_npeaks=False)
+    return result["center"][0], result["center_err"][0]
 
 
 def find_peaks_1d_prominence(

@@ -46,6 +46,14 @@ calculus
     :undoc-members:
     :show-inheritance:
 
+signal
+--------
+
+.. automodule:: libics.tools.math.signal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tensor
 ------
 
