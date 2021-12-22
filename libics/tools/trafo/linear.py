@@ -52,6 +52,17 @@ class AffineTrafo(FileBase):
     def offset_to_origin(self):
         return -np.dot(self.matrix_to_origin, self.offset)
 
+    @property
+    def fixed_point(self):
+        return -np.linalg.inv(
+            self.matrix - np.diag(np.ones(len(self.matrix)))
+        ) @ self.offset
+
+    def set_offset_by_fixed_point(self, fixed_point):
+        return -np.linalg.inv(
+            self.matrix - np.diag(np.ones(len(self.matrix)))
+        ) @ fixed_point
+
     def fit_affine_transform(self, origin_coords, target_coords):
         """
         Fits the affine transform matrix and offset vector.
