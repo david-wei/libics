@@ -79,7 +79,7 @@ class ItfSerial(ItfTerminal):
         for dev in self.devices():
             self.deregister(dev)
 
-    def is_setup(self):
+    def is_set_up(self):
         return self._serial is not None
 
     def connect(self):
@@ -101,7 +101,7 @@ class ItfSerial(ItfTerminal):
 
     def status(self):
         status = STATUS()
-        if self.is_setup():
+        if self.is_set_up():
             if self.is_connected():
                 status.set_state(STATUS.OK)
             else:
@@ -114,7 +114,7 @@ class ItfSerial(ItfTerminal):
     # ++++++++++++++++++++++++++++++++++++++++
 
     def send(self, s_data):
-        s_data = str(s_data) + self.cfg.send_termchar
+        s_data = str(s_data) + self.send_termchar
         self.LOGGER.debug("SEND: {:s}".format(s_data))
         b_data = s_data.encode("ascii")
         self._serial.write(b_data)
