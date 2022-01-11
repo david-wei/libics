@@ -138,7 +138,7 @@ def assume_list(data):
         return [data]
 
 
-def assume_numpy_array(data):
+def assume_numpy_array(data, shape=None):
     """
     Asserts that data is a `numpy.ndarray` object.
 
@@ -146,6 +146,10 @@ def assume_numpy_array(data):
     ----------
     data
         Input data to be checked for `numpy.ndarray`.
+    shape : `tuple(int)` or `None`
+        If given and data is scalar, creates a numpy array with given shape
+        containing given data as element.
+        If given and data has a different shape, raises a `ValueError`.
 
     Returns
     -------
@@ -154,6 +158,16 @@ def assume_numpy_array(data):
     """
     if not isinstance(data, np.ndarray):
         data = np.array(data)
+    if shape is not None:
+        if data.shape != shape:
+            # If scalar
+            if data.shape == tuple():
+                data = np.full(shape, data)
+            # Else wrong shape
+            else:
+                raise ValueError(
+                    f"array shape {data.shape} != given shape {shape}"
+                )
     return data
 
 
