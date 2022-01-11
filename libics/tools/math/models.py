@@ -24,6 +24,8 @@ class ModelBase(abc.ABC):
     ----------
     *data : `Any`
         Data interpretable by :py:meth:`_split_fit_data`.
+    const_p0 : `dict(str->float)`
+        Not fitted parameters set to the given value.
     **kwargs
         Keyword arguments passed to :py:func:`scipy.optimize.curve_fit`.
 
@@ -86,7 +88,7 @@ class ModelBase(abc.ABC):
     P_ALL = NotImplemented
     P_DEFAULT = NotImplemented
 
-    def __init__(self, *data, **kwargs):
+    def __init__(self, *data, const_p0=None, **kwargs):
         # Parameter names to be fitted (map to _popt index)
         self._pfit = None
         # Initial fit parameters
@@ -101,6 +103,8 @@ class ModelBase(abc.ABC):
         # Call fit functions if data is supplied
         if len(data) > 0:
             self.find_p0(*data)
+            if const_p0 is not None:
+                self.set_pfit(**const_p0)
             self.find_popt(*data, **kwargs)
 
     def __init_subclass__(cls, **kwargs):
