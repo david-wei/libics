@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import trapz, cumulative_trapezoid
+from scipy.integrate import trapz, cumtrapz
 
 from libics.core.data.arrays import ArrayData
 
@@ -49,7 +49,7 @@ def integrate_array(ar, bounds=False, x=None, dx=None, x0=None, axis=-1):
     indefinite_integration = bounds is False
     # Indefinite integration
     if indefinite_integration:
-        ar_int = cumulative_trapezoid(ad, x=x, axis=axis, initial=0)
+        ar_int = cumtrapz(ad, x=x, axis=axis, initial=0)
         if x0 is not None:
             idx_x0 = ad.cv_quantity_to_index(x0, axis)
             ar_int -= (
