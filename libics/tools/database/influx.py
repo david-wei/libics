@@ -84,7 +84,7 @@ class InfluxDB(object):
                 if not os.path.exists(config):
                     config = os.path.join(self.CONFIG_PATH, config)
                 if not os.path.exists(config):
-                    raise ValueError("Invalid `config`")
+                    raise ValueError(f"Invalid `config` ({str(config)})")
                 kwargs = io.load(config)
             elif isinstance(config, collections.Mapping):
                 kwargs = config

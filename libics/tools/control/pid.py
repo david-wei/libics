@@ -54,8 +54,10 @@ def get_err_image(dif_images, kernel, vmin=None, vmax=None, mask=None):
     err_image : `Array[2, float]`
         Error signal image.
     """
-    kernel = np.array(kernel)[:, np.newaxis, np.newaxis]
     dif_images = np.array(dif_images)
+    kernel = np.array(kernel)
+    while kernel.ndim < dif_images.ndim:
+        kernel = kernel[:, np.newaxis]
     if len(kernel) < len(dif_images):
         dif_images = dif_images[-len(kernel):]
     elif len(kernel) > len(dif_images):
