@@ -30,7 +30,7 @@ setup(name='libics',
       },
       install_requires=[
             'matplotlib', 'numpy', 'scipy', 'pandas',
-            'pyserial', 'pyusb', 'pymongo', 'Pillow'
+            'pyserial', 'pyusb', 'pymongo', 'Pillow', 'xxhash'
       ],
       python_requires='>=3.6',
       dependency_links=[
