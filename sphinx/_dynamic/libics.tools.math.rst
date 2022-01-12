@@ -46,8 +46,16 @@ calculus
     :undoc-members:
     :show-inheritance:
 
-signal
+sampling
 --------
+
+.. automodule:: libics.tools.math.sampling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+signal
+------
 
 .. automodule:: libics.tools.math.signal
     :members:
