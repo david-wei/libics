@@ -137,7 +137,7 @@ class ImageControlLoop(object):
         """
         _x = np.linspace(0, 1, num=num_integr_lim)
         kernel = np.zeros(num_integr_lim + 1, dtype=float)
-        kernel[:-1] = ivf.exp(_x, gain_integr_lim, 0, tau_integr_lim)
+        kernel[:-1] = ivf.exp(_x, 0, gain_integr_lim, tau_integr_lim)
         kernel[-1] += gain_prop
         self.ctrl_kernel = kernel
 
