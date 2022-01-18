@@ -52,6 +52,18 @@ class ItfTerminal(ItfBase):
             Message string.
         """
 
+    def send_lines(self, msgs):
+        """
+        Sends multiple messages.
+
+        Parameters
+        ----------
+        msgs : `Iter[str]`
+            Multiple message strings.
+        """
+        for msg in msgs:
+            self.send(msg)
+
     @abc.abstractmethod
     def recv(self):
         """
@@ -62,6 +74,35 @@ class ItfTerminal(ItfBase):
         msg : `str`
             Message string.
         """
+
+    def recv_lines(self, max_lines=None):
+        """
+        Receives multiple lines until `""` is received.
+
+        Parameters
+        ----------
+        max_lines : `int`
+            Maximal number of lines to receive.
+
+        Returns
+        -------
+        msgs : `list(str)`
+            List of message strings, where each item corresponds to a line.
+        """
+        msgs = []
+        i = 0
+        recv_continue = True
+        while recv_continue:
+            msg = self.recv()
+            if msg == "":
+                break
+            else:
+                msgs.append(msg)
+            i += 1
+            if max_lines is not None:
+                if i >= max_lines:
+                    recv_continue = False
+        return msgs
 
     def query(self, msg):
         """

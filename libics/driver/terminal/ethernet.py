@@ -64,11 +64,11 @@ class ItfEthernet(ItfTerminal):
         for dev in self.devices():
             self.deregister(dev)
 
-    def is_setup(self):
+    def is_set_up(self):
         return self._socket is not None
 
     def connect(self):
-        self._socket.connect((self.cfg.address, self.cfg.port))
+        self._socket.connect((self.address, self.port))
         self._is_connected = True
         self.flush_in()
 
