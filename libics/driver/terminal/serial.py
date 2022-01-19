@@ -1,4 +1,6 @@
+import glob
 import serial
+import sys
 
 from libics.driver.device import STATUS
 from libics.driver.terminal import ItfTerminal
@@ -93,11 +95,42 @@ class ItfSerial(ItfTerminal):
     def is_connected(self):
         return self._serial.is_open
 
-    def discover(self):
-        self.LOGGER.warning(
-            "serial interface base class cannot discover devices"
-        )
-        return []
+    @classmethod
+    def discover(cls):
+        """
+        Discovers serial addresses.
+
+        Returns
+        -------
+        result : `list(str)`
+            List of addresses, e.g. `["COM3"]`.
+
+        Notes
+        -----
+        From: https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python
+        """
+        if sys.platform.startswith('win'):
+            ports = ['COM%s' % (i + 1) for i in range(256)]
+        elif (
+            sys.platform.startswith('linux')
+            or sys.platform.startswith('cygwin')
+        ):
+            # this excludes your current terminal "/dev/tty"
+            ports = glob.glob('/dev/tty[A-Za-z]*')
+        elif sys.platform.startswith('darwin'):
+            ports = glob.glob('/dev/tty.*')
+        else:
+            raise EnvironmentError('Unsupported platform')
+
+        result = []
+        for port in ports:
+            try:
+                s = serial.Serial(port)
+                s.close()
+                result.append(port)
+            except (OSError, serial.SerialException):
+                pass
+        return result
 
     def status(self):
         status = STATUS()
@@ -121,7 +154,9 @@ class ItfSerial(ItfTerminal):
         self._serial.flush()
 
     def recv(self):
-        b_data = self._serial.readline()
+        b_data = self._serial.read_until(
+            terminator=self.recv_termchar.encode("ascii")
+        )
         s_data = b_data.decode("ascii")
         self.LOGGER.debug("RECV: {:s}".format(s_data))
         s_data = self._trim(s_data)
