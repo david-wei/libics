@@ -1,5 +1,5 @@
 """
-tsb.py -- A telnet <-> serial port bridge
+tsb-multi.py -- A telnet <-> serial port bridge
 Copyright (C) 2005 Eli Fulkerson
 Edited for Python 3, 2022, David Wei
 
@@ -38,6 +38,8 @@ from getopt import getopt, GetoptError
 
 # nonstandard library
 import serial
+
+comused = 0
 
 
 def usage():
@@ -103,7 +105,10 @@ class Connection:
 
     def recv_tcp(self):
         "Receive some data from the telnet client"
-        data = self.socket.recv(1024)
+        try:
+            data = self.socket.recv(1024)
+        except Exception:
+            data = 0
         return data.decode("ascii")
 
     def send_tcp(self, data):
@@ -155,14 +160,20 @@ class Handler:
         yes, this was originally going to be multi-user, I don't feel like
         changing it now though. We shall loop.
         """
-        for conn in self.clist[:]:
+        global comused
+
+        try:
+            conn = self.clist[0]
             if conn.com.isOpen():
                 "pull data from serial and send it to tcp if possible"
                 data = conn.recv_serial()
                 if not data:
                     pass
                 else:
-                    conn.send_tcp(data)
+                    for cn in self.clist[:]:
+                        cn.send_tcp(data)
+        except Exception:
+            pass
 
         ready = self.clist[:]
 
@@ -175,21 +186,24 @@ class Handler:
                 socket, address = self.listener.accept()
 
                 global com
-                try:
-                    com.close()
-                    com.open()
-                except serial.SerialException:
-                    print("Error opening serial port.  Is it in use?")
-                    sys.exit(1)
 
+                if comused == 0:
+                    try:
+                        com.close()
+                        com.open()
+                    except serial.SerialException:
+                        print("Error opening serial port.  Is it in use?")
+                        print("TCP connection closed")
+                        com.close()
+                        self.start_new_listener()
+                        break
+
+                comused += 1
                 conn = Connection(socket, com)
                 self.clist.append(conn)
 
                 "set up our initial telnet environment"
                 conn.init_tcp()
-
-                "we don't need to listen anymore"
-                self.listener = None
 
             else:
                 "pull some data from tcp and send it to serial, if possible."
@@ -197,6 +211,9 @@ class Handler:
                 if not data:
                     print("TCP connection closed.")
                     self.clist.remove(conn)
+                    comused -= 1
+                    if comused == 0:
+                        com.close()
                     self.start_new_listener()
 
                 else:
