@@ -107,7 +107,8 @@ class ItfSerial(ItfTerminal):
 
         Notes
         -----
-        From: https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python
+        From:
+        https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python
         """
         if sys.platform.startswith('win'):
             ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -157,6 +158,13 @@ class ItfSerial(ItfTerminal):
         b_data = self._serial.read_until(
             terminator=self.recv_termchar.encode("ascii")
         )
+        s_data = b_data.decode("ascii")
+        self.LOGGER.debug("RECV: {:s}".format(s_data))
+        s_data = self._trim(s_data)
+        return s_data
+
+    def recv_waiting(self):
+        b_data = self._serial.read(size=self._serial.in_waiting)
         s_data = b_data.decode("ascii")
         self.LOGGER.debug("RECV: {:s}".format(s_data))
         s_data = self._trim(s_data)
