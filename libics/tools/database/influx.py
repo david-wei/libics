@@ -1,8 +1,11 @@
 import collections
+import datetime
+from dateutil import tz
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import ASYNCHRONOUS, SYNCHRONOUS
 import numpy as np
 import os
+import pandas as pd
 import requests
 
 from libics.env import logging, DIR_LIBICS
@@ -562,7 +565,7 @@ class InfluxDB(object):
         ----------
         bucket : `str`
             Bucket name.
-        start, stop : `str`
+        start, stop : `str` or `datetime.datetime` or `pd.Timestamp`
             Extracted time range.
         group : `list(str)`
             Groups by the given tags.
@@ -592,6 +595,8 @@ class InfluxDB(object):
         """
         # Parse parameters
         bucket = bucket if bucket else self.default_bucket
+        start = self._cv_time(start)
+        stop = self._cv_time(stop)
         if isinstance(funcs, (type(None), str)):
             funcs = [funcs]
         if _check_params:
@@ -627,3 +632,18 @@ class InfluxDB(object):
             funcs = ["last"]
         kwargs["funcs"] = funcs
         return self.read_points(*args, **kwargs)
+
+    read_last_points.__doc__ += "\n" + read_points.__doc__
+
+    # ++++++++++++++++++++++++++++++
+    # Helper
+    # ++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _cv_time(t):
+        if isinstance(t, pd.Timestamp):
+            t = t.to_pydatetime()
+        if isinstance(t, datetime.datetime):
+            return t.astimezone(tz.tzutc()).isoformat().replace("+00:00", "Z")
+        else:
+            return t
