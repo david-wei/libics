@@ -22,6 +22,17 @@ def is_number(var):
     return isinstance(var, numbers.Number)
 
 
+def is_iter(var):
+    """
+    Returns whether given variable is iterable.
+    """
+    try:
+        iter(var)
+        return True
+    except TypeError:
+        return False
+
+
 def is_datetime(var):
     """
     Returns whether given variable is of date/time type.

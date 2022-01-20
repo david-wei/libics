@@ -72,7 +72,7 @@ class ArrayData(AttrHashBase):
         # e.g.: (np.ndarray, "from_array")
     ]
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super().__init__()
         # -------------------
         # Instance attributes
@@ -96,15 +96,21 @@ class ArrayData(AttrHashBase):
         self._high = []
         # Parse parameters
         if len(args) != 0:
-            self.__set_init_args(*args)
+            self.__set_init_args(*args, **kwargs)
 
-    def __set_init_args(self, *args):
+    def __set_init_args(self, *args, **kwargs):
         if len(args) != 1:
             raise ValueError("constructor only accepts one argument")
         arg = args[0]
         # Constructor for ArrayData
         if isinstance(arg, ArrayData):
             return self.from_ArrayData(arg)
+        # Constructor for sequence table (dictionary of lists)
+        elif (
+            isinstance(arg, dict)
+            and np.all([misc.is_iter(x) for x in arg.values()])
+        ):
+            return self.from_sequence_table(arg, **kwargs)
         else:
             # Constructor for registered types
             for _type, _constructor in self._CONSTRUCTOR_MAP:
@@ -130,6 +136,135 @@ class ArrayData(AttrHashBase):
         if arg.dtype == np.object_:
             raise ValueError("could not construct numeric array")
         self.data = arg
+
+    def from_sequence_table(
+        self, *args, data_key=None, var_keys=None, var_points=None,
+        data_quantity=None, var_quantity=None, method="nearest", **kwargs
+    ):
+        """
+        Loads data from a sequence table.
+
+        Parameters
+        ----------
+        args[0] : `dict(str->list)`
+            Dictionary of lists containing data, representing an
+            unstructured data table.
+        data_key : `str` or `None`
+            Dictionary key used as data values.
+            If `None`, uses the key (excluding those in `var_keys`)
+            whose data list has most unique items.
+        var_keys : `Iter[str]` or `None`
+            Dictionary keys used as variable values.
+            If `None`, uses all non-`data_key` keys.
+        var_points : `dict(str->Iter)` or `None`
+            Dictionary mapping variable IDs to interpolation points.
+            If `None`, uses all available points.
+        data_quantity : `types.Quantity`
+            Data quantity.
+        var_quantity : `dict(str->types.Quantity)`
+            Map between key ID and variable quantity.
+        method : `str`
+            Interpolation method.
+            `"nearest"`:
+                Nearest point.
+            `"linear"`:
+                Linear interpolation.
+            `"cubic"`:
+                Cubic interpolation (up to 2D).
+                If above 2D, silently uses linear interpolation.
+        fill_value : `float`
+            Fill value for linear and cubic interpolation if value
+            is outside convex hull (i.e. needs extrapolation).
+
+        Notes
+        -----
+        * The variable span is determined by all available values in each
+          dimension.
+        * An interpolation procedure is applied on this hyper-rectangular
+          variable domain.
+        * Using a dense variable span is therefore most reasonable. It might
+          be helpful to bin the unstructured sequence tables accordingly
+          before passing to this function.
+        """
+        # Parse parameters
+        arg = args[0]
+        # Find data_key
+        if data_key is None:
+            # Find all possible data keys
+            potential_keys = list(arg.keys())
+            if var_keys is not None:
+                for k in var_keys:
+                    del potential_keys[k]
+            # Find key with most unique elements
+            data_key = potential_keys[0]
+            num_items = len(set(arg[data_key]))
+            for k in potential_keys[1:]:
+                num = len(set(arg[k]))
+                if num > num_items:
+                    data_key = k
+                    num_items = num
+        # Find var_keys
+        if var_keys is None:
+            var_keys = list(arg.keys())
+            var_keys.remove(data_key)
+        # Find var_points
+        if var_points is None:
+            var_points = {}
+        for k in var_keys:
+            if k not in var_points:
+                var_points[k] = np.array(sorted(set(arg[k])))
+        # Handle datetime
+        var_datetime_tz = {}
+        for k in var_keys:
+            _pt = var_points[k][0]
+            if misc.is_datetime(_pt):
+                var_datetime_tz[k] = misc.cv_datetime(_pt.tzinfo)
+                var_points[k] = np.array([
+                    misc.cv_timestamp(x) for x in var_points[k]
+                ])
+
+        # Construct ArrayData
+        ad = ArrayData()
+        ad.add_dim(len(var_keys))
+        for i, k in enumerate(var_keys):
+            ad.set_dim(i, points=var_points[k])
+        ad.var_shape = tuple([len(var_points[k]) for k in var_keys])
+        if data_quantity is not None:
+            ad.set_data_quantity(data_quantity)
+        if var_quantity is not None:
+            for i, k in enumerate(var_keys):
+                if k in var_quantity:
+                    ad.set_var_quantity(i, var_quantity[k])
+
+        # Interpolate data
+        table_var = []
+        for k in var_keys:
+            if k in var_datetime_tz:
+                # Handle datetime
+                table_var.append([misc.cv_timestamp(x) for x in arg[k]])
+            else:
+                table_var.append(arg[k])
+        table_var = np.array(table_var)
+        table_data = np.array(arg[data_key])
+        mg = ad.get_var_meshgrid()
+        data = interpolate.griddata(
+            table_var.T, table_data,
+            mg.reshape((len(var_keys), -1)).T,
+            method=method, **kwargs
+        )
+        ad.data = data.reshape(ad.var_shape)
+
+        # Assign data
+        self.from_ArrayData(ad)
+        # Handle datetime
+        if len(var_datetime_tz) > 0:
+            for i, k in enumerate(var_keys):
+                if k in var_datetime_tz:
+                    _points = np.array([
+                        misc.cv_datetime(x).astimezone(var_datetime_tz[k])
+                        for x in self.get_points(i)
+                    ])
+                    self.set_dim(i, points=_points)
 
     __LIBICS_IO__ = True
     SER_KEYS = {
@@ -1655,6 +1790,8 @@ def assume_quantity(*args, **kwargs):
     """
     if len(args) == 1 and isinstance(args[0], Quantity):
         kwargs["quantity"] = args[0]
+    elif len(args) == 1 and isinstance(args[0], dict) and len(kwargs) == 0:
+        kwargs = args[0]
     if "quantity" in kwargs:
         _quantity = misc.assume_construct_obj(
             kwargs["quantity"], Quantity
