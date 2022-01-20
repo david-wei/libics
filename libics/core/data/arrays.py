@@ -614,20 +614,51 @@ class ArrayData(AttrHashBase):
             ])
         return _bins
 
-    def max(self):
-        return np.max(self.data)
+    def _reduce_axis(self, axis, ar):
+        """
+        Handles metadata operations reducing the array dimensionality.
+        """
+        roi = self.ndim * [slice(None)]
+        for dim in misc.assume_iter(axis):
+            roi[dim] = 0
+        ad = self[tuple(roi)]
+        ad.data = ar
+        return ad
 
-    def min(self):
-        return np.min(self.data)
+    def max(self, axis=None, **kwargs):
+        res = np.max(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def mean(self):
-        return np.mean(self.data)
+    def min(self, axis=None, **kwargs):
+        res = np.min(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def std(self):
-        return np.std(self.data)
+    def mean(self, axis=None, **kwargs):
+        res = np.mean(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def sum(self):
-        return np.sum(self.data)
+    def std(self, axis=None, **kwargs):
+        res = np.std(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
+
+    def sum(self, axis=None, **kwargs):
+        res = np.sum(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
     def get_var_meshgrid(self, indexing="ij"):
         """
