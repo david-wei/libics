@@ -212,7 +212,12 @@ class ArrayData(AttrHashBase):
         # Mode: points
         if "points" in kwargs:
             self.var_mode[dim] = self.POINTS
-            self._points[dim] = np.array(kwargs["points"])
+            if misc.is_datetime(kwargs["points"][0]):
+                self._points[dim] = np.array([
+                    misc.cv_datetime(x) for x in kwargs["points"]
+                ])
+            else:
+                self._points[dim] = np.array(kwargs["points"])
             self._offset[dim] = None
             self._center[dim] = None
             self._step[dim] = None
@@ -595,10 +600,18 @@ class ArrayData(AttrHashBase):
         symmetric bins around the edge points.
         """
         _points = self.get_points(dim)
+        _is_datetime = misc.is_datetime(_points[0])
+        if _is_datetime:
+            _tz = _points[0].tzinfo
+            _points = np.array([misc.cv_timestamp(x) for x in _points])
         _bins = np.empty(len(_points) + 1, dtype=float)
         _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
         _bins[0] = 2 * _points[0] - _bins[1]
         _bins[-1] = 2 * _points[-1] - _bins[-2]
+        if _is_datetime:
+            _bins = np.array([
+                misc.cv_datetime(x).astimezone(_tz) for x in _bins
+            ])
         return _bins
 
     def max(self):

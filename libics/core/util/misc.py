@@ -1,3 +1,4 @@
+import datetime
 import math
 import numbers
 import operator
@@ -6,6 +7,7 @@ import re
 import time
 
 import numpy as np
+import pandas as pd
 
 
 ###############################################################################
@@ -18,6 +20,13 @@ def is_number(var):
     Returns whether given variable is of scalar, numeric type.
     """
     return isinstance(var, numbers.Number)
+
+
+def is_datetime(var):
+    """
+    Returns whether given variable is of date/time type.
+    """
+    return isinstance(var, (datetime.datetime, pd.Timestamp))
 
 
 def cv_float(text, dec_sep=[".", ","]):
@@ -40,6 +49,43 @@ def cv_float(text, dec_sep=[".", ","]):
             if ch in text:
                 text = text.replace(ch, ".")
     return float(text)
+
+
+def cv_timestamp(var):
+    """
+    Converts a date/time to the Python datetime timestamp.
+
+    Parameters
+    ----------
+    var : `datetime.datetime` or `pd.Timestamp`
+        Date/time object.
+    """
+    if isinstance(var, pd.Timestamp):
+        var = var.to_pydatetime()
+    if isinstance(var, datetime.datetime):
+        return var.timestamp()
+    else:
+        return var
+
+
+def cv_datetime(var):
+    """
+    Converts to a Python datetime object.
+
+    Parameters
+    ----------
+    var : `pd.Timestamp` or `float` or `str`
+        `float`: Python timestamp.
+        `str`: Python datetime isoformat.
+    """
+    if isinstance(var, pd.Timestamp):
+        return var.to_pydatetime()
+    elif is_number(var):
+        return datetime.datetime.fromtimestamp(var)
+    elif isinstance(var, str):
+        return datetime.datetime.fromisoformat(var)
+    else:
+        return var
 
 
 def hex_positive(number, nbits=64):

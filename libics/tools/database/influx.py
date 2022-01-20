@@ -365,6 +365,8 @@ class InfluxDB(object):
                 "_time": "time", "_measurement": "measurement",
                 "_field": "field", "_value": "value"
             })
+            if "time" in ds.columns:
+                ds["time"] = ds["time"].dt.tz_convert(tz.tzlocal())
         return ds
 
     # +++++++++++++++++++++++++++++
