@@ -243,28 +243,19 @@ def main(argv=None):
     got_a_serial_port = False
     for o, a in options:
         if o in ("-p", "--port"):
-            # a = int(a)
             try:
                 com = serial.Serial(a)
-                # print("Serial port opened: %s" % (com.portstr))
                 got_a_serial_port = True
             except Exception:
                 print("Couldn't open serial port: %s" % (a))
-                print("This should be a numerical value.  "
-                      "0 == COM1, 1 == COM2, etc")
                 sys.exit(1)
         if o in ("-h", "--help"):
             usage()
             return
 
     if not got_a_serial_port:
-        # we don't have a port.  Fine, use the default.
-        try:
-            com = serial.Serial(0)
-            # print("Serial port opened: %s" % (com.portstr))
-        except Exception:
-            print("Couldn't open serial port: %s" % (0))
-            sys.exit(1)
+        print("No serial port given")
+        sys.exit(1)
 
     # sensible defaults
     com.baudrate = 9600
@@ -337,24 +328,25 @@ def main(argv=None):
                 print("Valid flow-controls are:", FLOWS)
                 sys.exit(1)
     # print out com's statistics
-    print("------------------------")
-    print("Serial Port Information:")
-    print("------------------------")
-    print("port:     %s" % com.portstr)
-    print("baudrate: %s" % com.baudrate)
-    print("bytesize: %s" % com.bytesize)
-    print("parity:   %s" % com.parity)
-    print("stopbits: %s" % com.stopbits)
-    print("timeout:  %s" % com.timeout)
-    print("xonxoff:  %s" % com.xonxoff)
-    print("rtscts:   %s" % com.rtscts)
-    print("")
-    print("------------------------")
-    print("TCP/IP Port Information:")
-    print("------------------------")
-    print("host:     %s" % "localhost")
-    print("port:     %s" % LISTEN)
-    print("")
+    if argv and argv[0]:
+        print("------------------------")
+        print("Serial Port Information:")
+        print("------------------------")
+        print("port:     %s" % com.portstr)
+        print("baudrate: %s" % com.baudrate)
+        print("bytesize: %s" % com.bytesize)
+        print("parity:   %s" % com.parity)
+        print("stopbits: %s" % com.stopbits)
+        print("timeout:  %s" % com.timeout)
+        print("xonxoff:  %s" % com.xonxoff)
+        print("rtscts:   %s" % com.rtscts)
+        print("")
+        print("------------------------")
+        print("TCP/IP Port Information:")
+        print("------------------------")
+        print("host:     %s" % "localhost")
+        print("port:     %s" % LISTEN)
+        print("")
 
     # start up our run loop
     connections = Handler()
