@@ -115,7 +115,7 @@ class ArrayData(AttrHashBase):
             # Constructor for registered types
             for _type, _constructor in self._CONSTRUCTOR_MAP:
                 if isinstance(arg, _type):
-                    return getattr(self, _constructor)(arg)
+                    return getattr(self, _constructor)(arg, **kwargs)
             # Try to convert argument to numpy array
             try:
                 return self.from_array(arg)
@@ -136,6 +136,7 @@ class ArrayData(AttrHashBase):
         if arg.dtype == np.object_:
             raise ValueError("could not construct numeric array")
         self.data = arg
+        return self
 
     def from_sequence_table(
         self, *args, data_key=None, var_keys=None, var_points=None,
@@ -185,6 +186,9 @@ class ArrayData(AttrHashBase):
         * Using a dense variable span is therefore most reasonable. It might
           be helpful to bin the unstructured sequence tables accordingly
           before passing to this function.
+
+        FIXME: number of unique items determined by hashing, not supported by
+        some data types!
         """
         # Parse parameters
         arg = args[0]
@@ -265,6 +269,7 @@ class ArrayData(AttrHashBase):
                         for x in self.get_points(i)
                     ])
                     self.set_dim(i, points=_points)
+        return self
 
     __LIBICS_IO__ = True
     SER_KEYS = {
