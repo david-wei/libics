@@ -649,7 +649,7 @@ class ArrayData(AttrHashBase):
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -671,7 +671,7 @@ class ArrayData(AttrHashBase):
                 return self._center[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _offset = self._offset[dim]
                 return _offset + _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -721,7 +721,7 @@ class ArrayData(AttrHashBase):
             return np.max(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = self.var_shape[dim] * _step
+            _range = (self.var_shape[dim] - 1) * _step
             if self._offset[dim] is not None:
                 return self._offset[dim] + _range
             else:
@@ -1018,7 +1018,9 @@ class ArrayData(AttrHashBase):
                 s += "{:s}".format(str(self.get_points(i)))
             else:
                 s += "range({:f}, {:f}, {:f})".format(
-                    self.get_low(i), self.get_high(i), self.get_step(i)
+                    self.get_low(i),
+                    self.get_high(i) + self.get_step(i),
+                    self.get_step(i)
                 )
             if i < self.ndim - 1:
                 s += ",\n"
