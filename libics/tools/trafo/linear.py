@@ -53,6 +53,10 @@ class AffineTrafo(FileBase):
         return -np.dot(self.matrix_to_origin, self.offset)
 
     @property
+    def ndim(self):
+        return len(self.offset)
+
+    @property
     def fixed_point(self):
         return -np.linalg.inv(
             self.matrix - np.diag(np.ones(len(self.matrix)))
@@ -112,6 +116,44 @@ class AffineTrafo(FileBase):
         self.matrix = m
         self.offset = b
         return True
+
+    def get_target_unit_vectors(self):
+        """
+        Gets the target unit vectors in origin coordinates.
+
+        Returns
+        -------
+        target_unit_vectors : `np.ndarray(2, float)`
+            List of unit vectors, i.e.,
+            `target_unit_vectors[i]` is the unit vector along the `i`-th
+            dimension in target space.
+        """
+        center = self.coord_to_origin(np.zeros(self.ndim, dtype=float))
+        unit_vecs = []
+        for i in range(self.ndim):
+            _v = np.zeros(self.ndim, dtype=float)
+            _v[i] = 1
+            unit_vecs.append(self.coord_to_origin(_v) - center)
+        return np.array(unit_vecs)
+
+    def get_origin_unit_vectors(self):
+        """
+        Gets the origin unit vectors in target coordinates.
+
+        Returns
+        -------
+        origin_unit_vectors : `np.ndarray(2, float)`
+            List of unit vectors, i.e.,
+            `origin_unit_vectors[i]` is the unit vector along the `i`-th
+            dimension in origin space.
+        """
+        center = self.coord_to_target(np.zeros(self.ndim, dtype=float))
+        unit_vecs = []
+        for i in range(self.ndim):
+            _v = np.zeros(self.ndim, dtype=float)
+            _v[i] = 1
+            unit_vecs.append(self.coord_to_target(_v) - center)
+        return np.array(unit_vecs)
 
     # ++++ Perform transformation ++++
 
