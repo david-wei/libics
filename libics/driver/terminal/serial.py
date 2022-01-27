@@ -156,7 +156,7 @@ class ItfSerial(ItfTerminal):
 
     def recv(self):
         b_data = self._serial.read_until(
-            terminator=self.recv_termchar.encode("ascii")
+            self.recv_termchar.encode("ascii")
         )
         s_data = b_data.decode("ascii")
         self.LOGGER.debug("RECV: {:s}".format(s_data))
