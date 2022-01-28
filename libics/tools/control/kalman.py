@@ -1,3 +1,4 @@
+from collections import deque
 import numpy as np
 
 
@@ -7,10 +8,18 @@ import numpy as np
 class KalmanFilter:
 
     """
-    Implements a scalar or 1D Kalman filter (TODO: n-dim).
+    Kalman filter for vectorial data and linear models (TODO: n-dim).
+
+    Implementation follows: https://en.wikipedia.org/wiki/Kalman_filter
+    where we distinguish between state, observation, and control space.
 
     Parameters
     ----------
+    history_len : `None` or `int`
+        This class records state observations, estimates and covariances
+        at each step.
+        If `int`, `history_len` restricts the number of stored steps.
+        If `None`, the history is unrestricted (may lead to memory issues).
     initial_estimate, initial_covariance : `float` or `Array[float]`
         Initial state estimate, and its covariance, respectively.
     process_model, process_covariance : `float` or `Array[float]`
@@ -33,7 +42,10 @@ class KalmanFilter:
         `[iterations, {data}, {data}]`.
     """
 
-    def __init__(self, initial_estimate=0, initial_covariance=1, **kwargs):
+    def __init__(
+        self, history_len=10000,
+        initial_estimate=0, initial_covariance=1, **kwargs
+    ):
         self._process_model = 1
         self._process_covariance = 1
         self._observation_model = 1
@@ -42,6 +54,12 @@ class KalmanFilter:
         self._state_observations = [initial_estimate]
         self._state_estimates = [initial_estimate]
         self._state_covariances = [initial_covariance]
+        if history_len is not None:
+            for _name in [
+                "_state_observations", "_state_estimates", "_state_covariances"
+            ]:
+                setattr(self, _name,
+                        deque(getattr(self, _name), maxlen=history_len))
         # Parse parameters
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -107,7 +125,7 @@ class KalmanFilter:
         observation : `float` or `Array[float]`
             Data in observation space in this iteration.
         control : `None` or `float` or `Array[float]`
-            Control value applied prior to the observation in this iteration.
+            Control value change applied prior to this observation.
             If `None`, no control is applied.
 
         Returns

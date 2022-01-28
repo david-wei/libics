@@ -1,3 +1,4 @@
+from collections import deque
 import numpy as np
 from uuid import uuid4 as uuid
 
@@ -85,13 +86,17 @@ class ImageControlLoop(object):
 
     LOGGER = logging.get_logger("libics.tools.control.pid.ImageControlLoop")
 
-    def __init__(self, *args, trg_image=None, init_ctrl_image=None, **kwargs):
+    def __init__(
+        self, *args, history_len=None,
+        trg_image=None, init_ctrl_image=None, **kwargs
+    ):
         # ID
         self.id = str(uuid())
         self.folder = ""
         # Images
         self.trg_image = trg_image
         # History
+        self.history_len = history_len
         self.act_images = []
         self.dif_images = []
         self.err_images = []
@@ -112,6 +117,46 @@ class ImageControlLoop(object):
 
     def __len__(self):
         return len(self.ctrl_images)
+
+    @property
+    def act_images(self):
+        return self._act_images
+
+    @act_images.setter
+    def act_images(self, val):
+        if self.history_len is not None:
+            val = deque(val, maxlen=self.history_len)
+        self._act_images = val
+
+    @property
+    def dif_images(self):
+        return self._dif_images
+
+    @dif_images.setter
+    def dif_images(self, val):
+        if self.history_len is not None:
+            val = deque(val, maxlen=self.history_len)
+        self._dif_images = val
+
+    @property
+    def err_images(self):
+        return self._err_images
+
+    @err_images.setter
+    def err_images(self, val):
+        if self.history_len is not None:
+            val = deque(val, maxlen=self.history_len)
+        self._err_images = val
+
+    @property
+    def ctrl_images(self):
+        return self._ctrl_images
+
+    @ctrl_images.setter
+    def ctrl_images(self, val):
+        if self.history_len is not None:
+            val = deque(val, maxlen=self.history_len+1)
+        self._ctrl_images = val
 
     def set_ctrl_kernel(
         self, gain_prop, gain_integr_lim, num_integr_lim, tau_integr_lim=-1e6
@@ -173,6 +218,10 @@ class ImageControlLoop(object):
         if len(self) == 0:
             raise RuntimeError("no initial control image")
         if step is not None:
+            if self.history_len is not None:
+                raise RuntimeError(
+                    "Setting `step` with finite `history_len` is invalid"
+                )
             self.act_images = self.act_images[:step]
             self.dif_images = self.dif_images[:step]
             self.err_images = self.err_images[:step]
