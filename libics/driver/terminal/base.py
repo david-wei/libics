@@ -1,4 +1,5 @@
 import abc
+import time
 
 from libics.driver.interface import ItfBase
 
@@ -104,7 +105,7 @@ class ItfTerminal(ItfBase):
                     recv_continue = False
         return msgs
 
-    def query(self, msg):
+    def query(self, msg, wait_time=0):
         """
         Sends and receives a message.
 
@@ -112,6 +113,8 @@ class ItfTerminal(ItfBase):
         ----------
         msg : `str`
             Message string to be sent.
+        wait_time : `float`
+            Waiting time between sending and receiving in seconds (s).
 
         Returns
         -------
@@ -119,6 +122,8 @@ class ItfTerminal(ItfBase):
             Message string received.
         """
         self.send(msg)
+        if wait_time > 0:
+            time.sleep(wait_time)
         return self.recv()
 
     def validate(self, msg, val):
