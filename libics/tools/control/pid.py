@@ -84,6 +84,25 @@ def get_ctrl_image(old_ctrl_image, err_image, vmin=None, vmax=None):
 
 class ImageControlLoop(object):
 
+    """
+    Proportional-integral control loop of array-like variables.
+
+    Parameters
+    ----------
+    history_len : `int` or `None`
+        `int`: number of points saved in history.
+        `None`: unlimited history.
+    trg_image : `float` or `Array[float]`
+        Initial setpoint. May be changed when running.
+    init_ctrl_image : `float` or `Array[float]`
+        Initial control value.
+
+    Notes
+    -----
+    After initialization, the control loop is executed by calling
+    :py:meth:`add_ctrl_step` in each control step.
+    """
+
     LOGGER = logging.get_logger("libics.tools.control.pid.ImageControlLoop")
 
     def __init__(
@@ -94,9 +113,10 @@ class ImageControlLoop(object):
         self.id = str(uuid())
         self.folder = ""
         # Images
-        self.trg_image = trg_image
+        self.current_trg_image = trg_image
         # History
         self.history_len = history_len
+        self.trg_images = []
         self.act_images = []
         self.dif_images = []
         self.err_images = []
@@ -117,6 +137,32 @@ class ImageControlLoop(object):
 
     def __len__(self):
         return len(self.ctrl_images)
+
+    @property
+    def trg_image(self):
+        self.LOGGER.warning(
+            "Attribute `trg_image` is deprecated. "
+            "Use `current_trg_image` instead."
+        )
+        return self.current_trg_image
+
+    @trg_image.setter
+    def trg_image(self, val):
+        self.LOGGER.warning(
+            "Attribute `trg_image` is deprecated. "
+            "Use `current_trg_image` instead."
+        )
+        self.current_trg_image = val
+
+    @property
+    def trg_images(self):
+        return self._trg_images
+
+    @trg_images.setter
+    def trg_images(self, val):
+        if self.history_len is not None:
+            val = deque(val, maxlen=self.history_len)
+        self._trg_images = val
 
     @property
     def act_images(self):
@@ -203,14 +249,17 @@ class ImageControlLoop(object):
             kernel = kernel + kernel_unlim
         return kernel
 
-    def add_ctrl_step(self, act_image, step=None):
+    def add_ctrl_step(self, act_image, trg_image=None, step=None):
         """
         Adds a measurement step.
 
         Parameters
         ----------
-        act_image : `Array[2, float]`
+        act_image : `float` or `Array[float]`
             Actual, measured image.
+        trg_image : `float` or `Array[float]`
+            Sets new current target image.
+            If `None`, uses :py:attr:`current_trg_image`.
         step : `int` or `None`
             If `int`, removes all later steps and updates the given step.
             If `None`, appends a new step.
@@ -222,13 +271,19 @@ class ImageControlLoop(object):
                 raise RuntimeError(
                     "Setting `step` with finite `history_len` is invalid"
                 )
+            self.trg_images = self.trg_images[:step]
             self.act_images = self.act_images[:step]
             self.dif_images = self.dif_images[:step]
             self.err_images = self.err_images[:step]
             self.ctrl_kernels = self.ctrl_kernels[:step]
             self.ctrl_images = self.ctrl_images[:step+1]
+        if trg_image:
+            self.current_trg_image = trg_image
+        self.trg_images.append(self.current_trg_image)
         self.act_images.append(act_image)
-        self.dif_images.append(get_dif_image(act_image, self.trg_image))
+        self.dif_images.append(
+            get_dif_image(act_image, self.current_trg_image)
+        )
         self.ctrl_kernels.append(self.get_ctrl_kernel())
         self.err_images.append(get_err_image(
             self.dif_images, self.ctrl_kernels[-1], mask=self.ctrl_mask
