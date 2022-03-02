@@ -82,7 +82,7 @@ def get_ctrl_image(old_ctrl_image, err_image, vmin=None, vmax=None):
     return ctrl_image
 
 
-class ImageControlLoop(object):
+class ArrayControlLoop(object):
 
     """
     Proportional-integral control loop of array-like variables.
@@ -103,7 +103,7 @@ class ImageControlLoop(object):
     :py:meth:`add_ctrl_step` in each control step.
     """
 
-    LOGGER = logging.get_logger("libics.tools.control.pid.ImageControlLoop")
+    LOGGER = logging.get_logger("libics.tools.control.pid.ArrayControlLoop")
 
     def __init__(
         self, *args, history_len=None,
@@ -205,7 +205,8 @@ class ImageControlLoop(object):
         self._ctrl_images = val
 
     def set_ctrl_kernel(
-        self, gain_prop, gain_integr_lim, num_integr_lim, tau_integr_lim=-1e6
+        self, gain_prop,
+        gain_integr_lim=None, num_integr_lim=25, tau_integr_lim=-1e6
     ):
         """
         Sets feedback parameters for proportional and limited integral gain.
@@ -226,10 +227,13 @@ class ImageControlLoop(object):
             Exponential characteristic number of steps,
             i.e. denominator of exponent.
         """
-        _x = np.linspace(0, 1, num=num_integr_lim)
-        kernel = np.zeros(num_integr_lim + 1, dtype=float)
-        kernel[:-1] = ivf.exp(_x, 0, gain_integr_lim, tau_integr_lim)
-        kernel[-1] += gain_prop
+        if gain_integr_lim is None:
+            kernel = np.array([gain_prop])
+        else:
+            _x = np.linspace(0, 1, num=num_integr_lim)
+            kernel = np.zeros(num_integr_lim + 1, dtype=float)
+            kernel[:-1] = ivf.exp(_x, 0, gain_integr_lim, tau_integr_lim)
+            kernel[-1] += gain_prop
         self.ctrl_kernel = kernel
 
     def get_ctrl_kernel(self):
@@ -249,6 +253,16 @@ class ImageControlLoop(object):
             kernel = kernel + kernel_unlim
         return kernel
 
+    def remove_steps(self, steps=1):
+        """Removes given number of steps from history."""
+        for _ in range(min(steps, len(self.trg_images))):
+            self.trg_images.pop()
+            self.act_images.pop()
+            self.dif_images.pop()
+            self.err_images.pop()
+            self.ctrl_kernels.pop()
+            self.ctrl_images.pop()
+
     def add_ctrl_step(self, act_image, trg_image=None, step=None):
         """
         Adds a measurement step.
@@ -261,22 +275,27 @@ class ImageControlLoop(object):
             Sets new current target image.
             If `None`, uses :py:attr:`current_trg_image`.
         step : `int` or `None`
-            If `int`, removes all later steps and updates the given step.
+            If `int < 0`, removes given number of latest steps
+                (see also :py:meth:`remove_steps`).
+            If `int >= 0`, removes all later steps and updates the given step.
             If `None`, appends a new step.
         """
         if len(self) == 0:
             raise RuntimeError("no initial control image")
         if step is not None:
-            if self.history_len is not None:
-                raise RuntimeError(
-                    "Setting `step` with finite `history_len` is invalid"
-                )
-            self.trg_images = self.trg_images[:step]
-            self.act_images = self.act_images[:step]
-            self.dif_images = self.dif_images[:step]
-            self.err_images = self.err_images[:step]
-            self.ctrl_kernels = self.ctrl_kernels[:step]
-            self.ctrl_images = self.ctrl_images[:step+1]
+            if step < 0:
+                self.remove_steps(-step)
+            else:
+                if self.history_len is not None:
+                    raise RuntimeError(
+                        "Setting `step` with finite `history_len` is invalid"
+                    )
+                self.trg_images = self.trg_images[:step]
+                self.act_images = self.act_images[:step]
+                self.dif_images = self.dif_images[:step]
+                self.err_images = self.err_images[:step]
+                self.ctrl_kernels = self.ctrl_kernels[:step]
+                self.ctrl_images = self.ctrl_images[:step+1]
         if trg_image:
             self.current_trg_image = trg_image
         self.trg_images.append(self.current_trg_image)
@@ -292,3 +311,6 @@ class ImageControlLoop(object):
             self.ctrl_images[-1], self.err_images[-1],
             vmin=self.ctrl_min, vmax=self.ctrl_max
         ))
+
+
+ImageControlLoop = ArrayControlLoop

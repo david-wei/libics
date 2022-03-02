@@ -186,6 +186,15 @@ class PeriodicTimer():
         if callable(stop_action):
             self._stop_action = stop_action
 
+    def is_alive(self):
+        """
+        Check whether thread is alive.
+        """
+        if self._thread is None:
+            return False
+        else:
+            return self._thread.is_alive()
+
     def set_args(self, *args, **kwargs):
         """
         Sets the arguments with which the worker function is called.
