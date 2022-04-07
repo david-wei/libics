@@ -296,7 +296,7 @@ class ArrayControlLoop(object):
                 self.err_images = self.err_images[:step]
                 self.ctrl_kernels = self.ctrl_kernels[:step]
                 self.ctrl_images = self.ctrl_images[:step+1]
-        if trg_image:
+        if trg_image is not None:
             self.current_trg_image = trg_image
         self.trg_images.append(self.current_trg_image)
         self.act_images.append(act_image)
