@@ -1294,6 +1294,29 @@ def cv_index_center_to_slice(center, size):
     return cv_index_rect_to_slice(cv_index_center_to_rect(center, size))
 
 
+def cv_index_mask_to_rect(mask):
+    """
+    Converts boolean mask to rectangle. Assumes rectangular mask.
+
+    Parameters
+    ----------
+    mask : `np.ndarray(bool)`
+        Boolean mask with array shape.
+
+    Returns
+    -------
+    rect : `Iter[(int, int)]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+    """
+    idxs = np.indices(mask.shape)[:, mask]
+    rect = [
+        [np.min(idx), np.max(idx) + 1]
+        for idx in idxs
+    ]
+    return rect
+
+
 def transpose_array(ar):
     """
     Transposes a rectangular array.
