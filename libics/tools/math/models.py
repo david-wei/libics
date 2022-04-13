@@ -294,14 +294,10 @@ class ModelBase(abc.ABC):
             return self.pstd
 
     def __getattr__(self, name):
-        get_std = False
-        if name[-4:] == "_std":
-            get_std = True
-            name = name[:-4]
         try:
-            if get_std is True:
+            if name[-4:] == "_std":
                 # return self.pstd[self.pall[name]]  # TODO: fix property pstd
-                return self.pstd[self.pfit[name]]
+                return self.pstd[self.pfit[name[:-4]]]
             else:
                 return self.popt[self.pall[name]]
         except KeyError:

@@ -142,6 +142,20 @@ class FitCosine2d(ModelBase):
         else:
             return np.arctan(self.fy / self.fx)
 
+    @property
+    def angle_std(self):
+        # TODO: does not take into account fx, fy correlations
+        derivs, errs = [], []
+        if "fx" in self.pfit:
+            derivs.append(-self.fy / (self.fx**2 + self.fy**2))
+            errs.append(self.fx_std)
+        if "fy" in self.pfit:
+            derivs.append(self.fx / (self.fx**2 + self.fy**2))
+            errs.append(self.fy_std)
+        return np.sqrt(np.sum(
+            np.array(derivs)**2 * np.array(errs)**2
+        ))
+
     def find_p0(self, *data, MAX_LINES=16, MAX_POINTS=1024):
         var_data, func_data, _ = self._split_fit_data(*data)
         # Perform 1D fits
