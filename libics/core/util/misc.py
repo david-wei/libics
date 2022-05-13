@@ -1179,13 +1179,14 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front", dtype=None):
             else:
                 start_new, start_old = None, ar.shape[dim] - shape[dim]
         elif mode_keep == "center":
-            center = shape[dim] // 2
             if shape[dim] > ar.shape[dim]:
+                center = shape[dim] // 2
                 ldiff = ar.shape[dim] // 2
                 rdiff = ar.shape[dim] - ldiff
                 start_new, start_old = center - ldiff, None
                 stop_new, stop_old = center + rdiff, None
             else:
+                center = ar.shape[dim] // 2
                 ldiff = shape[dim] // 2
                 rdiff = shape[dim] - ldiff
                 start_new, start_old = None, center - ldiff
