@@ -18,7 +18,8 @@ LOGGER_PEAKS = logging.get_logger("libics.tools.math.signal.peaks")
 
 
 def find_peaks_1d(
-    data, npeaks=None, rel_prominence=0.55, check_npeaks=True,
+    *data, npeaks=None, rel_prominence=0.55, check_npeaks=True,
+    base_prominence_ratio=None,
     edge_peaks=False, fit_algorithm="gaussian", ret_vals=None, _DEBUG=False
 ):
     """
@@ -26,21 +27,27 @@ def find_peaks_1d(
 
     Parameters
     ----------
-    data : `Array[1, float]`
+    *data : `Array[1, float]` or `(Array[1, float], Array[1, float])`
         1D data to find peaks in.
+        Data may be provided as `ArrayData`, `data` or `x, y`.
     npeaks : `int` or `None`
         Number of peaks to be found.
         If `None`, determines `npeaks` from `rel_prominence`.
     rel_prominence : `float`
         Minimum relative prominence of peak w.r.t. mean of other found peaks.
+    base_prominence_ratio : `float` or `None`
+        If `None`: the size of the base is unrestricted.
+        If `float`: the base of a peak may not extend into the base of
+        secondary peaks if these peaks have a relative prominence that is
+        higher than `base_prominence_ratio`.
+    edge_peaks : `bool`
+        Whether to allow the array edge to be considered as peak.
     check_npeaks : `bool` or `str`
         If `npeaks` is given, checks that `npeaks` equals the number of peaks
         found by `rel_prominence`. Performs the following actions if unequal:
         If `error`, raises `RuntimeError`.
         If `warning` or `True`, prints a warning.
         If `False`, does not perform the check.
-    edge_peaks : `bool`
-        Whether to allow the array edge to be considered as peak.
     fit_algorithm : `str` or `type(ModelBase)`
         Which algorithm to use for peak fitting among:
         `"mean", "gaussian", "lorentzian"`.
@@ -75,8 +82,9 @@ def find_peaks_1d(
         result["fit"] = []
     # Find peak slices
     peaks = find_peaks_1d_prominence(
-        data, npeaks=npeaks, rel_prominence=rel_prominence,
-        check_npeaks=check_npeaks, edge_peaks=edge_peaks
+        *data, npeaks=npeaks, rel_prominence=rel_prominence,
+        base_prominence_ratio=base_prominence_ratio,
+        edge_peaks=edge_peaks, check_npeaks=check_npeaks
     )
     if _DEBUG:
         plot.plot(data, color="black")
@@ -153,48 +161,55 @@ def find_peaks_1d(
     return result
 
 
-def find_peak_1d(data):
+def find_peak_1d(*data):
     """
     Single-peak wrapper for :py:func:`find_peaks_1d`.
 
     Parameters
     ----------
-    data : `Array[1, float]`
-        1D data containing single peak.
+    *data : `Array[1, float]` or `(Array[1, float], Array[1, float])`
+        1D data to find peaks in.
+        Data may be provided as `ArrayData`, `data` or `x, y`.
 
     Returns
     -------
     center, center_err : `float`
         Peak position and uncertainty.
     """
-    result = find_peaks_1d(data, npeaks=1, check_npeaks=False)
+    result = find_peaks_1d(*data, npeaks=1, check_npeaks=False)
     return result["center"][0], result["center_err"][0]
 
 
 def find_peaks_1d_prominence(
-    data, npeaks=None, rel_prominence=0.55, check_npeaks="warning",
-    edge_peaks=False
+    *data, npeaks=None, rel_prominence=0.55,
+    base_prominence_ratio=None, edge_peaks=False, check_npeaks="warning"
 ):
     """
     Finds positive peaks in 1D data by peak prominence.
 
     Parameters
     ----------
-    data : `Array[1, float]`
+    *data : `Array[1, float]` or `(Array[1, float], Array[1, float])`
         1D data to find peaks in.
+        Data may be provided as `ArrayData`, `data` or `x, y`.
     npeaks : `int` or `None`
         Number of peaks to be found.
         If `None`, determines `npeaks` from `rel_prominence`.
     rel_prominence : `float`
         Minimum relative prominence of peak w.r.t. mean of other found peaks.
+    base_prominence_ratio : `float` or `None`
+        If `None`: the size of the base is unrestricted.
+        If `float`: the base of a peak may not extend into the base of
+        secondary peaks if these peaks have a relative prominence that is
+        higher than `base_prominence_ratio`.
+    edge_peaks : `bool`
+        Whether to allow the array edge to be considered as peak.
     check_npeaks : `bool` or `str`
         If `npeaks` is given, checks that `npeaks` equals the number of peaks
         found by `rel_prominence`. Performs the following actions if unequal:
         If `error`, raises `RuntimeError`.
         If `warning` or `True`, prints a warning.
         If `False`, does not perform the check.
-    edge_peaks : `bool`
-        Whether to allow the array edge to be considered as peak.
 
     Returns
     -------
@@ -211,19 +226,24 @@ def find_peaks_1d_prominence(
     ----
     The number of returned peaks may vary.
     """
-    ad = ArrayData(data)
-    # Find raw peaks
+    # Parse data
+    if len(data) == 2:
+        ad = ArrayData(data[1])
+        ad.set_dim(0, points=data[0])
+    else:
+        ad = ArrayData(data[0])
     ar = ad.data.copy()
-    if edge_peaks:
-        raise NotImplementedError
-        ar = np.concatenate([
-            # [ar[0] - abs(ar[0]*1e-20)], ar, [ar[-1] - abs(ar[-1]*1e-20)]
-            [ar.min()], ar, [ar.min()]
-        ])
+    # Find raw peaks
+    if edge_peaks and len(ar) > 1:
+        edge_peak_left, edge_peak_right = ar[0] > ar[1], ar[-1] > ar[-2]
+        if edge_peak_left:
+            if edge_peak_right:
+                ar = np.concatenate([[-np.inf], ar, [-np.inf]])
+            else:
+                ar = np.concatenate([[-np.inf], ar])
+        else:
+            ar = np.concatenate([ar, [-np.inf]])
     _peaks, _props = signal.find_peaks(ar, prominence=0)
-    if edge_peaks:
-        for _ar in [_peaks, _props["left_bases"], _props["right_bases"]]:
-            _numpy_array_shift_inplace(_ar, -1, min=0, max=len(ad) - 1)
     # Sort peaks by prominence
     _order = np.flip(np.argsort(_props["prominences"]))
     peaks, prominences, = _peaks[_order], _props["prominences"][_order]
@@ -249,13 +269,38 @@ def find_peaks_1d_prominence(
                     raise RuntimeError(_msg)
                 else:
                     LOGGER_PEAKS.warning(_msg)
+    peaks = peaks[:npeaks]
+    lb = lb[:npeaks]
+    rb = rb[:npeaks]
+    prominences = np.array(prominences[:npeaks])
+    if edge_peaks:
+        if edge_peak_left:
+            peaks = [_peak - 1 for _peak in peaks]
+            lb = [max(0, _b - 1) for _b in lb]
+            rb = [_b - 1 for _b in rb]
+            ar = ar[1:]
+        if edge_peak_right:
+            ar = ar[:-1]
+        prominences[np.isinf(prominences)] = np.max(ar) - np.min(ar)
+    # Check base overlap
+    if base_prominence_ratio is not None:
+        for i, _prom_primary in enumerate(prominences):
+            _idxs_secondary = np.arange(i + 1, i + 1 + np.count_nonzero(
+                prominences[i+1:] >= base_prominence_ratio * _prom_primary
+            ))
+            _peak_primary = peaks[i]
+            for _idx_secondary in _idxs_secondary:
+                if peaks[_idx_secondary] > _peak_primary:
+                    if rb[i] > lb[_idx_secondary]:
+                        rb[i] = lb[_idx_secondary]
+                elif peaks[_idx_secondary] < _peak_primary:
+                    if lb[i] < rb[_idx_secondary]:
+                        lb[i] = rb[_idx_secondary]
     # Package data
     return {
-        "position": np.array([
-            ad.get_points(0)[idx] for idx in peaks[:npeaks]
-        ]),
-        "data": [ad[lb:rb+1] for lb, rb in zip(lb[:npeaks], rb[:npeaks])],
-        "prominence": np.array(prominences[:npeaks])
+        "position": np.array([ad.get_points(0)[idx] for idx in peaks]),
+        "data": [ad[lb:rb+1] for lb, rb in zip(lb, rb)],
+        "prominence": np.array(prominences)
     }
 
 
