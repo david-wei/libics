@@ -726,14 +726,30 @@ class AffineTrafo2d(AffineTrafo):
     def __rmul__(self, other):
         return self.magnify(other)
 
-    def shift(self, offset):
+    def shift(self, offset, ax="origin"):
         """
         Returns an `AffineTrafo` object whose offset is shifted.
         """
+        if ax == "origin":
+            return self.shift_origin_axes(offset)
+        elif ax == "target":
+            return self.shift_target_axes(offset)
+        else:
+            raise ValueError(f"Invalid shift `ax`es: {str(ax)}")
+
+    def shift_origin_axes(self, offset):
         _mag, _ang, _off = self.get_origin_axes()
         trafo = self.__class__()
         trafo.set_origin_axes(
-            magnification=_mag, angle=_ang, offset=_off+offset
+            magnification=_mag, angle=_ang, offset=_off+np.array(offset)
+        )
+        return trafo
+
+    def shift_target_axes(self, offset):
+        _mag, _ang, _off = self.get_target_axes()
+        trafo = self.__class__()
+        trafo.set_target_axes(
+            magnification=_mag, angle=_ang, offset=_off+np.array(offset)
         )
         return trafo
 
