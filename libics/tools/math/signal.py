@@ -43,8 +43,9 @@ def find_peaks_1d(
     edge_peaks : `bool`
         Whether to allow the array edge to be considered as peak.
     check_npeaks : `bool` or `str`
-        If `npeaks` is given, checks that `npeaks` equals the number of peaks
-        found by `rel_prominence`. Performs the following actions if unequal:
+        If `npeaks` is given, checks that `npeaks` is smaller or equal to
+        the number of peaks found by `rel_prominence`.
+        Performs the following actions if this condition is not fulfilled:
         If `error`, raises `RuntimeError`.
         If `warning` or `True`, prints a warning.
         If `False`, does not perform the check.
@@ -205,8 +206,9 @@ def find_peaks_1d_prominence(
     edge_peaks : `bool`
         Whether to allow the array edge to be considered as peak.
     check_npeaks : `bool` or `str`
-        If `npeaks` is given, checks that `npeaks` equals the number of peaks
-        found by `rel_prominence`. Performs the following actions if unequal:
+        If `npeaks` is given, checks that `npeaks` is smaller or equal to
+        the number of peaks found by `rel_prominence`.
+        Performs the following actions if this condition is not fulfilled:
         If `error`, raises `RuntimeError`.
         If `warning` or `True`, prints a warning.
         If `False`, does not perform the check.
@@ -259,7 +261,7 @@ def find_peaks_1d_prominence(
         if npeaks is None:
             npeaks = _npeaks
         else:
-            if _npeaks != npeaks:
+            if _npeaks < npeaks:
                 _msg = (
                     f"Expected `npeaks`={npeaks:d}, "
                     f"but found {_npeaks:d} peaks for "
