@@ -503,6 +503,11 @@ class FitGaussian2dTilt(ModelBase):
             ])
         return psuccess
 
+    @property
+    def ellipticity(self):
+        wu, wv = abs(self.wu), np.abs(self.wv)
+        return np.abs(wu - wv) / max(wu, wv)
+
 
 ###############################################################################
 # Polynomial Functions

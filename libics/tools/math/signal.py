@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 from scipy import signal
 
@@ -298,6 +299,11 @@ def find_peaks_1d_prominence(
                 elif peaks[_idx_secondary] < _peak_primary:
                     if lb[i] < rb[_idx_secondary]:
                         lb[i] = rb[_idx_secondary]
+        # Remove zero-length peaks
+        mask_keep = np.array(lb) < np.array(rb)
+        peaks = itertools.compress(peaks, mask_keep)
+        lb, rb = np.array(lb)[mask_keep], np.array(rb)[mask_keep]
+        prominences = np.array(prominences)[mask_keep]
     # Package data
     return {
         "position": np.array([ad.get_points(0)[idx] for idx in peaks]),
