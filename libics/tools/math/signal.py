@@ -109,7 +109,10 @@ def find_peaks_1d(
     # Peak by fit
     else:
         # Find fit class
-        if isinstance(fit_algorithm, ModelBase):
+        if (
+            not isinstance(fit_algorithm, str)
+            and issubclass(fit_algorithm, ModelBase)
+        ):
             fit_class = fit_algorithm
         elif fit_algorithm == "gaussian":
             fit_class = FitGaussian1d

@@ -214,8 +214,8 @@ class FitGaussian1d(ModelBase):
         else:
             idx_slice = slice(2 * idx0 - len(x), None)
         wx = np.sqrt(np.sum((x[idx_slice] - x0)**2 * _pdf[idx_slice]))
-        a = np.max(f)
         c = f_min
+        a = np.max(f) - c
         # Algorithm end
         p0 = [a, x0, wx, c]
         return p0
