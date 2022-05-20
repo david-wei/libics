@@ -562,7 +562,10 @@ class FitParabolic1d(ModelBase):
         var_data, func_data, _ = self._split_fit_data(*data)
         x, y = var_data[0], func_data
         # Smoothen data
-        _y_savgol = signal.savgol_filter(y, max(5, 2*(len(y)//5) + 1), 3)
+        if len(y) < 5:
+            _y_savgol = y
+        else:
+            _y_savgol = signal.savgol_filter(y, max(5, 2*(len(y)//5) + 1), 3)
         # Find polarity via peak and edges
         _y_med = np.median(_y_savgol)
         _xl, _xr = x[0], x[-1]
