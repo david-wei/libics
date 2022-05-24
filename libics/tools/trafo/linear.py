@@ -155,6 +155,62 @@ class AffineTrafo(FileBase):
             unit_vecs.append(self.coord_to_target(_v) - center)
         return np.array(unit_vecs)
 
+    def get_mask_origin_coords_within_target_rect(
+        self, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which origin coordinates lie inside a target rectangle.
+        """
+        return self._get_mask_origin_coords_within_target_rect(
+            self, coords, rect=rect, center=center, size=size
+        )
+
+    def get_mask_target_coords_within_origin_rect(
+        self, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which target coordinates lie inside an origin rectangle.
+        """
+        return self._get_mask_origin_coords_within_target_rect(
+            self.invert(), coords, rect=rect, center=center, size=size
+        )
+
+    @staticmethod
+    def _get_mask_origin_coords_within_target_rect(
+        trafo, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which origin coordinates lie inside a target rectangle.
+
+        Parameters
+        ----------
+        coords : `Array[float]`
+            Origin coordinates to check (dimensions: `[..., ndim]`).
+        rect : `Iter[(float, float)]`
+            Rectangle in target coordinates (dimensions: `[ndim, (min, max)]`).
+        center, size : `Iter[1, float]`
+            If `rect` is not given, the rectangle corners are calculated
+            from center and size.
+
+        Returns
+        -------
+        mask : `np.ndarray(bool)`
+            Boolean mask: `True` if the transformed coordinates lie in given
+            rectangle, `False` otherwise (dimensions: `[...]`).
+        """
+        if rect is None:
+            if center is None or size is None:
+                raise ValueError("Invalid parameters (`rect/center/size`)")
+            rect = [[_c - _s / 2, _c + _s / 2] for _c, _s in zip(center, size)]
+        coords = np.array(coords)
+        trafo_coords = trafo.coord_to_target(coords)
+        mask = np.logical_and.reduce([
+            (trafo_coords[..., dim] >= rect[dim, 0])
+            & (trafo_coords[..., dim] <= rect[dim, 1])
+            for dim in range(len(rect))
+        ], axis=0)
+        return mask
+
     # ++++ Perform transformation ++++
 
     def __call__(self, *args, direction="to_target", **kwargs):
