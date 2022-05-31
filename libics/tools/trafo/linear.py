@@ -63,9 +63,10 @@ class AffineTrafo(FileBase):
         ) @ self.offset
 
     def set_offset_by_fixed_point(self, fixed_point):
-        return -np.linalg.inv(
-            self.matrix - np.diag(np.ones(len(self.matrix)))
-        ) @ fixed_point
+        return self.set_offset_by_point_pair(fixed_point, fixed_point)
+
+    def set_offset_by_point_pair(self, origin_point, target_point):
+        self.offset = target_point - self.matrix @ origin_point
 
     def fit_affine_transform(self, origin_coords, target_coords):
         """
