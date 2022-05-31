@@ -480,19 +480,26 @@ def save(
         Keyword arguments passed to the respective write functions.
     """
     fmt = get_file_format(file_path, fmt=fmt)
-    ser = enc.encode(obj)
     # Registered fmt
     for k, v in _SAVER_FUNC.items():
         if k in fmt:
             return v(file_path)
     # Default fmt
     if "json" in fmt:
+        ser = enc.encode(obj)
         with open(file_path, "w") as f:
             json.dump(ser, f, **kwargs)
     elif "bson" in fmt:
+        ser = enc.encode(obj)
         stream = bson.BSON.encode(ser)
         with open(file_path, "wb") as f:
             f.write(stream)
+    elif "csv" in fmt:
+        ser = pd.DataFrame(obj)
+        ser.to_csv(file_path, **kwargs)
+    elif "xls" in fmt:
+        ser = pd.DataFrame(obj)
+        ser.to_excel(file_path, **kwargs)
     elif "hdf" in fmt:
         raise NotImplementedError("hdf format not yet implemented")
     else:
@@ -519,7 +526,7 @@ def _register_load_fmt(fmt, func):
 
 def load(
     file_path, obj_or_cls=None, dec=ObjDecoder, fmt=None,
-    req_version=None, raise_err=True
+    req_version=None, raise_err=True, **kwargs
 ):
     """
     Loads and deserializes an object from file.
@@ -542,6 +549,8 @@ def load(
     raise_err : `bool`
         Flag whether to raise an error on deserialization failure
         or to proceed silently.
+    **kwargs
+        Keyword arguments passed to the loader function.
 
     Returns
     -------
@@ -559,32 +568,36 @@ def load(
     # Default fmt
     if "json" in fmt:
         with open(file_path, "r") as f:
-            ser = json.load(f)
+            ser = json.load(f, **kwargs)
         obj = dec.decode(
             ser, obj=obj, req_version=req_version, raise_err=raise_err
         )
     elif "bson" in fmt:
         with open(file_path, "rb") as f:
             stream = f.read()
-        ser = bson.BSON.decode(stream)
+        ser = bson.BSON.decode(stream, **kwargs)
         obj = dec.decode(
             ser, obj=obj, req_version=req_version, raise_err=raise_err
         )
-    elif "hdf" in fmt:
-        raise NotImplementedError("hdf format not yet implemented")
     elif "tif" in fmt or "tiff" in fmt:
-        obj = image.load_tif_to_arraydata(file_path, ad=obj_or_cls)
+        obj = image.load_tif_to_arraydata(file_path, ad=obj_or_cls, **kwargs)
     elif "bmp" in fmt:
-        obj = image.load_bmp_to_arraydata(file_path, ad=obj_or_cls)
+        obj = image.load_bmp_to_arraydata(file_path, ad=obj_or_cls, **kwargs)
     elif "png" in fmt:
-        obj = image.load_png_to_arraydata(file_path, ad=obj_or_cls)
+        obj = image.load_png_to_arraydata(file_path, ad=obj_or_cls, **kwargs)
     elif "wct" in fmt:
-        obj = image.load_wct_to_arraydata(file_path, ad=obj_or_cls)
+        obj = image.load_wct_to_arraydata(file_path, ad=obj_or_cls, **kwargs)
     elif "sif" in fmt:
-        obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls)
+        obj = image.load_sif_to_arraydata(file_path, ad=obj_or_cls, **kwargs)
     elif "mat" in fmt:
         from libics.core.data.types import AttrDict
         obj = AttrDict(scipy.io.loadmat(file_path))
+    elif "csv" in fmt:
+        obj = pd.read_csv(file_path, **kwargs)
+    elif "xls" in fmt:
+        obj = pd.read_excel(file_path, **kwargs)
+    elif "hdf" in fmt:
+        raise NotImplementedError("hdf format not yet implemented")
     else:
         raise NotImplementedError("format {:s} not supported".format(fmt))
     return obj
