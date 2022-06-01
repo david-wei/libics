@@ -4,6 +4,7 @@ import time
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData
+from libics.core.data.types import AttrHashBase
 from libics.core.io import FileBase
 from libics.core.util import misc
 from libics.tools.math.peaked import FitGaussian2dTilt
@@ -12,7 +13,7 @@ from libics.tools.math.peaked import FitGaussian2dTilt
 ###############################################################################
 
 
-class AffineTrafo(FileBase):
+class AffineTrafo(FileBase, AttrHashBase):
 
     """
     Defines an affine transformation in arbitrary dimensions.
@@ -27,12 +28,14 @@ class AffineTrafo(FileBase):
 
     LOGGER = logging.get_logger("libics.tools.trafo.linear.AffineTrafo")
     SER_KEYS = FileBase.SER_KEYS | {"matrix", "offset"}
+    HASH_KEYS = AttrHashBase.HASH_KEYS | {"matrix", "offset"}
 
     def __init__(
         self,
         matrix=np.diag([1, 1]).astype(float),
         offset=np.array([0, 0], dtype=float)
     ):
+        super().__init__()
         self.matrix = matrix
         self.offset = offset
 
