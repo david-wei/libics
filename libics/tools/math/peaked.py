@@ -70,7 +70,7 @@ class FitExponential1d(ModelBase):
         return 1 / self.g
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         # Smoothened derivatives
         func_data_filter = ndimage.uniform_filter(
@@ -221,7 +221,7 @@ class FitGaussian1d(ModelBase):
         return p0
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         self.p0 = self._find_p0_stat(var_data, func_data)
 
     @staticmethod
@@ -275,6 +275,204 @@ class FitGaussian1d(ModelBase):
                 for pname in ["a", "wx"]
             ])
         return psuccess
+
+
+class SkewNormal1dDistribution:
+
+    """
+    Namespace class for the skew normal distribution.
+
+    Uses the parameterization of:
+    https://en.wikipedia.org/wiki/Skew_normal_distribution.
+
+    """
+
+    @staticmethod
+    def pdf(x, x0, wx, alpha):
+        xi = (x - x0) / (wx * np.sqrt(2))
+        return (
+            1 / np.sqrt(2 * np.pi) * np.exp(-xi**2)
+            * (1 + special.erf(alpha * xi))
+        )
+
+    @staticmethod
+    def cdf(x, x0, wx, alpha):
+        xi = (x - x0) / (wx * np.sqrt(2))
+        phi = (1 + special.erf(xi)) / 2
+        t = special.owens_t(xi * np.sqrt(2), alpha)
+        return phi - 2 * t
+
+    @staticmethod
+    def variance(wx, alpha):
+        delta = alpha / np.sqrt(1 + alpha**2)
+        mu = delta * np.sqrt(2 / np.pi)
+        return wx**2 * (1 - mu**2)
+
+    @staticmethod
+    def skewness(alpha):
+        delta = alpha / np.sqrt(1 + alpha**2)
+        mu = delta * np.sqrt(2 / np.pi)
+        sigma = np.sqrt(1 - mu**2)
+        return (4 - np.pi) / 2 * (mu / sigma)**3
+
+    @staticmethod
+    def kurtosis(alpha):
+        delta = alpha / np.sqrt(1 + alpha**2)
+        mu = delta * np.sqrt(2 / np.pi)
+        sigma = np.sqrt(1 - mu**2)
+        return 2 * (np.pi - 3) * (mu / sigma)**4
+
+    @staticmethod
+    def mode(x0, wx, alpha):
+        cls = SkewNormal1dDistribution
+        delta = alpha / np.sqrt(1 + alpha**2)
+        mu = np.sqrt(2 / np.pi) * delta
+        sigma = np.sqrt(1 - mu**2)
+        if np.isscalar(alpha):
+            alpha_abs_inv = (
+                np.inf if np.abs(alpha) < 1e-2 else 1 / np.abs(alpha)
+            )
+        else:
+            alpha_abs_inv = np.full_like(alpha, np.inf)
+            np.divide(1, np.abs(alpha), out=alpha_abs_inv,
+                      where=(np.abs(alpha) < 1e-2))
+        factor = (
+            mu
+            - cls.skewness(alpha) * sigma / 2
+            - np.sign(alpha) / 2 * np.exp(-2 * np.pi * alpha_abs_inv)
+        )
+        return x0 + wx * factor
+
+    @staticmethod
+    def mean(x0, wx, alpha):
+        delta = alpha / np.sqrt(1 + alpha**2)
+        return x0 + wx * delta * np.sqrt(2 / np.pi)
+
+    @staticmethod
+    def amplitude(wx, alpha):
+        cls = SkewNormal1dDistribution
+        return cls.pdf(cls.mode(0, wx, alpha), 0, wx, alpha)
+
+    @staticmethod
+    def cv_skewness_to_alpha(skewness):
+        k = skewness * 2 / (4 - np.pi)
+        k3 = np.sign(k) * np.abs(k)**(1/3)
+        mu = k3 / np.sqrt(1 + k3**2)
+        delta = mu * np.sqrt(np.pi / 2)
+        alpha = delta / np.sqrt(1 - delta**2)
+        return alpha
+
+
+def skew_gaussian_1d(
+    x, amplitude, center, width, alpha, offset=0.0
+):
+    r"""
+    Skewed Gaussian in one dimension.
+
+    See: https://en.wikipedia.org/wiki/Skew_normal_distribution.
+
+    Parameters
+    ----------
+    x : `float`
+        Variable.
+    amplitude : `float`
+        Amplitude of PDF.
+    center : `float`
+        Mode of PDF.
+    width : `float`
+        Standard deviation of PDF.
+    alpha : `float`
+        Parameter controlling skewness.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`.
+    """
+    ns = SkewNormal1dDistribution
+    # Change to standard skew normal parameterization
+    mu = np.sqrt(2 / np.pi) * alpha / np.sqrt(1 + alpha**2)
+    wx = width / np.sqrt(1 - mu**2)
+    x0 = center - wx * ns.mode(0, 1, alpha)
+    # Calculate function
+    res = amplitude * ns.pdf(x, x0, wx, alpha)
+    amp = ns.amplitude(wx, alpha)
+    if np.isscalar(amp):
+        if amp > 1e-50:
+            res = res / amp
+    else:
+        np.divide(res, amp, out=res, where=(amp > 1e-50))
+    return res + offset
+
+
+class FitSkewGaussian1d(FitGaussian1d):
+
+    """
+    Fit class for :py:func:`skew_gaussian_1d`.
+
+    Parameters
+    ----------
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    alpha : `float`
+        parameter controlling skewness
+    c : `float`
+        offset
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitSkewGaussian1d")
+    P_ALL = ["a", "x0", "wx", "alpha", "c"]
+    P_DEFAULT = [1, 0, 1, 0, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return skew_gaussian_1d(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self.split_fit_data(*data)
+        # Find p0 from unskewed Gaussian
+        a, x0, wx, c = self._find_p0_stat(var_data, func_data)
+        # Extract peak data
+        var_data = var_data[0]
+        mask = (var_data > x0 - 2 * wx) & (var_data < x0 + 2 * wx)
+        x, y = var_data[mask], func_data[mask]
+        # If insufficient data
+        if len(x) < 5:
+            alpha = 0
+        # Make probability mass function from peak data
+        else:
+            bin_edges = (x[1:] + x[:-1]) / 2
+            bin_widths = bin_edges[1:] - bin_edges[:-1]
+            bin_widths = np.concatenate([
+                [bin_widths[0]], bin_widths, [bin_widths[-1]]
+            ])
+            pmf = y - c
+            pmf[pmf < 0] = 0
+            pmf = pmf * bin_widths
+            pmf /= np.sum(pmf)
+            # Estimate alpha from PMF skewness
+            _mu1 = np.sum(x * pmf)
+            _mu2 = np.sum((x - _mu1)**2 * pmf)
+            _mu3 = np.sum((x - _mu1)**3 * pmf)
+            skewness = _mu3 / _mu2**(3/2)
+            alpha = SkewNormal1dDistribution.cv_skewness_to_alpha(skewness)
+        self.p0 = [a, x0, wx, alpha, c]
+
+    def get_skew_normal_1d_distribution_params(self):
+        """
+        Gets the equiv. :py:class:`SkewNormal1dDistribution` parameterization.
+
+        Returns
+        -------
+        params : `dict(str->float)`
+            Parameter dictionary containing the keys `"x0", "wx", "alpha"`.
+        """
+        center, width, alpha = self.x0, self.wx, self.alpha
+        mu = np.sqrt(2 / np.pi) * alpha / np.sqrt(1 + alpha**2)
+        wx = width / np.sqrt(1 - mu**2)
+        x0 = center - wx * SkewNormal1dDistribution.mode(0, 1, alpha)
+        return {"x0": x0, "wx": wx, "alpha": alpha}
 
 
 def gaussian_nd(x,
@@ -460,7 +658,7 @@ class FitGaussian2dTilt(ModelBase):
         algorithm : `str`
             `"linear", "fit1d"`.
         """
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         if algorithm == "linear":
             self.p0 = self._find_p0_linear(var_data, func_data)
         elif algorithm == "fit1d":
@@ -559,7 +757,7 @@ class FitParabolic1d(ModelBase):
         return parabolic_1d(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         x, y = var_data[0], func_data
         # Smoothen data
         if len(y) < 5:
@@ -771,7 +969,7 @@ class FitBmGaussianParabolic1dInt2d(FitGaussian1d):
         -----
         Currently only works for positive data.
         """
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         fitg, fitp = FitGaussian1d(), FitParabolic1dInt2d()
         # Split data
         fitg.find_p0(var_data, func_data)
@@ -871,7 +1069,7 @@ class FitBmGaussianParabolic2dInt1dTilt(FitGaussian2dTilt):
         return [ag, ap, x0, y0, wgx, wgy, wpx, wpy, tilt, c]
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         self.p0 = self._find_p0_fit1d(var_data, func_data)
 
     def find_popt(self, *args, **kwargs):
@@ -979,7 +1177,7 @@ class FitLorentzian1dAbs(ModelBase):
         """
         Algorithm: dummy max.
         """
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data[0]
         idx_max = np.argmax(func_data)
         a = func_data[idx_max]
@@ -1124,7 +1322,7 @@ class FitLorentzianEit1dImag(ModelBase):
     # +++++++++++++++++++++++++++++++++++++++++++++++
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         x, y_noisy = var_data[0], func_data
         # Smoothen data
         y_savgol = signal.savgol_filter(
@@ -1260,7 +1458,7 @@ class FitLorentzianRydEit1dImag(FitLorentzianEit1dImag):
             Constant parameters which should not be fitted when estimating
             `p0` with `r == 0` fit.
         """
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         x, y = var_data[0], func_data
         # Find raw EIT
         _fit = FitLorentzianEit1dImag()
@@ -1363,7 +1561,7 @@ class FitAiryDisk2d(ModelBase):
         """
         Algorithm: linear min/max approximation.
         """
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         c = func_data.min()
         xmin, xmax = var_data[0].min(), var_data[0].max()
         ymin, ymax = var_data[1].min(), var_data[1].max()
