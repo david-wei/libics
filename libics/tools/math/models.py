@@ -99,6 +99,8 @@ class ModelBase(abc.ABC):
         self._pcov = None
         # Flag whether fit succeeded
         self.psuccess = None
+        # Domain of data variables
+        self._var_rect = None
 
         # Call fit functions if data is supplied
         if len(data) > 0:
@@ -208,7 +210,7 @@ class ModelBase(abc.ABC):
             _p0 = self.get_p0(as_dict=True)
             _p0.update(val)
             val = [_p0[k] for k in self.pall]
-        self._p0 = np.array(val)
+        self._p0 = np.array(val, dtype=float)
 
     def get_p0(self, as_dict=True):
         if as_dict:
@@ -237,7 +239,7 @@ class ModelBase(abc.ABC):
         p0_for_fit = len(self.pfit) * [None]
         for k, i in self.pfit.items():
             p0_for_fit[i] = p0[self.pall[k]]
-        return np.array(p0_for_fit)
+        return np.array(p0_for_fit, dtype=float)
 
     @property
     def popt(self):
@@ -246,7 +248,7 @@ class ModelBase(abc.ABC):
         if self._popt is not None:
             for k, i in self.pfit.items():
                 popt[self.pall[k]] = self._popt[i]
-        return np.array(popt)
+        return np.array(popt, dtype=float)
 
     def get_popt(self, as_dict=True, pall=True):
         popt = self.popt if pall else self._popt.copy()
@@ -263,7 +265,7 @@ class ModelBase(abc.ABC):
 
     @popt_for_fit.setter
     def popt_for_fit(self, val):
-        self._popt = val
+        self._popt = np.array(val, dtype=float)
 
     @property
     def pcov(self):
@@ -275,7 +277,7 @@ class ModelBase(abc.ABC):
 
     @pcov_for_fit.setter
     def pcov_for_fit(self, val):
-        self._pcov = val
+        self._pcov = np.array(val, dtype=float)
 
     @property
     def pstd(self):
@@ -347,7 +349,7 @@ class ModelBase(abc.ABC):
             Whether fit succeeded.
         """
         # Define (reduced) fit function
-        _p = copy.deepcopy(self.p0)
+        _p = np.copy(self.p0)
         _pall = self.pall
         _pfit = self.pfit
         _func = self._func
@@ -358,11 +360,11 @@ class ModelBase(abc.ABC):
             return _func(var, *_p).ravel()
 
         # Prepare fit data
-        split_data = self._split_fit_data(*data)
+        split_data = self.split_fit_data(*data)
         var_data, func_data, err_data = self._ravel_data(*split_data)
         if err_data is not None and "sigma" not in kwargs:
             kwargs.update({"sigma": err_data})
-        p0 = self.p0_for_fit
+        p0 = np.copy(self.p0_for_fit)
 
         # Optimize parameters
         try:
@@ -482,9 +484,59 @@ class ModelBase(abc.ABC):
             ad.data = res
             return ad
 
+    def get_model_data(self, shape=50):
+        """
+        Gets a (continuos) model data array using fitted parameters.
+
+        Generates a continuos meshgrid spanning the domain of the data points
+        used for fitting. Calls the model function using the optimized
+        fit parameters for this meshgrid.
+
+        Parameters
+        ----------
+        shape : `Iter[int]` or `int`
+            Shape of meshgrid. If `int`, uses the same size in all dimensions.
+
+        Returns
+        -------
+        data_cont : `ArrayData(float)`
+            Continuos model data.
+
+        Raises
+        ------
+        ValueError
+            If no prior fit has been performed.
+        """
+        # Parse parameters
+        if self._var_rect is None:
+            raise ValueError("No prior fit has been performed")
+        if np.isscalar(shape):
+            shape = np.full(len(self._var_rect), np.ceil(shape), dtype=int)
+        else:
+            shape = np.round(shape).astype(int)
+        # Generate meshgrid
+        ndim = len(shape)
+        data_cont = ArrayData()
+        for _low, _high in self._var_rect:
+            data_cont.add_dim(low=_low, high=_high)
+        data_cont.var_shape = tuple(shape)
+        # Call model function
+        if ndim == 1:
+            data_cont.data = self(data_cont.get_points(0))
+        else:
+            data_cont.data = self(data_cont.get_var_meshgrid())
+        return data_cont
+
     # +++++++++++++++++++++++++++++++++++++++
     # Helper functions
     # +++++++++++++++++++++++++++++++++++++++
+
+    def split_fit_data(self, *data, func_dim=-1):
+        var_data, func_data, err_data = self._split_fit_data(
+            *data, func_dim=func_dim
+        )
+        self._var_rect = [[np.min(v), np.max(v)] for v in var_data]
+        return var_data, func_data, err_data
 
     @staticmethod
     def _split_fit_data(*data, func_dim=-1):
