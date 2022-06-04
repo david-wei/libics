@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import ndimage, special, signal, stats
+from scipy import ndimage, optimize, special, signal, stats
 
 from libics.env import logging
 from libics.tools.math.models import ModelBase
@@ -150,7 +150,14 @@ def gaussian_1d(x,
         Offset :math:`C`.
     """
     exponent = -((x - center) / width)**2 / 2.0
-    return amplitude * np.exp(exponent) + offset
+    if np.isscalar(exponent):
+        val = 0
+        if exponent > -700:
+            val = np.exp(exponent)
+    else:
+        val = np.zeros_like(exponent)
+        np.exp(exponent, out=val, where=(exponent > -700))
+    return amplitude * val + offset
 
 
 class FitGaussian1d(ModelBase):
@@ -262,8 +269,8 @@ class FitGaussian1d(ModelBase):
         x0 = (1 - max_weight) * x_stat + max_weight * x_max
         return x0
 
-    def find_popt(self, *args, **kwargs):
-        psuccess = super().find_popt(*args, **kwargs)
+    def find_popt(self, *args, maxfev=100000, **kwargs):
+        psuccess = super().find_popt(*args, maxfev=maxfev, **kwargs)
         if psuccess:
             # Enforce positive width
             for pname in ["wx"]:
@@ -284,16 +291,52 @@ class SkewNormal1dDistribution:
 
     Uses the parameterization of:
     https://en.wikipedia.org/wiki/Skew_normal_distribution.
-
     """
 
     @staticmethod
     def pdf(x, x0, wx, alpha):
         xi = (x - x0) / (wx * np.sqrt(2))
+        if np.isscalar(xi):
+            val = 0
+            if np.abs(xi) < 26:
+                val = np.exp(-xi**2)
+        else:
+            val = np.zeros_like(xi)
+            np.exp(-xi**2, out=val, where=(np.abs(xi) < 26))
         return (
-            1 / np.sqrt(2 * np.pi) * np.exp(-xi**2)
+            1 / np.sqrt(2 * np.pi) * val
             * (1 + special.erf(alpha * xi))
         )
+
+    @staticmethod
+    def ipdf(p, x0, wx, alpha, branch="left"):
+        cls = SkewNormal1dDistribution
+        # Parse parameters
+        if p < 0 or p > cls.amplitude(wx, alpha) * (1 + 1e-5):
+            raise ValueError("Invalid probability density value `p`")
+        xm = cls.mode(x0, wx, alpha)
+        if branch == "left":
+            opt_x0 = xm - wx
+            opt_x1 = xm - 2 * wx
+        elif branch == "right":
+            opt_x0 = xm + wx
+            opt_x1 = xm + 2 * wx
+        else:
+            raise ValueError("Invalid `branch` (should be 'left' or 'right')")
+
+        # Find solutions to inverse PDF
+        def root_func(x):
+            return p - cls.pdf(x, x0, wx, alpha)
+            # return cls.pdf(x, x0, wx, alpha) - p
+        if np.isscalar(p):
+            res = optimize.root_scalar(root_func, x0=opt_x0, x1=opt_x1)
+            x = res.root
+        else:
+            res = optimize.root(root_func, opt_x0)
+            x = res.x
+        if not res.converged:
+            raise ValueError("Invalid probability density value `p`")
+        return x
 
     @staticmethod
     def cdf(x, x0, wx, alpha):
@@ -301,6 +344,34 @@ class SkewNormal1dDistribution:
         phi = (1 + special.erf(xi)) / 2
         t = special.owens_t(xi * np.sqrt(2), alpha)
         return phi - 2 * t
+
+    @staticmethod
+    def ppf(q, x0, wx, alpha):
+        cls = SkewNormal1dDistribution
+        if np.isscalar(q):
+            if q <= 0:
+                return -np.inf
+            elif q >= 1:
+                return np.inf
+            x1 = cls.mean(x0, wx, alpha)
+            if x0 == x1:
+                x1 = x0 + np.sign(alpha + 1e-50) * wx
+            res = optimize.root_scalar(
+                lambda x: cls.cdf(x, x0, wx, alpha) - q, x0=x0, x1=x1
+            ).root
+        else:
+            res = np.zeros_like(q, dtype=float)
+            mask0, mask1 = (q <= 0), (q >= 1)
+            res[mask0] = -np.inf
+            res[mask1] = np.inf
+            mask = (~mask0) & (~mask1)
+            q_opt = q[mask]
+            if len(q_opt) > 0:
+                x0_opt = np.full_like(q_opt, x0, dtype=float)
+                res[mask] = optimize.root(
+                    lambda x: cls.cdf(x, x0, wx, alpha) - q_opt, x0_opt
+                ).x
+        return res
 
     @staticmethod
     def variance(wx, alpha):
@@ -361,6 +432,32 @@ class SkewNormal1dDistribution:
         delta = mu * np.sqrt(np.pi / 2)
         alpha = delta / np.sqrt(1 - delta**2)
         return alpha
+
+    @staticmethod
+    def minimal_overlap(
+        x0_l, x0_r, wx_l, wx_r, alpha_l, alpha_r, amp_l=1, amp_r=1
+    ):
+        cls = SkewNormal1dDistribution
+        median_l = cls.ppf(0.5, x0_l, wx_l, alpha_l)
+        median_r = cls.ppf(0.5, x0_r, wx_r, alpha_r)
+        # Check if left/right distributions need to be swapped
+        if median_l > median_r:
+            x0_l, x0_r, wx_l, wx_r, alpha_l, alpha_r, amp_l, amp_r = (
+                x0_r, x0_l, wx_r, wx_l, alpha_r, alpha_l, amp_r, amp_l
+            )
+            median_l, median_r = median_r, median_l
+
+        # Minimal overlap condition: equal weights across separation line `xs`
+        def root_func(x):
+            q_l = 1 - cls.cdf(x, x0_l, wx_l, alpha_l)
+            q_r = cls.cdf(x, x0_r, wx_r, alpha_r)
+            return amp_l * q_l - amp_r * q_r
+        # Minimize overlap
+        res = optimize.root_scalar(root_func, bracket=[median_l, median_r])
+        xs = res.root
+        if not res.converged:
+            cls.LOGGER.warning("`minimal_overlap` did not converge")
+        return xs
 
 
 def skew_gaussian_1d(
@@ -438,7 +535,7 @@ class FitSkewGaussian1d(FitGaussian1d):
         mask = (var_data > x0 - 2 * wx) & (var_data < x0 + 2 * wx)
         x, y = var_data[mask], func_data[mask]
         # If insufficient data
-        if len(x) < 5:
+        if len(x) < 9:
             alpha = 0
         # Make probability mass function from peak data
         else:
@@ -456,8 +553,21 @@ class FitSkewGaussian1d(FitGaussian1d):
             _mu2 = np.sum((x - _mu1)**2 * pmf)
             _mu3 = np.sum((x - _mu1)**3 * pmf)
             skewness = _mu3 / _mu2**(3/2)
-            alpha = SkewNormal1dDistribution.cv_skewness_to_alpha(skewness)
+            # Check for invalid skewness (often due to few data points)
+            if np.abs(skewness) > 0.8:
+                alpha = 0
+            else:
+                alpha = SkewNormal1dDistribution.cv_skewness_to_alpha(skewness)
         self.p0 = [a, x0, wx, alpha, c]
+
+    def find_popt(self, *args, **kwargs):
+        # If alpha == 0, curve_fit has problems optimizing
+        if "alpha" in self.pfit:
+            alpha = self.get_p0()["alpha"]
+            alpha_sign = 1 if alpha == 0 else np.sign(alpha)
+            if np.abs(alpha) < 1e-8:
+                self.set_p0(alpha=1e-8*alpha_sign)
+        return super().find_popt(*args, **kwargs)
 
     def get_skew_normal_1d_distribution_params(self):
         """
