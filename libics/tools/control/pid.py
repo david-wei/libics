@@ -276,7 +276,7 @@ class ArrayControlLoop(object):
             If `None`, uses :py:attr:`current_trg_image`.
         step : `int` or `None`
             If `int < 0`, removes given number of latest steps
-                (see also :py:meth:`remove_steps`).
+            (see also :py:meth:`remove_steps`).
             If `int >= 0`, removes all later steps and updates the given step.
             If `None`, appends a new step.
         """

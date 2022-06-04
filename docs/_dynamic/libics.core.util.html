@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="libics.driver" href="libics.driver.html" />
+    <link rel="next" title="libics.tools" href="libics.tools.html" />
     <link rel="prev" title="libics.core.io" href="libics.core.io.html" /> 
 </head>
 
@@ -56,7 +56,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
 </ul>
 
@@ -148,19 +147,22 @@ Call signature: <cite>worker_func(*args, **kwargs)</cite> with
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>()</p></td>
 <td><p>Call self as a function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.run" title="libics.core.util.func.PeriodicTimer.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.is_alive" title="libics.core.util.func.PeriodicTimer.is_alive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code></a>()</p></td>
+<td><p>Check whether thread is alive.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.run" title="libics.core.util.func.PeriodicTimer.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
 <td><p>Timer thread method that periodically calls a function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.set_args" title="libics.core.util.func.PeriodicTimer.set_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_args</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.set_args" title="libics.core.util.func.PeriodicTimer.set_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_args</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Sets the arguments with which the worker function is called.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.set_stop_action" title="libics.core.util.func.PeriodicTimer.set_stop_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stop_action</span></code></a>(stop_action)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.set_stop_action" title="libics.core.util.func.PeriodicTimer.set_stop_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stop_action</span></code></a>(stop_action)</p></td>
 <td><p>Sets the stop action.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.start" title="libics.core.util.func.PeriodicTimer.start"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.start" title="libics.core.util.func.PeriodicTimer.start"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Starts a thread which runs the <cite>run</cite> method.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.stop" title="libics.core.util.func.PeriodicTimer.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.PeriodicTimer.stop" title="libics.core.util.func.PeriodicTimer.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
 <td><p>Stops the timer.</p></td>
 </tr>
 </tbody>
@@ -188,6 +190,12 @@ Call signature: <cite>worker_func(*args, **kwargs)</cite> with
 <dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.get_period">
 <span class="sig-name descname"><span class="pre">get_period</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.get_period" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.is_alive">
+<span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.PeriodicTimer.is_alive" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether thread is alive.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.core.util.func.PeriodicTimer.run">
@@ -478,12 +486,16 @@ list. If not, a list is created with the data as single item.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Asserts that data is a <cite>numpy.ndarray</cite> object.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt><strong>data</strong></dt><dd><p>Input data to be checked for <cite>numpy.ndarray</cite>.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier"><cite>tuple(int)</cite> or <cite>None</cite></span></dt><dd><p>If given and data is scalar, creates a numpy array with given shape
+containing given data as element.
+If given and data has a different shape, raises a <cite>ValueError</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -634,6 +646,21 @@ Supports broadcasting.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_datetime">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Converts to a Python datetime object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>var</strong><span class="classifier"><cite>pd.Timestamp</cite> or <cite>float</cite> or <cite>str</cite></span></dt><dd><p><cite>float</cite>: Python timestamp.
+<cite>str</cite>: Python datetime isoformat.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.cv_float">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['.',</span> <span class="pre">',']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_float" title="Permalink to this definition"></a></dt>
 <dd><p>Converts a string into a float.</p>
@@ -680,6 +707,27 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_index_mask_to_rect">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_mask_to_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_mask_to_rect" title="Permalink to this definition"></a></dt>
+<dd><p>Converts boolean mask to rectangle. Assumes rectangular mask.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>mask</strong><span class="classifier"><cite>np.ndarray(bool)</cite></span></dt><dd><p>Boolean mask with array shape.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>rect</strong><span class="classifier"><cite>Iter[(int, int)]</cite></span></dt><dd><p>Index rectangle where the outer iterator corresponds to the dimension
+and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.cv_index_rect_to_slice">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_rect_to_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_rect_to_slice" title="Permalink to this definition"></a></dt>
 <dd><p>Converts min-max indices to slices.</p>
@@ -694,6 +742,20 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
 <dt><strong>slices</strong><span class="classifier"><cite>Iter[slice]</cite></span></dt><dd><p>Iterator of slices from index rectangle.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_timestamp">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_timestamp" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a date/time to the Python datetime timestamp.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>var</strong><span class="classifier"><cite>datetime.datetime</cite> or <cite>pd.Timestamp</cite></span></dt><dd><p>Date/time object.</p>
 </dd>
 </dl>
 </dd>
@@ -973,10 +1035,52 @@ separators.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.get_si_prefix">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">get_si_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.get_si_prefix" title="Permalink to this definition"></a></dt>
+<dd><p>Gets value and SI unit prefix.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>val</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Value in base SI unit.</p>
+</dd>
+<dt><strong>cutoff</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Numerical value, at which the next SI prefix is chosen.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>val</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Value in prefixed SI unit.</p>
+</dd>
+<dt><strong>prefix</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>SI prefix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.hex_positive">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">hex_positive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.hex_positive" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the <cite>hex</cite> of an integer without sign with given number of bits.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.id_dict">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">id_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.id_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Takes any iterable and returns a dictionary mapping the item values to
 themselves.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.is_datetime">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">is_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.is_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Returns whether given variable is of date/time type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.is_iter">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">is_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.is_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Returns whether given variable is iterable.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1262,6 +1366,33 @@ given string is cast to numerical format.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.str_si_prefix">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">str_si_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.str_si_prefix" title="Permalink to this definition"></a></dt>
+<dd><p>String formatting for <a class="reference internal" href="#libics.core.util.misc.get_si_prefix" title="libics.core.util.misc.get_si_prefix"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_si_prefix()</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>val</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Value in base SI unit.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Base unit.</p>
+</dd>
+<dt><strong>precision</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of decimal digits.</p>
+</dd>
+<dt><strong>cutoff</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Numerical value, at which the next SI prefix is chosen.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str_si_prefix</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">)</span>
+<span class="go">10.000µW</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str_si_prefix</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">100pW</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.transpose_array">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">transpose_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.transpose_array" title="Permalink to this definition"></a></dt>
 <dd><p>Transposes a rectangular array.</p>
@@ -1373,13 +1504,13 @@ given string is cast to numerical format.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="libics.core.io.html" class="btn btn-neutral float-left" title="libics.core.io" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="libics.driver.html" class="btn btn-neutral float-right" title="libics.driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libics.tools.html" class="btn btn-neutral float-right" title="libics.tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2021, David Wei.</p>
+    <p>&#169; Copyright 2019-2022, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

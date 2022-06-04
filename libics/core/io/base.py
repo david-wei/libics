@@ -1,4 +1,3 @@
-import bson
 import datetime
 import json
 import numpy as np
@@ -10,6 +9,17 @@ from importlib import import_module
 from libics import env
 from libics.core.io import image
 from libics.core.util import misc
+
+LOGGER = env.logging.get_logger("libics.core.io")
+
+try:
+    import bson
+except ImportError:
+    LOGGER.info(
+        "Could not load `bson` package. "
+        + "If you are accessing `*.bson` files, "
+        + "install the Python package `pymongo`."
+    )
 
 
 ###############################################################################

@@ -6,13 +6,14 @@
 Documentation of libics
 =======================
 
+This is the documentation of the data analysis package `libics <https://github.com/david-wei/libics>`_.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
     
    _dynamic/libics.env
    _dynamic/libics.core
-   _dynamic/libics.driver
    _dynamic/libics.tools
 
 .. automodule:: libics

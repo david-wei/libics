@@ -54,7 +54,6 @@
 <li class="toctree-l2"><a class="reference internal" href="libics.core.util.html">libics.core.util</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libics.tools.html">libics.tools</a></li>
 </ul>
 
@@ -445,7 +444,7 @@ where dependencies have changed.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.io.base.load">
-<span class="sig-prename descclassname"><span class="pre">libics.core.io.base.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_or_cls=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec=&lt;class</span> <span class="pre">'libics.core.io.base.ObjDecoder'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_version=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_err=True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.load" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.core.io.base.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_or_cls=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec=&lt;class</span> <span class="pre">'libics.core.io.base.ObjDecoder'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_version=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_err=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.base.load" title="Permalink to this definition"></a></dt>
 <dd><p>Loads and deserializes an object from file.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -465,6 +464,8 @@ Raises a <cite>RuntimeError</cite> if this condition is not fulfilled.</p>
 </dd>
 <dt><strong>raise_err</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Flag whether to raise an error on deserialization failure
 or to proceed silently.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the loader function.</p>
 </dd>
 </dl>
 </dd>
@@ -819,7 +820,7 @@ given value.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2021, David Wei.</p>
+    <p>&#169; Copyright 2019-2022, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

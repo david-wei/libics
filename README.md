@@ -28,6 +28,7 @@ gives an overview of these additional external dependencies.
 
 ## Files
 
-| Developer | Library | Type | Description |
-| --------- | ------- | ---- | ----------- |
-| [Github: fujii-team](https://github.com/fujii-team) | [sif_reader](https://github.com/fujii-team/sif_reader) | Python wrapper | R/W singularity image files (.sif) |
+| Library | Description | File types [read/write] | Installation |
+| ------- | ----------- | ----------------------- | ------------ |
+| [pymongo](https://github.com/mongodb/mongo-python-driver) | MongoDB database | [r/w] Binary JSON files (.bson) | `pip install pymongo` |
+| [sif_reader](https://github.com/fujii-team/sif_reader) | SIF file reader | [r] Singularity image files (.sif) | `pip install git+https://github.com/fujii-team/sif_reader.git` |

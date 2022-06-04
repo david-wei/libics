@@ -416,6 +416,14 @@ class PeakInfo:
         return len(list(self.iter_subpeaks()))
 
     def get_model_data(self):
+        """
+        Gets the fitted peak data.
+
+        Returns
+        -------
+        ad : `ArrayData(1, float)`
+            Fitted peak data evaluated at the positions of the raw data.
+        """
         x = self.data.get_points(0)
         y = np.zeros_like(x, dtype=float)
         for _peak in self.iter_peaks():

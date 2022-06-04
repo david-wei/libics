@@ -62,6 +62,8 @@ LIBICS_VERSION = (
     + str(LIBICS_VERSION_MINOR)
     + LIBICS_VERSION_DEV
 )
+short_version = str(LIBICS_VERSION_MAJOR) + "." + str(LIBICS_VERSION_MINOR)
+__version__ = LIBICS_VERSION
 
 
 ###############################################################################

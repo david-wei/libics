@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>libics.tools.control &mdash; libics 1.0a documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="libics.tools.database" href="libics.tools.database.html" />
+    <link rel="prev" title="libics.tools" href="libics.tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> libics
+          </a>
+              <div class="version">
+                1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.kalman">kalman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.pid">pid</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.database.html">libics.tools.database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.math.html">libics.tools.math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.plot.html">libics.tools.plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.trafo.html">libics.tools.trafo</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="libics.tools.html">libics.tools</a> &raquo;</li>
+      <li>libics.tools.control</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_dynamic/libics.tools.control.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-libics.tools.control">
+<span id="libics-tools-control"></span><h1>libics.tools.control<a class="headerlink" href="#module-libics.tools.control" title="Permalink to this headline"></a></h1>
+<section id="module-libics.tools.control.kalman">
+<span id="kalman"></span><h2>kalman<a class="headerlink" href="#module-libics.tools.control.kalman" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.control.kalman.</span></span><span class="sig-name descname"><span class="pre">KalmanFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_estimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_covariance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Kalman filter for vectorial data and linear models (TODO: n-dim).</p>
+<p>Implementation follows: <a class="reference external" href="https://en.wikipedia.org/wiki/Kalman_filter">https://en.wikipedia.org/wiki/Kalman_filter</a>
+where we distinguish between state, observation, and control space.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>history_len</strong><span class="classifier"><cite>None</cite> or <cite>int</cite></span></dt><dd><p>This class records state observations, estimates and covariances
+at each step.
+If <cite>int</cite>, <cite>history_len</cite> restricts the number of stored steps.
+If <cite>None</cite>, the history is unrestricted (may lead to memory issues).</p>
+</dd>
+<dt><strong>initial_estimate, initial_covariance</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Initial state estimate, and its covariance, respectively.</p>
+</dd>
+<dt><strong>process_model, process_covariance</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Mapping from previous to subsequent state (between iterations),
+and its covariance, respectively</p>
+</dd>
+<dt><strong>observation_model, observation_covariance</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Mapping from state to observation space,
+and the covariance in observation space, respectively.</p>
+</dd>
+<dt><strong>control_model</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Mapping from control to state space.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl>
+<dt><strong>state_observations</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Sequence of observations with dimensions: <cite>[iterations, {data}]</cite>.</p>
+</dd>
+<dt><strong>state_estimates</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Sequence of state estimates with dimensions: <cite>[iterations, {data}]</cite>.</p>
+</dd>
+<dt><strong>state_covariances</strong><span class="classifier"><cite>np.ndarray(float)</cite></span></dt><dd><p>Sequence of state covariances with dimensions:
+<cite>[iterations, {data}, {data}]</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.control.kalman.KalmanFilter.add_observation" title="libics.tools.control.kalman.KalmanFilter.add_observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_observation</span></code></a>(observation[, control])</p></td>
+<td><p>Adds an observation iteration.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.add_observation">
+<span class="sig-name descname"><span class="pre">add_observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.add_observation" title="Permalink to this definition"></a></dt>
+<dd><p>Adds an observation iteration.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>observation</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Data in observation space in this iteration.</p>
+</dd>
+<dt><strong>control</strong><span class="classifier"><cite>None</cite> or <cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Control value change applied prior to this observation.
+If <cite>None</cite>, no control is applied.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>state_estimate</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Posterior state estimate.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.control_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control_model</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.control_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.observation_covariance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observation_covariance</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.observation_covariance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.observation_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observation_model</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.observation_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.process_covariance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_covariance</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.process_covariance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.process_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_model</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.process_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.state_covariances">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_covariances</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.state_covariances" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.state_estimates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_estimates</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.state_estimates" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter.state_observations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_observations</span></span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter.state_observations" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-libics.tools.control.pid">
+<span id="pid"></span><h2>pid<a class="headerlink" href="#module-libics.tools.control.pid" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">ArrayControlLoop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_ctrl_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Proportional-integral control loop of array-like variables.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>history_len</strong><span class="classifier"><cite>int</cite> or <cite>None</cite></span></dt><dd><p><cite>int</cite>: number of points saved in history.
+<cite>None</cite>: unlimited history.</p>
+</dd>
+<dt><strong>trg_image</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Initial setpoint. May be changed when running.</p>
+</dd>
+<dt><strong>init_ctrl_image</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Initial control value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>After initialization, the control loop is executed by calling
+<a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.add_ctrl_step" title="libics.tools.control.pid.ArrayControlLoop.add_ctrl_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_ctrl_step()</span></code></a> in each control step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>act_images</strong></dt><dd></dd>
+<dt><strong>ctrl_images</strong></dt><dd></dd>
+<dt><strong>dif_images</strong></dt><dd></dd>
+<dt><strong>err_images</strong></dt><dd></dd>
+<dt><strong>trg_image</strong></dt><dd></dd>
+<dt><strong>trg_images</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.add_ctrl_step" title="libics.tools.control.pid.ArrayControlLoop.add_ctrl_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_ctrl_step</span></code></a>(act_image[, trg_image, step])</p></td>
+<td><p>Adds a measurement step.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.get_ctrl_kernel" title="libics.tools.control.pid.ArrayControlLoop.get_ctrl_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ctrl_kernel</span></code></a>()</p></td>
+<td><p>Gets the PI-kernel used to calculate the error signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.remove_steps" title="libics.tools.control.pid.ArrayControlLoop.remove_steps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_steps</span></code></a>([steps])</p></td>
+<td><p>Removes given number of steps from history.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel" title="libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_ctrl_kernel</span></code></a>(gain_prop[, ...])</p></td>
+<td><p>Sets feedback parameters for proportional and limited integral gain.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.tools.control.pid.ArrayControlLoop</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.act_images">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_images</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.act_images" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.add_ctrl_step">
+<span class="sig-name descname"><span class="pre">add_ctrl_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.add_ctrl_step" title="Permalink to this definition"></a></dt>
+<dd><p>Adds a measurement step.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>act_image</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Actual, measured image.</p>
+</dd>
+<dt><strong>trg_image</strong><span class="classifier"><cite>float</cite> or <cite>Array[float]</cite></span></dt><dd><p>Sets new current target image.
+If <cite>None</cite>, uses <code class="xref py py-attr docutils literal notranslate"><span class="pre">current_trg_image</span></code>.</p>
+</dd>
+<dt><strong>step</strong><span class="classifier"><cite>int</cite> or <cite>None</cite></span></dt><dd><p>If <cite>int &lt; 0</cite>, removes given number of latest steps
+(see also <a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop.remove_steps" title="libics.tools.control.pid.ArrayControlLoop.remove_steps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_steps()</span></code></a>).
+If <cite>int &gt;= 0</cite>, removes all later steps and updates the given step.
+If <cite>None</cite>, appends a new step.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.ctrl_images">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ctrl_images</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.ctrl_images" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.dif_images">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dif_images</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.dif_images" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.err_images">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">err_images</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.err_images" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.get_ctrl_kernel">
+<span class="sig-name descname"><span class="pre">get_ctrl_kernel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.get_ctrl_kernel" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the PI-kernel used to calculate the error signal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.remove_steps">
+<span class="sig-name descname"><span class="pre">remove_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.remove_steps" title="Permalink to this definition"></a></dt>
+<dd><p>Removes given number of steps from history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel">
+<span class="sig-name descname"><span class="pre">set_ctrl_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gain_prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel" title="Permalink to this definition"></a></dt>
+<dd><p>Sets feedback parameters for proportional and limited integral gain.</p>
+<p>For the limited integral control loop, an exponential kernel is used.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>amp_prop</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Proportional gain.</p>
+</dd>
+<dt><strong>gain_integr_lim</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Limited integral gain at latest step.
+Exponentially taperes off over characteristic length
+number of steps towards zero.</p>
+</dd>
+<dt><strong>num_integr_lim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of steps until limited integral gain is zero.</p>
+</dd>
+<dt><strong>tau_integr_lim</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Exponential characteristic number of steps,
+i.e. denominator of exponent.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.trg_image">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trg_image</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.trg_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.trg_images">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trg_images</span></span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.trg_images" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.control.pid.ImageControlLoop">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">ImageControlLoop</span></span><a class="headerlink" href="#libics.tools.control.pid.ImageControlLoop" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop" title="libics.tools.control.pid.ArrayControlLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.control.pid.ArrayControlLoop</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.control.pid.get_ctrl_image">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">get_ctrl_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_ctrl_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.get_ctrl_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.control.pid.get_dif_image">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">get_dif_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.get_dif_image" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the difference between actual and target image.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>act_image</strong><span class="classifier"><cite>Array[2, float]</cite></span></dt><dd><p>Actual image.</p>
+</dd>
+<dt><strong>trg_image</strong><span class="classifier"><cite>Array[2, float]</cite></span></dt><dd><p>Target image.</p>
+</dd>
+<dt><strong>offset, scale</strong></dt><dd><p>TODO: rescaling stuff</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>dif_image</strong><span class="classifier"><cite>Array[2, float]</cite></span></dt><dd><p>Difference image.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.control.pid.get_err_image">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">get_err_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dif_images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.get_err_image" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the error signal from a history of difference images.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>dif_images</strong><span class="classifier"><cite>Array[3, float]</cite></span></dt><dd><p>History of difference images with dimensions:
+<cite>[history_steps, *image_dims]</cite>.</p>
+</dd>
+<dt><strong>kernel</strong><span class="classifier"><cite>Array[1, float]</cite></span></dt><dd><p>Weighing gain kernel.
+Can be used to implement PI control.</p>
+</dd>
+<dt><strong>vmin, vmax</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Clipping values.</p>
+</dd>
+<dt><strong>mask</strong><span class="classifier"><cite>Array[2, bool]</cite></span></dt><dd><p>Error mask.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>err_image</strong><span class="classifier"><cite>Array[2, float]</cite></span></dt><dd><p>Error signal image.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="libics.tools.html" class="btn btn-neutral float-left" title="libics.tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="libics.tools.database.html" class="btn btn-neutral float-right" title="libics.tools.database" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2022, David Wei.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

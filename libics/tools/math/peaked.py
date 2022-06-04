@@ -1624,7 +1624,7 @@ def airy_disk_2d(
     amplitude : `float`
         :math:`A`
     center_x, center_y : `float`
-        :math:`(x_0, y_0)
+        :math:`(x_0, y_0)`
     width : `float`
         :math:`w`
     offset : `float`

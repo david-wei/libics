@@ -44,8 +44,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.control.html">libics.tools.control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.database.html">libics.tools.database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.math.html">libics.tools.math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.plot.html">libics.tools.plot</a></li>
@@ -163,7 +163,7 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.linear.</span></span><span class="sig-name descname"><span class="pre">AffineTrafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a>, <a class="reference internal" href="libics.core.data.html#libics.core.data.types.AttrHashBase" title="libics.core.data.types.AttrHashBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.types.AttrHashBase</span></code></a></p>
 <p>Defines an affine transformation in arbitrary dimensions.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -176,8 +176,10 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
+<dt><strong>fixed_point</strong></dt><dd></dd>
 <dt><strong>matrix_to_origin</strong></dt><dd></dd>
 <dt><strong>matrix_to_target</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
 <dt><strong>offset_to_origin</strong></dt><dd></dd>
 <dt><strong>offset_to_target</strong></dt><dd></dd>
 </dl>
@@ -220,6 +222,18 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.fit_affine_transform" title="libics.tools.trafo.linear.AffineTrafo.fit_affine_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_affine_transform</span></code></a>(origin_coords, ...)</p></td>
 <td><p>Fits the affine transform matrix and offset vector.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.get_mask_origin_coords_within_target_rect" title="libics.tools.trafo.linear.AffineTrafo.get_mask_origin_coords_within_target_rect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask_origin_coords_within_target_rect</span></code></a>(coords)</p></td>
+<td><p>Mask selecting which origin coordinates lie inside a target rectangle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.get_mask_target_coords_within_origin_rect" title="libics.tools.trafo.linear.AffineTrafo.get_mask_target_coords_within_origin_rect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask_target_coords_within_origin_rect</span></code></a>(coords)</p></td>
+<td><p>Mask selecting which target coordinates lie inside an origin rectangle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.get_origin_unit_vectors" title="libics.tools.trafo.linear.AffineTrafo.get_origin_unit_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_origin_unit_vectors</span></code></a>()</p></td>
+<td><p>Gets the origin unit vectors in target coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.get_target_unit_vectors" title="libics.tools.trafo.linear.AffineTrafo.get_target_unit_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_unit_vectors</span></code></a>()</p></td>
+<td><p>Gets the target unit vectors in origin coordinates.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.invert" title="libics.tools.trafo.linear.AffineTrafo.invert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert</span></code></a>()</p></td>
 <td><p>Returns the inverse <cite>AffineTrafo</cite> object.</p></td>
 </tr>
@@ -231,6 +245,25 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 </tr>
 </tbody>
 </table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 74%" />
+<col style="width: 26%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_offset_by_point_pair</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.HASH_KEYS">
+<span class="sig-name descname"><span class="pre">HASH_KEYS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'matrix',</span> <span class="pre">'offset'}</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.HASH_KEYS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.LOGGER">
 <span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.tools.trafo.linear.AffineTrafo</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.LOGGER" title="Permalink to this definition"></a></dt>
@@ -366,6 +399,55 @@ Variable naming convention:</p>
 </ul>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.fixed_point">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fixed_point</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.fixed_point" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.get_mask_origin_coords_within_target_rect">
+<span class="sig-name descname"><span class="pre">get_mask_origin_coords_within_target_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.get_mask_origin_coords_within_target_rect" title="Permalink to this definition"></a></dt>
+<dd><p>Mask selecting which origin coordinates lie inside a target rectangle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.get_mask_target_coords_within_origin_rect">
+<span class="sig-name descname"><span class="pre">get_mask_target_coords_within_origin_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.get_mask_target_coords_within_origin_rect" title="Permalink to this definition"></a></dt>
+<dd><p>Mask selecting which target coordinates lie inside an origin rectangle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.get_origin_unit_vectors">
+<span class="sig-name descname"><span class="pre">get_origin_unit_vectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.get_origin_unit_vectors" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the origin unit vectors in target coordinates.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>origin_unit_vectors</strong><span class="classifier"><cite>np.ndarray(2, float)</cite></span></dt><dd><p>List of unit vectors, i.e.,
+<cite>origin_unit_vectors[i]</cite> is the unit vector along the <cite>i</cite>-th
+dimension in origin space.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.get_target_unit_vectors">
+<span class="sig-name descname"><span class="pre">get_target_unit_vectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.get_target_unit_vectors" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the target unit vectors in origin coordinates.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>target_unit_vectors</strong><span class="classifier"><cite>np.ndarray(2, float)</cite></span></dt><dd><p>List of unit vectors, i.e.,
+<cite>target_unit_vectors[i]</cite> is the unit vector along the <cite>i</cite>-th
+dimension in target space.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.invert">
 <span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.invert" title="Permalink to this definition"></a></dt>
@@ -383,6 +465,11 @@ Variable naming convention:</p>
 <dd></dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.ndim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ndim</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.ndim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.offset_to_origin">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">offset_to_origin</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.offset_to_origin" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -390,6 +477,16 @@ Variable naming convention:</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.offset_to_target">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">offset_to_target</span></span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.offset_to_target" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.set_offset_by_fixed_point">
+<span class="sig-name descname"><span class="pre">set_offset_by_fixed_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fixed_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.set_offset_by_fixed_point" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.set_offset_by_point_pair">
+<span class="sig-name descname"><span class="pre">set_offset_by_point_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.set_offset_by_point_pair" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -410,8 +507,10 @@ Variable naming convention:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
+<dt><strong>fixed_point</strong></dt><dd></dd>
 <dt><strong>matrix_to_origin</strong></dt><dd></dd>
 <dt><strong>matrix_to_target</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
 <dt><strong>offset_to_origin</strong></dt><dd></dd>
 <dt><strong>offset_to_target</strong></dt><dd></dd>
 </dl>
@@ -463,6 +562,12 @@ Variable naming convention:</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates" title="libics.tools.trafo.linear.AffineTrafo2d.fit_peak_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_peak_coordinates</span></code></a>(image[, snr, max_sum_ratio])</p></td>
 <td><p>Uses a Gaussian fit to obtain the peak coordinates of an image.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask_origin_coords_within_target_rect</span></code>(coords)</p></td>
+<td><p>Mask selecting which origin coordinates lie inside a target rectangle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask_target_coords_within_origin_rect</span></code>(coords)</p></td>
+<td><p>Mask selecting which target coordinates lie inside an origin rectangle.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes" title="libics.tools.trafo.linear.AffineTrafo2d.get_origin_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_origin_axes</span></code></a>()</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -470,12 +575,18 @@ Variable naming convention:</p>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.get_target_axes" title="libics.tools.trafo.linear.AffineTrafo2d.get_target_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_axes</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_origin_unit_vectors</span></code>()</p></td>
+<td><p>Gets the origin unit vectors in target coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.get_target_axes" title="libics.tools.trafo.linear.AffineTrafo2d.get_target_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_axes</span></code></a>()</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_unit_vectors</span></code>()</p></td>
+<td><p>Gets the target unit vectors in origin coordinates.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert</span></code>()</p></td>
 <td><p>Returns the inverse <cite>AffineTrafo</cite> object.</p></td>
@@ -498,8 +609,28 @@ Variable naming convention:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.set_target_axes" title="libics.tools.trafo.linear.AffineTrafo2d.set_target_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_target_axes</span></code></a>([magnification, angle, offset])</p></td>
 <td><p>Sets the target coordinate system axes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="libics.tools.trafo.linear.AffineTrafo2d.shift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code></a>(offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="libics.tools.trafo.linear.AffineTrafo2d.shift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code></a>(offset[, ax])</p></td>
 <td><p>Returns an <cite>AffineTrafo</cite> object whose offset is shifted.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 74%" />
+<col style="width: 26%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_offset_by_point_pair</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shift_origin_axes</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>shift_target_axes</strong></p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -660,9 +791,19 @@ None: If fit failed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.shift">
-<span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'origin'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.shift" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an <cite>AffineTrafo</cite> object whose offset is shifted.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.shift_origin_axes">
+<span class="sig-name descname"><span class="pre">shift_origin_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.shift_origin_axes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d.shift_target_axes">
+<span class="sig-name descname"><span class="pre">shift_target_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d.shift_target_axes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -887,7 +1028,7 @@ crop.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2021, David Wei.</p>
+    <p>&#169; Copyright 2019-2022, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
