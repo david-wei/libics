@@ -40,7 +40,7 @@ class FitCosine1d(ModelBase):
         return cosine_1d(var, *p)
 
     def find_p0(self, *data, MAX_POINTS=1024):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         if len(var_data) > MAX_POINTS:
             var_data, func_data = var_data[:MAX_POINTS], func_data[:MAX_POINTS]
@@ -142,8 +142,22 @@ class FitCosine2d(ModelBase):
         else:
             return np.arctan(self.fy / self.fx)
 
+    @property
+    def angle_std(self):
+        # TODO: does not take into account fx, fy correlations
+        derivs, errs = [], []
+        if "fx" in self.pfit:
+            derivs.append(-self.fy / (self.fx**2 + self.fy**2))
+            errs.append(self.fx_std)
+        if "fy" in self.pfit:
+            derivs.append(self.fx / (self.fx**2 + self.fy**2))
+            errs.append(self.fy_std)
+        return np.sqrt(np.sum(
+            np.array(derivs)**2 * np.array(errs)**2
+        ))
+
     def find_p0(self, *data, MAX_LINES=16, MAX_POINTS=1024):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         # Perform 1D fits
         _step = var_data.shape[2] // MAX_LINES, var_data.shape[1] // MAX_LINES
         _step = [max(1, _x) for _x in _step]
@@ -254,7 +268,7 @@ class FitLinear1d(ModelBase):
         return linear_1d(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         idx_min, idx_max = np.argmin(func_data), np.argmax(func_data)
         if idx_min == idx_max:
@@ -267,7 +281,7 @@ class FitLinear1d(ModelBase):
             self.p0 = [a, c]
 
     def find_popt(self, *data, **kwargs):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         if np.allclose(np.abs(self.__call__(var_data) - func_data), 0):
             popt_for_fit = self.p0_for_fit
@@ -318,7 +332,7 @@ class FitPowerLaw1d(ModelBase):
         return power_law_1d(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         mask = var_data > 0
         var_data, func_data = var_data[mask], func_data[mask]
@@ -347,11 +361,13 @@ class FitPowerLaw1dCenter(ModelBase):
         power
     x0 : `float`
         center
+    c : `float`
+        offset
     """
 
     LOGGER = logging.get_logger("libics.tools.math.flat.FitPowerLaw1dCenter")
-    P_ALL = ["a", "p", "x0"]
-    P_DEFAULT = [1, 1, 0]
+    P_ALL = ["a", "p", "x0", "c"]
+    P_DEFAULT = [1, 1, 0, 0]
 
     @staticmethod
     def _func(var, *p):
@@ -360,7 +376,7 @@ class FitPowerLaw1dCenter(ModelBase):
     def find_p0(self, *data):
         _fit = FitPowerLaw1d()
         _fit.find_p0(*data)
-        self.p0 = [_fit.a, _fit.p, 0]
+        self.p0 = [_fit.a, _fit.p, 0, 0]
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -402,7 +418,7 @@ class FitErrorFunction(ModelBase):
         return error_function(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         func_data = scipy.ndimage.uniform_filter(
             func_data, size=max(3, len(func_data) // 12)
@@ -480,7 +496,7 @@ class FitLinearStepFunction(ModelBase):
         return linear_step_function(var, *p)
 
     def find_p0(self, *data):
-        var_data, func_data, _ = self._split_fit_data(*data)
+        var_data, func_data, _ = self.split_fit_data(*data)
         var_data = var_data.ravel()
         func_data = scipy.ndimage.uniform_filter(
             func_data, size=max(3, len(func_data) // 12)

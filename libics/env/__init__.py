@@ -56,12 +56,14 @@ def WRITE_JSON(file_path, obj):
 
 LIBICS_VERSION_MAJOR = 1
 LIBICS_VERSION_MINOR = 0
-LIBICS_VERSION_DEV = "dev"
+LIBICS_VERSION_DEV = "a"
 LIBICS_VERSION = (
     str(LIBICS_VERSION_MAJOR) + "."
     + str(LIBICS_VERSION_MINOR)
     + LIBICS_VERSION_DEV
 )
+short_version = str(LIBICS_VERSION_MAJOR) + "." + str(LIBICS_VERSION_MINOR)
+__version__ = LIBICS_VERSION
 
 
 ###############################################################################

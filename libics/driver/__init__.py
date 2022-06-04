@@ -1,10 +1,15 @@
-from . import device
-from . import interface
-from . import terminal
+# Import libics_driver as libics.driver for backward compatibility
+try:
+    from libics_driver import *
+    import re
+    import sys
+    
+    _modules = {}
+    for k, v in sys.modules.items():
+        match = re.match(r"libics_driver\.(\S+)", k)
+        if match:
+            _modules[f"libics.driver.{match.group(1)}"] = v
+    sys.modules.update(_modules)
 
-from . import camera
-from . import digitizer
-from . import display
-from . import lightsource
-from . import piezo
-from . import waveformgenerator
+except ImportError:
+    pass

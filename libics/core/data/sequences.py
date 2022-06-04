@@ -230,3 +230,20 @@ class DataSequence(pd.DataFrame):
         else:
             obj.data = np.std(objs, *args, **kwargs)
         return obj
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++
+# ArrayData constructor plugin for DataSequence
+# +++++++++++++++++++++++++++++++++++++++++++++
+
+
+def constructor_plugin_DataSequence_to_ArrayData(obj, *args, **kwargs):
+    arg = args[0]
+    arg = {k: arg[k].tolist() for k in arg.columns}
+    return obj.from_sequence_table(arg, **kwargs)
+
+
+ArrayData.from_DataSequence = constructor_plugin_DataSequence_to_ArrayData
+ArrayData._CONSTRUCTOR_MAP.append(
+    (DataSequence, "from_DataSequence")
+)

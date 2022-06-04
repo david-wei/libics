@@ -3,7 +3,9 @@ import numpy as np
 from scipy import interpolate
 
 from libics.env import logging
-from libics.core.data import types
+from libics.core.data.types import (
+    AttrHashBase, Quantity, UNARY_OPS_NUMPY, BINARY_OPS_NUMPY
+)
 from libics.core.util import misc
 
 
@@ -12,7 +14,7 @@ from libics.core.util import misc
 ###############################################################################
 
 
-class ArrayData(object):
+class ArrayData(AttrHashBase):
 
     """
     Stores a multidimensional array and its scaling information (linear
@@ -63,7 +65,15 @@ class ArrayData(object):
 
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
-    def __init__(self, *args):
+    # Maps constructor argument type to function
+    _CONSTRUCTOR_MAP = [
+        # For future class extension, use the format
+        # (object_type, "name_of_constructor_method")
+        # e.g.: (np.ndarray, "from_array")
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
         # -------------------
         # Instance attributes
         # -------------------
@@ -86,28 +96,180 @@ class ArrayData(object):
         self._high = []
         # Parse parameters
         if len(args) != 0:
-            self.__set_init_args(*args)
+            self.__set_init_args(*args, **kwargs)
 
-    def __set_init_args(self, *args):
+    def __set_init_args(self, *args, **kwargs):
         if len(args) != 1:
             raise ValueError("constructor only accepts one argument")
         arg = args[0]
+        # Constructor for ArrayData
         if isinstance(arg, ArrayData):
-            for attr_name in self.ATTR_NAMES_COPY_VAR:
-                setattr(self, attr_name, getattr(arg, attr_name))
-            self.data = arg.data
-        elif isinstance(arg, np.ndarray):
-            self.data = arg
+            return self.from_ArrayData(arg)
+        # Constructor for sequence table (dictionary of lists)
+        elif (
+            isinstance(arg, dict)
+            and np.all([misc.is_iter(x) for x in arg.values()])
+        ):
+            return self.from_sequence_table(arg, **kwargs)
         else:
+            # Constructor for registered types
+            for _type, _constructor in self._CONSTRUCTOR_MAP:
+                if isinstance(arg, _type):
+                    return getattr(self, _constructor)(arg, **kwargs)
+            # Try to convert argument to numpy array
             try:
-                arg = np.array(arg)
-                if arg.dtype == np.object_:
-                    raise ValueError
-                self.data = arg
+                return self.from_array(arg)
             except ValueError:
                 raise ValueError(
                     f"constructor does not accept type `{type(arg)}`"
                 )
+
+    def from_ArrayData(self, *args):
+        arg = args[0]
+        for attr_name in self.ATTR_NAMES_COPY_VAR:
+            setattr(self, attr_name, getattr(arg, attr_name))
+        self.data = arg.data
+        return self
+
+    def from_array(self, *args):
+        arg = np.array(args[0])
+        if arg.dtype == np.object_:
+            raise ValueError("could not construct numeric array")
+        self.data = arg
+        return self
+
+    def from_sequence_table(
+        self, *args, data_key=None, var_keys=None, var_points=None,
+        data_quantity=None, var_quantity=None, method="nearest", **kwargs
+    ):
+        """
+        Loads data from a sequence table.
+
+        Parameters
+        ----------
+        args[0] : `dict(str->list)`
+            Dictionary of lists containing data, representing an
+            unstructured data table.
+        data_key : `str` or `None`
+            Dictionary key used as data values.
+            If `None`, uses the key (excluding those in `var_keys`)
+            whose data list has most unique items.
+        var_keys : `Iter[str]` or `None`
+            Dictionary keys used as variable values.
+            If `None`, uses all non-`data_key` keys.
+        var_points : `dict(str->Iter)` or `None`
+            Dictionary mapping variable IDs to interpolation points.
+            If `None`, uses all available points.
+        data_quantity : `types.Quantity`
+            Data quantity.
+        var_quantity : `dict(str->types.Quantity)`
+            Map between key ID and variable quantity.
+        method : `str`
+            Interpolation method.
+            `"nearest"`:
+                Nearest point.
+            `"linear"`:
+                Linear interpolation.
+            `"cubic"`:
+                Cubic interpolation (up to 2D).
+                If above 2D, silently uses linear interpolation.
+        fill_value : `float`
+            Fill value for linear and cubic interpolation if value
+            is outside convex hull (i.e. needs extrapolation).
+
+        Notes
+        -----
+        * The variable span is determined by all available values in each
+          dimension.
+        * An interpolation procedure is applied on this hyper-rectangular
+          variable domain.
+        * Using a dense variable span is therefore most reasonable. It might
+          be helpful to bin the unstructured sequence tables accordingly
+          before passing to this function.
+
+        FIXME: number of unique items determined by hashing, not supported by
+        some data types!
+        """
+        # Parse parameters
+        arg = args[0]
+        # Find data_key
+        if data_key is None:
+            # Find all possible data keys
+            potential_keys = list(arg.keys())
+            if var_keys is not None:
+                for k in var_keys:
+                    del potential_keys[k]
+            # Find key with most unique elements
+            data_key = potential_keys[0]
+            num_items = len(set(arg[data_key]))
+            for k in potential_keys[1:]:
+                num = len(set(arg[k]))
+                if num > num_items:
+                    data_key = k
+                    num_items = num
+        # Find var_keys
+        if var_keys is None:
+            var_keys = list(arg.keys())
+            var_keys.remove(data_key)
+        # Find var_points
+        if var_points is None:
+            var_points = {}
+        for k in var_keys:
+            if k not in var_points:
+                var_points[k] = np.array(sorted(set(arg[k])))
+        # Handle datetime
+        var_datetime_tz = {}
+        for k in var_keys:
+            _pt = var_points[k][0]
+            if misc.is_datetime(_pt):
+                var_datetime_tz[k] = misc.cv_datetime(_pt.tzinfo)
+                var_points[k] = np.array([
+                    misc.cv_timestamp(x) for x in var_points[k]
+                ])
+
+        # Construct ArrayData
+        ad = ArrayData()
+        ad.add_dim(len(var_keys))
+        for i, k in enumerate(var_keys):
+            ad.set_dim(i, points=var_points[k])
+        ad.var_shape = tuple([len(var_points[k]) for k in var_keys])
+        if data_quantity is not None:
+            ad.set_data_quantity(data_quantity)
+        if var_quantity is not None:
+            for i, k in enumerate(var_keys):
+                if k in var_quantity:
+                    ad.set_var_quantity(i, var_quantity[k])
+
+        # Interpolate data
+        table_var = []
+        for k in var_keys:
+            if k in var_datetime_tz:
+                # Handle datetime
+                table_var.append([misc.cv_timestamp(x) for x in arg[k]])
+            else:
+                table_var.append(arg[k])
+        table_var = np.array(table_var)
+        table_data = np.array(arg[data_key])
+        mg = ad.get_var_meshgrid()
+        data = interpolate.griddata(
+            table_var.T, table_data,
+            mg.reshape((len(var_keys), -1)).T,
+            method=method, **kwargs
+        )
+        ad.data = data.reshape(ad.var_shape)
+
+        # Assign data
+        self.from_ArrayData(ad)
+        # Handle datetime
+        if len(var_datetime_tz) > 0:
+            for i, k in enumerate(var_keys):
+                if k in var_datetime_tz:
+                    _points = np.array([
+                        misc.cv_datetime(x).astimezone(var_datetime_tz[k])
+                        for x in self.get_points(i)
+                    ])
+                    self.set_dim(i, points=_points)
+        return self
 
     __LIBICS_IO__ = True
     SER_KEYS = {
@@ -123,6 +285,8 @@ class ArrayData(object):
         "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
         "_points", "_offset", "_center", "_step", "_low", "_high"
     }
+
+    HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
 
     # ++++
     # Data
@@ -188,7 +352,12 @@ class ArrayData(object):
         # Mode: points
         if "points" in kwargs:
             self.var_mode[dim] = self.POINTS
-            self._points[dim] = np.array(kwargs["points"])
+            if misc.is_datetime(kwargs["points"][0]):
+                self._points[dim] = np.array([
+                    misc.cv_datetime(x) for x in kwargs["points"]
+                ])
+            else:
+                self._points[dim] = np.array(kwargs["points"])
             self._offset[dim] = None
             self._center[dim] = None
             self._step[dim] = None
@@ -316,7 +485,7 @@ class ArrayData(object):
         # Unary operations
         if other is None:
             if isinstance(op, str):
-                op = types.UNARY_OPS_NUMPY[op]
+                op = UNARY_OPS_NUMPY[op]
             if self.var_mode[dim] == self.POINTS:
                 self._points[dim] = op(self._points[dim])
             elif self.var_mode[dim] == self.RANGE:
@@ -335,7 +504,7 @@ class ArrayData(object):
         # Binary operations
         else:
             if isinstance(op, str):
-                op = types.BINARY_OPS_NUMPY[op]
+                op = BINARY_OPS_NUMPY[op]
             if rev:
                 def _op(x, y):
                     return op(y, x)
@@ -480,7 +649,7 @@ class ArrayData(object):
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -502,7 +671,7 @@ class ArrayData(object):
                 return self._center[dim]
             else:
                 _step = self._step[dim]
-                _range = self.shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _offset = self._offset[dim]
                 return _offset + _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -552,7 +721,7 @@ class ArrayData(object):
             return np.max(self._points[dim])
         elif self.var_mode[dim] == self.RANGE:
             _step = self._step[dim]
-            _range = self.var_shape[dim] * _step
+            _range = (self.var_shape[dim] - 1) * _step
             if self._offset[dim] is not None:
                 return self._offset[dim] + _range
             else:
@@ -571,26 +740,65 @@ class ArrayData(object):
         symmetric bins around the edge points.
         """
         _points = self.get_points(dim)
+        _is_datetime = misc.is_datetime(_points[0])
+        if _is_datetime:
+            _tz = _points[0].tzinfo
+            _points = np.array([misc.cv_timestamp(x) for x in _points])
         _bins = np.empty(len(_points) + 1, dtype=float)
         _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
         _bins[0] = 2 * _points[0] - _bins[1]
         _bins[-1] = 2 * _points[-1] - _bins[-2]
+        if _is_datetime:
+            _bins = np.array([
+                misc.cv_datetime(x).astimezone(_tz) for x in _bins
+            ])
         return _bins
 
-    def max(self):
-        return np.max(self.data)
+    def _reduce_axis(self, axis, ar):
+        """
+        Handles metadata operations reducing the array dimensionality.
+        """
+        roi = self.ndim * [slice(None)]
+        for dim in misc.assume_iter(axis):
+            roi[dim] = 0
+        ad = self[tuple(roi)]
+        ad.data = ar
+        return ad
 
-    def min(self):
-        return np.min(self.data)
+    def max(self, axis=None, **kwargs):
+        res = np.max(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def mean(self):
-        return np.mean(self.data)
+    def min(self, axis=None, **kwargs):
+        res = np.min(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def std(self):
-        return np.std(self.data)
+    def mean(self, axis=None, **kwargs):
+        res = np.mean(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
-    def sum(self):
-        return np.sum(self.data)
+    def std(self, axis=None, **kwargs):
+        res = np.std(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
+
+    def sum(self, axis=None, **kwargs):
+        res = np.sum(self.data, axis=axis, **kwargs)
+        if axis is None:
+            return res
+        else:
+            return self._reduce_axis(axis, res)
 
     def get_var_meshgrid(self, indexing="ij"):
         """
@@ -650,6 +858,16 @@ class ArrayData(object):
     def total_ndim(self):
         """Total ndim (variable and data dimension)."""
         return self.ndim + 1
+
+    @property
+    def dtype(self):
+        """Data array type."""
+        return self.data.dtype
+
+    def astype(self, dtype):
+        """Changes data array type to `dtype`."""
+        ad = self.copy_var()
+        ad.data = self.data.astype(dtype)
 
     @property
     def shape(self):
@@ -786,8 +1004,11 @@ class ArrayData(object):
         """
         return iter(self.data)
 
-    def __array__(self, **kwargs):
-        return self.data.__array__(**kwargs)
+    def __array__(self, *args, **kwargs):
+        return self.data.__array__(*args, **kwargs)
+
+    def __hash__(self):
+        return super().__hash__()
 
     def __str__(self):
         s = f"{str(self.data_quantity)}\n"
@@ -807,7 +1028,9 @@ class ArrayData(object):
                 s += "{:s}".format(str(self.get_points(i)))
             else:
                 s += "range({:f}, {:f}, {:f})".format(
-                    self.get_low(i), self.get_high(i), self.get_step(i)
+                    self.get_low(i),
+                    self.get_high(i) + self.get_step(i),
+                    self.get_step(i)
                 )
             if i < self.ndim - 1:
                 s += ",\n"
@@ -875,18 +1098,90 @@ class ArrayData(object):
         -------
         ind : `int`
             Index associated with given quantity.
-
-        Raises
-        ------
-        IndexError:
-            If `dim` is out of bounds.
         """
         if self.var_mode[dim] == self.POINTS:
             ind = np.argmin(np.abs(self.get_points(dim) - val))
         else:
             val = max(val, self.get_offset(dim))
             ind = round((val - self.offset[dim]) / self.step[dim])
+            ind = min(ind, self.shape[dim] - 1)
         return ind
+
+    def cv_multi_index_to_quantity(self, *indices):
+        """
+        Converts indices to variable quantity values.
+
+        Parameters
+        ----------
+        *indices : `int` or `Iter[int]` or `slice` or `None`
+            Indices to be converted.
+            Order of arguments corresponds to dimensions.
+
+        Returns
+        -------
+        quantities : `float` or `tuple(float)` or `slice` or `None`
+            Indices converted to quantities.
+            If multiple `indices` given, returns tuple of elements.
+        """
+        quantities = []
+        for dim, ind in enumerate(indices):
+            if ind is None:
+                _q = None
+            elif isinstance(ind, slice):
+                _start = (None if ind.start is None
+                          else self.cv_index_to_quantity(ind.start, dim))
+                _stop = (None if ind.stop is None
+                         else self.cv_index_to_quantity(ind.stop - 1, dim))
+                _step = (None if ind.step is None
+                         else ind.step * self.get_step(dim))
+                _q = slice(_start, _stop, _step)
+            elif np.isscalar(ind):
+                _q = self.cv_index_to_quantity(ind, dim)
+            else:
+                _q = tuple(self.cv_index_to_quantity(it, dim) for it in ind)
+            quantities.append(_q)
+        if len(quantities) == 1:
+            return quantities[0]
+        else:
+            return tuple(quantities)
+
+    def cv_multi_quantity_to_index(self, *quantities):
+        """
+        Converts variable quantity values to indices.
+
+        Parameters
+        ----------
+        *quantities : `float` or `Iter[float]` or `slice` or `None`
+            Quantities to be converted.
+            Order of arguments corresponds to dimensions.
+
+        Returns
+        -------
+        indices : `int` or `tuple(int)` or `slice` or `None`
+            Converted indices.
+            If multiple `quantities` given, returns tuple of elements.
+        """
+        indices = []
+        for dim, qty in enumerate(quantities):
+            if qty is None:
+                _idx = None
+            elif isinstance(qty, slice):
+                _sta = (None if qty.start is None else
+                        int(round(self.cv_quantity_to_index(qty.start, dim))))
+                _sto = (None if qty.stop is None else
+                        int(round(self.cv_quantity_to_index(qty.stop, dim))))+1
+                _ste = (None if qty.step is None else
+                        int(round(self.get_step(dim) / qty.step)))
+                _idx = slice(_sta, _sto, _ste)
+            elif np.isscalar(qty):
+                _idx = self.cv_quantity_to_index(qty, dim)
+            else:
+                _idx = tuple(self.cv_quantity_to_index(it, dim) for it in qty)
+            indices.append(_idx)
+        if len(indices) == 1:
+            return indices[0]
+        else:
+            return tuple(indices)
 
     # +++++++++++++
     # Interpolation
@@ -933,7 +1228,7 @@ class ArrayData(object):
         Notes
         -----
         * See also scipy.interpolate.interpn:
-          <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn>`
+          https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interpn
         """
         # Convert to seriesdata-structure-like
         shape = None
@@ -1510,14 +1805,16 @@ def assume_quantity(*args, **kwargs):
     quantity : `types.Quantity`
         Constructed object.
     """
-    if len(args) == 1 and isinstance(args[0], types.Quantity):
+    if len(args) == 1 and isinstance(args[0], Quantity):
         kwargs["quantity"] = args[0]
+    elif len(args) == 1 and isinstance(args[0], dict) and len(kwargs) == 0:
+        kwargs = args[0]
     if "quantity" in kwargs:
         _quantity = misc.assume_construct_obj(
-            kwargs["quantity"], types.Quantity
+            kwargs["quantity"], Quantity
         )
     else:
-        _quantity = types.Quantity()
+        _quantity = Quantity()
         if "name" in kwargs:
             _quantity.name = kwargs["name"]
         if "symbol" in kwargs:
@@ -1525,3 +1822,67 @@ def assume_quantity(*args, **kwargs):
         if "unit" in kwargs:
             _quantity.unit = kwargs["unit"]
     return _quantity
+
+
+def get_coordinate_meshgrid(*coords):
+    """
+    Constructs a coordinate ArrayData parametrized by coordinates.
+
+    Parameters
+    ----------
+    *coords : `Array[1, float]` or `float`
+        `Array`: Ordered 1D arrays representing coordinate axis.
+        `float`: Constant coordinate not used for parametrization.
+
+    Returns
+    -------
+    ad : `ArrayData[float]`
+        Coordinate array with a dimension of (number_of_vectors + 1).
+        Last axis contains the coordinates.
+
+    Examples
+    --------
+    Create a standard 2D meshgrid:
+
+    >>> x = get_coordinate_meshgrid(
+    ...     np.arange(-2, 3),
+    ...     np.arange(10, 11)
+    ... )
+    >>> x.shape
+    (5, 1, 2)
+    >>> np.array(x[0])
+    array([[-2, 10]])
+
+    Create a 1D meshgrid in 2D space with constant second dimension:
+
+    >>> x = get_coordinate_meshgrid(
+    ...     np.arange(-2, 3),
+    ...     10
+    ... )
+    >>> x.shape
+    (5, 2)
+    >>> np.array(x[0])
+    array([-2, 10])
+    """
+    scalar_dims = []
+    vector_dims = []
+    vectors = []
+    for i, _ar in enumerate(coords):
+        if np.isscalar(_ar):
+            scalar_dims.append(i)
+            vectors.append([_ar])
+        else:
+            vector_dims.append(i)
+            vectors.append(_ar)
+    mg = np.array(np.meshgrid(*vectors, indexing="ij"))
+    for dim in reversed(scalar_dims):
+        mg = mg[(dim+1) * (slice(None),) + (0,)]
+    ad = ArrayData(np.moveaxis(mg, 0, -1))
+    ad.set_data_quantity(name="coordinate")
+    for i, dim in enumerate(vector_dims):
+        _c = coords[dim]
+        ad.set_dim(i, points=np.array(_c))
+        if isinstance(_c, ArrayData):
+            ad.set_var_quantity(i, quantity=_c.data_quantity)
+    ad.set_var_quantity(len(vector_dims), name="coordinate")
+    return ad

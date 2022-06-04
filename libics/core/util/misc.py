@@ -1,3 +1,4 @@
+import datetime
 import math
 import numbers
 import operator
@@ -6,6 +7,7 @@ import re
 import time
 
 import numpy as np
+import pandas as pd
 
 
 ###############################################################################
@@ -18,6 +20,24 @@ def is_number(var):
     Returns whether given variable is of scalar, numeric type.
     """
     return isinstance(var, numbers.Number)
+
+
+def is_iter(var):
+    """
+    Returns whether given variable is iterable.
+    """
+    try:
+        iter(var)
+        return True
+    except TypeError:
+        return False
+
+
+def is_datetime(var):
+    """
+    Returns whether given variable is of date/time type.
+    """
+    return isinstance(var, (datetime.datetime, pd.Timestamp))
 
 
 def cv_float(text, dec_sep=[".", ","]):
@@ -42,9 +62,65 @@ def cv_float(text, dec_sep=[".", ","]):
     return float(text)
 
 
+def cv_timestamp(var):
+    """
+    Converts a date/time to the Python datetime timestamp.
+
+    Parameters
+    ----------
+    var : `datetime.datetime` or `pd.Timestamp`
+        Date/time object.
+    """
+    if isinstance(var, pd.Timestamp):
+        var = var.to_pydatetime()
+    if isinstance(var, datetime.datetime):
+        return var.timestamp()
+    else:
+        return var
+
+
+def cv_datetime(var):
+    """
+    Converts to a Python datetime object.
+
+    Parameters
+    ----------
+    var : `pd.Timestamp` or `float` or `str`
+        `float`: Python timestamp.
+        `str`: Python datetime isoformat.
+    """
+    if isinstance(var, pd.Timestamp):
+        return var.to_pydatetime()
+    elif is_number(var):
+        return datetime.datetime.fromtimestamp(var)
+    elif isinstance(var, str):
+        return datetime.datetime.fromisoformat(var)
+    else:
+        return var
+
+
+def hex_positive(number, nbits=64):
+    """
+    Returns the `hex` of an integer without sign with given number of bits.
+    """
+    return hex(number & (2**nbits - 1))
+
+
 ###############################################################################
 # Assumption Functions
 ###############################################################################
+
+
+def assume_even_int(val):
+    """Asserts that val is a scalar even integer."""
+    val = int(val)
+    return (val//2) * 2
+
+
+def assume_odd_int(val):
+    """Asserts that val is a scalar odd integer."""
+    val = int(val)
+    return (val//2) * 2 + 1
 
 
 def assume_iter(data):
@@ -119,7 +195,7 @@ def assume_list(data):
         return [data]
 
 
-def assume_numpy_array(data):
+def assume_numpy_array(data, shape=None):
     """
     Asserts that data is a `numpy.ndarray` object.
 
@@ -127,6 +203,10 @@ def assume_numpy_array(data):
     ----------
     data
         Input data to be checked for `numpy.ndarray`.
+    shape : `tuple(int)` or `None`
+        If given and data is scalar, creates a numpy array with given shape
+        containing given data as element.
+        If given and data has a different shape, raises a `ValueError`.
 
     Returns
     -------
@@ -135,6 +215,16 @@ def assume_numpy_array(data):
     """
     if not isinstance(data, np.ndarray):
         data = np.array(data)
+    if shape is not None:
+        if data.shape != shape:
+            # If scalar
+            if data.shape == tuple():
+                data = np.full(shape, data)
+            # Else wrong shape
+            else:
+                raise ValueError(
+                    f"array shape {data.shape} != given shape {shape}"
+                )
     return data
 
 
@@ -502,16 +592,16 @@ def split_strip(s, delim=",", strip=" \t\n\r"):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be split.
-    delim : str or None
+    delim : `str` or `None`
         String delimiter. If None, string will not be split.
-    strip : str
+    strip : `str`
         Strip characters.
 
     Returns
     -------
-    ls : list(str) or str
+    ls : `list(str)` or `str`
         Returns stripped (list of) string depending on delim
         parameter.
     """
@@ -528,14 +618,14 @@ def split_unit(s):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be split.
 
     Returns
     -------
-    val : int or float or str
+    val : `int` or `float` or `str`
         Numerical value or unchanged string.
-    unit : str
+    unit : `str`
         Unit.
 
     Notes
@@ -562,6 +652,74 @@ def split_unit(s):
     return val, unit
 
 
+SI_PREFIX_MAP = {
+    3: "k", 6: "M", 9: "G", 12: "T", 15: "P", 18: "E", 21: "Z", 24: "Y",
+    -3: "m", -6: "µ", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+}
+
+
+def get_si_prefix(val, cutoff=1):
+    """
+    Gets value and SI unit prefix.
+
+    Parameters
+    ----------
+    val : `float`
+        Value in base SI unit.
+    cutoff : `float`
+        Numerical value, at which the next SI prefix is chosen.
+
+    Returns
+    -------
+    val : `float`
+        Value in prefixed SI unit.
+    prefix : `str`
+        SI prefix.
+    """
+    sgn = 1 if val >= 0 else -1
+    val = abs(val)
+    exp = int(3 * (np.log10(val / cutoff) // 3))
+    if exp in SI_PREFIX_MAP:
+        prefix = SI_PREFIX_MAP[exp]
+    else:
+        if exp == 0:
+            prefix = ""
+        else:
+            prefix = f"1e{exp:d}"
+    val /= sgn * 10**exp
+    return val, prefix, exp
+
+
+def str_si_prefix(val, unit="", precision=3, cutoff=1):
+    """
+    String formatting for :py:func:`get_si_prefix`.
+
+    Parameters
+    ----------
+    val : `float`
+        Value in base SI unit.
+    unit : `str`
+        Base unit.
+    precision : `int`
+        Number of decimal digits.
+    cutoff : `float`
+        Numerical value, at which the next SI prefix is chosen.
+
+    Examples
+    --------
+    >>> str_si_prefix(1e-5, "W")
+    10.000µW
+    >>> str_si_prefix(1e-10, "W", precision=0)
+    100pW
+
+    """
+    _val, _prefix, _exp = get_si_prefix(val, cutoff=cutoff)
+    precision -= int(np.log10(abs(val))) - 1 - _exp
+    precision = max(0, precision)
+    fmt = "{0:." + f"{precision:d}" + "f}{1:s}"
+    return fmt.format(_val, _prefix + unit)
+
+
 def extract(s, regex, group=1, cv_func=None, flags=0):
     """
     Extracts part of a string.
@@ -569,17 +727,17 @@ def extract(s, regex, group=1, cv_func=None, flags=0):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String from which to extract.
-    regex : str
+    regex : `str`
         Regular expression defining search function.
         Search findings should be enclosed in parentheses `()`.
-    group : int or list(int) or tuple(int) or np.ndarray(1, int)
+    group : `int` or `list(int)` or `tuple(int)` or `np.ndarray(1, int)`
         Group index of search results.
         If list, returns corresponding list of search results.
-    cv_func : callable or None
+    cv_func : `callable` or `None`
         Conversion function applied to search results (e.g. float).
-    flags : int
+    flags : `int`
         Flags parameter passed to re.search.
 
     Returns
@@ -622,16 +780,49 @@ def capitalize_first_char(s):
 
     Parameters
     ----------
-    s : str
+    s : `str`
         String to be capitalized.
 
     Returns
     -------
-    s_cap : str
+    s_cap : `str`
         Capitalized string.
     """
     s_cap = re.sub(r"(\S)", lambda x: x.groups()[0].upper(), s, 1)
     return s_cap
+
+
+REGEX_UPPERCASE_EUROPE = "[A-ZÀÁÂÄÆÇÈÉÊËÌÍÎÏÑÒÓÔÖÙÚÛÜŒŸẞ]"
+REGEX_LOWERCASE_EUROPE = "[a-zàáâäæçèéêëìíîïñòóôöùúûüœÿß]"
+
+
+def cv_camel_to_snake_case(s, snake_char="_"):
+    """
+    Converts CamelCase to snake_case.
+
+    Parameters
+    ----------
+    s : `str`
+        String in CamelCase
+    snake_char : `str`
+        Snake case concatenation character.
+
+    Returns
+    -------
+    s : `str`
+        String in snake_case.
+    """
+    # Lower body of multi-upper-case strings
+    s = re.sub(
+        f"({REGEX_UPPERCASE_EUROPE})({REGEX_UPPERCASE_EUROPE}+)",
+        lambda x: x.group(1) + x.group(2).lower(), s
+    )
+    # Add snake_char between lower and upper case characters
+    s = re.sub(
+        f"({REGEX_LOWERCASE_EUROPE}|\\d)({REGEX_UPPERCASE_EUROPE})",
+        lambda x: x.group(1) + snake_char + x.group(2).lower(), s
+    )
+    return s.lower()
 
 
 def char_range(start, stop=None, step=1):
@@ -712,6 +903,8 @@ def iter_progress(it, **kwargs):
         it = list(it)
         total = len(it)
     it = iter(it)
+    if total == 0:
+        return it
     start_time = time.time()
     counter = 0
     try:
@@ -864,8 +1057,8 @@ def get_combinations(ls, flatten=True, dtype=None):
 
     Examples
     --------
-    >>>> ls = [(1, 2), (5, ), (7, 8)]
-    >>>> get_combinations(ls, dtype=list)
+    >>> ls = [(1, 2), (5, ), (7, 8)]
+    >>> get_combinations(ls, dtype=list)
     [[1, 5, 7], [1, 5, 8], [2, 5, 7], [2, 5, 8]]
     """
     if flatten is True:
@@ -986,13 +1179,14 @@ def resize_numpy_array(ar, shape, fill_value=0, mode_keep="front", dtype=None):
             else:
                 start_new, start_old = None, ar.shape[dim] - shape[dim]
         elif mode_keep == "center":
-            center = shape[dim] // 2
             if shape[dim] > ar.shape[dim]:
+                center = shape[dim] // 2
                 ldiff = ar.shape[dim] // 2
                 rdiff = ar.shape[dim] - ldiff
                 start_new, start_old = center - ldiff, None
                 stop_new, stop_old = center + rdiff, None
             else:
+                center = ar.shape[dim] // 2
                 ldiff = shape[dim] // 2
                 rdiff = shape[dim] - ldiff
                 start_new, start_old = None, center - ldiff
@@ -1066,7 +1260,7 @@ def cv_index_center_to_rect(center, size):
         and the inner tuple corresponds to the slice `(min, max)`.
     """
     size = len(center) * [size] if np.isscalar(size) else size
-    return tuple((max(0, c - size[i] // 2), c + size[i] // 2 + 1)
+    return tuple((max(0, c - size[i] // 2), c + (size[i] + 1) // 2)
                  for i, c in enumerate(center))
 
 
@@ -1092,6 +1286,36 @@ def cv_index_rect_to_slice(rect):
         else:
             slices.append(slice(*item))
     return tuple(slices)
+
+
+def cv_index_center_to_slice(center, size):
+    """
+    Shorthand for applying `cv_index_rect_to_slice(cv_index_center_to_rect())`.
+    """
+    return cv_index_rect_to_slice(cv_index_center_to_rect(center, size))
+
+
+def cv_index_mask_to_rect(mask):
+    """
+    Converts boolean mask to rectangle. Assumes rectangular mask.
+
+    Parameters
+    ----------
+    mask : `np.ndarray(bool)`
+        Boolean mask with array shape.
+
+    Returns
+    -------
+    rect : `Iter[(int, int)]`
+        Index rectangle where the outer iterator corresponds to the dimension
+        and the inner tuple corresponds to the slice `(min, max)`.
+    """
+    idxs = np.indices(mask.shape)[:, mask]
+    rect = [
+        [np.min(idx), np.max(idx) + 1]
+        for idx in idxs
+    ]
+    return rect
 
 
 def transpose_array(ar):

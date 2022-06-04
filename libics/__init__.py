@@ -1,4 +1,4 @@
 from . import env
 
 
-__version__ = env.LIBICS_VERSION
+__version__ = env.__version__

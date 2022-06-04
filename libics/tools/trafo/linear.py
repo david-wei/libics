@@ -4,6 +4,7 @@ import time
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData
+from libics.core.data.types import AttrHashBase
 from libics.core.io import FileBase
 from libics.core.util import misc
 from libics.tools.math.peaked import FitGaussian2dTilt
@@ -12,7 +13,7 @@ from libics.tools.math.peaked import FitGaussian2dTilt
 ###############################################################################
 
 
-class AffineTrafo(FileBase):
+class AffineTrafo(FileBase, AttrHashBase):
 
     """
     Defines an affine transformation in arbitrary dimensions.
@@ -25,13 +26,16 @@ class AffineTrafo(FileBase):
         Transformation offset.
     """
 
+    LOGGER = logging.get_logger("libics.tools.trafo.linear.AffineTrafo")
     SER_KEYS = FileBase.SER_KEYS | {"matrix", "offset"}
+    HASH_KEYS = AttrHashBase.HASH_KEYS | {"matrix", "offset"}
 
     def __init__(
         self,
         matrix=np.diag([1, 1]).astype(float),
         offset=np.array([0, 0], dtype=float)
     ):
+        super().__init__()
         self.matrix = matrix
         self.offset = offset
 
@@ -50,6 +54,22 @@ class AffineTrafo(FileBase):
     @property
     def offset_to_origin(self):
         return -np.dot(self.matrix_to_origin, self.offset)
+
+    @property
+    def ndim(self):
+        return len(self.offset)
+
+    @property
+    def fixed_point(self):
+        return -np.linalg.inv(
+            self.matrix - np.diag(np.ones(len(self.matrix)))
+        ) @ self.offset
+
+    def set_offset_by_fixed_point(self, fixed_point):
+        return self.set_offset_by_point_pair(fixed_point, fixed_point)
+
+    def set_offset_by_point_pair(self, origin_point, target_point):
+        self.offset = target_point - self.matrix @ origin_point
 
     def fit_affine_transform(self, origin_coords, target_coords):
         """
@@ -100,6 +120,100 @@ class AffineTrafo(FileBase):
         self.matrix = m
         self.offset = b
         return True
+
+    def get_target_unit_vectors(self):
+        """
+        Gets the target unit vectors in origin coordinates.
+
+        Returns
+        -------
+        target_unit_vectors : `np.ndarray(2, float)`
+            List of unit vectors, i.e.,
+            `target_unit_vectors[i]` is the unit vector along the `i`-th
+            dimension in target space.
+        """
+        center = self.coord_to_origin(np.zeros(self.ndim, dtype=float))
+        unit_vecs = []
+        for i in range(self.ndim):
+            _v = np.zeros(self.ndim, dtype=float)
+            _v[i] = 1
+            unit_vecs.append(self.coord_to_origin(_v) - center)
+        return np.array(unit_vecs)
+
+    def get_origin_unit_vectors(self):
+        """
+        Gets the origin unit vectors in target coordinates.
+
+        Returns
+        -------
+        origin_unit_vectors : `np.ndarray(2, float)`
+            List of unit vectors, i.e.,
+            `origin_unit_vectors[i]` is the unit vector along the `i`-th
+            dimension in origin space.
+        """
+        center = self.coord_to_target(np.zeros(self.ndim, dtype=float))
+        unit_vecs = []
+        for i in range(self.ndim):
+            _v = np.zeros(self.ndim, dtype=float)
+            _v[i] = 1
+            unit_vecs.append(self.coord_to_target(_v) - center)
+        return np.array(unit_vecs)
+
+    def get_mask_origin_coords_within_target_rect(
+        self, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which origin coordinates lie inside a target rectangle.
+        """
+        return self._get_mask_origin_coords_within_target_rect(
+            self, coords, rect=rect, center=center, size=size
+        )
+
+    def get_mask_target_coords_within_origin_rect(
+        self, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which target coordinates lie inside an origin rectangle.
+        """
+        return self._get_mask_origin_coords_within_target_rect(
+            self.invert(), coords, rect=rect, center=center, size=size
+        )
+
+    @staticmethod
+    def _get_mask_origin_coords_within_target_rect(
+        trafo, coords, rect=None, center=None, size=None
+    ):
+        """
+        Mask selecting which origin coordinates lie inside a target rectangle.
+
+        Parameters
+        ----------
+        coords : `Array[float]`
+            Origin coordinates to check (dimensions: `[..., ndim]`).
+        rect : `Iter[(float, float)]`
+            Rectangle in target coordinates (dimensions: `[ndim, (min, max)]`).
+        center, size : `Iter[1, float]`
+            If `rect` is not given, the rectangle corners are calculated
+            from center and size.
+
+        Returns
+        -------
+        mask : `np.ndarray(bool)`
+            Boolean mask: `True` if the transformed coordinates lie in given
+            rectangle, `False` otherwise (dimensions: `[...]`).
+        """
+        if rect is None:
+            if center is None or size is None:
+                raise ValueError("Invalid parameters (`rect/center/size`)")
+            rect = [[_c - _s / 2, _c + _s / 2] for _c, _s in zip(center, size)]
+        coords = np.array(coords)
+        trafo_coords = trafo.coord_to_target(coords)
+        mask = np.logical_and.reduce([
+            (trafo_coords[..., dim] >= rect[dim, 0])
+            & (trafo_coords[..., dim] <= rect[dim, 1])
+            for dim in range(len(rect))
+        ], axis=0)
+        return mask
 
     # ++++ Perform transformation ++++
 
@@ -251,6 +365,7 @@ class AffineTrafo(FileBase):
         _from = from_array.data
 
         if supersample is not None:
+            AffineTrafo.LOGGER.error("TODO: Supersampling seems to have bugs!")
             supersample = round(supersample)
             _step = _step / supersample
             _low = _low - _step / supersample / 2
@@ -288,6 +403,41 @@ class AffineTrafo(FileBase):
             return to_shape
         else:
             return _to
+
+    def cv_offset_shift_to_target(self, shift):
+        """Converts an offset shift from origin to target space."""
+        return self._cv_offset_shift(shift, self.matrix_to_target)
+
+    def cv_offset_shift_to_origin(self, shift):
+        """Converts an offset shift from target to origin space."""
+        return self._cv_offset_shift(shift, self.matrix_to_origin)
+
+    @staticmethod
+    def _cv_offset_shift(shift, matrix):
+        """
+        Converts an offset shift between origin and target space.
+
+        Parameters
+        ----------
+        shift : `Array[1, float]`
+            Offset shift in initial space.
+        matrix : `Array[2, float]`
+            Transformation matrix.
+
+        Returns
+        -------
+        shift_cv : `Array[1, float]`
+            Offset shift in transformed space.
+        """
+        ar_shift = np.array(shift, dtype=float)
+        ar_matrix = np.array(matrix, dtype=float)
+        ar_shift_cv = ar_matrix @ ar_shift
+        if isinstance(shift, ArrayData):
+            shift_cv = shift.copy_var()
+            shift_cv.data = ar_shift_cv
+        else:
+            shift_cv = ar_shift_cv
+        return shift_cv
 
     # ++++ Operations on trafo ++++
 
@@ -636,14 +786,30 @@ class AffineTrafo2d(AffineTrafo):
     def __rmul__(self, other):
         return self.magnify(other)
 
-    def shift(self, offset):
+    def shift(self, offset, ax="origin"):
         """
         Returns an `AffineTrafo` object whose offset is shifted.
         """
+        if ax == "origin":
+            return self.shift_origin_axes(offset)
+        elif ax == "target":
+            return self.shift_target_axes(offset)
+        else:
+            raise ValueError(f"Invalid shift `ax`es: {str(ax)}")
+
+    def shift_origin_axes(self, offset):
         _mag, _ang, _off = self.get_origin_axes()
         trafo = self.__class__()
         trafo.set_origin_axes(
-            magnification=_mag, angle=_ang, offset=_off+offset
+            magnification=_mag, angle=_ang, offset=_off+np.array(offset)
+        )
+        return trafo
+
+    def shift_target_axes(self, offset):
+        _mag, _ang, _off = self.get_target_axes()
+        trafo = self.__class__()
+        trafo.set_target_axes(
+            magnification=_mag, angle=_ang, offset=_off+np.array(offset)
         )
         return trafo
 

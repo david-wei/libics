@@ -309,36 +309,3 @@ def apply_calibration(sd, calibration, dim=0):
     sd.data[dim] = calibration(sd.data[dim])
     sd.quantity[dim] = calibration.val_quantity
     return sd
-
-
-###############################################################################
-
-
-if __name__ == "__main__":
-
-    # Test data
-    offset = 0
-    end = 3
-    num = 1001
-    scale = (end - offset) / (num - 1)
-    ar = np.cos(2 * np.pi * np.linspace(offset, end, num=num))
-    ad = ArrayData()
-    ad.add_dim(offset=offset, scale=scale, name="time", symbol="t", unit="s")
-    ad.add_dim(name="amplitude", symbol="A", unit="V")
-    ad.data = ar
-    # Convert to series data
-    sd = cv_arraydata_to_seriesdata(ad)
-    # Convert back to array data
-    ad2 = cv_seriesdata_to_arraydata(sd)
-    # Plot
-    from libics.display import plot, plotdefault
-    pcfg = [
-        plotdefault.get_plotcfg_arraydata_1d(label="original"),
-        plotdefault.get_plotcfg_seriesdata_1d(label="seriesdata"),
-        plotdefault.get_plotcfg_arraydata_1d(label="arraydata")
-    ]
-    fcfg = plotdefault.get_figurecfg()
-    fig = plot.Figure(fcfg, pcfg, data=[ad, sd, ad2])
-    fig.plot()
-    fig.legend()
-    fig.show()

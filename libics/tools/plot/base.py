@@ -1,5 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.colors as mplc
 import numpy as np
 import os
 
@@ -50,7 +51,7 @@ def style_figure(
     Styles figure and contained axes properties.
 
     See matplotlib API:
-    `https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html`.
+    https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html.
 
     Parameters
     ----------
@@ -106,7 +107,7 @@ def style_axes(
     """
     Styles axes properties.
 
-    See matplotlib API: `<https://matplotlib.org/api/axes_api.html>`.
+    See matplotlib API: https://matplotlib.org/api/axes_api.html.
 
     Parameters
     ----------
@@ -172,7 +173,7 @@ def tick_params(
     Styles tick properties.
 
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.tick_params>`.
+    https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.tick_params.
 
     Parameters
     ----------
@@ -202,6 +203,11 @@ def tick_params(
                 i._marker._capstyle = capstyle
 
 
+def savefig(fp, *args, **kwargs):
+    plt.savefig(fp, *args, **kwargs)
+    return fp
+
+
 ###############################################################################
 # Artists
 ###############################################################################
@@ -219,8 +225,8 @@ def plot(
     Supports scatter plots, line plots and 2D error bars.
     See matplotlib API:
 
-    * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot>`
-    * `<https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar>`
+    * https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot
+    * https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.errorbar
 
     Parameters
     ----------
@@ -302,7 +308,7 @@ def pcolormesh(
 
     Uses the pcolormesh function.
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.pcolormesh.html>`
+    https://matplotlib.org/api/_as_gen/matplotlib.pyplot.pcolormesh.html
 
     Parameters
     ----------
@@ -403,7 +409,7 @@ def contourf(
 
     Uses the contourf function.
     See matplotlib API:
-    `<https://matplotlib.org/api/_as_gen/matplotlib.pyplot.contourf.html>`
+    https://matplotlib.org/api/_as_gen/matplotlib.pyplot.contourf.html
 
     Parameters
     ----------
@@ -475,6 +481,142 @@ def contourf(
             )
         if isinstance(clabel, str):
             cb.set_label(misc.capitalize_first_char(clabel))
+    return art
+
+
+###############################################################################
+# Patches
+###############################################################################
+
+
+def plot_rectangle(
+    rect=None, center=None, size=None,
+    linestyle="=", angle=None,
+    ax=None, **kwargs
+):
+    """
+    Plots a rectangle.
+
+    The rectangle can be specified either by its left-bottom and right-top
+    corners (`rect`) or by its `center` location and `size`.
+
+    Parameters
+    ----------
+    rect : `[[float, float], [float], float]]`
+        Rectangle corners, specified as `[[xmin, xmax], [ymin, ymax]]`.
+        Takes precedence over `center` and `size`.
+    center, size : `[float, float]`
+        Rectangle center and size, specified as `[x, y]`.
+    angle : `float`
+        Rotation of rectangle.
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Interpret arguments
+    if rect is not None:
+        _xy = rect[0][0], rect[1][0]
+        size = rect[0][1] - rect[0][0], rect[1][1] - rect[1][0]
+    else:
+        _xy = center[0] - size[0] / 2, center[1] - size[1] / 2
+    # Process marker style
+    if angle is not None:
+        kwargs["angle"] = angle
+    if "color" not in kwargs:
+        kwargs["color"] = ax._get_lines.get_next_color()
+    kwargs = _process_patch_param(linestyle, **kwargs)
+    # Plot patch
+    patch = mpl.patches.Rectangle(_xy, *size, **kwargs)
+    art = ax.add_patch(patch)
+    return art
+
+
+def plot_polygon(
+    vertices=None, center=None, size=None, num=None,
+    linestyle="=", angle=None,
+    ax=None, **kwargs
+):
+    """
+    Plots a regular or irregular polygon.
+
+    An irregular polygon can be directly specified by its `vertices`.
+    A regular polygon can be specified by its `center` location, `size`,
+    and `num`ber of vertices.
+
+    Parameters
+    ----------
+    vertices : `Iter[[float], float]]`
+        Vertex coordinates of (irregular) polygon,
+        specified as `[[x0, y0], [x1, y1], ...]`.
+        Takes precedence over `center`, `size` and `num`.
+    center : `[float, float]`
+        (Regular) polygon center, specified as `[x, y]`.
+    size : `float`
+        Size (diameter) of polygon.
+    num : `int`
+        Number of vertices of (regular) polygon.
+    angle : `float`
+        Rotation of polygon (only applied to regular polygons).
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Process marker style
+    if "orientation" not in kwargs and angle is not None:
+        kwargs["orientation"] = angle
+    if "color" not in kwargs:
+        kwargs["color"] = ax._get_lines.get_next_color()
+    kwargs = _process_patch_param(linestyle, **kwargs)
+    # Plot patch
+    if vertices is None:
+        patch = mpl.patches.RegularPolygon(
+            center, num, radius=size/2, **kwargs
+        )
+    else:
+        patch = mpl.patches.Polygon(vertices, **kwargs)
+    art = ax.add_patch(patch)
+    return art
+
+
+def plot_ellipse(
+    center=None, size=None,
+    linestyle="=", angle=None,
+    ax=None, **kwargs
+):
+    """
+    Plots an ellipse.
+
+    Parameters
+    ----------
+    center : `[float, float]`
+        Center of ellipse, specified as `[x, y]`.
+    size : `float` or `[float, float]`
+        Diameter of ellipse in both dimensions.
+        If `float`, plots a circle.
+    angle : `float`
+        Rotation of ellipse.
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Interpret arguments
+    if np.isscalar(size):
+        size = [size, size]
+    # Process marker style
+    if angle is not None:
+        kwargs["angle"] = angle
+    if "color" not in kwargs:
+        kwargs["color"] = ax._get_lines.get_next_color()
+    kwargs = _process_patch_param(linestyle, **kwargs)
+    # Plot patch
+    patch = mpl.patches.Ellipse(center, *size, **kwargs)
+    art = ax.add_patch(patch)
     return art
 
 
@@ -720,21 +862,74 @@ def _process_marker_param(
         if "markeredgecolor" not in kwargs:
             if "markerfacecolor" not in kwargs:
                 kwargs["markeredgecolor"] = kwargs["color"]
-            kwargs["markerfacecolor"] = colors.lighten_rgb(
-                colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
-                    kwargs["markeredgecolor"]
-                ))
-            )
-        else:
-            if "markerfacecolor" not in kwargs:
                 kwargs["markerfacecolor"] = colors.lighten_rgb(
-                    colors.hex_to_rgb(mpl.colors.colorConverter.to_rgb(
-                        kwargs["markerfacecolor"]
+                    colors.hex_to_rgb(mplc.colorConverter.to_rgba(
+                        kwargs["markeredgecolor"]
                     ))
                 )
+            else:
+                if __kwargs_param_is_not_empty(kwargs, "markerfacecolor"):
+                    kwargs["markeredgecolor"] = colors.darken_rgb(
+                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
+                            kwargs["markerfacecolor"]
+                        ))
+                    )
+                else:
+                    kwargs["markeredgecolor"] = mplc.colorConverter.to_rgba(
+                        kwargs["color"]
+                    )
+        else:
+            if "markerfacecolor" not in kwargs:
+                if __kwargs_param_is_not_empty(kwargs, "markeredgecolor"):
+                    kwargs["markerfacecolor"] = colors.lighten_rgb(
+                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
+                            kwargs["markeredgecolor"]
+                        ))
+                    )
+                else:
+                    kwargs["markerfacecolor"] = colors.lighten_rgb(
+                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
+                            kwargs["color"]
+                        ))
+                    )
         kwargs["marker"] = "o"
     else:
         kwargs["marker"] = marker
+    return kwargs
+
+
+def _process_patch_param(linestyle, **kwargs):
+    if "ec" in kwargs:
+        kwargs["edgecolor"] = kwargs.pop("ec")
+    if "fc" in kwargs:
+        kwargs["facecolor"] = kwargs.pop("fc")
+    _color = mplc.colorConverter.to_rgba(kwargs.pop("color"))
+    if linestyle == "=":
+        if "edgecolor" not in kwargs:
+            if "facecolor" not in kwargs:
+                kwargs["edgecolor"] = _color
+                _fc = mplc.colorConverter.to_rgba(kwargs["edgecolor"])
+                _fc = _fc[:-1] + (0.3 * _fc[-1],)
+                kwargs["facecolor"] = _fc
+            else:
+                if __kwargs_param_is_not_empty(kwargs, "facecolor"):
+                    _ec = colors.darken_rgb(
+                        mplc.colorConverter.to_rgba(kwargs["facecolor"])
+                    )
+                else:
+                    _ec = _color
+                kwargs["edgecolor"] = _ec
+        else:
+            if "facecolor" not in kwargs:
+                if __kwargs_param_is_not_empty(kwargs, "edgecolor"):
+                    _fc = mplc.colorConverter.to_rgba(kwargs["edgecolor"])
+                else:
+                    _fc = _color
+                _fc = _fc[:-1] + (0.3 * _fc[-1],)
+                kwargs["facecolor"] = _fc
+        kwargs["linestyle"] = "-"
+    else:
+        kwargs["linestyle"] = linestyle
     return kwargs
 
 
@@ -746,3 +941,16 @@ def _process_err_param(art, **kwargs):
         c.set_solid_capstyle(kwargs["solid_capstyle"])
     for b in barlinecols:
         b.set_capstyle(kwargs["solid_capstyle"])
+
+
+def __kwargs_param_is_not_empty(kwargs, param):
+    """Returns whether `kwargs["param"]` contains reasonable data."""
+    if param not in kwargs:
+        return False
+    v = kwargs[param]
+    if v is None:
+        return False
+    elif isinstance(v, str):
+        if v == "" or v.lower() == "none":
+            return False
+    return True

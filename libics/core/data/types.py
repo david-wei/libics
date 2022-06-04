@@ -1,4 +1,8 @@
+import collections
+import functools
 import numpy as np
+import operator
+from xxhash import xxh64_intdigest
 
 
 ###############################################################################
@@ -33,6 +37,115 @@ UNARY_OPS_NUMPY = {
 
 
 ###############################################################################
+# Hashing
+###############################################################################
+
+
+def hash_combine_ordered(*hval):
+    """
+    Combines multiple hash values (asymmetric).
+    """
+    if len(hval) == 1:
+        return hval[0]
+    else:
+        return hash(hval)
+
+
+def hash_combine_xor(*hval):
+    """
+    Combines multiple hash values by xor (symmetric).
+    """
+    return functools.reduce(operator.xor, hval)
+
+
+def hash_libics(val):
+    """
+    Implements a hash function that modifies built-in `hash` as follows:
+
+    * Stable hash of `bytes`-like objects via `xxh64`.
+    * Support for `numpy` arrays via `xxh64`.
+    * Recursively hashes iterables including `dict` and `list`.
+    """
+    if isinstance(val, np.ndarray):
+        if val.dtype == complex:
+            return hash_combine_ordered(
+                xxh64_intdigest(np.ascontiguousarray(np.real(val))),
+                xxh64_intdigest(np.ascontiguousarray(np.imag(val)))
+            )
+        else:
+            return xxh64_intdigest(np.ascontiguousarray(val))
+    elif isinstance(val, AttrHashBase):
+        return val._hash_libics()
+    elif isinstance(val, collections.Mapping):
+        return hash_combine_xor(*(
+            hash_combine_ordered(hash_libics(k), hash_libics(val[k]))
+            for k in val
+        ))
+    else:
+        try:
+            return xxh64_intdigest(val)
+        except TypeError:
+            pass
+        try:
+            return hash(val)
+        except TypeError:
+            return hash_combine_ordered(*(hash_libics(_v) for _v in val))
+
+
+class AttrHashBase:
+
+    """
+    Base class for attribute hashing.
+
+    For a given set of attributes (:py:attr:`HASH_KEYS`), constructs a hash
+    value that has the following properties:
+
+    * Is unordered in the hash keys.
+    * Includes mapping between attribute name and value.
+    * Includes fully qualified class name.
+    * The attribute values must have `__hash__()` implemented.
+
+    Examples
+    --------
+    Subclassing :py:class:`AttrHashBase`:
+
+    >>> class MyClass(AttrHashBase):
+    ...     HASH_KEYS = AttrHashBase.HASH_KEYS | {"attr0", "attr1"}
+    ...     def __init__(self):
+    ...         self.attr0 = "asdf"
+    ...         self.attr1 = 1234
+    >>> my_object = MyClass()
+    >>> hex(hash(my_object))
+    '0x1b6ce7488edaa385'
+
+    Note that if subclassing :py:class:`AttrHashBase` and overriding the
+    `__eq__` method, the `__hash__` method has to be explicitly reimplemented:
+
+    >>> class Sub(AttrHashBase):
+    ...     def __eq__(self, other):
+    ...         return id(self) == id(other)
+    ...     def __hash__(self):
+    ...         return super().__hash__()
+    """
+
+    HASH_KEYS = set()
+
+    def _hash_libics(self):
+        hash_name = hash_libics(
+            self.__class__.__module__ + "." + self.__class__.__name__
+        )
+        hash_vals = (
+            hash_combine_ordered(
+                hash_libics(k), hash_libics(getattr(self, k))
+            ) for k in self.HASH_KEYS
+        )
+        return hash_combine_xor(hash_name, *hash_vals)
+
+    def __hash__(self):
+        return self._hash_libics()
+
+
+###############################################################################
 # Primitive containers
 ###############################################################################
 
@@ -40,7 +153,7 @@ UNARY_OPS_NUMPY = {
 NO_NAME = "N/A"
 
 
-class Quantity(object):
+class Quantity(AttrHashBase):
 
     """
     Data type for physical quantities (name and unit).
@@ -57,12 +170,14 @@ class Quantity(object):
     """
 
     def __init__(self, name=NO_NAME, symbol=None, unit=None):
+        super().__init__()
         self.name = name
         self.symbol = symbol
         self.unit = unit
 
     __LIBICS_IO__ = True
     SER_KEYS = {"name", "symbol", "unit"}
+    HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
 
     def attributes(self):
         """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
@@ -112,6 +227,9 @@ class Quantity(object):
     def _is_quantity(self, other):
         return isinstance(other, type(self))
 
+    def __hash__(self):
+        return super().__hash__()
+
     def __eq__(self, other):
         return (
             self.name == other.name
@@ -151,6 +269,7 @@ class ValQuantity(Quantity):
     """
 
     SER_KEYS = Quantity.SER_KEYS | {"val"}
+    HASH_KEYS = Quantity.HASH_KEYS | SER_KEYS
 
     def __init__(self, name=NO_NAME, symbol=None, unit=None, val=None):
         super().__init__(name=name, symbol=symbol, unit=unit)
@@ -290,13 +409,13 @@ class ValQuantity(Quantity):
                     _unit = other.unit
                 else:
                     _a = [self.STR_OP[op], self._brk(other.unit)]
-                    _unit = "1 {:s} {:s}".format(_a)
+                    _unit = "1 {:s} {:s}".format(*_a)
             elif other.unit is None:
                 if rev:
                     _unit = self.unit
                 else:
                     _a = [self.STR_OP[op], self._brk(self.unit)]
-                    _unit = "1 {:s} {:s}".format(_a)
+                    _unit = "1 {:s} {:s}".format(*_a)
             elif self.unit == other.unit:
                 _unit = None
             else:
@@ -306,6 +425,9 @@ class ValQuantity(Quantity):
         elif op in self.NUMERIC_OPS:
             _unit = None
         return _unit
+
+    def __hash__(self):
+        return super().__hash__()
 
     def __eq__(self, other):
         if self._is_quantity(other):

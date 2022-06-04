@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from .libics.env import __version__
 
 
 def readme():
@@ -7,7 +8,7 @@ def readme():
 
 
 setup(name='libics',
-      version='1.0dev',
+      version=__version__,
       description='Incoherent source library',
       long_description=readme(),
       classifiers=[
@@ -29,12 +30,13 @@ setup(name='libics',
             'gui_scripts': []
       },
       install_requires=[
-            'matplotlib', 'numpy', 'scipy', 'pandas',
-            'pyserial', 'pyusb', 'pymongo', 'Pillow'
+            'matplotlib', 'numpy', 'pandas', 'Pillow', 'scipy', 'xxhash'
       ],
+      extras_require={
+            'bson': ['pymongo']
+      },
       python_requires='>=3.6',
       dependency_links=[
-            'https://github.com/morefigs/pymba',
             'https://github.com/fujii-team/sif_reader'
       ],
       include_package_data=True,

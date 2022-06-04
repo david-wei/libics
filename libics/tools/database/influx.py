@@ -1,9 +1,21 @@
+import collections
+import datetime
+from dateutil import tz
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import ASYNCHRONOUS, SYNCHRONOUS
 import numpy as np
+import os
+import pandas as pd
+import requests
 
-from libics.env import logging
+from libics.env import logging, DIR_LIBICS
+from libics.core import io
 from libics.core.data.sequences import DataSequence
+from libics.core.util import misc, path
+
+__all__ = [
+    "InfluxDB"
+]
 
 
 ###############################################################################
@@ -16,6 +28,9 @@ class InfluxDB(object):
 
     Parameters
     ----------
+    config : `str` or `dict`
+        Configuration file path or dictionary specifying below parameters.
+        Duplicate parameters overwrite the `config` parameters.
     host : `str`
         Database server IP.
     port : `int`
@@ -28,6 +43,8 @@ class InfluxDB(object):
         Query timeout in seconds (s).
     asynchr : `bool`
         Whether to communicate synchronous or asynchronous.
+    default_bucket, default_measurement : `str`
+        Default bucket/measurement name.
 
     Attributes
     ----------
@@ -43,8 +60,18 @@ class InfluxDB(object):
     """
 
     LOGGER = logging.get_logger("libics.tools.database.influx.InfluxDB")
+    CONFIG_PATH = os.path.join(DIR_LIBICS, "tools", "database", "influx")
 
-    def __init__(self, **kwargs):
+    @staticmethod
+    def find_configs(config_path=None):
+        """
+        Returns a list of all file names within the default configuration path.
+        """
+        if config_path is None:
+            config_path = InfluxDB.CONFIG_PATH
+        return path.get_folder_contents(config_path).files
+
+    def __init__(self, config=None, **kwargs):
         # Parameters
         self.host = "localhost"
         self.port = 8086
@@ -52,6 +79,21 @@ class InfluxDB(object):
         self.token = None
         self.timeout = 10
         self.asynchr = False
+        self._default_bucket = None
+        self._default_measurement = None
+        if config is not None:
+            _kwargs = kwargs
+            if isinstance(config, str):
+                if not os.path.exists(config):
+                    config = os.path.join(self.CONFIG_PATH, config)
+                if not os.path.exists(config):
+                    raise ValueError(f"Invalid `config` ({str(config)})")
+                kwargs = io.load(config)
+            elif isinstance(config, collections.Mapping):
+                kwargs = config
+            else:
+                raise ValueError("Invalid `config`")
+            kwargs.update(_kwargs)
         for k, v in kwargs.items():
             if k[0] != "_":
                 setattr(self, k, v)
@@ -71,12 +113,23 @@ class InfluxDB(object):
     # +++++++++++++++++++++++++++++
 
     def __str__(self):
-        s = [f"Server: {self.url}\nOrganisation: {self.org}"]
+        s = [f"Server: {self.url}", f"Organisation: {self.org}"]
+        if self._default_bucket:
+            s.append(f"Default bucket: {self._default_bucket}")
+        if self._default_measurement:
+            s.append(f"Default measurement: {self._default_measurement}")
         for bucket in self.buckets:
+            s.append(misc.generate_fill_chars(40, fill_char="-"))
             s.append(f"Bucket: {bucket}")
             s.append(f" → Measurements: {self.measurements[bucket]}")
             s.append(f" → Tags: {self.tags[bucket]}")
             s.append(f" → Fields: {self.fields[bucket]}")
+        return "\n".join(s)
+
+    def __repr__(self):
+        s = [f"<'{self.__class__.__name__}' at {hex(id(self))}>"]
+        s.extend([f"Server: {self.url}", f"Organisation: {self.org}"])
+        s.append(f"Buckets: {self.buckets}")
         return "\n".join(s)
 
     @property
@@ -110,6 +163,30 @@ class InfluxDB(object):
                 self.update_fields(bucket)
         return self._fields
 
+    @property
+    def default_bucket(self):
+        if self._default_bucket is None:
+            raise ValueError("unspecified default bucket")
+        elif self._default_bucket not in self.buckets:
+            self.update_buckets()
+            if self._default_bucket not in self.buckets:
+                raise ValueError("default bucket not available")
+        return self._default_bucket
+
+    @default_bucket.setter
+    def default_bucket(self, val):
+        self._default_bucket = val
+
+    @property
+    def default_measurement(self):
+        if self._default_measurement is None:
+            raise ValueError("unspecified default measurement")
+        return self._default_measurement
+
+    @default_measurement.setter
+    def default_measurement(self, val):
+        self._default_measurement = val
+
     # +++++++++++++++++++++++++++++
     # InfluxDB
     # +++++++++++++++++++++++++++++
@@ -127,6 +204,25 @@ class InfluxDB(object):
         self._qapi = self._client.query_api()
         self._bapi = self._client.buckets_api()
         self.update_buckets()
+
+    def _create_bucket(
+        self, bucket, description=None, retention_period=0
+    ):
+        """Creates a bucket via HTTP API."""
+        if description is None:
+            description = "generated by Python <{self.__class__.__name__}>"
+        url = self.url + "/api/v2/buckets"
+        headers = {"Authorization": "Token " + self.token}
+        payload = {
+            "orgID": self.org,
+            "name": bucket,
+            "description": description,
+            "retentionRules": [{
+                "type": "expire",
+                "everySeconds": retention_period
+            }]
+        }
+        return requests.post(url, headers=headers, json=payload)
 
     def _write(self, bucket, record, **kwargs):
         """
@@ -209,10 +305,12 @@ class InfluxDB(object):
                 continue
             elif isinstance(v, str) or np.isscalar(v):
                 v = [v]
+            _qfilter_per_tag = []
             for vv in v:
                 if isinstance(vv, str):
                     vv = f'"{vv}"'
-                _qfilter.append(f'(r.{k} == {vv})')
+                _qfilter_per_tag.append(f'(r.{k} == {vv})')
+            _qfilter.append(" or ".join(_qfilter_per_tag))
         if len(_qfilter) == 0:
             q = ""
         else:
@@ -229,16 +327,73 @@ class InfluxDB(object):
                  f'fn: {function}, createEmpty: {create_empty})')
         return q
 
+    def _get_query_group(self, tags, mode="by"):
+        """
+        Flux query string: group by column names.
+
+        Parameters
+        ----------
+        tags : `list(str)` or `None`
+            List of tag keys to group by.
+            If `None` and `mode == "except"`, groups by all tag keys.
+        mode : `str`
+            `"by", "except"`.
+        """
+        if tags is None and mode == "by":
+            q = ""
+        else:
+            if tags is None:
+                tags = ["_value", "_time"]
+            if isinstance(tags, str):
+                tags = [tags]
+            _qgroup = [f'"{v}"' for v in tags]
+            q = f' |> group(columns: [{", ".join(_qgroup)}], mode: "{mode}")'
+        return q
+
+    def _get_query_func(self, func="last"):
+        """Flux query string: apply function."""
+        if func is None:
+            q = ""
+        else:
+            q = f' |> {func}()'
+        return q
+
+    def _cleanup_table(self, ds):
+        if len(ds) > 0:
+            ds = ds.drop(columns=["result", "table", "_start", "_stop"])
+            ds = ds.rename(columns={
+                "_time": "time", "_measurement": "measurement",
+                "_field": "field", "_value": "value"
+            })
+            if "time" in ds.columns:
+                ds["time"] = ds["time"].dt.tz_convert(tz.tzlocal())
+        return ds
+
     # +++++++++++++++++++++++++++++
     # API
     # +++++++++++++++++++++++++++++
+
+    def create_bucket(self, bucket):
+        """
+        Creates a bucket if it does not exist.
+
+        Parameters
+        ----------
+        bucket : `str`
+            Name of new bucket.
+        """
+        if bucket not in self.buckets:
+            self.update_buckets()
+            if bucket not in self.buckets:
+                self._create_bucket(bucket)
 
     def update_buckets(self):
         """Queries the database to update the buckets property."""
         self._buckets = self._read_buckets()
 
-    def update_measurements(self, bucket):
+    def update_measurements(self, bucket=None):
         """Queries the database to update the measurements property."""
+        bucket = bucket if bucket else self.default_bucket
         q = f"""
         import "influxdata/influxdb/schema"
         schema.measurements(bucket: "{bucket}")
@@ -246,8 +401,9 @@ class InfluxDB(object):
         ds = self._query(q)
         self._measurements[bucket] = sorted(ds["_value"].tolist())
 
-    def update_tags(self, bucket):
+    def update_tags(self, bucket=None):
         """Queries the database to update the tags property."""
+        bucket = bucket if bucket else self.default_bucket
         q = f"""
         import "influxdata/influxdb/schema"
         schema.tagKeys(bucket: "{bucket}")
@@ -258,8 +414,9 @@ class InfluxDB(object):
             tags.discard(key)
         self._tags[bucket] = sorted(list(tags))
 
-    def update_fields(self, bucket):
+    def update_fields(self, bucket=None):
         """Queries the database to update the fields property."""
+        bucket = bucket if bucket else self.default_bucket
         q = f"""
         import "influxdata/influxdb/schema"
         schema.fieldKeys(bucket: "{bucket}")
@@ -267,8 +424,10 @@ class InfluxDB(object):
         ds = self._query(q)
         self._fields[bucket] = sorted(ds["_value"].tolist())
 
-    def read_measurement_values(self, bucket, measurement):
+    def read_measurement_values(self, bucket=None, measurement=None):
         """Queries the database and gets all measurement values."""
+        bucket = bucket if bucket else self.default_bucket
+        measurement = measurement if measurement else self.default_measurement
         q = f"""
         import "influxdata/influxdb/schema"
         schema.measurementFieldKeys(
@@ -279,8 +438,49 @@ class InfluxDB(object):
         ds = self._query(q)
         return sorted(ds["_value"].tolist())
 
+    def read_tag_values(self, bucket=None, tag=None, measurement=True):
+        """
+        Queries the database and gets all tag values.
+
+        Parameters
+        ----------
+        bucket : `str`
+            Bucket name.
+        tag : `str`
+            Tag key from which to obtain values.
+        measurement : `str` or `bool` or `None`
+            If `str`, gets only tag values with the given `measurement` value.
+            If `True`, gets all tag values.
+            If `None`, uses :py:attr:`default_measurement` in `str` mode.
+
+        Returns
+        -------
+        tag_values : `list(str)`
+            List of tag values.
+        """
+        if tag is None:
+            raise ValueError("no tag given")
+        bucket = bucket if bucket else self.default_bucket
+        measurement = measurement if measurement else self.default_measurement
+        if measurement is True:
+            q = f"""
+            import "influxdata/influxdb/schema"
+            schema.tagValues(bucket: "{bucket}", tag: "{tag}")
+            """
+        else:
+            q = f"""
+            import "influxdata/influxdb/schema"
+            schema.measurementTagValues(
+                bucket: "{bucket}",
+                tag: "{tag}",
+                measurement: "{measurement}"
+            )
+            """
+        ds = self._query(q)
+        return sorted(ds["_value"].tolist())
+
     def write_point(
-        self, bucket, measurement, tags=None, fields=None, time=None
+        self, bucket=None, measurement=None, tags=None, fields=None, time=None
     ):
         """
         Writes a point to the database.
@@ -299,6 +499,8 @@ class InfluxDB(object):
             Timestamp in nanoseconds (ns).
             If `None`, uses the current time.
         """
+        bucket = bucket if bucket else self.default_bucket
+        measurement = measurement if measurement else self.default_measurement
         if bucket not in self.buckets:
             self.update_buckets()
             if bucket not in self.buckets:
@@ -315,10 +517,48 @@ class InfluxDB(object):
         q = point.to_line_protocol()
         return self._write(bucket, q)
 
+    def write_points(self, bucket=None, data=None):
+        """
+        Writes multiple points to the database.
+
+        Parameters
+        ----------
+        bucket : `str`
+            Bucket name.
+        data : `list(dict)`
+            List of dictionaries containing the keyword arguments
+            for :py:meth:`write_point`.
+        """
+        # Check parameters
+        if data is None:
+            raise ValueError("no data given")
+        elif isinstance(data, dict):
+            data = [data]
+        # Write each data point
+        for d in data:
+            self.write_point(bucket=bucket, **d)
+
+    def _check_read_points_param(self, **kwargs):
+        """Checks for user errors in parameters."""
+        param_map = {
+            "fields": "field", "measurements": "measurement", "func": "funcs"
+        }
+        for k, v in param_map.items():
+            if k in kwargs:
+                self.LOGGER.warning(
+                    f"Did you mean to use parameter '{v}' instead of '{k}'?"
+                )
+        for k in ["tag", "tags"]:
+            if k in kwargs:
+                self.LOGGER.warning(
+                    f"Did you mean to filter by tag values? "
+                    f"Then pass them as keyword arguments, i.e. `**{k}`."
+                )
+
     def read_points(
-        self, bucket, start="-1d", stop=None,
-        window=None, function=None, rmv_nan=True,
-        measurement=None, field=None, **tags
+        self, bucket=None, start="-1d", stop=None, group=None,
+        window=None, function=None, rmv_nan=True, funcs=None,
+        measurement=None, field=None, _check_params=True, **tags
     ):
         """
         Queries the database.
@@ -327,8 +567,10 @@ class InfluxDB(object):
         ----------
         bucket : `str`
             Bucket name.
-        start, stop : `str`
+        start, stop : `str` or `datetime.datetime` or `pd.Timestamp`
             Extracted time range.
+        group : `list(str)`
+            Groups by the given tags.
         window : `str`
             Time window per extracted point.
             E.g.: `"1m", "2h", ...`
@@ -337,6 +579,8 @@ class InfluxDB(object):
             E.g.: `"mean", "median", "last", ...`.
         rmv_nan : `bool`
             Whether to remove windows containing no data.
+        funcs : `list(str)`
+            List of functions applied to query tables.
         measurement : `list(str)`
             Filter for measurement values.
         field : `list(str)`
@@ -351,20 +595,57 @@ class InfluxDB(object):
             Data sequence with the following columns:
             `"time", "measurement", "field", "value", <tags>`.
         """
+        # Parse parameters
+        bucket = bucket if bucket else self.default_bucket
+        start = self._cv_time(start)
+        stop = self._cv_time(stop)
+        if isinstance(funcs, (type(None), str)):
+            funcs = [funcs]
+        if _check_params:
+            self._check_read_points_param(**tags)
         # Construct query
         q = self._get_query_bucket(bucket)
         q += self._get_query_range(start, stop)
         q += self._get_query_filter(operation="or", _measurement=measurement)
         q += self._get_query_filter(operation="and", **tags)
         q += self._get_query_filter(operation="or", _field=field)
+        q += self._get_query_group(group)
         q += self._get_query_aggregate_window(window, function, rmv_nan)
+        for func in funcs:
+            q += self._get_query_func(func=func)
         q += " |> yield()"
         # Execute query
         ds = DataSequence(self._query(q))
-        if len(ds) > 0:
-            ds = ds.drop(columns=["result", "table", "_start", "_stop"])
-            ds = ds.rename(columns={
-                "_time": "time", "_measurement": "measurement",
-                "_field": "field", "_value": "value"
-            })
+        ds = self._cleanup_table(ds)
         return ds
+
+    def read_last_points(self, *args, **kwargs):
+        """
+        Queries the database for the last points.
+
+        Wrapper for :py:meth:`read_points`.
+        """
+        if "funcs" in kwargs:
+            funcs = kwargs["funcs"]
+            if isinstance(funcs, str):
+                funcs = [funcs]
+            funcs.append("last")
+        else:
+            funcs = ["last"]
+        kwargs["funcs"] = funcs
+        return self.read_points(*args, **kwargs)
+
+    read_last_points.__doc__ += "\n" + read_points.__doc__
+
+    # ++++++++++++++++++++++++++++++
+    # Helper
+    # ++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _cv_time(t):
+        if isinstance(t, pd.Timestamp):
+            t = t.to_pydatetime()
+        if isinstance(t, datetime.datetime):
+            return t.astimezone(tz.tzutc()).isoformat().replace("+00:00", "Z")
+        else:
+            return t

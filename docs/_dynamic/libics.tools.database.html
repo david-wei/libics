@@ -1,77 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>libics.tools.database &mdash; libics 1.0a documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="libics.tools.math" href="libics.tools.math.html" />
-    <link rel="prev" title="libics.tools" href="libics.tools.html" /> 
+    <link rel="prev" title="libics.tools.control" href="libics.tools.control.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> libics
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,24 +39,13 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="libics.env.html">libics.env</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="libics.driver.html">libics.driver</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="libics.tools.control.html">libics.tools.control</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.database</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.database.influx">influx</a></li>
 </ul>
@@ -108,85 +57,46 @@
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">libics</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="libics.tools.html">libics.tools</a> &raquo;</li>
-        
       <li>libics.tools.database</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/_dynamic/libics.tools.database.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-libics.tools.database">
-<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-libics.tools.database.influx">
-<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="module-libics.tools.database">
+<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this headline"></a></h1>
+<section id="module-libics.tools.database.influx">
+<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.influx.</span></span><span class="sig-name descname"><span class="pre">InfluxDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.influx.</span></span><span class="sig-name descname"><span class="pre">InfluxDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>InfluxDB v2 client.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
+<dt><strong>config</strong><span class="classifier"><cite>str</cite> or <cite>dict</cite></span></dt><dd><p>Configuration file path or dictionary specifying below parameters.
+Duplicate parameters overwrite the <cite>config</cite> parameters.</p>
+</dd>
 <dt><strong>host</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Database server IP.</p>
 </dd>
 <dt><strong>port</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Database server port.</p>
@@ -198,6 +108,8 @@
 <dt><strong>timeout</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Query timeout in seconds (s).</p>
 </dd>
 <dt><strong>asynchr</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to communicate synchronous or asynchronous.</p>
+</dd>
+<dt><strong>default_bucket, default_measurement</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Default bucket/measurement name.</p>
 </dd>
 </dl>
 </dd>
@@ -222,65 +134,113 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_measurement_values" title="libics.tools.database.influx.InfluxDB.read_measurement_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_measurement_values</span></code></a>(self, bucket, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.create_bucket" title="libics.tools.database.influx.InfluxDB.create_bucket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_bucket</span></code></a>(bucket)</p></td>
+<td><p>Creates a bucket if it does not exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.find_configs" title="libics.tools.database.influx.InfluxDB.find_configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_configs</span></code></a>([config_path])</p></td>
+<td><p>Returns a list of all file names within the default configuration path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_last_points" title="libics.tools.database.influx.InfluxDB.read_last_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_last_points</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Queries the database for the last points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_measurement_values" title="libics.tools.database.influx.InfluxDB.read_measurement_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_measurement_values</span></code></a>([bucket, measurement])</p></td>
 <td><p>Queries the database and gets all measurement values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_points" title="libics.tools.database.influx.InfluxDB.read_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_points</span></code></a>(self, bucket[, start, stop, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_points" title="libics.tools.database.influx.InfluxDB.read_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_points</span></code></a>([bucket, start, stop, group, ...])</p></td>
 <td><p>Queries the database.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_buckets" title="libics.tools.database.influx.InfluxDB.update_buckets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_buckets</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_tag_values" title="libics.tools.database.influx.InfluxDB.read_tag_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tag_values</span></code></a>([bucket, tag, measurement])</p></td>
+<td><p>Queries the database and gets all tag values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_buckets" title="libics.tools.database.influx.InfluxDB.update_buckets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_buckets</span></code></a>()</p></td>
 <td><p>Queries the database to update the buckets property.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_fields" title="libics.tools.database.influx.InfluxDB.update_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_fields</span></code></a>(self, bucket)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_fields" title="libics.tools.database.influx.InfluxDB.update_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_fields</span></code></a>([bucket])</p></td>
 <td><p>Queries the database to update the fields property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_measurements" title="libics.tools.database.influx.InfluxDB.update_measurements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_measurements</span></code></a>(self, bucket)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_measurements" title="libics.tools.database.influx.InfluxDB.update_measurements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_measurements</span></code></a>([bucket])</p></td>
 <td><p>Queries the database to update the measurements property.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_tags" title="libics.tools.database.influx.InfluxDB.update_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_tags</span></code></a>(self, bucket)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.update_tags" title="libics.tools.database.influx.InfluxDB.update_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_tags</span></code></a>([bucket])</p></td>
 <td><p>Queries the database to update the tags property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.write_point" title="libics.tools.database.influx.InfluxDB.write_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_point</span></code></a>(self, bucket, measurement[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.write_point" title="libics.tools.database.influx.InfluxDB.write_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_point</span></code></a>([bucket, measurement, tags, ...])</p></td>
 <td><p>Writes a point to the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.influx.InfluxDB.write_points" title="libics.tools.database.influx.InfluxDB.write_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_points</span></code></a>([bucket, data])</p></td>
+<td><p>Writes multiple points to the database.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.CONFIG_PATH">
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\David\\.libics\\tools\\database\\influx'</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.CONFIG_PATH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.LOGGER">
-<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">libics.tools.database.influx.InfluxDB</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.LOGGER" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.tools.database.influx.InfluxDB</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.LOGGER" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.buckets">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">buckets</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.buckets" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">buckets</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.buckets" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.create_bucket">
+<span class="sig-name descname"><span class="pre">create_bucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.create_bucket" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a bucket if it does not exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Name of new bucket.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.default_bucket">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_bucket</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.default_bucket" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.default_measurement">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_measurement</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.default_measurement" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.fields">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">fields</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.fields" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.fields" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.find_configs">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.find_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all file names within the default configuration path.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.measurements">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">measurements</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.measurements" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">measurements</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.measurements" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_measurement_values">
-<span class="sig-name descname"><span class="pre">read_measurement_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_measurement_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries the database and gets all measurement values.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_points">
-<span class="sig-name descname"><span class="pre">read_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self</span></em>, <em class="sig-param"><span class="pre">bucket</span></em>, <em class="sig-param"><span class="pre">start='-1d'</span></em>, <em class="sig-param"><span class="pre">stop=None</span></em>, <em class="sig-param"><span class="pre">window=None</span></em>, <em class="sig-param"><span class="pre">function=None</span></em>, <em class="sig-param"><span class="pre">rmv_nan=True</span></em>, <em class="sig-param"><span class="pre">measurement=None</span></em>, <em class="sig-param"><span class="pre">field=None</span></em>, <em class="sig-param"><span class="pre">\*\*tags</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries the database.</p>
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_last_points">
+<span class="sig-name descname"><span class="pre">read_last_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_last_points" title="Permalink to this definition"></a></dt>
+<dd><p>Queries the database for the last points.</p>
+<p>Wrapper for <a class="reference internal" href="#libics.tools.database.influx.InfluxDB.read_points" title="libics.tools.database.influx.InfluxDB.read_points"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_points()</span></code></a>.</p>
+<p>Queries the database.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Bucket name.</p>
 </dd>
-<dt><strong>start, stop</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Extracted time range.</p>
+<dt><strong>start, stop</strong><span class="classifier"><cite>str</cite> or <cite>datetime.datetime</cite> or <cite>pd.Timestamp</cite></span></dt><dd><p>Extracted time range.</p>
+</dd>
+<dt><strong>group</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Groups by the given tags.</p>
 </dd>
 <dt><strong>window</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Time window per extracted point.
 E.g.: <cite>“1m”, “2h”, …</cite></p>
@@ -289,6 +249,8 @@ E.g.: <cite>“1m”, “2h”, …</cite></p>
 E.g.: <cite>“mean”, “median”, “last”, …</cite>.</p>
 </dd>
 <dt><strong>rmv_nan</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to remove windows containing no data.</p>
+</dd>
+<dt><strong>funcs</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>List of functions applied to query tables.</p>
 </dd>
 <dt><strong>measurement</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Filter for measurement values.</p>
 </dd>
@@ -309,43 +271,117 @@ Note that all extracted keys must have the same data type.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_measurement_values">
+<span class="sig-name descname"><span class="pre">read_measurement_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_measurement_values" title="Permalink to this definition"></a></dt>
+<dd><p>Queries the database and gets all measurement values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_points">
+<span class="sig-name descname"><span class="pre">read_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmv_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_check_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">tags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_points" title="Permalink to this definition"></a></dt>
+<dd><p>Queries the database.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Bucket name.</p>
+</dd>
+<dt><strong>start, stop</strong><span class="classifier"><cite>str</cite> or <cite>datetime.datetime</cite> or <cite>pd.Timestamp</cite></span></dt><dd><p>Extracted time range.</p>
+</dd>
+<dt><strong>group</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Groups by the given tags.</p>
+</dd>
+<dt><strong>window</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Time window per extracted point.
+E.g.: <cite>“1m”, “2h”, …</cite></p>
+</dd>
+<dt><strong>function</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Function applied to aggregated points.
+E.g.: <cite>“mean”, “median”, “last”, …</cite>.</p>
+</dd>
+<dt><strong>rmv_nan</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to remove windows containing no data.</p>
+</dd>
+<dt><strong>funcs</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>List of functions applied to query tables.</p>
+</dd>
+<dt><strong>measurement</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Filter for measurement values.</p>
+</dd>
+<dt><strong>field</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Filter for field keys.
+Note that all extracted keys must have the same data type.</p>
+</dd>
+<dt><strong>**tags</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Filter for tag keys and values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ds</strong><span class="classifier"><cite>DataSequence</cite></span></dt><dd><p>Data sequence with the following columns:
+<cite>“time”, “measurement”, “field”, “value”, &lt;tags&gt;</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.read_tag_values">
+<span class="sig-name descname"><span class="pre">read_tag_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.read_tag_values" title="Permalink to this definition"></a></dt>
+<dd><p>Queries the database and gets all tag values.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Bucket name.</p>
+</dd>
+<dt><strong>tag</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Tag key from which to obtain values.</p>
+</dd>
+<dt><strong>measurement</strong><span class="classifier"><cite>str</cite> or <cite>bool</cite> or <cite>None</cite></span></dt><dd><p>If <cite>str</cite>, gets only tag values with the given <cite>measurement</cite> value.
+If <cite>True</cite>, gets all tag values.
+If <cite>None</cite>, uses <a class="reference internal" href="#libics.tools.database.influx.InfluxDB.default_measurement" title="libics.tools.database.influx.InfluxDB.default_measurement"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_measurement</span></code></a> in <cite>str</cite> mode.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>tag_values</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>List of tag values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.tags">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tags</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.tags" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tags</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.tags" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.update_buckets">
-<span class="sig-name descname"><span class="pre">update_buckets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_buckets" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_buckets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_buckets" title="Permalink to this definition"></a></dt>
 <dd><p>Queries the database to update the buckets property.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.update_fields">
-<span class="sig-name descname"><span class="pre">update_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_fields" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_fields" title="Permalink to this definition"></a></dt>
 <dd><p>Queries the database to update the fields property.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.update_measurements">
-<span class="sig-name descname"><span class="pre">update_measurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_measurements" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_measurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_measurements" title="Permalink to this definition"></a></dt>
 <dd><p>Queries the database to update the measurements property.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.update_tags">
-<span class="sig-name descname"><span class="pre">update_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_tags" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.update_tags" title="Permalink to this definition"></a></dt>
 <dd><p>Queries the database to update the tags property.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.url">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.url" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.url" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.write_point">
-<span class="sig-name descname"><span class="pre">write_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.write_point" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.write_point" title="Permalink to this definition"></a></dt>
 <dd><p>Writes a point to the database.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -366,57 +402,57 @@ If <cite>None</cite>, uses the current time.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.write_points">
+<span class="sig-name descname"><span class="pre">write_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.write_points" title="Permalink to this definition"></a></dt>
+<dd><p>Writes multiple points to the database.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>bucket</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Bucket name.</p>
+</dd>
+<dt><strong>data</strong><span class="classifier"><cite>list(dict)</cite></span></dt><dd><p>List of dictionaries containing the keyword arguments
+for <a class="reference internal" href="#libics.tools.database.influx.InfluxDB.write_point" title="libics.tools.database.influx.InfluxDB.write_point"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_point()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-</div>
+</dd></dl>
+
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="libics.tools.control.html" class="btn btn-neutral float-left" title="libics.tools.control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="libics.tools.math.html" class="btn btn-neutral float-right" title="libics.tools.math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="libics.tools.html" class="btn btn-neutral float-left" title="libics.tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019-2021, David Wei.
-
-    </p>
+    <p>&#169; Copyright 2019-2022, David Wei.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

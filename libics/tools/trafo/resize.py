@@ -24,7 +24,7 @@ def crop_image(mask):
 
     Notes
     -----
-    From `https://codereview.stackexchange.com/questions/132914`.
+    From https://codereview.stackexchange.com/questions/132914.
     Use :py:func:`libics.core.util.misc.cv_index_rect_to_slice()` to convert
     the index rectangle to slices.
 
