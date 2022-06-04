@@ -860,6 +860,16 @@ class ArrayData(AttrHashBase):
         return self.ndim + 1
 
     @property
+    def dtype(self):
+        """Data array type."""
+        return self.data.dtype
+
+    def astype(self, dtype):
+        """Changes data array type to `dtype`."""
+        ad = self.copy_var()
+        ad.data = self.data.astype(dtype)
+
+    @property
     def shape(self):
         """Data array shape."""
         return self._data.shape

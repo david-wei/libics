@@ -283,7 +283,11 @@ class ModelBase(abc.ABC):
     def pstd(self):
         # TODO: Get pall with dummy std for p0 only
         # TODO: Same for pcov
-        return np.sqrt(np.diag(self.pcov))
+        var = np.diag(self.pcov)
+        if np.any(var < 0):
+            return np.full_like(var, np.inf, dtype=float)
+        else:
+            return np.sqrt(var)
 
     @property
     def pstd_for_fit(self):
@@ -363,7 +367,13 @@ class ModelBase(abc.ABC):
         split_data = self.split_fit_data(*data)
         var_data, func_data, err_data = self._ravel_data(*split_data)
         if err_data is not None and "sigma" not in kwargs:
+            if err_data.dtype != float:
+                err_data = err_data.astype(float)
             kwargs.update({"sigma": err_data})
+        if var_data.dtype != float:
+            var_data = var_data.astype(float)
+        if func_data.dtype != float:
+            func_data = func_data.astype(float)
         p0 = np.copy(self.p0_for_fit)
 
         # Optimize parameters
@@ -371,12 +381,12 @@ class ModelBase(abc.ABC):
             self.popt_for_fit, self.pcov_for_fit = scipy.optimize.curve_fit(
                 _fit_func, var_data, func_data, p0=p0, **kwargs
             )
+            self.psuccess = (
+                not np.any(np.isnan(self.pcov_for_fit))
+                and np.all(np.isfinite(self.pcov_for_fit))
+            )
         except RuntimeError:
-            return False
-        self.psuccess = (
-            not np.any(np.isnan(self.pcov_for_fit))
-            and np.all(np.isfinite(self.pcov_for_fit))
-        )
+            self.psuccess = False
         return self.psuccess
 
     def find_chi2(self, *data):
@@ -788,7 +798,11 @@ class TensorModelBase(abc.ABC):
 
     @property
     def pstd(self):
-        return np.sqrt(np.diag(self.pcov))
+        var = np.diag(self.pcov)
+        if np.any(var < 0):
+            return np.full_like(var, np.inf, dtype=float)
+        else:
+            return np.sqrt(var)
 
     def __getattr__(self, name):
         get_std = False
