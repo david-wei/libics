@@ -30,7 +30,8 @@ setup(name='libics',
             'gui_scripts': []
       },
       install_requires=[
-            'matplotlib', 'numpy', 'pandas', 'Pillow', 'scipy', 'xxhash'
+            'colorsys', 'matplotlib', 'numpy', 'pandas', 'Pillow',
+            'scipy', 'xxhash'
       ],
       extras_require={
             'bson': ['pymongo']
