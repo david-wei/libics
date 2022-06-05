@@ -2,12 +2,22 @@ import abc
 import copy
 import numpy as np
 import scipy.optimize
+import scipy.stats
+try:
+    from scipy.stats._distn_infrastructure import rv_continuous_frozen
+except ImportError:
+    # Backward compatibilty after scipy update (commit on 2022-03-17)
+    from scipy.stats._distn_infrastructure import (
+        rv_frozen as rv_continuous_frozen
+    )
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData, SeriesData
 from libics.core.util import misc
 
 
+###############################################################################
+# Fitting models
 ###############################################################################
 
 
@@ -1125,3 +1135,272 @@ class TensorModelBase(abc.ABC):
         else:
             var_data = var_data.reshape((var_data.shape[0], -1))
         return var_data, func_data, err_data
+
+
+###############################################################################
+# Random variable models
+###############################################################################
+
+
+class RvContinuousFrozen(rv_continuous_frozen):
+
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: (
+            getattr(self.dist, name)(*args, *self.args, **kwargs, **self.kwds)
+        )
+
+
+class RvContinuous(scipy.stats.rv_continuous):
+
+    LOGGER = logging.get_logger("libics.tools.math.models.RvContinuous")
+
+    def _ipdf(self, p, *args, branch="left", tol=None):
+        p = np.array(p, dtype=float)
+        xm = self._mode(*args)
+        if branch == "left":
+            opt_x0 = xm - 1
+        elif branch == "right":
+            opt_x0 = xm + 1
+        else:
+            raise ValueError("Invalid `branch` (should be 'left' or 'right')")
+        mask = (
+            (p > 0) & (p < self._amplitude(*args) * (1 + 1e-5))
+        )
+        p_masked = p[mask]
+        x = np.full_like(p, np.nan)
+        if len(p_masked) == 0:
+            self.LOGGER.error("`_ipdf`: Invalid probability densities given")
+            if x.ndim == 0:
+                return float(x)
+            else:
+                return x
+
+        # Find solutions to inverse PDF
+        def root_func(x):
+            return p_masked - self._pdf(x, *args)
+        opt_x0 = np.full_like(p_masked, opt_x0)
+        res = scipy.optimize.root(root_func, opt_x0, tol=tol)
+        x[mask] = res.x
+        # Check results
+        if np.any(np.isnan(x)):
+            self.LOGGER.error("`_ipdf`: Invalid probability densities given")
+        elif not res.success:
+            self.LOGGER.warning(f"`_ipdf` optimization: {res.message}")
+        if x.ndim == 0:
+            return float(x)
+        else:
+            return x
+
+    def _mode(self, *args):
+        res = scipy.optimize.minimize(-self._pdf, self._mean(*args), args=args)
+        return res.x
+
+    def _amplitude(self, *args):
+        return self._pdf(self._mode(*args), *args)
+
+    def ipdf(self, p, *args, branch="left", tol=None, **kwds):
+        """
+        Mode of the given RV, i.e., the maximum location of the PDF.
+
+        Parameters
+        ----------
+        p : `Array`
+            Probability density.
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+        loc : `Array`, optional
+            location parameter (default=0)
+        scale : `Array`, optional
+            scale parameter (default=1)
+        branch : `str`
+            Which branch of the PDF to select.
+            Options for unimodal distributions: `"left", "right"`.
+
+        Returns
+        -------
+        ipdf : `Array`
+            Inverse of the probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        try:
+            ipdf = self._ipdf(p * scale, *args, branch=branch, tol=tol)
+        except TypeError:
+            ipdf = self._ipdf(p * scale, *args, branch=branch)
+        return loc + scale * ipdf
+
+    def mode(self, *args, **kwds):
+        """
+        Mode of the given RV, i.e., the maximum location of the PDF.
+
+        Parameters
+        ----------
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+        loc : `Array`, optional
+            location parameter (default=0)
+        scale : `Array`, optional
+            scale parameter (default=1)
+
+        Returns
+        -------
+        mode : `float`
+            Mode of probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        return loc + scale * self._mode(*args)
+
+    def amplitude(self, *args, **kwds):
+        """
+        Amplitude of the given RV, i.e., the maximum value of the PDF.
+
+        Parameters
+        ----------
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+
+        Returns
+        -------
+        amplitude : `float`
+            Amplitude of probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        return self._amplitude(*args) / scale
+
+    def freeze(self, *args, **kwds):
+        return RvContinuousFrozen(self, *args, **kwds)
+
+    def variance(self, *args, **kwargs):
+        return self.var(*args, **kwargs)
+
+    def skewness(self, *args, **kwargs):
+        return float(self.stats(*args, moments="s", **kwargs))
+
+    def kurtosis(self, *args, **kwargs):
+        return float(self.stats(*args, moments="k", **kwargs))
+
+    def separation_loc(
+        self, distr_l=None, distr_r=None, amp_l=1, amp_r=1,
+        args_l=tuple(), args_r=tuple(), kwargs_l={}, kwargs_r={}
+    ):
+        """
+        Gets the position of best separation between two distributions.
+
+        Parameters
+        ----------
+        distr_l, distr_r : `RvContinuous` or `RvContinuousFrozen` or `None`
+            (Left, right) distribution. If `None`, uses the current object.
+            If `RvContinuousFrozen`, overwrites `arg` and `kwarg`.
+        amp_l, amp_r : `float`
+            (Relative) amplitudes of the distributions.
+            Used if one distribution contains "more" probability than another.
+        args_l, args_r : `tuple(float)`
+            Distribution arguments (left, right).
+        kwargs_l, kwargs_r : `dict(str->Any)`
+            Distribution keyword arguments (left, right).
+
+        Returns
+        -------
+        xs : `float`
+            Separation position.
+        ql, qr : `float`
+            Quantile of the (left, right) distribution on the "wrong" side.
+        """
+        # Parse parameters
+        if distr_l is None:
+            distr_l = self
+        if distr_r is None:
+            distr_r = self
+        if np.isscalar(args_l):
+            args_l = (args_l,)
+        if np.isscalar(args_r):
+            args_r = (args_r,)
+        if not isinstance(distr_l, rv_continuous_frozen):
+            distr_l = distr_l(*args_l, **kwargs_l)
+        if not isinstance(distr_r, rv_continuous_frozen):
+            distr_r = distr_r(*args_r, **kwargs_r)
+        # Minimize overlap
+        return self.separation_loc_multi(
+            [distr_l], [distr_r], amp_l=amp_l, amp_r=amp_r
+        )
+
+    @staticmethod
+    def separation_loc_multi(distrs_l, distrs_r, amp_l=1, amp_r=1):
+        """
+        Gets the position of best separation between two distributions.
+
+        Parameters
+        ----------
+        distr_l, distr_r : `RvContinuous` or `RvContinuousFrozen` or `None`
+            (Left, right) distribution. If `None`, uses the current object.
+            If `RvContinuousFrozen`, overwrites `arg` and `kwarg`.
+        amp_l, amp_r : `float`
+            (Relative) amplitudes of the distributions.
+            Used if one distribution contains "more" probability than another.
+        args_l, args_r : `tuple(float)`
+            Distribution arguments (left, right).
+        kwargs_l, kwargs_r : `dict(str->Any)`
+            Distribution keyword arguments (left, right).
+
+        Returns
+        -------
+        xs : `float`
+            Separation position.
+        ql, qr : `float`
+            Quantile of the (left, right) distribution on the "wrong" side.
+        """
+        # Parse parameters
+        try:
+            distrs_l = list(distrs_l)
+        except TypeError:
+            distrs_l = [distrs_l]
+        try:
+            distrs_r = list(distrs_r)
+        except TypeError:
+            distrs_r = [distrs_r]
+        for distr in misc.flatten_nested_list([distrs_l, distrs_r]):
+            if not isinstance(distr, rv_continuous_frozen):
+                raise ValueError("Distributions must be frozen")
+        if np.isscalar(amp_l):
+            amp_l = np.full(len(distrs_l), amp_l, dtype=float)
+        if np.isscalar(amp_r):
+            amp_r = np.full(len(distrs_r), amp_r, dtype=float)
+        rel_amp_l, rel_amp_r = amp_l / np.sum(amp_l), amp_r / np.sum(amp_r)
+        # Check if left/right distributions need to be swapped
+        medians_l = [distr.median() for distr in distrs_l]
+        medians_r = [distr.median() for distr in distrs_r]
+        median_l = np.sum(np.array(medians_l) * rel_amp_l)
+        median_r = np.sum(np.array(medians_r) * rel_amp_r)
+        if median_l > median_r:
+            RvContinuous.LOGGER.warning(
+                "separation_loc_multi: flipped distribution order"
+            )
+            distrs_l, distrs_r = distrs_r, distrs_l
+            median_l, median_r = median_r, median_l
+
+        # Minimal overlap condition: equal weights across separation line `xs`
+        def root_func(x):
+            q_l = np.sum([
+                amp * distr.sf(x) for amp, distr in zip(amp_l, distrs_l)
+            ])
+            q_r = np.sum([
+                amp * distr.cdf(x) for amp, distr in zip(amp_r, distrs_r)
+            ])
+            return q_l - q_r
+        # Minimize overlap
+        bracket = [median_l, median_r]
+        res = scipy.optimize.root_scalar(root_func, bracket=bracket)
+        xs = res.root
+        if not res.converged:
+            RvContinuous.LOGGER.warning(
+                "`separation_loc_multi` did not converge"
+            )
+        ql = np.sum([
+            p * distr.sf(xs) for p, distr in zip(rel_amp_l, distrs_l)
+        ])
+        qr = np.sum([
+            p * distr.cdf(xs) for p, distr in zip(rel_amp_r, distrs_r)
+        ])
+        return xs, ql, qr
