@@ -5,8 +5,8 @@ import numpy as np
 
 
 def minimize_discrete_stepwise(
-    fun, x0, args=(), dx=1, bounds=None,
-    maxiter=10000, results_cache=None
+    fun, x0, args=(), kwargs={}, dx=1, bounds=None,
+    maxiter=10000, results_cache=None, ret_cache=False
 ):
     """
     Minimizes a discrete function by nearest neighbour descent.
@@ -20,6 +20,8 @@ def minimize_discrete_stepwise(
         Initial guess for solution.
     args : `tuple(Any)`
         Additional function arguments.
+    kwargs : `dict(str->Any)`
+        Function keywword arguments.
     dx : `Array[1]` or `Scalar`
         Discrete steps along each dimension.
         If scalar, applies given step to all dimensions.
@@ -27,11 +29,15 @@ def minimize_discrete_stepwise(
         Maximum number of optimization steps.
     results_cache : `dict` or `None`
         Dictionary of pre-calculated results.
+    ret_cache : `bool`
+        Whether to return the `results_cache`.
 
     Returns
     -------
     x : `Array[1, float]` or `float`
         Solution. Scalar or vectorial depending on `x0`.
+    results_cache : `dict`
+        Results cache. Only returned if `ret_cache is True`.
     """
     # Parse parameters
     if results_cache is None:
@@ -43,13 +49,14 @@ def minimize_discrete_stepwise(
         x0, dx = [x0], [dx]
     else:
         if np.isscalar(x0):
-            x0 = np.full_like(dx, x0)
+            x0 = np.full_like(dx, x0, dtype=float)
         if np.isscalar(dx):
-            dx = np.full_like(x0, dx)
+            dx = np.full_like(x0, dx, dtype=float)
     if bounds is not None:
         raise NotImplementedError("`bounds` not yet implemented")
     # Initialize optimization variables
-    x, dx = np.array(x0), np.array(dx)               # [ndim]
+    x = np.array(x0, dtype=float)                    # [ndim]
+    dx = np.array(dx, dtype=float)                   # [ndim]
     dx_ar = dx[:, np.newaxis] * np.arange(-1, 2)     # [ndim, 3]
     dx_ar_mg = np.meshgrid(*dx_ar, indexing="ij")    # [ndim, {nsteps}]
     dx_ar_mg = [np.ravel(_dx) for _dx in dx_ar_mg]   # [ndim, nsteps]
@@ -64,7 +71,7 @@ def minimize_discrete_stepwise(
         for idx in range(size):
             key = tuple(x_mg[idx])
             if key not in results_cache:
-                results_cache[key] = fun(x_mg[idx], *args)
+                results_cache[key] = fun(x_mg[idx], *args, **kwargs)
             res_mg[idx] = results_cache[key]
         # Find best step direction
         idx_min = np.argmin(res_mg)
@@ -80,6 +87,19 @@ def minimize_discrete_stepwise(
             f"(`x` = {str(x)})"
         )
     if is_scalar:
-        return x[0]
+        ret = x[0]
     else:
-        return x
+        ret = x
+    if ret_cache:
+        return ret, results_cache
+    else:
+        return ret
+
+
+def maximize_discrete_stepwise(fun, *args, **kwargs):
+    """
+    Analogous to :py:func:`minimize_discrete_stepwise` but maximizing.
+    """
+    def neg_fun(*_args, **_kwargs):
+        return -fun(*_args, **_kwargs)
+    return minimize_discrete_stepwise(neg_fun, *args, **kwargs)
