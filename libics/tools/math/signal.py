@@ -4,6 +4,7 @@ from scipy import ndimage, signal
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData
+from libics.core.io import FileBase
 from libics.core.util import misc
 from libics.tools.math.models import ModelBase, RvContinuous
 from libics.tools.math.peaked import (
@@ -346,7 +347,7 @@ def find_peaks_1d_prominence(
     }
 
 
-class PeakInfo:
+class PeakInfo(FileBase):
 
     """
     Results class for peak analysis.
@@ -372,6 +373,9 @@ class PeakInfo:
     """
 
     LOGGER = logging.get_logger("libics.tools.math.signal.PeakInfo")
+    SER_KEYS = FileBase.SER_KEYS | {
+        "data", "center", "width", "base", "subpeak", "_fit"
+    }
 
     def __init__(
         self, data=None, fit=None, center=None, width=None, base=None,

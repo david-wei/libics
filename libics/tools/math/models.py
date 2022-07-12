@@ -14,6 +14,7 @@ except ImportError:
 from libics.env import logging
 from libics.core.data.arrays import ArrayData, SeriesData
 from libics.core.util import misc
+from libics.core.io import FileBase
 
 
 ###############################################################################
@@ -21,7 +22,7 @@ from libics.core.util import misc
 ###############################################################################
 
 
-class ModelBase(abc.ABC):
+class ModelBase(abc.ABC, FileBase):
 
     """
     Base class for functional models.
@@ -93,6 +94,9 @@ class ModelBase(abc.ABC):
     """
 
     LOGGER = logging.get_logger("libics.math.models.ModelBase")
+    SER_KEYS = FileBase.SER_KEYS | {
+        "_pfit", "_p0", "_popt", "_pcov", "psuccess", "_var_rect"
+    }
 
     # Ordered list of all parameter names
     P_ALL = NotImplemented
