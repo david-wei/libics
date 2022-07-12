@@ -5,7 +5,7 @@ import numpy as np
 
 
 def minimize_discrete_stepwise(
-    fun, x0, args=(), kwargs={}, dx=1, bounds=None,
+    fun, x0, args=(), kwargs={}, dx=1, search_range=1, bounds=None,
     maxiter=10000, results_cache=None, ret_cache=False
 ):
     """
@@ -25,6 +25,10 @@ def minimize_discrete_stepwise(
     dx : `Array[1]` or `Scalar`
         Discrete steps along each dimension.
         If scalar, applies given step to all dimensions.
+    search_range : `int`
+        Number of discrete steps to be evaluated per iteration.
+        E.g. `search_range = 1` means evaluating in the range `[-1, 0, 1]`.
+        Larger `search_range` avoids ending in local optimum but is slower.
     maxiter : `int`
         Maximum number of optimization steps.
     results_cache : `dict` or `None`
@@ -57,7 +61,9 @@ def minimize_discrete_stepwise(
     # Initialize optimization variables
     x = np.array(x0, dtype=float)                    # [ndim]
     dx = np.array(dx, dtype=float)                   # [ndim]
-    dx_ar = dx[:, np.newaxis] * np.arange(-1, 2)     # [ndim, 3]
+    dx_ar = (                                        # [ndim, 3]
+        dx[:, np.newaxis] * np.arange(-search_range, search_range + 1)
+    )
     dx_ar_mg = np.meshgrid(*dx_ar, indexing="ij")    # [ndim, {nsteps}]
     dx_ar_mg = [np.ravel(_dx) for _dx in dx_ar_mg]   # [ndim, nsteps]
     dx_ar_mg = np.transpose(dx_ar_mg)                # [nsteps, ndim]
