@@ -308,6 +308,6 @@ def load_sif_to_arraydata(file_path, ad=None):
     ads = []
     for im in images:
         _ad = copy.deepcopy(ad)
-        _ad.data = im.T
+        _ad.data = np.ascontiguousarray(im.T, dtype=float)
         ads.append(_ad)
     return ads
