@@ -299,6 +299,7 @@ def scatter(*args, marker="O", linestyle="None", **kwargs):
 def pcolormesh(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
+    vmin=None, vmax=None, vdif=None, vcen=None,
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True, cticks=None,
     aspect=None, ax=None, **kwargs
@@ -324,6 +325,11 @@ def pcolormesh(
     xnorm, ynorm, cnorm : `float, ValQuantity`
         Normalization value for plot data.
         If `Quantity`, sets an automatic label.
+    vmin, vmax, vdif, vcen : `float`
+        Defines the color map range.
+        Minimum/maximum are given either directly (`vmin, vmax`)
+        or are deduced from center and range (`vcen, vdif`).
+        If `vdif is True`, the full range is automatically assigned.
     xlabel, ylabel, clabel, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -359,8 +365,17 @@ def pcolormesh(
         y = np.array(y) / ynorm
     if cnorm is not None:
         c = np.array(c) / cnorm
+    if vdif is not None:
+        if vcen is None:
+            vcen = 0
+        if vdif is True:
+            vdif = np.max(np.abs(c - vcen))
+        if vmin is None:
+            vmin = vcen - vdif
+        if vmax is None:
+            vmax = vcen + vdif
     # Perform pcolormesh
-    art = ax.pcolormesh(x, y, c, **kwargs)
+    art = ax.pcolormesh(x, y, c, vmin=vmin, vmax=vmax, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
@@ -400,6 +415,7 @@ def pcolorim(*args, aspect=1, **kwargs):
 def contourf(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
+    vmin=None, vmax=None, vdif=None, vcen=None,
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True,
     aspect=None, ax=None, **kwargs
@@ -425,6 +441,11 @@ def contourf(
     xnorm, ynorm, cnorm : `float, ValQuantity`
         Normalization value for plot data.
         If `Quantity`, sets an automatic label.
+    vmin, vmax, vdif, vcen : `float`
+        Defines the color map range.
+        Minimum/maximum are given either directly (`vmin, vmax`)
+        or are deduced from center and range (`vcen, vdif`).
+        If `vdif is True`, the full range is automatically assigned.
     xlabel, ylabel, clabel, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -458,8 +479,17 @@ def contourf(
         y = np.array(y) / ynorm
     if cnorm is not None:
         c = np.array(c) / cnorm
+    if vdif is not None:
+        if vcen is None:
+            vcen = 0
+        if vdif is True:
+            vdif = np.max(np.abs(c - vcen))
+        if vmin is None:
+            vmin = vcen - vdif
+        if vmax is None:
+            vmax = vcen + vdif
     # Perform contourf
-    art = ax.contourf(x, y, c, **kwargs)
+    art = ax.contourf(x, y, c, vmin=vmin, vmax=vmax, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
