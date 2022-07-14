@@ -825,6 +825,35 @@ def cv_camel_to_snake_case(s, snake_char="_"):
     return s.lower()
 
 
+def cv_iter_to_str(_iter, fmt=None, join=", ", prefix="[", suffix="]"):
+    """
+    Converts an iterable to a single string.
+
+    Parameters
+    ----------
+    _iter : `Iter[Any]`
+        Iterable to be converted.
+    fmt : `str` or `None`
+        Formatter string, e.g.: `"{:.2f}", "{:03d}", "{:4.3e}"`.
+        If `None`, the items in `_iter` are converted by `str()`.
+    join : `str`
+        Characters used to join the items.
+    prefix, suffix : `str`
+        Prefix/suffix prepended/appended to the joined string.
+
+    Returns
+    -------
+    s : `str`
+        Converted string.
+    """
+    if fmt is None:
+        s = [str(i) for i in _iter]
+    else:
+        s = [fmt.format(i) for i in _iter]
+    s = prefix + join.join(s) + suffix
+    return s
+
+
 def char_range(start, stop=None, step=1):
     """
     Yield an alphabetic range of lowercase letters.
