@@ -39,6 +39,10 @@ class AffineTrafo(FileBase, AttrHashBase):
         self.matrix = matrix
         self.offset = offset
 
+    def copy(self):
+        attrs = self.attributes()
+        return self.__class__(**{k: v.copy() for k, v in attrs.items()})
+
     @property
     def matrix_to_target(self):
         return self.matrix
