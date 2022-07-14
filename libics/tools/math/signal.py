@@ -281,6 +281,8 @@ def find_peaks_1d_prominence(
                 ar = np.concatenate([[-np.inf], ar])
         else:
             ar = np.concatenate([ar, [-np.inf]])
+    else:
+        edge_peaks = False
     _peaks, _props = signal.find_peaks(ar, prominence=0)
     # Sort peaks by prominence
     _order = np.flip(np.argsort(_props["prominences"]))
