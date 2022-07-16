@@ -256,6 +256,34 @@ def assume_endswith(string, suffix):
     return string
 
 
+def assume_startswith(string, prefix):
+    """
+    Asserts that the passed `string` starts with with `prefix`. If it does not,
+    the prefix is prepended. The assumed result is returned.
+
+    Parameters
+    ----------
+    string : `str`
+        String to be checked.
+    prefix : `str`
+        Assumed start of string.
+
+    Returns
+    -------
+    string : `str`
+        String with assumed beginning.
+
+    Raises
+    ------
+    AssertionError
+        If the parameters are invalid.
+    """
+    assert(type(string) == str and type(prefix) == str)
+    if not string.startswith(prefix):
+        string = prefix + string
+    return string
+
+
 def assume_dir(path):
     """
     Asserts that the given path directory exists. If not, the path will be
