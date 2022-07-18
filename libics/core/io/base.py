@@ -212,7 +212,7 @@ class ObjEncoder(object):
             return d
 
     @classmethod
-    def encode(cls, obj):
+    def encode(cls, obj, opt=None):
         """
         Encodes an object into a serializable format.
 
@@ -233,6 +233,8 @@ class ObjEncoder(object):
             "date": now.strftime("%Y-%m-%d"),
             "time": now.strftime("%H:%M:%S"),
         }
+        if opt:
+            ser["__meta__"]["parameters"] = opt
         ser["__data__"] = cls.serialize(obj)
         return ser
 
@@ -471,7 +473,7 @@ def _register_save_fmt(fmt, func):
 
 
 def save(
-    file_path, obj, enc=ObjEncoder, fmt=None, **kwargs
+    file_path, obj, enc=ObjEncoder, fmt=None, opt=None, **kwargs
 ):
     """
     Serializes and saves an object to file.
@@ -490,6 +492,7 @@ def save(
         Keyword arguments passed to the respective write functions.
     """
     fmt = get_file_format(file_path, fmt=fmt)
+    ser = enc.encode(obj,opt=opt)
     # Registered fmt
     for k, v in _SAVER_FUNC.items():
         if k in fmt:
@@ -634,7 +637,7 @@ class FileBase(object):
 
     SER_KEYS = set()
 
-    def save(self, file_path, **kwargs):
+    def save(self, file_path,opt=None, **kwargs):
         """
         Wrapper for :py:func:`save` function.
 
