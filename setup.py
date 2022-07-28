@@ -31,7 +31,7 @@ setup(name='libics',
       },
       install_requires=[
             'colorsys', 'matplotlib', 'numpy', 'pandas', 'Pillow',
-            'scipy', 'xxhash'
+            'scipy', 'xxhash', 'colorama'
       ],
       extras_require={
             'bson': ['pymongo']
