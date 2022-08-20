@@ -34,7 +34,7 @@ setup(name='libics',
             'scipy', 'xxhash', 'colorama'
       ],
       extras_require={
-            'bson': ['pymongo']
+            'bson': ['pymongo'], 'db': ['pika', 'influxdb-client']
       },
       python_requires='>=3.6',
       dependency_links=[
