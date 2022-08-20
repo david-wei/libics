@@ -5,6 +5,8 @@ import os
 import pika
 import random
 import string
+import time
+import uuid
 
 from libics.env import logging, DIR_LIBICS
 from libics.core import io
@@ -174,7 +176,7 @@ class AmqpConnection:
 ###############################################################################
 
 
-def api_method(reply=False):
+def api_method(reply=False, timeout=1):
     """
     Decorator registering a method as API method.
 
@@ -182,6 +184,8 @@ def api_method(reply=False):
     ----------
     ret : `bool`
         Whether to expect a reply value.
+    timeout : `float`
+        API reply timeout in seconds (s).
     """
     class api_func_generator:
 
@@ -193,6 +197,7 @@ def api_method(reply=False):
             owner.API_METHODS.add(name)
             if reply:
                 owner.API_REPLIES.add(name)
+                owner.API_TIMEOUTS["name"] = timeout
             setattr(owner, name, self.func)
     return api_func_generator
 
@@ -229,8 +234,9 @@ class AmqpApiBase:
     API_ID = "TEST"
     API_SUB_ID = "default"
     API_VERSION = "0.0.0"
-    API_METHODS = set()
-    API_REPLIES = set()
+    API_METHODS = set()    # set(str): Names of API methods
+    API_REPLIES = set()    # set(str): Names of API methods requiring reply
+    API_TIMEOUTS = dict()  # dict(str->float): Timeout in seconds (s)
 
     def __init__(self, instance_id="default", _random_id=None):
         self.instance_id = instance_id
@@ -270,9 +276,13 @@ class AmqpApiBase:
         )
 
     @api_method(reply=True)
+    def ping(self, *args, **kwargs):
+        return args, kwargs
+
+    @api_method(reply=True)
     def get_api_methods(self):
         """Gets a list of all API method names."""
-        return self.API_METHODS
+        return list(self.API_METHODS)
 
 
 class AmqpRpcBase:
@@ -327,9 +337,12 @@ class AmqpRpcBase:
         """Sets up the AMQP connection object."""
         self._amqp_conn = AmqpConnection(blocking=blocking, **kwargs)
 
-    def setup_api(self, *args, **kwargs):
+    def setup_api(self, *args, api_object=None, **kwargs):
         """Sets up the API object."""
-        self._api = self.API(*args, **kwargs)
+        if api_object is not None:
+            self._api = api_object
+        else:
+            self._api = self.API(*args, **kwargs)
 
     def connect_amqp(self):
         """Establishes an AMQP connection."""
@@ -344,7 +357,7 @@ class AmqpRpcBase:
         return getattr(self._api, name)
 
     @classmethod
-    def serialize(cls, func_id, *args, **kwargs):
+    def serialize_request(cls, func_id, *args, **kwargs):
         _meta = {
             "__rpc_version": cls.RPC_VERSION,
             "__api_version": cls.API.API_VERSION
@@ -359,7 +372,7 @@ class AmqpRpcBase:
         return _msg
 
     @classmethod
-    def deserialize(cls, _msg):
+    def deserialize_request(cls, _msg):
         try:
             _d = json.loads(_msg)
             func_id = _d["func_id"]
@@ -378,10 +391,38 @@ class AmqpRpcBase:
             raise RuntimeError(f"invalid RPC format: {str(_msg)}")
         return func_id, func_args, func_kwargs
 
+    @classmethod
+    def serialize_reply(cls, *args, err=False):
+        _d = {"reply": args}
+        if err:
+            _d["error"] = str(err)
+        try:
+            _msg = json.dumps(_d)
+        except TypeError as e:
+            _msg = json.dumps({"error": f"ENCODING_ERROR: {str(e)}"})
+        return _msg
+
+    @classmethod
+    def deserialize_reply(cls, _msg):
+        try:
+            _d = json.loads(_msg)
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError(f"invalid reply: {str(_msg)}")
+        if "error" in _d:
+            raise RuntimeError(f"remote error: {str(_d['error'])}")
+        try:
+            ret = _d["reply"]
+            if len(ret) == 1:
+                ret = ret[0]
+        except (KeyError, TypeError):
+            raise RuntimeError(f"invalid RPC reply format: {_msg}")
+        return ret
+
     def local_dispatcher(self, channel, method, properties, body):
         """Local dispatcher used by RPC server."""
+        # Process message
         try:
-            func_id, func_args, func_kwargs = self.deserialize(body)
+            func_id, func_args, func_kwargs = self.deserialize_request(body)
             try:
                 func = getattr(self._api, func_id)
             except AttributeError:
@@ -392,25 +433,83 @@ class AmqpRpcBase:
             self.LOGGER.error(f"local dispatch error: {str(e)}")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
+        # Execute function
         try:
-            _ = func(*func_args, **func_kwargs)
+            ret = func(*func_args, **func_kwargs)
             channel.basic_ack(delivery_tag=method.delivery_tag)
-            # TODO: handle return, e.g. perform RPC callback etc.
+            func_err = None
         except (RuntimeError, TypeError) as e:
             self.LOGGER.error(
                 f"error executing local method `{func_id}`: {str(e)}"
             )
             channel.basic_ack(delivery_tag=method.delivery_tag)
-            return
+            ret = None
+            func_err = f"FUNCTION_ERROR: {str(e)}"
+        # Reply
+        if properties.reply_to:
+            _msg = self.serialize_reply(ret, err=func_err)
+            channel.basic_publish(
+                self.get_exchange_id(),
+                properties.reply_to,
+                _msg
+            )
+        elif func_id in self._api.API_REPLIES:
+            self.LOGGER.warning(
+                f"no reply queue received for func_id: `{func_id}`"
+            )
 
     def remote_dispatcher(self, func_id, *args, **kwargs):
         """Remote dispatcher used by RPC client."""
-        _msg = self.serialize(func_id, *args, **kwargs)
+        # Create JSON message
+        _msg = self.serialize_request(func_id, *args, **kwargs)
         self.LOGGER.debug(f"remote_dispatcher: {_msg}")
-        self._amqp_conn.basic_publish(
-            self.get_exchange_id(), self.get_routing_key(), _msg
-        )
-        # TODO: handle callback
+        # If request only
+        if func_id not in self._api.API_REPLIES:
+            self._amqp_conn.basic_publish(
+                self.get_exchange_id(), self.get_routing_key(), _msg
+            )
+        # If request and reply
+        else:
+            _cor_id = str(uuid.uuid4())
+            _reply_queue = self._amqp_conn.queue_declare(
+                "", exclusive=True
+            )
+            self._amqp_conn.queue_bind(
+                _reply_queue.method.queue,
+                self.get_exchange_id()
+            )
+            _props = pika.BasicProperties(
+                reply_to=_reply_queue.method.queue,
+                correlation_id=_cor_id
+            )
+            # Sent request
+            self._amqp_conn.basic_publish(
+                self.get_exchange_id(), self.get_routing_key(), _msg,
+                properties=_props
+            )
+            # Wait for reply
+            _timeout = 1
+            if func_id in self._api.API_TIMEOUTS:
+                _timeout = self._api.API_TIMEOUTS[func_id]
+            _sleep_time = min(0.1, _timeout / 50)
+            _start_time = time.time()
+            while time.time() - _start_time < _timeout:
+                r_method, r_props, r_body = self._amqp_conn.basic_get(
+                    _reply_queue.method.queue
+                )
+                if r_method is not None:
+                    self._amqp_conn.basic_ack(r_method.delivery_tag)
+                    self._amqp_conn.queue_delete(_reply_queue.method.queue)
+                    return self.deserialize_reply(r_body)
+                time.sleep(_sleep_time)
+            self._amqp_conn.queue_delete(_reply_queue.method.queue)
+            raise RuntimeError(f"reply timeout for func_id: `{func_id}`")
+
+
+def _remote_method_factory(name):
+    def _remote_method(obj, *args, **kwargs):
+        return obj.remote_dispatcher(name, *args, **kwargs)
+    return _remote_method
 
 
 class AmqpRpcFactory:
@@ -487,9 +586,8 @@ class AmqpRpcFactory:
                 )
 
         # Create RPC methods
-        for func_id in Api.API_METHODS:
-            def _remote_method(self, *args, **kwargs):
-                return self.remote_dispatcher(func_id, *args, **kwargs)
+        for func_id in list(Api.API_METHODS):
+            _remote_method = _remote_method_factory(func_id)
             _remote_method.__doc__ = getattr(Api, func_id).__doc__
             setattr(AmqpRpcClient, func_id, _remote_method)
         # Set docs
@@ -562,15 +660,19 @@ if __name__ == "__main__":
     # Test client code
     else:
         test_client = TestClient()
-        test_client.LOGGER.setLevel(logging.DEBUG)
+        # test_client.LOGGER.setLevel(logging.DEBUG)
         print("Setting up...")
         test_client.setup_api()
         test_client.setup_amqp(**test_conn_param)
         print("Connecting...")
         test_client.connect_amqp()
-        print("Calling `test_server`")
-        test_client.test_server()
+        print("Calling `ping()`")
+        print("Return:", test_client.ping())
+        print("Calling `test_server()`")
+        print("Return:", test_client.test_server())
         print("Calling `test_server(123, 456, asdf='ghjk')`")
-        test_client.test_server(123, 456, asdf="ghjk")
+        print("Return:", test_client.test_server(123, 456, asdf="ghjk"))
+        print("Calling `get_api_methods()`")
+        print("Return:", test_client.get_api_methods())
         print("Closing...")
         test_client.close_amqp()
