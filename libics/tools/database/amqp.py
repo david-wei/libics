@@ -6,7 +6,7 @@ import pika
 import random
 import string
 import time
-from typing import List
+from typing import Any, List
 import uuid
 
 from libics.env import logging, DIR_LIBICS
@@ -278,10 +278,12 @@ class AmqpApiBase:
 
     @api_method(reply=True)
     def ping(self) -> bool:
+        """Returns `True`."""
         return True
 
     @api_method(reply=True)
-    def ping_args(self, *args, **kwargs):
+    def ping_args(self, *args, **kwargs) -> Any:
+        """Returns any passed parameters."""
         if len(args) == 0:
             if len(kwargs) == 0:
                 return
@@ -293,9 +295,16 @@ class AmqpApiBase:
             return args
 
     @api_method(reply=True)
-    def get_api_methods(self) -> List[str]:
+    def get_api(self) -> List[str]:
         """Gets a list of all API method names."""
         return list(self.API_METHODS)
+
+    @api_method(reply=True)
+    def help(self, func_id: str) -> str:
+        """Gets the docstring of the API method."""
+        doc = getattr(self, func_id).__doc__
+        doc = "" if doc is None else doc
+        return doc
 
 
 class AmqpRpcBase:
@@ -393,7 +402,6 @@ class AmqpRpcBase:
                 func_kwargs = dict(_d["func_kwargs"])
             else:
                 func_kwargs = {}
-            # TODO: handle callback
         except (json.decoder.JSONDecodeError, TypeError):
             raise RuntimeError(f"invalid JSON message: {str(_msg)}")
         except KeyError:
@@ -705,7 +713,9 @@ if __name__ == "__main__":
         print("Return:", test_client.test_server())
         print("Calling `test_server(123, 456, asdf='ghjk')`")
         print("Return:", test_client.test_server(123, 456, asdf="ghjk"))
-        print("Calling `get_api_methods()`")
-        print("Return:", test_client.get_api_methods())
+        print("Calling `get_api()`")
+        print("Return:", test_client.get_api())
+        print("Calling `help('ping_args')`")
+        print("Return:", test_client.help("ping_args"))
         print("Closing...")
         test_client.close_amqp()
