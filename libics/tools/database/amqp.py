@@ -6,6 +6,7 @@ import pika
 import random
 import string
 import time
+from typing import List
 import uuid
 
 from libics.env import logging, DIR_LIBICS
@@ -276,11 +277,23 @@ class AmqpApiBase:
         )
 
     @api_method(reply=True)
-    def ping(self, *args, **kwargs):
-        return args, kwargs
+    def ping(self) -> bool:
+        return True
 
     @api_method(reply=True)
-    def get_api_methods(self):
+    def ping_args(self, *args, **kwargs):
+        if len(args) == 0:
+            if len(kwargs) == 0:
+                return
+            else:
+                return kwargs
+        elif len(args) == 1:
+            return args[0]
+        else:
+            return args
+
+    @api_method(reply=True)
+    def get_api_methods(self) -> List[str]:
         """Gets a list of all API method names."""
         return list(self.API_METHODS)
 
@@ -317,10 +330,6 @@ class AmqpRpcBase:
         ],
         "func_kwargs": {
             "kw0": kwarg0, "kw1": kwarg1, ...
-        },
-        "callback": {
-            "queue": "callback_queue",
-            "func_id": "callback_func_id"
         }
     }
     ```
@@ -526,7 +535,12 @@ class AmqpRpcFactory:
     """
 
     @classmethod
-    def make_rpc_server(cls, Api, cls_name):
+    def make_rpc_server(cls, Api: AmqpRpcBase, cls_name: str):
+        """
+        Creates an AMQP RPC server class.
+
+        Accepts API method calls via an AMQP broker from a remote client.
+        """
         # Subclass RPC base class
         class AmqpRpcServer(AmqpRpcBase):
             LOGGER = logging.get_logger(
@@ -571,7 +585,12 @@ class AmqpRpcFactory:
         return AmqpRpcServer
 
     @classmethod
-    def make_rpc_client(cls, Api, cls_name):
+    def make_rpc_client(cls, Api: AmqpRpcBase, cls_name: str):
+        """
+        Creates an AMQP RPC client class.
+
+        API method calls are sent via an AMQP broker to a remote server.
+        """
         # Subclass RPC base class
         class AmqpRpcClient(AmqpRpcBase):
             LOGGER = logging.get_logger(
@@ -596,6 +615,20 @@ class AmqpRpcFactory:
         if Api.__doc__:
             AmqpRpcClient.__doc__ += "\n\n" + Api.__doc__
         return AmqpRpcClient
+
+    @classmethod
+    def make_c_client(cls, Api: AmqpRpcBase, cls_name: str):
+        """
+        Creates a header-only C client for the given API.
+
+        Note that all API functions must have type hints.
+
+        Returns
+        -------
+        c_code : `str`
+            C client header file contents.
+        """
+        raise NotImplementedError
 
 
 ###############################################################################
