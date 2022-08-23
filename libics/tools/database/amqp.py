@@ -91,7 +91,7 @@ class AmqpConnection:
             val, pika.PlainCredentials
         )
 
-    def get_url(self):
+    def get_url(self, connect_status=True):
         if self.host is None:
             self.LOGGER.error("get_url failed because no host was set")
             return "ERR_NO_HOST"
@@ -100,6 +100,9 @@ class AmqpConnection:
             s = s + f":{self.port:d}"
         if self.credentials is not None:
             s = self.credentials.username + "@" + s
+        if connect_status:
+            c = f" [{'connected' if self.is_connected() else 'disconnected'}]"
+            s += c
         return s
 
     def __str__(self):
@@ -372,9 +375,24 @@ class AmqpRpcBase:
         self._api = None
         self._amqp_conn = None
 
-    def setup_amqp(self, blocking=True, **kwargs):
-        """Sets up the AMQP connection object."""
-        self._amqp_conn = AmqpConnection(blocking=blocking, **kwargs)
+    def setup_amqp(self, amqp_connection=None, blocking=True, **kwargs):
+        """
+        Sets up the AMQP connection object.
+        
+        If passing an `amqp_connection`, a separate connection with its
+        parameters is created and is overwritten by `kwargs`.
+        """
+        _kwargs = {}
+        if amqp_connection is not None:
+            _kwargs["host"] = amqp_connection.host
+            _kwargs["port"] = amqp_connection.port
+            if amqp_connection.credentials:
+                _kwargs["credentials"] = {
+                    "username": amqp_connection.credentials.username,
+                    "password": amqp_connection.credentials.password
+                }
+        _kwargs.update(kwargs)
+        self._amqp_conn = AmqpConnection(blocking=blocking, **_kwargs)
 
     def setup_api(self, *args, api_object=None, **kwargs):
         """Sets up the API object."""
