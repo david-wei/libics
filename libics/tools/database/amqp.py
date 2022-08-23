@@ -91,6 +91,26 @@ class AmqpConnection:
             val, pika.PlainCredentials
         )
 
+    def get_url(self):
+        if self.host is None:
+            self.LOGGER.error("get_url failed because no host was set")
+            return "ERR_NO_HOST"
+        s = f"amqp://{self.host}"
+        if self.port is not None:
+            s = s + f":{self.port:d}"
+        if self.credentials is not None:
+            s = self.credentials.username + "@" + s
+        return s
+
+    def __str__(self):
+        return f"AmqpConnection({self.get_url()})"
+
+    def __repr__(self):
+        return (
+            f"<'{self.__class__.__name__}' at {hex(id(self))}> "
+            + self.get_url()
+        )
+
     def handle_error(self, *_, err_raise=logging.ERROR, err_msg=""):
         if isinstance(err_raise, Exception):
             raise err_raise(err_msg)
