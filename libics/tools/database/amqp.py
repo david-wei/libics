@@ -52,7 +52,7 @@ class AmqpConnection:
     def __init__(self, config=None, **kwargs):
         # Parameters
         self.host = "localhost"
-        self.port = 15672
+        self.port = 5672
         self.credentials = None
         self.blocking = False
         # Parse parameters
@@ -195,10 +195,11 @@ def api_method(reply=False, timeout=1):
 
         # Called after owner (class of method) creation
         def __set_name__(self, owner, name):
-            owner.API_METHODS.add(name)
+            owner.API_METHODS = owner.API_METHODS | {name}
             if reply:
-                owner.API_REPLIES.add(name)
-                owner.API_TIMEOUTS["name"] = timeout
+                owner.API_REPLIES = owner.API_REPLIES | {name}
+                owner.API_TIMEOUTS = owner.API_TIMEOUTS.copy()
+                owner.API_TIMEOUTS[name] = timeout
             setattr(owner, name, self.func)
     return api_func_generator
 
