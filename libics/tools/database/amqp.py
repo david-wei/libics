@@ -1,6 +1,5 @@
 import collections
 import json
-import numpy as np
 import os
 import pika
 import random
@@ -19,6 +18,7 @@ from libics.core.util import misc, path
 
 class AmqpRemoteError(RuntimeError):
     pass
+
 
 class AmqpReplyTimeoutError(RuntimeError):
     pass
@@ -86,7 +86,6 @@ class AmqpConnection:
         self._connection = None
         self._channel = None
         self._queues = []
-        self._is_connected = False
         self._is_running = False
 
     @property
@@ -156,7 +155,6 @@ class AmqpConnection:
 
     def _connect_channel(self, *_, callback=None, **__):
         self._channel = self._connection.channel()
-        self._is_connected = True
         if callback is not None:
             callback(self.is_connected())
 
@@ -165,17 +163,17 @@ class AmqpConnection:
         if self.is_connected():
             self._connection.close()
             self.join()
-        self._is_connected = False
         self._channel = None
         self._connection = None
 
     def is_connected(self):
         """Returns whether the AMQP connection is established."""
-        return np.all([
-            self._is_connected,
-            self._channel is not None,
-            self._connection is not None
-        ])
+        is_connected = (
+            self._channel is not None
+            and self._connection is not None
+            and self._connection.is_open
+        )
+        return is_connected
 
     def run(self):
         """Starts the AMQP I/O loop."""
@@ -389,7 +387,7 @@ class AmqpRpcBase:
     def setup_amqp(self, amqp_connection=None, blocking=True, **kwargs):
         """
         Sets up the AMQP connection object.
-        
+
         If passing an `amqp_connection`, a separate connection with its
         parameters is created and is overwritten by `kwargs`.
         """
