@@ -17,6 +17,16 @@ from libics.core.util import misc, path
 ###############################################################################
 
 
+class AmqpRemoteError(RuntimeError):
+    pass
+
+class AmqpReplyTimeoutError(RuntimeError):
+    pass
+
+
+###############################################################################
+
+
 class AmqpConnection:
 
     """
@@ -287,6 +297,7 @@ class AmqpApiBase:
 
     def _get_str(self):
         return (
+            f" → API ID: {self.API_ID}.{self.API_SUB_ID}\n"
             f" → API version: {self.API_VERSION}\n"
             f" → API methods: {str(self.API_METHODS)}\n"
         )
@@ -465,7 +476,7 @@ class AmqpRpcBase:
         except json.decoder.JSONDecodeError:
             raise RuntimeError(f"invalid reply: {str(_msg)}")
         if "error" in _d:
-            raise RuntimeError(f"remote error: {str(_d['error'])}")
+            raise AmqpRemoteError(str(_d['error']))
         try:
             ret = _d["reply"]
             if len(ret) == 1:
@@ -494,13 +505,16 @@ class AmqpRpcBase:
             ret = func(*func_args, **func_kwargs)
             channel.basic_ack(delivery_tag=method.delivery_tag)
             func_err = None
-        except (RuntimeError, TypeError) as e:
+        except (RuntimeError, TypeError, ValueError) as e:
             self.LOGGER.error(
                 f"error executing local method `{func_id}`: {str(e)}"
             )
             channel.basic_ack(delivery_tag=method.delivery_tag)
             ret = None
             func_err = f"FUNCTION_ERROR: {str(e)}"
+            # DEBUG
+            import traceback
+            traceback.print_exc()
         # Reply
         if properties.reply_to:
             _msg = self.serialize_reply(ret, err=func_err)
@@ -521,15 +535,29 @@ class AmqpRpcBase:
         self.LOGGER.debug(f"remote_dispatcher: {_msg}")
         # If request only
         if func_id not in self._api.API_REPLIES:
-            self._amqp_conn.basic_publish(
-                self.get_exchange_id(), self.get_routing_key(), _msg
-            )
+            try:
+                self._amqp_conn.basic_publish(
+                    self.get_exchange_id(), self.get_routing_key(), _msg
+                )
+            except pika.exceptions.StreamLostError:
+                self.LOGGER.warning("Lost AMQP connection, reconnecting")
+                self.connect_amqp()
+                self._amqp_conn.basic_publish(
+                    self.get_exchange_id(), self.get_routing_key(), _msg
+                )
         # If request and reply
         else:
             _cor_id = str(uuid.uuid4())
-            _reply_queue = self._amqp_conn.queue_declare(
-                "", exclusive=True
-            )
+            try:
+                _reply_queue = self._amqp_conn.queue_declare(
+                    "", exclusive=True
+                )
+            except pika.exceptions.StreamLostError:
+                self.LOGGER.warning("Lost AMQP connection, reconnecting")
+                self.connect_amqp()
+                _reply_queue = self._amqp_conn.queue_declare(
+                    "", exclusive=True
+                )
             self._amqp_conn.queue_bind(
                 _reply_queue.method.queue,
                 self.get_exchange_id()
@@ -559,7 +587,7 @@ class AmqpRpcBase:
                     return self.deserialize_reply(r_body)
                 time.sleep(_sleep_time)
             self._amqp_conn.queue_delete(_reply_queue.method.queue)
-            raise RuntimeError(f"reply timeout for func_id: `{func_id}`")
+            raise AmqpReplyTimeoutError(f"func_id: `{func_id}`")
 
 
 def _remote_method_factory(name):
