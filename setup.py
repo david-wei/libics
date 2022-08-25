@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from .libics.env import __version__
+__version__ = "1.1a"
 
 
 def readme():
@@ -30,7 +30,7 @@ setup(name='libics',
             'gui_scripts': []
       },
       install_requires=[
-            'colorsys', 'matplotlib', 'numpy', 'pandas', 'Pillow',
+            'matplotlib', 'numpy', 'pandas', 'Pillow',
             'scipy', 'xxhash', 'colorama'
       ],
       extras_require={
