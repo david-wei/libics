@@ -67,11 +67,33 @@ class ArrayData(AttrHashBase):
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
     # Maps constructor argument type to function
-    _CONSTRUCTOR_MAP = [
+    _CONSTRUCTOR_MAP = {
         # For future class extension, use the format
-        # (object_type, "name_of_constructor_method")
-        # e.g.: (np.ndarray, "from_array")
-    ]
+        # object_type->"name_of_constructor_method"
+        # e.g.: _CONSTRUCTOR_MAP[np.ndarray] = "from_array"
+    }
+
+    @classmethod
+    def REGISTER_CONSTRUCTOR(cls, obj_cls, func, func_name=None):
+        """
+        Registers a constructor method.
+
+        Parameters
+        ----------
+        obj_cls : `class`
+            Class of objects to use the given constructor.
+        func : `callable`
+            Constructor function.
+        """
+        cls_name = obj_cls.__name__
+        if func_name is None:
+            func_name = f"from_{cls_name}"
+        if func_name in cls.__dict__:
+            raise ValueError(f"constructor name `{func_name}` already exists")
+        elif obj_cls in cls._CONSTRUCTOR_MAP:
+            raise ValueError(f"class `{str(obj_cls)}` is already registered")
+        setattr(cls, func_name, func)
+        cls._CONSTRUCTOR_MAP[obj_cls] = func_name
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -114,7 +136,7 @@ class ArrayData(AttrHashBase):
             return self.from_sequence_table(arg, **kwargs)
         else:
             # Constructor for registered types
-            for _type, _constructor in self._CONSTRUCTOR_MAP:
+            for _type, _constructor in self._CONSTRUCTOR_MAP.items():
                 if isinstance(arg, _type):
                     return getattr(self, _constructor)(arg, **kwargs)
             # Try to convert argument to numpy array
@@ -1976,6 +1998,17 @@ class CmprArrayData(AttrHashBase):
                     v = v[:, 0]
             setattr(ad, k, v)
         return ad
+
+
+def constructor_plugin_CmprArrayData_to_ArrayData(obj, *args, **kwargs):
+    arg = args[0]
+    ad = arg.to_array_data()
+    return obj.from_ArrayData(ad, **kwargs)
+
+
+ArrayData.REGISTER_CONSTRUCTOR(
+    CmprArrayData, constructor_plugin_CmprArrayData_to_ArrayData
+)
 
 
 ###############################################################################

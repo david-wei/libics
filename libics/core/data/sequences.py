@@ -243,7 +243,6 @@ def constructor_plugin_DataSequence_to_ArrayData(obj, *args, **kwargs):
     return obj.from_sequence_table(arg, **kwargs)
 
 
-ArrayData.from_DataSequence = constructor_plugin_DataSequence_to_ArrayData
-ArrayData._CONSTRUCTOR_MAP.append(
-    (DataSequence, "from_DataSequence")
+ArrayData.REGISTER_CONSTRUCTOR(
+    DataSequence, constructor_plugin_DataSequence_to_ArrayData
 )
