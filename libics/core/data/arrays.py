@@ -6,6 +6,7 @@ from libics.env import logging
 from libics.core.data.types import (
     AttrHashBase, Quantity, UNARY_OPS_NUMPY, BINARY_OPS_NUMPY
 )
+from libics.core import io
 from libics.core.util import misc
 
 
@@ -1648,6 +1649,333 @@ class ArrayData(AttrHashBase):
                 obj.data = res
         # Return ArrayData object with data as calculated by the ufunc
         return obj
+
+
+class CmprArrayData(AttrHashBase):
+
+    """
+    Container class storing compressed real 2D :py:class:`ArrayData` objects.
+    """
+
+    __LIBICS_IO__ = True
+    SER_KEYS = ArrayData.SER_KEYS | {
+        "enc_type", "enc_bitdepth", "dec_lut", "ad_dtype",
+        "map_bitdepth", "map_ndim", "map_offset", "map_amplitude"
+    }
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
+    HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
+
+    def __init__(
+        self, ad=None, enc_type="png", map_bitdepth=16,
+        map_lut_vals=None, check_cmpr=True
+    ):
+        super().__init__()
+        # Encoding/compression: parameters
+        self.enc_type = enc_type
+        # Encoding/compression: derived
+        self.enc_bitdepth = None
+        self.dec_lut = None
+        self.ad_dtype = None
+        # Float mapping: parameters
+        self.map_bitdepth = map_bitdepth
+        self.map_lut_vals = map_lut_vals
+        # Float mapping: derived
+        self.map_offset = None
+        self.map_amplitude = None
+        self.map_ndim = None
+        # Initialize data
+        self.from_array_data(ad, check_cmpr=check_cmpr)
+
+    @property
+    def dec_lut(self):
+        return self._dec_lut
+
+    @dec_lut.setter
+    def dec_lut(self, val):
+        if val is None:
+            self._dec_lut = None
+        else:
+            self._dec_lut = {int(k): v for k, v in val.items()}
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+    # Static methods
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _get_dtype_str(dtype):
+        if np.issubdtype(dtype, np.bool_):
+            return "bool"
+        elif np.issubdtype(dtype, np.integer):
+            return "int"
+        elif np.issubdtype(dtype, np.floating):
+            return "float"
+        else:
+            raise ValueError(f"invalid dtype: {str(dtype)}")
+
+    @classmethod
+    def _get_enc_bitdepth(cls, map_bitdepth):
+        """
+        Gets the minimum encoding bitdepth for the given mapping bitdepth.
+        """
+        if map_bitdepth <= 8:
+            return 8
+        elif map_bitdepth <= 16:
+            return 16
+        else:
+            raise ValueError(f"invalid map_bitdepth: {map_bitdepth:d}")
+
+    @classmethod
+    def _get_enc_dtype(cls, enc_bitdepth):
+        """
+        Gets the appropriate encoding data type.
+        """
+        if enc_bitdepth == 8:
+            return np.uint8
+        elif enc_bitdepth == 16:
+            return np.uint16
+        else:
+            raise TypeError(f"invalid enc_bitdepth: {enc_bitdepth:d}")
+
+    @classmethod
+    def _get_enc_max(cls, map_bitdepth, enc_bitdepth=None, num_lut_vals=0):
+        """
+        Gets the maximum encoding value.
+        """
+        if enc_bitdepth is None:
+            enc_bitdepth = cls._get_enc_bitdepth(map_bitdepth)
+            # If too many LUT values are used, default to a higher bitdepth
+            dif_bitdepth = enc_bitdepth - map_bitdepth
+            if num_lut_vals >= 2**dif_bitdepth:
+                enc_bitdepth = 16  # maximum png encoding bitdepth is 16 bit
+        return min(2**map_bitdepth, 2**enc_bitdepth - num_lut_vals) - 1
+
+    @classmethod
+    def _get_lut_codes(self, num_lut_vals, enc_bitdepth):
+        """
+        Gets the LUT codes to be associated with.
+        """
+        if not np.isscalar(num_lut_vals):
+            num_lut_vals = len(num_lut_vals)
+        return [2**enc_bitdepth - 1 - i for i in range(num_lut_vals)]
+
+    @classmethod
+    def get_compressed_array_png(
+        cls, ar, map_bitdepth=16, enc_lut=None, max_num_lut=1024,
+        check_unique_vals=True
+    ):
+        """
+        Gets a base64-encoded string representing the array as PNG.
+
+        Parameters
+        ----------
+        ar : `Array[2]`
+            2D array to be compressed.
+        map_bitdepth : `int`
+            Bitdepth of compression (number of grayscales: `2**map_bitdepth`).
+        enc_lut : `dict(float->int)`
+            Encoding LUT palette.
+        max_num_lut : `int`
+            Maximum number of LUT palette colors.
+        check_unique_vals : `bool`
+            Whether the number of unique array elements is checked.
+            If `check_unique_vals is True and enc_lut is None`, this method
+            automatically tries to exactly encode the data via LUTs.
+
+        Returns
+        -------
+        ar_cmpr : `str`
+            Base64-encoded string representing compressed array.
+        meta : `dict(str->Any)`
+            Metadata dictionary containing the following items:
+        offset, amplitude : `float`
+            Mapping offset and amplitude.
+        dec_lut : `dict(int->float)`
+            Decoding LUT mapping codes to array values.
+        unique_vals_raw, unique_vals_cmpr : `int`
+            Number of unique values in the raw and in the compressed array.
+            Only returned if `check_unique_vals is True`.
+        """
+        # Parse parameters
+        if map_bitdepth <= 0 or map_bitdepth > 16:
+            raise ValueError(f"invalid map bitdepth: {map_bitdepth:d}")
+        enc_bitdepth = cls._get_enc_bitdepth(map_bitdepth)
+        enc_dtype = cls._get_enc_dtype(enc_bitdepth)
+        if check_unique_vals:
+            unique_vals = np.unique(ar)
+        # Construct LUT
+        if enc_lut is None:
+            # If few unique values exist, encode data exactly
+            if (
+                check_unique_vals and
+                len(unique_vals) <= min(2**enc_bitdepth, max_num_lut)
+            ):
+                enc_lut_vals = unique_vals
+                enc_lut_codes = cls._get_lut_codes(
+                    len(enc_lut_vals), enc_bitdepth
+                )
+                enc_lut = misc.make_dict(enc_lut_vals, enc_lut_codes)
+            else:
+                enc_lut = {}
+        dec_lut = misc.reverse_dict(enc_lut)
+        # Get data normalization parameters
+        ar_min, ar_max = np.min(ar), np.max(ar)
+        enc_max = cls._get_enc_max(
+            map_bitdepth, enc_bitdepth=enc_bitdepth, num_lut_vals=len(enc_lut)
+        )
+        offset = ar_min
+        amplitude = (ar_max - ar_min) / enc_max
+        # If only one value exists, set amplitude to some non-zero value
+        if amplitude == 0:
+            amplitude = 1
+            ar_norm = np.zeros_like(ar)
+        else:
+            ar_norm = (ar - offset) / amplitude
+        # Convert data to integer
+        ar_int = np.round(ar_norm).astype(enc_dtype)
+        # Encode LUT data
+        for lut_value, lut_code in enc_lut.items():
+            ar_int[ar == lut_value] = lut_code
+        # Compress data
+        ar_cmpr = io.image.compress_numpy_array_as_png(ar_int, encode="base64")
+        # Package metadata
+        meta = {"offset": offset, "amplitude": amplitude, "dec_lut": dec_lut}
+        if check_unique_vals:
+            meta.update(dict(
+                unique_vals_raw=len(np.unique(ar)),
+                unique_vals_cmpr=len(np.unique(ar_int))
+            ))
+        return ar_cmpr, meta
+
+    @classmethod
+    def get_decompressed_array_png(
+        cls, ar_cmpr, offset=0, amplitude=1, dec_lut=None, dtype=None
+    ):
+        """
+        Gets an array from its base64-PNG-encoded string representation.
+
+        Parameters
+        ----------
+        ar_cmpr : `str`
+            Compressed string representation of array.
+        offset, amplitude : `float`
+            Mapping offset and amplitude.
+        dec_lut : `dict(int->float)`
+            Decoding LUT mapping codes to values.
+        dtype : `str`
+            Data type of array.
+
+        Returns
+        -------
+        ar : `np.ndarray(2, dtype)`
+            Decompressed array.
+        """
+        # Parse parameters
+        if dec_lut is None:
+            dec_lut = {}
+        # Decompress data
+        ar_int = io.image.decompress_numpy_array_from_png(ar_cmpr)
+        # Decode data
+        ar = amplitude * ar_int + offset
+        # Decode LUT data
+        for lut_code, lut_value in dec_lut.items():
+            ar[ar_int == lut_code] = lut_value
+        if dtype is not None:
+            ar = np.array(ar).astype(dtype)
+        return ar
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+    # Compression/decompression methods
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def from_array_data(self, ad, check_cmpr=True):
+        """
+        Converts an `ArrayData` object into its compressed form.
+
+        Parameters
+        ----------
+        ad : `ArrayData`
+            Uncompressed array data object.
+        check_cmpr : `bool` or `float`
+            Checks number of unique values before and after compression.
+            If the number before compression is larger by more than the factor
+            `check_cmpr`, raises a `ValueError` **after** setting the
+            attributes.
+            If `True`, uses the default factor of `64`.
+        """
+        # Parse parameters
+        if ad is None:
+            for k in ArrayData.SER_KEYS:
+                setattr(self, k, None)
+            return
+        if not isinstance(ad, ArrayData):
+            ad = ArrayData(ad)
+        if ad.ndim == 2:
+            pass
+        elif ad.ndim == 1:
+            ad = ad.copy()
+            ad.data = ad.data[:, np.newaxis]  # Add dummy dimension
+            self.map_ndim = 1
+        else:
+            raise TypeError("Invalid dimension of `ad`")
+        if check_cmpr:
+            check_cmpr = 64
+        # Execute compression
+        _err_msg = None
+        for k in ArrayData.SER_KEYS:
+            v = getattr(ad, k)
+            if k == "data":
+                if self.enc_type != "png":
+                    raise ValueError(f"invalid encoding type: {self.enc_type}")
+                self.enc_bitdepth = self._get_enc_bitdepth(self.map_bitdepth)
+                enc_lut = None
+                if self.map_lut_vals is not None:
+                    enc_lut = misc.make_dict(
+                        self.map_lut_vals, self._get_lut_codes(
+                            len(self.map_lut_vals), self.enc_bitdepth
+                        )
+                    )
+                v, meta = self.get_compressed_array_png(
+                    np.copy(v.data), self.map_bitdepth, enc_lut=enc_lut,
+                    check_unique_vals=(check_cmpr > 0)
+                )
+                if check_cmpr:
+                    unique_vals_raw = meta["unique_vals_raw"]
+                    unique_vals_cmpr = meta["unique_vals_cmpr"]
+                    if unique_vals_raw > check_cmpr * unique_vals_cmpr:
+                        _err_msg = (
+                            "check_cmpr failed ("
+                            f"uncompressed values: {unique_vals_raw:d}, "
+                            f"compressed values: {unique_vals_cmpr:d})"
+                        )
+                self.map_offset = meta["offset"]
+                self.map_amplitude = meta["amplitude"]
+                self.dec_lut = meta["dec_lut"]
+                self.ad_dtype = self._get_dtype_str(ad.dtype)
+            setattr(self, k, v)
+        # If compression is bad
+        if _err_msg is not None:
+            raise ValueError(_err_msg)
+
+    def to_array_data(self):
+        """
+        Converts the compressed data into an `ArrayData` object.
+        """
+        ad = ArrayData()
+        for k in ArrayData.SER_KEYS:
+            v = getattr(self, k)
+            if k == "data":
+                v = self.get_decompressed_array_png(
+                    v, offset=self.map_offset, amplitude=self.map_amplitude,
+                    dec_lut=self.dec_lut, dtype=self.ad_dtype
+                )
+                if self.map_ndim == 1:
+                    v = v[:, 0]
+            setattr(ad, k, v)
+        return ad
 
 
 ###############################################################################
