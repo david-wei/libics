@@ -328,9 +328,11 @@ class AmqpApiBase:
             else:
                 return kwargs
         elif len(args) == 1:
-            return args[0]
-        else:
+            args = args[0]
+        if len(kwargs) == 0:
             return args
+        else:
+            return args, kwargs
 
     @api_method(reply=True)
     def get_api(self) -> List[str]:
