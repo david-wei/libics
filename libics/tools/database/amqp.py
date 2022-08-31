@@ -20,6 +20,10 @@ class AmqpRemoteError(RuntimeError):
     pass
 
 
+class AmqpLocalError(RuntimeError):
+    pass
+
+
 class AmqpReplyTimeoutError(RuntimeError):
     pass
 
