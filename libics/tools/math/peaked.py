@@ -6,124 +6,6 @@ from libics.tools.math.models import ModelBase, RvContinuous
 
 
 ###############################################################################
-# Exponential Functions
-###############################################################################
-
-
-def exponential_1d(x, amplitude, rate, offset=0.0):
-    r"""
-    Exponential function in one dimension.
-
-    .. math::
-        A e^{\gamma x} + C
-
-    Parameters
-    ----------
-    x : `float`
-        Variable :math:`x`.
-    amplitude : `float`
-        Amplitude :math:`A`.
-    rate : `float`
-        Rate of exponential :math:`\gamma`.
-    offset : `float`, optional (default: 0)
-        Offset :math:`C`
-    """
-    return amplitude * np.exp(rate * x) + offset
-
-
-class FitExponential1d(ModelBase):
-
-    """
-    Fit class for :py:func:`exponential_1d`.
-
-    Parameters
-    ----------
-    a : `float`
-        amplitude
-    g : `float`
-        rate
-    c : `float`
-        offset
-
-    Attributes
-    ----------
-    x0 : `float`
-        variable offset, assuming unity amplitude
-    xi : `float`
-        decay length, inverse rate
-    """
-
-    LOGGER = logging.get_logger("libics.math.peaked.FitExponential1d")
-    P_ALL = ["a", "g", "c"]
-    P_DEFAULT = [1, 1, 0]
-
-    @staticmethod
-    def _func(var, *p):
-        return exponential_1d(var, *p)
-
-    @property
-    def x0(self):
-        return -np.log(np.abs(self.a)) / self.g
-
-    @property
-    def xi(self):
-        return 1 / self.g
-
-    def find_p0(self, *data):
-        var_data, func_data, _ = self.split_fit_data(*data)
-        var_data = var_data.ravel()
-        # Smoothened derivatives
-        func_data_filter = ndimage.uniform_filter(
-            func_data, size=max(3, len(func_data) // 12)
-        )
-        first_derivative = np.gradient(func_data_filter, var_data)
-        second_derivative = np.gradient(
-            ndimage.uniform_filter(first_derivative, size=3), var_data
-        )
-        mask = first_derivative != 0
-        # Extract parameters
-        g = np.median(second_derivative[mask] / first_derivative[mask])
-        _exp_gx = np.exp(g * var_data)
-        a = np.median(first_derivative / g / _exp_gx)
-        c = np.median(func_data_filter - a * _exp_gx)
-        self.p0 = [a, g, c]
-
-
-def exponential_decay_1d(*args, **kwargs):
-    raise RuntimeError("DEPRECATED: use function `exponential_1d`")
-
-
-class FitExponentialDecay1d:
-    def __init__(self, *args, **kwargs):
-        raise RuntimeError("DEPRECATED: use class `FitExponential1d`")
-
-
-def exponential_decay_nd(x,
-                         amplitude, center, length, offset=0.0):
-    r"""
-    Exponential decay in :math:`n` dimensions.
-
-    .. math::
-        A e^{-\sum_{i=1}^n \frac{|x_i - c_i|}{\xi_i}} + C
-
-    Parameters
-    ----------
-    x : `numpy.array(n, float)`
-        Variables :math:`x_i`.
-    amplitude : `float`
-        Amplitude :math:`A`.
-    center : `numpy.array(n, float)`
-        Centers :math:`c_i`.
-    length : `numpy.array(n, float)`
-        Characteristic lengths :math:`\xi_i`.
-    offset : `float`, optional (default: 0)
-        Offset :math:`C`
-    """
-    exponent = -np.sum(np.abs(x - center) / length)
-    return amplitude * np.exp(exponent) + offset
-
-
-###############################################################################
 # Gaussian Functions
 ###############################################################################
 
@@ -779,6 +661,267 @@ class FitGaussian2dTilt(ModelBase):
     def ellipticity(self):
         wu, wv = abs(self.wu), np.abs(self.wv)
         return np.abs(wu - wv) / max(wu, wv)
+
+
+###############################################################################
+# Exponential Functions
+###############################################################################
+
+
+def exponential_1d(x, amplitude, rate, offset=0.0):
+    r"""
+    Exponential function in one dimension.
+
+    .. math::
+        A e^{\gamma x} + C
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    amplitude : `float`
+        Amplitude :math:`A`.
+    rate : `float`
+        Rate of exponential :math:`\gamma`.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`
+    """
+    return amplitude * np.exp(rate * x) + offset
+
+
+class FitExponential1d(ModelBase):
+
+    """
+    Fit class for :py:func:`exponential_1d`.
+
+    Parameters
+    ----------
+    a : `float`
+        amplitude
+    g : `float`
+        rate
+    c : `float`
+        offset
+
+    Attributes
+    ----------
+    x0 : `float`
+        variable offset, assuming unity amplitude
+    xi : `float`
+        decay length, inverse rate
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitExponential1d")
+    P_ALL = ["a", "g", "c"]
+    P_DEFAULT = [1, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return exponential_1d(var, *p)
+
+    @property
+    def x0(self):
+        return -np.log(np.abs(self.a)) / self.g
+
+    @property
+    def xi(self):
+        return 1 / self.g
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self.split_fit_data(*data)
+        var_data = var_data.ravel()
+        # Smoothened derivatives
+        func_data_filter = ndimage.uniform_filter(
+            func_data, size=max(3, len(func_data) // 12)
+        )
+        first_derivative = np.gradient(func_data_filter, var_data)
+        second_derivative = np.gradient(
+            ndimage.uniform_filter(first_derivative, size=3), var_data
+        )
+        mask = first_derivative != 0
+        # Extract parameters
+        g = np.median(second_derivative[mask] / first_derivative[mask])
+        _exp_gx = np.exp(g * var_data)
+        a = np.median(first_derivative / g / _exp_gx)
+        c = np.median(func_data_filter - a * _exp_gx)
+        self.p0 = [a, g, c]
+
+
+def exponential_decay_1d(*args, **kwargs):
+    raise RuntimeError("DEPRECATED: use function `exponential_1d`")
+
+
+class FitExponentialDecay1d:
+    def __init__(self, *args, **kwargs):
+        raise RuntimeError("DEPRECATED: use class `FitExponential1d`")
+
+
+def exponential_decay_nd(x,
+                         amplitude, center, length, offset=0.0):
+    r"""
+    Exponential decay in :math:`n` dimensions.
+
+    .. math::
+        A e^{-\sum_{i=1}^n \frac{|x_i - c_i|}{\xi_i}} + C
+
+    Parameters
+    ----------
+    x : `numpy.array(n, float)`
+        Variables :math:`x_i`.
+    amplitude : `float`
+        Amplitude :math:`A`.
+    center : `numpy.array(n, float)`
+        Centers :math:`c_i`.
+    length : `numpy.array(n, float)`
+        Characteristic lengths :math:`\xi_i`.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`
+    """
+    exponent = -np.sum(np.abs(x - center) / length)
+    return amplitude * np.exp(exponent) + offset
+
+
+class _SymExpon1dDistribution_gen(RvContinuous):
+
+    LOGGER = logging.get_logger(
+        "libics.tools.math.peaked.SymExpon1dDistribution"
+    )
+
+    def __init__(self, *args, **kwargs):
+        RvContinuous.__init__(self, *args, **kwargs)
+
+    def _pdf(self, x):
+        xi = np.abs(x / np.sqrt(2))
+        if np.isscalar(xi):
+            val = 0
+            if xi < 700:
+                val = np.exp(-xi)
+        else:
+            val = np.zeros_like(xi, dtype=float)
+            np.exp(-xi, out=val, where=(xi < 700))
+        return val / np.sqrt(2)
+
+    def _logpdf(self, x):
+        return -np.abs(x) / np.sqrt(2) - np.log(2) / 2
+
+    def _ipdf(self, p, branch="left"):
+        sign = -1 if branch == "left" else 1
+        val = sign * np.sqrt(2) * np.log(p * np.sqrt(2))
+        if np.isscalar(p):
+            if p > self.amplitude():
+                val = np.nan
+        else:
+            val[p > self.amplitude()] = np.nan
+        return val
+
+    def _cdf(self, x):
+        val = np.exp(-np.abs(x / np.sqrt(2))) / 2
+        if np.isscalar(x):
+            if x > 0:
+                val = 1 - val
+        else:
+            mask = (x > 0)
+            val[mask] = 1 - val[mask]
+        return val
+
+    def _ppf(self, q):
+        if np.isscalar(q):
+            if q <= 1/2:
+                arg = 2 * q
+            else:
+                arg = 1 / 2 / (1 - q)
+        else:
+            arg = np.ones_like(q, dtype=float)
+            mask = (q <= 1/2)
+            arg[mask] = 2 * q[mask]
+            arg[~mask] = 1 / 2 / (1 - q[~mask])
+        return np.sqrt(2) * np.log(arg)
+
+    def _stats(self):
+        return 0, 1, 0, 6
+
+    def _mode(self):
+        return 0
+
+    def _amplitude(self):
+        return 1 / np.sqrt(2)
+
+
+SymExpon1dDistribution = _SymExpon1dDistribution_gen(
+    name="SymExpon1dDistribution"
+)
+
+
+def sym_exponential_1d(x,
+                       amplitude, center, width, offset=0.0):
+    r"""
+    Symmetric exponential function in one dimension.
+
+    .. math::
+        A e^{-|x - x_0| / w \sqrt{2}} + C
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    amplitude : `float`
+        Amplitude :math:`A`.
+    center : `float`
+        Center :math:`x_0`.
+    width : `float`
+        Width of exponential :math:`w`.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`
+    """
+    exponent = -np.abs((x - center) / width / np.sqrt(2))
+    if np.isscalar(exponent):
+        val = 0
+        if exponent > -700:
+            val = np.exp(exponent)
+    else:
+        val = np.zeros_like(exponent)
+        np.exp(exponent, out=val, where=(exponent > -700))
+    return amplitude * val + offset
+
+
+class FitSymExponential1d(FitGaussian1d):
+
+    """
+    Fit class for :py:func:`sym_exponential_1d`.
+
+    Parameters
+    ----------
+    a : `float`
+        amplitude
+    x0 : `float`
+        center
+    wx : `float`
+        width
+    c : `float`
+        offset
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitSymExponential1d")
+    P_ALL = ["a", "x0", "wx", "c"]
+    P_DEFAULT = [1, 0, 1, 0]
+    DISTRIBUTION = SymExpon1dDistribution
+
+    @staticmethod
+    def _func(var, *p):
+        return sym_exponential_1d(var, *p)
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self.split_fit_data(*data)
+        # Find p0 using Gaussian algorithm (temporarily)
+        a, x0, wx, c = self._find_p0_stat(var_data, func_data)
+        self.p0 = [a, x0, wx, c]
+
+    def get_distribution(self):
+        return self.DISTRIBUTION(loc=self.x0, scale=self.wx)
+
+    @property
+    def distribution_amplitude(self):
+        return self.a / self.DISTRIBUTION.amplitude(loc=self.x0, scale=self.wx)
 
 
 ###############################################################################
