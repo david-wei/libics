@@ -7,7 +7,6 @@ import string
 import time
 from typing import Any, List
 import uuid
-from libics.core.io.iomisc import NumpyJsonEncoder
 
 from libics.env import logging, DIR_LIBICS
 from libics.core import io
