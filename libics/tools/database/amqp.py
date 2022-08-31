@@ -340,7 +340,10 @@ class AmqpApiBase:
     @api_method(reply=True)
     def help(self, func_id: str) -> str:
         """Gets the docstring of the API method."""
-        doc = getattr(self, func_id).__doc__
+        try:
+            doc = getattr(self, func_id).__doc__
+        except AttributeError:
+            raise AmqpLocalError(f"{str(func_id)} is not a valid API method")
         doc = "" if doc is None else doc
         return doc
 
