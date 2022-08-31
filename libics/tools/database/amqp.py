@@ -7,10 +7,12 @@ import string
 import time
 from typing import Any, List
 import uuid
+from libics.core.io.iomisc import NumpyJsonEncoder
 
 from libics.env import logging, DIR_LIBICS
 from libics.core import io
 from libics.core.util import misc, path
+from libics.core.io.iomisc import NumpyJsonEncoder
 
 
 ###############################################################################
@@ -438,7 +440,7 @@ class AmqpRpcBase:
             "func_args": args,
             "func_kwargs": kwargs
         }
-        _msg = json.dumps(_d)
+        _msg = json.dumps(_d, cls=NumpyJsonEncoder)
         return _msg
 
     @classmethod
@@ -466,7 +468,7 @@ class AmqpRpcBase:
         if err:
             _d["error"] = str(err)
         try:
-            _msg = json.dumps(_d)
+            _msg = json.dumps(_d, cls=NumpyJsonEncoder)
         except TypeError as e:
             _msg = json.dumps({"error": f"ENCODING_ERROR: {str(e)}"})
         return _msg
