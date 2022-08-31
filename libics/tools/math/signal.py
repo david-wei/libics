@@ -519,11 +519,12 @@ class PeakInfo(FileBase):
 
 def analyze_single_peak(
     peak_ad, max_subpeaks=1, x0=None, alpha=None, c=0, p0=None,
+    fit_class=FitSkewGaussian1d,
     max_width_std=1e-3, min_subpeak_len_abs=5, min_subpeak_len_rel=0.2,
     maxfev=None, _is_recursion=False
 ):
     """
-    Fits a peak with a skew Gaussian.
+    Fits a peak with a distribution model.
 
     Recursively fits subpeaks to residuals.
 
@@ -539,10 +540,19 @@ def analyze_single_peak(
     alpha : `float` or `None`
         If `float`, fixes the peak skewness parameter, thereby
         removing one fit degree of freedom. Only applied to top-level peak.
+        Only applied for skewed models, e.g. for `fit_class=FitSkewGaussian1d`.
     c : `float`
         Fixed peak background level. Only applied to top-level peak.
     p0 : `dict(str->float)`
         Fitting initial values.
+    fit_class : `class`
+        Fit model class inheriting from
+        :py:class:`libics.tools.math.models.ModelBase`.
+        Must implement the parameters `"a", "x0", "wx"` and be associated
+        with a distribution, i.e., must implement `get_distribution()`
+        which must return a subclass of
+        :py:class:`libics.tools.math.models.RvContinuous`.
+        Examples are: `FitGaussian1d, FitSkewGaussian1d, FitSymExponential1d`.
     max_width_std : `float`
         Maximum fit uncertainty for the width to not continue to search
         for subpeaks.
@@ -563,14 +573,19 @@ def analyze_single_peak(
     """
     peak_ad = ArrayData(peak_ad)
     # Perform initial fit
-    _fit = FitSkewGaussian1d()
+    if (
+        not issubclass(fit_class, ModelBase)
+        or not hasattr(fit_class, "get_distribution")
+    ):
+        raise TypeError(f"invalid fit_class: {str(fit_class)}")
+    _fit = fit_class()
     _fit.find_p0(peak_ad)
     if p0 is not None:
         _fit.set_p0(**p0)
     const_p0 = {"c": c}
     if x0 is not None:
         const_p0["x0"] = x0
-    if alpha is not None:
+    if alpha is not None and "alpha" in fit_class.P_ALL:
         const_p0["alpha"] = alpha
     _fit.set_pfit(**const_p0)
     _fit.find_popt(peak_ad, maxfev=maxfev)
@@ -628,7 +643,8 @@ def analyze_single_peak(
                     peak_ad_subtr = ArrayData(_d)
                     peak_ad_subtr.set_dim(0, points=_x)
                     subpeak = analyze_single_peak(
-                        peak_ad_subtr, max_subpeaks=max_subpeaks-1,
+                        peak_ad_subtr, fit_class=fit_class,
+                        max_subpeaks=max_subpeaks-1,
                         max_width_std=max_width_std,
                         min_subpeak_len_abs=min_subpeak_len_abs,
                         min_subpeak_len_rel=min_subpeak_len_rel,
