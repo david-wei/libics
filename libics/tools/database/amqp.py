@@ -272,17 +272,65 @@ class AmqpApiBase:
     API_ID = "TEST"
     API_SUB_ID = "default"
     API_VERSION = "0.0.0"
-    API_METHODS = set()    # set(str): Names of API methods
-    API_REPLIES = set()    # set(str): Names of API methods requiring reply
-    API_TIMEOUTS = dict()  # dict(str->float): Timeout in seconds (s)
+    API_METHODS = set()     # set(str): Names of API methods
+    API_REPLIES = set()     # set(str): Names of API methods requiring reply
+    API_TIMEOUTS = dict()   # dict(str->float): Timeout in seconds (s)
 
     def __init__(self, instance_id="default", _random_id=None):
+        # IDs
         self.instance_id = instance_id
         if _random_id is None:
             _random_id = "rnd_" + "".join(
                 random.choices(string.ascii_lowercase, k=24)
             )
         self._random_id = _random_id
+        # Callbacks
+        self.cbs_on_entry = {}
+        self.cbs_on_exit = {}
+
+    def register_cb_on_entry(self, method_name, func):
+        """
+        Adds a callback function called before executing the API method.
+
+        Parameters
+        ----------
+        method_name : `str`
+            API method name.
+        func : `callable`
+            Callback function. Must accept the same arguments as the API method
+            and may only raise `AmqpLocalError`.
+        """
+        if method_name not in self.API_METHODS:
+            raise ValueError(f"invalid API method name: {method_name}")
+        if not callable(func):
+            raise ValueError(f"invalid callback function: {str(func)}")
+        if method_name in self.cbs_on_entry:
+            self.LOGGER.warning(
+                f"Overwriting callback on entry for API method: {method_name}"
+            )
+        self.cbs_on_entry[method_name] = func
+
+    def register_cb_on_exit(self, method_name, func):
+        """
+        Adds a callback function called after executing the API method.
+
+        Parameters
+        ----------
+        method_name : `str`
+            API method name.
+        func : `callable`
+            Callback function. Must accept the return value of the API method
+            as arguments and may only raise `AmqpLocalError`.
+        """
+        if method_name not in self.API_METHODS:
+            raise ValueError(f"invalid API method name: {method_name}")
+        if not callable(func):
+            raise ValueError(f"invalid callback function: {str(func)}")
+        if method_name in self.cbs_on_exit:
+            self.LOGGER.warning(
+                f"Overwriting callback on exit for API method: {method_name}"
+            )
+        self.cbs_on_exit[method_name] = func
 
     @classmethod
     def get_exchange_id(cls):
@@ -313,6 +361,10 @@ class AmqpApiBase:
             f"<'{self.__class__.__name__}' at {hex(id(self))}>\n"
             + self._get_str()
         )
+
+    # +++++++++++++++++++++++++++++++++++++++++
+    # RPC API
+    # +++++++++++++++++++++++++++++++++++++++++
 
     @api_method(reply=True)
     def ping(self) -> bool:
@@ -430,6 +482,8 @@ class AmqpRpcBase:
         self._amqp_conn.close()
 
     def __getattr__(self, name):
+        if self._api is None:
+            raise AttributeError("API has not been set up")
         return getattr(self._api, name)
 
     @classmethod
@@ -495,6 +549,9 @@ class AmqpRpcBase:
 
     def local_dispatcher(self, channel, method, properties, body):
         """Local dispatcher used by RPC server."""
+        # Initialize variables
+        ret = None
+        func_errs = []
         # Process message
         try:
             func_id, func_args, func_kwargs = self.deserialize_request(body)
@@ -508,23 +565,50 @@ class AmqpRpcBase:
             self.LOGGER.error(f"local dispatch error: {str(e)}")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
+        # Execute callback on entry
+        if func_id in self._api.cbs_on_entry:
+            try:
+                self._api.cbs_on_entry[func_id](*func_args, **func_kwargs)
+            except RuntimeError as e:
+                self.LOGGER.error(
+                    f"error during callback on entry for `{func_id}`: {str(e)}"
+                )
+                func_errs.append(f"CB_ENTRY_ERROR: {str(e)}")
+                # For server-side debugging
+                import traceback
+                traceback.print_exc()
         # Execute function
         try:
             ret = func(*func_args, **func_kwargs)
             channel.basic_ack(delivery_tag=method.delivery_tag)
-            func_err = None
         except (RuntimeError, TypeError, ValueError) as e:
             self.LOGGER.error(
                 f"error executing local method `{func_id}`: {str(e)}"
             )
             channel.basic_ack(delivery_tag=method.delivery_tag)
             ret = None
-            func_err = f"FUNCTION_ERROR: {str(e)}"
-            # DEBUG
+            func_errs.append(f"FUNCTION_ERROR: {str(e)}")
+            # For server-side debugging
             import traceback
             traceback.print_exc()
+        # Execute callback on exit
+        if func_id in self._api.cbs_on_exit:
+            try:
+                self._api.cbs_on_exit[func_id](ret)
+            except RuntimeError as e:
+                self.LOGGER.error(
+                    f"error during callback on exit for `{func_id}`: {str(e)}"
+                )
+                func_errs.append(f"CB_EXIT_ERROR: {str(e)}")
+                # For server-side debugging
+                import traceback
+                traceback.print_exc()
         # Reply
         if properties.reply_to:
+            if len(func_errs) == 0:
+                func_err = None
+            else:
+                func_err = "; ".join(func_errs)
             _msg = self.serialize_reply(ret, err=func_err)
             channel.basic_publish(
                 self.get_exchange_id(),
