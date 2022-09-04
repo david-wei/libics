@@ -56,13 +56,20 @@ class AmqpConnection:
     CONFIG_PATH = os.path.join(DIR_LIBICS, "tools", "database", "amqp")
 
     @staticmethod
-    def find_configs(config_path=None):
+    def discover_configs(config_path=None):
         """
         Returns a list of all file names within the default configuration path.
         """
         if config_path is None:
             config_path = AmqpConnection.CONFIG_PATH
         return path.get_folder_contents(config_path).files
+
+    @staticmethod
+    def find_configs(config_path=None):
+        AmqpConnection.LOGGER.warning(
+            "find_configs DEPRECATED: use alias `discover_configs` instead"
+        )
+        return AmqpConnection.discover_configs(config_path=config_path)
 
     def __init__(self, config=None, **kwargs):
         # Parameters
@@ -702,7 +709,7 @@ class AmqpRpcFactory:
     """
 
     @classmethod
-    def make_rpc_server(cls, Api: AmqpRpcBase, cls_name: str):
+    def make_rpc_server(cls, Api: AmqpApiBase, cls_name: str):
         """
         Creates an AMQP RPC server class.
 
@@ -752,7 +759,7 @@ class AmqpRpcFactory:
         return AmqpRpcServer
 
     @classmethod
-    def make_rpc_client(cls, Api: AmqpRpcBase, cls_name: str):
+    def make_rpc_client(cls, Api: AmqpApiBase, cls_name: str):
         """
         Creates an AMQP RPC client class.
 
@@ -784,18 +791,102 @@ class AmqpRpcFactory:
         return AmqpRpcClient
 
     @classmethod
-    def make_c_client(cls, Api: AmqpRpcBase, cls_name: str):
+    def make_dynamic_rpc_client(
+        cls, api_id, api_sub_id="default", instance_id="default",
+        cls_name=None
+    ):
         """
-        Creates a header-only C client for the given API.
+        Creates an AMQP RPC client class.
 
-        Note that all API functions must have type hints.
+        API method calls are sent via an AMQP broker to a remote server.
 
-        Returns
-        -------
-        c_code : `str`
-            C client header file contents.
+        Parameters
+        ----------
+        api_id, api_sub_id, instance_id : `str`
+            API ID, API sub ID and instance ID determining the AMQP
+            exchange from which to obtain the API specifications.
         """
-        raise NotImplementedError
+        class AmqpDynamicApi(AmqpApiBase):
+            API_ID = api_id
+            API_SUB_ID = api_sub_id
+
+        class AmqpDynamicRpcClient(AmqpRpcBase):
+            """
+            Dynamically generated AMQP RPC client.
+
+            Uses a running RPC server to obtain the API specifications and
+            to automatically construct a client for this API locally.
+
+            Usage:
+
+            * Construct object.
+            * Set up the AMQP connection and connect to the message broker.
+            * Set up the API by passing the IDs.
+            """
+
+            LOGGER = logging.get_logger(
+                "libics.tools.database.amqp.AmqpDynamicRpcClient"
+            )
+            API = AmqpDynamicApi
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self._fetched_api_docs = {}
+                self._fetched_api_signatures = {}
+
+            def _fetch_api(self):
+                func_ids = self.remote_dispatcher("get_api")
+                self._api.API_METHODS = set(func_ids)
+
+            def _fetch_docstrings(self):
+                for func_id in self._api.API_METHODS:
+                    self._fetched_api_docs[func_id] = (
+                        self.remote_dispatcher("help", func_id)
+                    )
+
+            def _fetch_signatures(self):
+                for func_id in self._api.API_METHODS:
+                    self._fetched_api_signatures[func_id] = (
+                        self.remote_dispatcher("get_api_signature", func_id)
+                    )
+
+            def _construct_api(self):
+                for func_id in list(self._api.API_METHODS):
+                    _remote_method = _remote_method_factory(func_id)
+                    if func_id in self._fetched_api_docs:
+                        _remote_method.__doc__ = self._fetched_api_docs[func_id]
+                    setattr(AmqpDynamicRpcClient, func_id, _remote_method)
+
+            def setup_api(
+                self, instance_id=instance_id,
+                fetch_docstrings=False, fetch_signatures=False
+            ):
+                """
+                Constructs this client using the remote API.
+
+                Parameters
+                ----------
+                fetch_docstrings, fetch_signatures : `bool`
+                    Whether to fetch the API method docstring/type signature.
+                    Note that this might be slow.
+                """
+                # Construct API object
+                self._api = self.API(instance_id=instance_id)
+                # Establish AMQP exchange
+                self._amqp_conn.exchange_declare(
+                    self.get_exchange_id(), exchange_type="topic"
+                )
+                # Fetch API from remote
+                self._fetch_api()
+                if fetch_docstrings:
+                    self._fetch_docstrings()
+                if fetch_signatures:
+                    self._fetch_signatures()
+                self._construct_api()
+
+        if cls_name:
+            AmqpDynamicRpcClient.__name__ = cls_name
+        return AmqpDynamicRpcClient
 
 
 ###############################################################################
