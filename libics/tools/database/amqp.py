@@ -5,7 +5,7 @@ import pika
 import random
 import string
 import time
-from typing import Any, List
+from typing import Any, List, Union
 import uuid
 
 from libics.env import logging, DIR_LIBICS
@@ -397,6 +397,91 @@ class AmqpApiBase:
     def get_api(self) -> List[str]:
         """Gets a list of all API method names."""
         return list(self.API_METHODS)
+
+    @api_method(reply=True)
+    def get_api_signature(self, func_id: str) -> dict:
+        """
+        Gets the call signature of the API method.
+
+        Returns
+        -------
+        ret : `dict`
+            Dictionary describing the signature with the following items:
+        func_id : `str`
+            API method name.
+        arg_names : `list(str)`
+            Names of positional arguments in order.
+        kwarg_names : `list(str)`
+            Names of keyword arguments.
+        return : `bool`
+            Whether a value is returned.
+            If `True`, the argument name of the reply in `types` is `"return"`.
+        arg_var : `bool`
+            Whether variable positional arguments are valid.
+        kwarg_var : `bool`
+            Whether variable keyword arguments are valid.
+        types : `dict(str->list(str))`
+            Dictionary mapping arg/kwarg/return name to a list of types.
+            Valid types: `"null", "int", "float", "str", "json"`.
+            Type `"json"` means that the parameter has no type hint or
+            has a more complicated structure.
+        """
+        try:
+            func = getattr(self, func_id)
+        except AttributeError:
+            raise AmqpLocalError(f"{str(func_id)} is not a valid API method")
+        import inspect
+        specs = inspect.getfullargspec(func)
+        # Set variable parameters
+        reply = func_id in self.API_REPLIES
+        arg_var = specs.varargs is not None
+        kwarg_var = specs.varkw is not None
+        # Set parameter names
+        specs_args = specs.args[1:]  # Remove `self`
+        if specs.defaults is None:
+            arg_names = specs_args
+            kwarg_names = []
+        else:
+            num_kwargs = len(specs.defaults)
+            arg_names = specs_args[:-num_kwargs]
+            kwarg_names = specs_args[-num_kwargs:]
+        # Set types
+        all_names = arg_names + kwarg_names
+        if reply:
+            all_names += ["return"]
+        types = {}
+        for name in all_names:
+            _type = set()
+            if name in specs.annotations:
+                annots = specs.annotations[name]
+                try:
+                    if annots.__origin__ == Union:
+                        annots = annots.__args__
+                    else:
+                        annots = [annots]
+                except AttributeError:
+                    annots = [annots]
+                for annot in annots:
+                    if annot == type(None):  # noqa E721
+                        _type.add("null")
+                    elif annot == int:
+                        _type.add("int")
+                    elif annot == float:
+                        _type.add("float")
+                    elif annot == str:
+                        _type.add("str")
+                    else:
+                        _type.add("json")
+            else:
+                _type.add("json")
+            types[name] = list(_type)
+        # Package signature
+        signature = {
+            "arg_names": arg_names, "kwarg_names": kwarg_names,
+            "return": reply, "arg_var": arg_var, "kwarg_var": kwarg_var,
+            "types": types, "func_id": func_id
+        }
+        return signature
 
     @api_method(reply=True)
     def help(self, func_id: str) -> str:
@@ -854,7 +939,9 @@ class AmqpRpcFactory:
                 for func_id in list(self._api.API_METHODS):
                     _remote_method = _remote_method_factory(func_id)
                     if func_id in self._fetched_api_docs:
-                        _remote_method.__doc__ = self._fetched_api_docs[func_id]
+                        _remote_method.__doc__ = (
+                            self._fetched_api_docs[func_id]
+                        )
                     setattr(AmqpDynamicRpcClient, func_id, _remote_method)
 
             def setup_api(
