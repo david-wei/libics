@@ -1,4 +1,5 @@
 import collections
+from datetime import datetime
 import json
 import os
 import pika
@@ -91,6 +92,14 @@ class AmqpConnection:
             else:
                 raise ValueError("Invalid `config`")
             kwargs.update(_kwargs)
+        if (
+            "credentials" not in kwargs and
+            "username" in kwargs and "password" in kwargs
+        ):
+            kwargs["credentials"] = dict(
+                username=kwargs.pop("username"),
+                password=kwargs.pop("password")
+            )
         for k, v in kwargs.items():
             if k[0] != "_":
                 setattr(self, k, v)
@@ -116,7 +125,7 @@ class AmqpConnection:
         if self.host is None:
             self.LOGGER.error("get_url failed because no host was set")
             return "ERR_NO_HOST"
-        s = f"amqp://{self.host}"
+        s = self.host
         if self.port is not None:
             s = s + f":{self.port:d}"
         if self.credentials is not None:
@@ -287,8 +296,10 @@ class AmqpApiBase:
         # IDs
         self.instance_id = instance_id
         if _random_id is None:
-            _random_id = "rnd_" + "".join(
-                random.choices(string.ascii_lowercase, k=24)
+            _random_id = (
+                "rnd"
+                + datetime.strftime(datetime.now(), "%Y%m%d%H%M")
+                + "".join(random.choices(string.ascii_lowercase, k=8))
             )
         self._random_id = _random_id
         # Callbacks
@@ -399,6 +410,23 @@ class AmqpApiBase:
         return list(self.API_METHODS)
 
     @api_method(reply=True)
+    def get_api_specifications(self) -> dict:
+        """
+        Gets the API specifications.
+
+        Returns
+        -------
+        specs : `dict(str->Any)`
+            Dictionary containing the class variables
+            `"API_METHODS", "API_REPLIES", "API_TIMEOUTS"`.
+        """
+        return dict(
+            API_METHODS=list(self.API_METHODS),
+            API_REPLIES=list(self.API_REPLIES),
+            API_TIMEOUTS=self.API_TIMEOUTS
+        )
+
+    @api_method(reply=True)
     def get_api_signature(self, func_id: str) -> dict:
         """
         Gets the call signature of the API method.
@@ -422,7 +450,7 @@ class AmqpApiBase:
             Whether variable keyword arguments are valid.
         types : `dict(str->list(str))`
             Dictionary mapping arg/kwarg/return name to a list of types.
-            Valid types: `"null", "int", "float", "str", "json"`.
+            Valid types: `"null", "bool", "int", "float", "str", "json"`.
             Type `"json"` means that the parameter has no type hint or
             has a more complicated structure.
         """
@@ -464,6 +492,8 @@ class AmqpApiBase:
                 for annot in annots:
                     if annot == type(None):  # noqa E721
                         _type.add("null")
+                    elif annot == bool:
+                        _type.add("bool")
                     elif annot == int:
                         _type.add("int")
                     elif annot == float:
@@ -620,6 +650,7 @@ class AmqpRpcBase:
         try:
             _msg = json.dumps(_d, cls=NumpyJsonEncoder)
         except TypeError as e:
+            cls.LOGGER.error(f"error serializing reply: {str(e)}")
             _msg = json.dumps({"error": f"ENCODING_ERROR: {str(e)}"})
         return _msg
 
@@ -920,8 +951,10 @@ class AmqpRpcFactory:
                 self._fetched_api_signatures = {}
 
             def _fetch_api(self):
-                func_ids = self.remote_dispatcher("get_api")
-                self._api.API_METHODS = set(func_ids)
+                api_specs = self.remote_dispatcher("get_api_specifications")
+                self.API.API_METHODS = set(api_specs["API_METHODS"])
+                self.API.API_REPLIES = set(api_specs["API_REPLIES"])
+                self.API.API_TIMEOUTS = api_specs["API_TIMEOUTS"]
 
             def _fetch_docstrings(self):
                 for func_id in self._api.API_METHODS:
