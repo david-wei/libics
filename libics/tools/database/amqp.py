@@ -693,39 +693,30 @@ class AmqpRpcBase:
             try:
                 self._api.cbs_on_entry[func_id](*func_args, **func_kwargs)
             except RuntimeError as e:
-                self.LOGGER.error(
+                self.LOGGER.exception(
                     f"error during callback on entry for `{func_id}`: {str(e)}"
                 )
                 func_errs.append(f"CB_ENTRY_ERROR: {str(e)}")
-                # For server-side debugging
-                import traceback
-                traceback.print_exc()
         # Execute function
         try:
             ret = func(*func_args, **func_kwargs)
             channel.basic_ack(delivery_tag=method.delivery_tag)
         except (RuntimeError, TypeError, ValueError) as e:
-            self.LOGGER.error(
+            self.LOGGER.exception(
                 f"error executing local method `{func_id}`: {str(e)}"
             )
             channel.basic_ack(delivery_tag=method.delivery_tag)
             ret = None
             func_errs.append(f"FUNCTION_ERROR: {str(e)}")
-            # For server-side debugging
-            import traceback
-            traceback.print_exc()
         # Execute callback on exit
         if func_id in self._api.cbs_on_exit:
             try:
                 self._api.cbs_on_exit[func_id](ret)
             except RuntimeError as e:
-                self.LOGGER.error(
+                self.LOGGER.exception(
                     f"error during callback on exit for `{func_id}`: {str(e)}"
                 )
                 func_errs.append(f"CB_EXIT_ERROR: {str(e)}")
-                # For server-side debugging
-                import traceback
-                traceback.print_exc()
         # Reply
         if properties.reply_to:
             if len(func_errs) == 0:
