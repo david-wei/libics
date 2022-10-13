@@ -261,7 +261,7 @@ class ArrayData(AttrHashBase):
         if var_quantity is not None:
             for i, k in enumerate(var_keys):
                 if k in var_quantity:
-                    ad.set_var_quantity(i, var_quantity[k])
+                    ad.set_var_quantity(i, quantity=var_quantity[k])
 
         # Interpolate data
         table_var = []
@@ -295,19 +295,19 @@ class ArrayData(AttrHashBase):
         return self
 
     __LIBICS_IO__ = True
-    SER_KEYS = {
-        "data_quantity", "data", "var_quantity", "var_mode",
+
+    ATTR_NAMES_VAR = {
+        "var_quantity", "var_mode",
         "_points", "_offset", "_center", "_step", "_low", "_high"
     }
+    ATTR_NAMES_COPY_VAR = ATTR_NAMES_VAR | {
+        "data_quantity", "_placeholder_shape"
+    }
+    SER_KEYS = ATTR_NAMES_COPY_VAR | {"data"}
 
     def attributes(self):
         """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
         return {k: getattr(self, k) for k in self.SER_KEYS}
-
-    ATTR_NAMES_COPY_VAR = {
-        "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
-        "_points", "_offset", "_center", "_step", "_low", "_high"
-    }
 
     HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
 
@@ -625,6 +625,36 @@ class ArrayData(AttrHashBase):
             del self._step[dim]
             del self._low[dim]
             del self._high[dim]
+
+    def move_dim(self, source_dim=0, destination_dim=-1):
+        """
+        Moves a dimension to a new position (in place).
+
+        Parameters
+        ----------
+        source_dim, destination_dim : `int` or `Iter[int]`
+            Moves the dimension(s) with index/indices
+            `source_dim` to position `destination_dim`.
+        """
+        source_dim, destination_dim = (
+            np.array(misc.assume_iter(source_dim)) % self.ndim,
+            np.array(misc.assume_iter(destination_dim)) % self.ndim
+        )
+        _ord = np.argsort(destination_dim)
+        source_dim, destination_dim = source_dim[_ord], destination_dim[_ord]
+        if len(source_dim) != len(destination_dim):
+            raise ValueError("move_dim: invalid dimensions")
+        self.data = np.moveaxis(self.data, source_dim, destination_dim)
+        for attr_name in self.ATTR_NAMES_VAR:
+            item = getattr(self, attr_name)
+            if len(item) != self.ndim or not isinstance(item, list):
+                self.LOGGER.warning(f"move_dim: failed to move `{str(item)}`")
+                continue
+            _tmp = [item[i] for i in source_dim]
+            for i in np.flip(np.sort(source_dim)):
+                del item[i]
+            for i, j in enumerate(destination_dim):
+                item.insert(j, _tmp[i])
 
     # ++++++
     # Getter
