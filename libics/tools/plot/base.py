@@ -267,7 +267,7 @@ def plot(
         if yerr is not None:
             yerr = np.array(yerr) / ynorm
     # Process marker style
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_marker_param(marker, **kwargs)
     # Perform plot
@@ -294,6 +294,9 @@ def scatter(*args, marker="O", linestyle="None", **kwargs):
     Defaults to markers instead of lines.
     """
     return plot(*args, linestyle=linestyle, marker=marker, **kwargs)
+
+
+scatter.__doc__ += "\n\n" + plot.__doc__
 
 
 def pcolormesh(
@@ -412,6 +415,9 @@ def pcolorim(*args, aspect=1, **kwargs):
     return pcolormesh(*args, aspect=aspect, **kwargs)
 
 
+pcolorim.__doc__ += "\n\n" + pcolormesh.__doc__
+
+
 def contourf(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
@@ -468,7 +474,7 @@ def contourf(
     ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
     cnorm, clabel = _process_norm_param(cnorm, label=clabel)
     p = _get_xyc_from_data(
-        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=False
     )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
@@ -554,7 +560,7 @@ def plot_rectangle(
     # Process marker style
     if angle is not None:
         kwargs["angle"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
@@ -598,7 +604,7 @@ def plot_polygon(
     # Process marker style
     if "orientation" not in kwargs and angle is not None:
         kwargs["orientation"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
@@ -641,7 +647,7 @@ def plot_ellipse(
     # Process marker style
     if angle is not None:
         kwargs["angle"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
