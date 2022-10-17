@@ -468,8 +468,7 @@ class ModelBase(abc.ABC, FileBase):
         ----------
         var : `np.ndarray` or `ArrayData`
             Variables.
-            If `ArrayData`, uses its `var_meshgrid` as variables
-            and overwrites its data.
+            If `ArrayData`, uses its `var_meshgrid` as variables.
         *args : `Any`
             Model function positional arguments after the parameters.
         **kwargs : `Any`
@@ -486,7 +485,7 @@ class ModelBase(abc.ABC, FileBase):
         # Parse arguments
         ad = None
         if isinstance(var, ArrayData):
-            ad = var
+            ad = var.copy_var()
             var = ad.get_var_meshgrid()
         # Get current parameters
         _popt = self.popt
@@ -695,116 +694,8 @@ class ModelBase(abc.ABC, FileBase):
 # +++++++++++++++++++++++++++++++++++++++++++++
 
 
-def ParamModelFromArray(
-    ar, param_dims=None, interpolation="linear", extrapolation=True
-):
-    """
-    Uses an interpolated array to define a parameterized model.
-
-    Parameters
-    ----------
-    ar : `Array[float]`
-        Array interpreted as functional values.
-    param_dims : `Iter[int]`
-        Array dimensions used as fitting parameters.
-        If `None`, uses only first dimension as parameter.
-    interpolation : `str`
-        Interpolation mode: `"nearest", "linear"`.
-    extrapolation : `bool` or `float`
-        If `True`, extrapolates using the method given by `interpolation`.
-        If `False`, raises an error upon extrapolation.
-        If `float`, uses the given value as constant extrapolation value.
-
-    Returns
-    -------
-    FitArrayData : `class`
-        Generated model class (subclass of :py:class:`ModelBase`).
-    """
-    # Parse parameters
-    if isinstance(ar, ArrayData):
-        ad = ar.copy()
-    else:
-        ad = ArrayData(np.array(ar).copy())
-        for dim in range(ad.ndim):
-            ad.set_var_quantity(dim, name=chr(ord("a") + dim))
-    # Distinguish variables and parameters
-    if param_dims is None:
-        param_dims = [0]
-    if np.isscalar(param_dims):
-        param_dims = [param_dims]
-    var_dims = []
-    for dim in range(ad.ndim):
-        if dim not in param_dims:
-            var_dims.append(dim)
-    param_names = [ad.var_quantity[dim].name for dim in param_dims]
-    if len(np.unique(param_names)) != len(param_names):
-        raise ValueError("non-unique parameter names")
-
-    # Create model class
-    if len(var_dims) == 0:
-        raise ValueError("no variable dimension set")
-    elif len(param_dims) == 0:
-        raise ValueError("no parameter dimension set")
-    # Scalar variable
-    elif len(var_dims) == 1:
-        class FitArrayData(ModelBase):
-
-            P_ALL = param_names
-            P_DEFAULT = [ad.get_center(dim) for dim in param_dims]
-
-            _data = ad
-            _var_dims = var_dims
-            _param_dims = param_dims
-
-            @staticmethod
-            def _func(var, *p):
-                cls = FitArrayData
-                params = []
-                i_p = 0
-                for dim in range(cls._data.ndim):
-                    if dim in cls._var_dims:
-                        params.append(var)
-                    else:
-                        params.append(np.full_like(var, p[i_p]))
-                        i_p += 1
-                params = np.array(params)
-                return ad.interpolate(
-                    params, mode=interpolation, extrapolation=extrapolation
-                )
-
-    # Tensorial variable
-    else:
-        class FitArrayData(ModelBase):
-
-            P_ALL = param_names
-            P_DEFAULT = [ad.get_center(dim) for dim in param_dims]
-
-            _data = ad
-            _var_dims = var_dims
-            _param_dims = param_dims
-
-            @staticmethod
-            def _func(var, *p):
-                cls = FitArrayData
-                params = []
-                i_var, i_p = 0, 0
-                for dim in range(cls._data.ndim):
-                    if dim in cls._var_dims:
-                        params.append(var[i_var])
-                        i_var += 1
-                    else:
-                        params.append(np.full_like(var[0], p[i_p]))
-                        i_p += 1
-                params = np.array(params)
-                return ad.interpolate(
-                    params, mode=interpolation, extrapolation=extrapolation
-                )
-
-    return FitArrayData
-
-
-def ScaleModelFromArray(
-    ar, scale_dims=None, offset_dims=None,
+def ModelFromArray(
+    ar, param_dims=None, scale_dims=None, offset_dims=None,
     interpolation="linear", extrapolation=True
 ):
     """
@@ -816,10 +707,10 @@ def ScaleModelFromArray(
     ----------
     ar : `Array[float]`
         Array interpreted as functional values.
-    scale_dims, offset_dims : `Iter[int]`
+    param_dims : `int` or `Iter[int]`
+        Array dimensions used as fitting parameters.
+    scale_dims, offset_dims : `int` or `Iter[int]`
         Array dimensions that should be scaled/offset.
-        If `scale_dims is None`, scales all dimensions.
-        If `offset_dims is None`, offsets none of the dimensions.
     interpolation : `str`
         Interpolation mode: `"nearest", "linear"`.
     extrapolation : `bool` or `float`
@@ -831,6 +722,49 @@ def ScaleModelFromArray(
     -------
     FitArrayData : `class`
         Generated model class (subclass of :py:class:`ModelBase`).
+
+    Raises
+    ------
+    ValueError
+        If the given dimensions are invalid.
+
+    Examples
+    --------
+    Consider a typical physical model `f (t, x; a, b)`.
+    This could, e.g., be a charge distribution `f` at time `t`
+    and location `x`, given some parameters `a` and `b` (like conductivities).
+    Since this might be a complicated model, it might be numerically defined
+    and given as the array `ar`:
+    >>> ar.ndim
+    4
+
+    Let us assume that the goal is to fit this model to measurements
+    `f_i (t_i, x)`. `f_i` denotes the data set, which we assume is taken at
+    all positions `x` and at a single point in time `t_i`:
+    >>> f.ndim
+    2
+
+    If we want to fit `a, b`, we have to pass the dimensions of `a` and `b`
+    as `param_dims`:
+    >>> param_dims = [2, 3]
+
+    Let us further assume that we also want to fit the times.
+    If we allow for a scalable time, we can set the corresponding dimensions:
+    >>> scale_dims : [0]
+
+    If we allow for a time offset, we can again set the dimensions:
+    >>> offset_dims = [0]
+
+    Now we can create the class representing the fit model from the
+    numerical model:
+    >>> FitModel = ModelFromArray(
+    ...     ar, param_dims=param_dims,
+    ...     scale_dims=scale_dims, offset_dims=offset_dims
+    ... )
+
+    This class is a subclass of :py:class:`ModelBase` and can now be used
+    to fit the measurement data:
+    >>> fit = FitModel(f)
     """
     # Parse parameters
     if isinstance(ar, ArrayData):
@@ -839,80 +773,89 @@ def ScaleModelFromArray(
         ad = ArrayData(np.array(ar).copy())
         for dim in range(ad.ndim):
             ad.set_var_quantity(dim, name=chr(ord("a") + dim))
-    # Distinguish variables and parameters
-    if scale_dims is None:
-        scale_dims = np.arange(ad.ndim)
-    elif np.isscalar(scale_dims):
-        scale_dims = [scale_dims]
-    if offset_dims is None:
-        offset_dims = []
-    elif np.isscalar(offset_dims):
-        offset_dims = [offset_dims]
+    # Find parameter, scaling and offset dimensions
+    param_dims = [] if param_dims is None else misc.assume_iter(param_dims)
+    var_dims = list(filter(lambda x: x not in param_dims, np.arange(ad.ndim)))
+    var_ndim = len(var_dims)
+    scale_dims = [] if scale_dims is None else misc.assume_iter(scale_dims)
+    offset_dims = [] if offset_dims is None else misc.assume_iter(offset_dims)
+    # Set fit parameter names and default values
     param_names = (
-        [f"{ad.var_quantity[dim].name}_scale" for dim in scale_dims]
+        [ad.var_quantity[dim].name for dim in param_dims]
+        + [f"{ad.var_quantity[dim].name}_scale" for dim in scale_dims]
         + [f"{ad.var_quantity[dim].name}_offset" for dim in offset_dims]
     )
-    param_default = len(scale_dims) * [1] + len(offset_dims) * [0]
+    param_default = (
+        [ad.get_center(dim) for dim in param_dims]
+        + len(scale_dims) * [1.0]
+        + len(offset_dims) * [0.0]
+    )
+
+    # Check for validity
     if len(np.unique(param_names)) != len(param_names):
         raise ValueError("non-unique parameter names")
-
-    # Create model class
     if len(param_names) == 0:
         raise ValueError("no parameter dimensions set")
-    # Scalar variable
-    elif ad.ndim == 1:
-        class FitArrayData(ModelBase):
+    if var_ndim == 0:
+        raise ValueError("no variable dimensions set")
+    if len(set(param_dims) & set(scale_dims)) > 0:
+        raise ValueError("scaling dimension cannot be parameter dimension")
+    if len(set(param_dims) & set(offset_dims)) > 0:
+        raise ValueError("offset dimension cannot be parameter dimension")
 
-            P_ALL = param_names
-            P_DEFAULT = param_default
+    class FitArrayData(ModelBase):
 
-            _data = ad
-            _scale_dims = scale_dims
-            _offset_dims = offset_dims
+        P_ALL = param_names
+        P_DEFAULT = param_default
 
-            @staticmethod
-            def _func(var, *p):
-                cls = FitArrayData
-                _scale_ndim = len(cls._scale_dims)
-                _offset_ndim = len(cls._offset_dims)
-                if _scale_ndim == 1:
-                    var = p[0] * var
-                if _offset_ndim == 1:
-                    var = p[_scale_ndim] + var
-                return ad.interpolate(
-                    var, mode=interpolation, extrapolation=extrapolation
-                )
+        _data = ad
+        _var_dims = var_dims
+        _param_dims = param_dims
+        _scale_dims = scale_dims
+        _offset_dims = offset_dims
 
-    # Tensorial variable
-    else:
-        class FitArrayData(ModelBase):
-
-            P_ALL = param_names
-            P_DEFAULT = param_default
-
-            _data = ad
-            _scale_dims = scale_dims
-            _offset_dims = offset_dims
-
-            @staticmethod
-            def _func(var, *p):
-                cls = FitArrayData
-                params = []
-                i_scale, i_offset = 0, 0
-                for dim in range(cls._data.ndim):
-                    _tmp = var[dim]
+        @staticmethod
+        def _func(var, *p):
+            cls = FitArrayData
+            # If scalar variable
+            if len(cls._var_dims) == 1:
+                var = [var]
+            shape = var[0].shape
+            # Counters for each parameter
+            i_var = 0
+            i_param = 0
+            i_scale = len(cls._param_dims)
+            i_offset = len(cls._param_dims) + len(cls._scale_dims)
+            # Construct interpolation parameters
+            params = []
+            for dim in range(cls._data.ndim):
+                if dim in cls._param_dims:
+                    _tmp = np.full(shape, p[i_param])
+                    i_param += 1
+                else:
+                    _tmp = var[i_var]
+                    i_var += 1
                     if dim in cls._scale_dims:
                         _tmp = p[i_scale] * _tmp
                         i_scale += 1
                     if dim in cls._offset_dims:
-                        _tmp = _tmp + p[len(cls._scale_dims) + i_offset]
+                        _tmp = _tmp + p[i_offset]
                         i_offset += 1
-                    params.append(_tmp)
-                params = np.array(params)
-                return ad.interpolate(
-                    params, mode=interpolation, extrapolation=extrapolation
-                )
+                params.append(_tmp)
+            params = np.array(params)
+            # Interpolate
+            return ad.interpolate(
+                params, mode=interpolation, extrapolation=extrapolation
+            )
 
+    FitArrayData.__doc__ = (
+        f"Fit class for interpolated array with data_quantity"
+        f" `{str(ad.data_quantity.name)}`.\n"
+        f"\n"
+        f"Parameters\n"
+        f"----------\n"
+        f"{', '.join(param_names)}"
+    )
     return FitArrayData
 
 
