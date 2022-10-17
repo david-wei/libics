@@ -1000,8 +1000,12 @@ class ArrayData(AttrHashBase):
         # If single item
         if (len(key) == self.ndim and np.all([np.isscalar(k) for k in key])):
             return self.data[key]
+        # If boolean array
+        if not isinstance(key, tuple):
+            return self.data[key]
         # Else (slice in at least one dimension)
         obj = self.copy_var()
+        key = misc.cv_index_ellipsis(key, self.ndim)
         kdim = len(key)
         for i, k in enumerate(reversed(key)):
             dim = kdim - i - 1
@@ -1050,6 +1054,8 @@ class ArrayData(AttrHashBase):
 
     def __setitem__(self, key, val):
         """Set data array item by index."""
+        if isinstance(key, ArrayData):
+            key = key.data
         self.data[key] = val
 
     def __iter__(self):
@@ -1289,10 +1295,12 @@ class ArrayData(AttrHashBase):
         shape = None
         dim = self.ndim
         if dim == 1:
+            is_scalar = np.isscalar(var)
             if np.isscalar(var) or len(var) != 1:
                 var = [var]
             var = np.array(var)
         if not np.isscalar(var[0]):
+            is_scalar = np.isscalar(var[0])
             shape = var[0].shape
             var = var.reshape((dim, var.size // dim))
             var = np.moveaxis(var, 0, -1)
@@ -1318,6 +1326,8 @@ class ArrayData(AttrHashBase):
         )
         if shape is not None:
             func_val = func_val.reshape(shape)
+        if is_scalar:
+            func_val = func_val.item()
         return func_val
 
     def supersample(self, rep):
@@ -1614,28 +1624,28 @@ class ArrayData(AttrHashBase):
     # ++++ Comparisons +++++++++++
 
     def __lt__(self, other):
-        return np.all(self.get_common_obj(other, np.less, raw=True))
+        return self.get_common_obj(other, np.less, raw=True)
 
     def __le__(self, other):
-        return np.all(self.get_common_obj(other, np.less_equal, raw=True))
+        return self.get_common_obj(other, np.less_equal, raw=True)
 
     def __eq__(self, other):
         try:
-            return np.all(self.get_common_obj(other, np.equal, raw=True))
+            return self.get_common_obj(other, np.equal, raw=True)
         except ValueError:
             return False
 
     def __ne__(self, other):
         try:
-            return np.all(self.get_common_obj(other, np.not_equal, raw=True))
+            return self.get_common_obj(other, np.not_equal, raw=True)
         except ValueError:
             return True
 
     def __ge__(self, other):
-        return np.all(self.get_common_obj(other, np.greater_equal, raw=True))
+        return self.get_common_obj(other, np.greater_equal, raw=True)
 
     def __gt__(self, other):
-        return np.all(self.get_common_obj(other, np.greater, raw=True))
+        return self.get_common_obj(other, np.greater, raw=True)
 
     # ++++ Unary operations ++++++
 
