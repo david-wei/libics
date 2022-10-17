@@ -1044,6 +1044,8 @@ class ArrayData(AttrHashBase):
             else:
                 raise ValueError(f"invalid key type ({k} of type {type(k)})")
         obj.data = self.data[key]
+        for k in self.ATTR_NAMES_VAR:
+            setattr(self, k, getattr(self, k)[:self.ndim])
         return obj
 
     def __setitem__(self, key, val):
