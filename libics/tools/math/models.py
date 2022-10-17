@@ -695,11 +695,11 @@ class ModelBase(abc.ABC, FileBase):
 # +++++++++++++++++++++++++++++++++++++++++++++
 
 
-def FitModelFromArray(
+def ParamModelFromArray(
     ar, param_dims=None, interpolation="linear", extrapolation=True
 ):
     """
-    Generates a fit class based on interpolating an array.
+    Uses an interpolated array to define a parameterized model.
 
     Parameters
     ----------
@@ -795,6 +795,119 @@ def FitModelFromArray(
                     else:
                         params.append(np.full_like(var[0], p[i_p]))
                         i_p += 1
+                params = np.array(params)
+                return ad.interpolate(
+                    params, mode=interpolation, extrapolation=extrapolation
+                )
+
+    return FitArrayData
+
+
+def ScaleModelFromArray(
+    ar, scale_dims=None, offset_dims=None,
+    interpolation="linear", extrapolation=True
+):
+    """
+    Uses an interpolated array to define a variable-scaled model.
+
+    Can be used to fit a scale and offset to the array variables.
+
+    Parameters
+    ----------
+    ar : `Array[float]`
+        Array interpreted as functional values.
+    scale_dims, offset_dims : `Iter[int]`
+        Array dimensions that should be scaled/offset.
+        If `scale_dims is None`, scales all dimensions.
+        If `offset_dims is None`, offsets none of the dimensions.
+    interpolation : `str`
+        Interpolation mode: `"nearest", "linear"`.
+    extrapolation : `bool` or `float`
+        If `True`, extrapolates using the method given by `interpolation`.
+        If `False`, raises an error upon extrapolation.
+        If `float`, uses the given value as constant extrapolation value.
+
+    Returns
+    -------
+    FitArrayData : `class`
+        Generated model class (subclass of :py:class:`ModelBase`).
+    """
+    # Parse parameters
+    if isinstance(ar, ArrayData):
+        ad = ar.copy()
+    else:
+        ad = ArrayData(np.array(ar).copy())
+        for dim in range(ad.ndim):
+            ad.set_var_quantity(dim, name=chr(ord("a") + dim))
+    # Distinguish variables and parameters
+    if scale_dims is None:
+        scale_dims = np.arange(ad.ndim)
+    elif np.isscalar(scale_dims):
+        scale_dims = [scale_dims]
+    if offset_dims is None:
+        offset_dims = []
+    elif np.isscalar(offset_dims):
+        offset_dims = [offset_dims]
+    param_names = (
+        [f"{ad.var_quantity[dim].name}_scale" for dim in scale_dims]
+        + [f"{ad.var_quantity[dim].name}_offset" for dim in offset_dims]
+    )
+    param_default = len(scale_dims) * [1] + len(offset_dims) * [0]
+    if len(np.unique(param_names)) != len(param_names):
+        raise ValueError("non-unique parameter names")
+
+    # Create model class
+    if len(param_names) == 0:
+        raise ValueError("no parameter dimensions set")
+    # Scalar variable
+    elif ad.ndim == 1:
+        class FitArrayData(ModelBase):
+
+            P_ALL = param_names
+            P_DEFAULT = param_default
+
+            _data = ad
+            _scale_dims = scale_dims
+            _offset_dims = offset_dims
+
+            @staticmethod
+            def _func(var, *p):
+                cls = FitArrayData
+                _scale_ndim = len(cls._scale_dims)
+                _offset_ndim = len(cls._offset_dims)
+                if _scale_ndim == 1:
+                    var = p[0] * var
+                if _offset_ndim == 1:
+                    var = p[_scale_ndim] + var
+                return ad.interpolate(
+                    var, mode=interpolation, extrapolation=extrapolation
+                )
+
+    # Tensorial variable
+    else:
+        class FitArrayData(ModelBase):
+
+            P_ALL = param_names
+            P_DEFAULT = param_default
+
+            _data = ad
+            _scale_dims = scale_dims
+            _offset_dims = offset_dims
+
+            @staticmethod
+            def _func(var, *p):
+                cls = FitArrayData
+                params = []
+                i_scale, i_offset = 0, 0
+                for dim in range(cls._data.ndim):
+                    _tmp = var[dim]
+                    if dim in cls._scale_dims:
+                        _tmp = p[i_scale] * _tmp
+                        i_scale += 1
+                    if dim in cls._offset_dims:
+                        _tmp = _tmp + p[len(cls._scale_dims) + i_offset]
+                        i_offset += 1
+                    params.append(_tmp)
                 params = np.array(params)
                 return ad.interpolate(
                     params, mode=interpolation, extrapolation=extrapolation
