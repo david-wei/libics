@@ -1375,6 +1375,58 @@ def cv_index_mask_to_rect(mask):
     return rect
 
 
+def cv_index_ellipsis(indices, ndim):
+    """
+    Resolves an indexing tuple containing `Ellipsis` into explicit slices.
+
+    Parameters
+    ----------
+    indices : `Iter[int or slice or Ellipsis]`
+        Indexing tuple.
+    ndim : `int`
+        Number of dimensions of resolved indexing tuple.
+
+    Returns
+    -------
+    resolved_indices : `tuple(int or slice)`
+        Indexing tuple with `Ellipsis` resolved.
+
+    Examples
+    --------
+    >>> ar = np.arange(2*3*4*5).reshape((2, 3, 4, 5))
+    >>> indices = (1, ..., 4)
+    >>> ar[indices]
+    array([[ 64,  69,  74,  79],
+           [ 84,  89,  94,  99],
+           [104, 109, 114, 119]])
+    >>> resolved_indices = cv_index_ellipsis(indices, ar.ndim)
+    >>> resolved_indices
+    (1, slice(None, None, None), slice(None, None, None), 4)
+    >>> np.all(ar[indices] == ar[resolved_indices])
+    True
+    """
+    # Check if iterable
+    try:
+        iter(indices)
+    except TypeError:
+        return indices
+    # Find index of ellipsis
+    idx_ellipsis = None
+    for i, item in enumerate(indices):
+        if item == Ellipsis:
+            idx_ellipsis = i
+            break
+    if idx_ellipsis is None:
+        return indices
+    # Resolve ellipsis
+    resolved_indices = ndim * [slice(None)]
+    for i in range(idx_ellipsis):
+        resolved_indices[i] = indices[i]
+    for i in range(len(indices) - idx_ellipsis - 1):
+        resolved_indices[-i - 1] = indices[-i - 1]
+    return tuple(resolved_indices)
+
+
 def transpose_array(ar):
     """
     Transposes a rectangular array.
