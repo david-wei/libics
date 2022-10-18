@@ -1294,6 +1294,7 @@ class ArrayData(AttrHashBase):
         # Convert to seriesdata-structure-like
         shape = None
         dim = self.ndim
+        is_scalar = False
         if dim == 1:
             is_scalar = np.isscalar(var)
             if np.isscalar(var) or len(var) != 1:

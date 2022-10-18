@@ -350,7 +350,7 @@ class ModelBase(abc.ABC, FileBase):
         """
         raise NotImplementedError
 
-    def find_popt(self, *data, **kwargs):
+    def find_popt(self, *data, bounds=None, **kwargs):
         """
         Fits the model function to the given data.
 
@@ -358,6 +358,9 @@ class ModelBase(abc.ABC, FileBase):
         ----------
         *data : `Any`
             Data interpretable by :py:meth:`_split_fit_data`.
+        bounds : `dict(str->(float, float))`
+            Bounds for fitted values for each parameter:
+            `dict(parameter_name->(lower_bound, upper_bound))`.
         **kwargs
             Keyword arguments passed to :py:func:`scipy.optimize.curve_fit`.
 
@@ -389,6 +392,13 @@ class ModelBase(abc.ABC, FileBase):
         if func_data.dtype != float:
             func_data = func_data.astype(float)
         p0 = np.copy(self.p0_for_fit)
+
+        # Set bounds
+        if bounds is not None:
+            pbounds = []
+            for k in self.pfit:
+                pbounds.append(bounds.get(k, (-np.inf, np.inf)))
+            kwargs["bounds"] = np.transpose(pbounds)
 
         # Optimize parameters
         try:
