@@ -133,6 +133,15 @@ class ModelBase(abc.ABC, FileBase):
         ):
             raise NotImplementedError("Class attribute `P_DEFAULT` is missing")
 
+    def copy(self):
+        """
+        Returns a deep copy of the object.
+        """
+        obj = self.__class__()
+        for attr_name in self.SER_KEYS:
+            setattr(obj, attr_name, copy.deepcopy(getattr(self, attr_name)))
+        return obj
+
     @staticmethod
     @abc.abstractmethod
     def _func(var, *p):
