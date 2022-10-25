@@ -1,5 +1,6 @@
 from .base import *
 from . import colors
+from .layout import SubfigLayout, SubfigMargins, SubfigSize, make_fixed_axes
 
 
 import matplotlib.pyplot
