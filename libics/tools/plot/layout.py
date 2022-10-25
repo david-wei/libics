@@ -513,27 +513,27 @@ class SubfigLayout:
                 heights = heights[row:row + 1]
                 voffsets = voffsets[row:row + 1]
             elif isinstance(row, slice):
-                voffsets = voffsets[row.start:row.start + 1]
                 if row.stop is None:
                     row_stop = len(voffsets)
                 else:
                     row_stop = row.stop % (len(voffsets) + 1)
                 vhigh = voffsets[row_stop - 1] + heights[row_stop - 1]
-                heights = np.array([vhigh])
+                voffsets = voffsets[row.start:row.start + 1]
+                heights = np.array([vhigh]) - voffsets
             else:
                 raise ValueError("invalid `row`")
         if col is not None:
             if np.isscalar(col):
                 widths = widths[col:col + 1]
                 hoffsets = hoffsets[col:col + 1]
-            elif isinstance(row, slice):
-                hoffsets = hoffsets[col.start:col.start + 1]
+            elif isinstance(col, slice):
                 if col.stop is None:
                     col_stop = len(hoffsets)
                 else:
                     col_stop = col.stop % (len(hoffsets) + 1)
                 hhigh = hoffsets[col_stop - 1] + widths[col_stop - 1]
-                widths = np.array([hhigh])
+                hoffsets = hoffsets[col.start:col.start + 1]
+                widths = np.array([hhigh]) - hoffsets
             else:
                 raise ValueError("invalid `col`")
         # Return rect
