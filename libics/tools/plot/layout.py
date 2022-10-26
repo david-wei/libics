@@ -408,7 +408,7 @@ class SubfigLayout:
             elif isinstance(sublayout, mpl.axes.Axes):
                 yield sublayout
             else:
-                yield sublayout.iter_axs()
+                yield from sublayout.iter_axs()
 
     def get_sublayout_size(self, subfig_size, row=None, col=None):
         """
@@ -601,3 +601,49 @@ class SubfigLayout:
         ax = make_fixed_axes(self.fig, self.normalize_rect(rect))
         self.sublayouts[row, col] = ax
         return ax
+
+    # ++++++++++++++++++++++++++
+    # Helpers
+    # ++++++++++++++++++++++++++
+
+    @staticmethod
+    def cv_rect_to_center(mpl_rect):
+        """
+        Converts a matplotlib rectangle to center.
+
+        Dimensions: `[..., (left, bottom, width, height)]
+        -> [..., (xcenter, ycenter, width, height)]`
+        """
+        mpl_rect = np.array(mpl_rect)
+        is_scalar = mpl_rect.ndim == 1
+        if is_scalar:
+            mpl_rect = mpl_rect[np.newaxis, ...]
+        mpl_center = mpl_rect.copy()
+        for idx in np.ndindex(mpl_rect.shape[:-1]):
+            pos_idx = idx + (slice(None, 2),)
+            size_idx = idx + (slice(2, None),)
+            mpl_center[pos_idx] = mpl_rect[pos_idx] + mpl_rect[size_idx] / 2
+        if is_scalar:
+            mpl_center = mpl_center[0]
+        return mpl_center
+
+    @staticmethod
+    def cv_center_to_rect(mpl_center):
+        """
+        Converts a matplotlib center to rectangle.
+
+        Dimensions: `[..., (xcenter, ycenter, width, height)]
+        -> [..., (left, bottom, width, height)]`
+        """
+        mpl_center = np.array(mpl_center)
+        is_scalar = mpl_center.ndim == 1
+        if is_scalar:
+            mpl_center = mpl_center[np.newaxis, ...]
+        mpl_rect = mpl_center.copy()
+        for idx in np.ndindex(mpl_center.shape[:-1]):
+            pos_idx = idx + (slice(None, 2),)
+            size_idx = idx + (slice(2, None),)
+            mpl_rect[pos_idx] = mpl_center[pos_idx] - mpl_center[size_idx] / 2
+        if is_scalar:
+            mpl_rect = mpl_rect[0]
+        return mpl_rect
