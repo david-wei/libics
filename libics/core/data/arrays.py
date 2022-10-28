@@ -1483,6 +1483,25 @@ class ArrayData(AttrHashBase):
             Processed object.
         """
         obj = self if in_place else copy.deepcopy(self)
+        # Align var axes
+        if not np.isscalar(other):
+            dif_ndim = other.ndim - self.ndim
+            # If other has more dimensions, shift var for numpy broadcasting
+            if dif_ndim > 0:
+                # Assert that other has var attributes
+                if isinstance(other, ArrayData):
+                    other_ad = other
+                else:
+                    # Create dummy ArrayData
+                    other_ad = ArrayData()
+                    other_ad.add_dim(dif_ndim)
+                # Copy and shift var attributes
+                for k in obj.ATTR_NAMES_VAR:
+                    v = copy.deepcopy(
+                        list(getattr(other_ad, k)[:dif_ndim])
+                        + list(getattr(obj, k))
+                    )
+                    setattr(obj, k, v)
         # Non-homogeneous operation
         if not isinstance(other, ArrayData):
             if rev:
