@@ -241,7 +241,9 @@ def plot(
         If `Quantity`, sets an automatic label.
     marker : `str` or `object`
         Matplotlib markers.
-        Additionally supports `"O"` (larger circle with darker edge color).
+        Using square brackets (`[<marker>]`) around the matplotlib marker
+        creates a larger marker with a darker edge color.
+        Shorthands: `"O" == "[o]"`.
     xlabel, ylabel, label, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -881,7 +883,7 @@ def _process_marker_param(
     Parameters
     ----------
     marker : `str`
-        Matplotlib marker options or `"O"`.
+        Matplotlib marker options.
     **kwargs
         Other matplotlib style options for plotting.
 
@@ -890,7 +892,16 @@ def _process_marker_param(
     kwargs : `dict`
         Updated matplotlib style options.
     """
-    if marker == "O":
+    marker_map = {
+        "O": "[o]"
+    }
+    marker = marker_map.get(marker, marker)
+    try:
+        marker = misc.extract(marker, r"^\[(.*)\]$")
+        has_edge = True
+    except (TypeError, KeyError):
+        has_edge = False
+    if has_edge:
         if "markersize" not in kwargs:
             kwargs["markersize"] = mpl.rcParams["lines.markersize"] * 1.3
         if "markeredgewidth" not in kwargs:
@@ -928,9 +939,7 @@ def _process_marker_param(
                             kwargs["color"]
                         ))
                     )
-        kwargs["marker"] = "o"
-    else:
-        kwargs["marker"] = marker
+    kwargs["marker"] = marker
     return kwargs
 
 
