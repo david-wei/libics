@@ -191,6 +191,8 @@ def tick_params(
     ax.tick_params(axis=axis, **kwargs)
     # Cap style
     if capstyle is not None:
+        if not isinstance(capstyle, mpl.markers.CapStyle):
+            capstyle = getattr(mpl.markers.CapStyle, capstyle)
         if axis in ["x", "both"]:
             for i in ax.xaxis.get_majorticklines():
                 i._marker._capstyle = capstyle
@@ -374,7 +376,7 @@ def pcolormesh(
         if vcen is None:
             vcen = 0
         if vdif is True:
-            vdif = np.max(np.abs(c - vcen))
+            vdif = np.nanmax(np.abs(c - vcen))
         if vmin is None:
             vmin = vcen - vdif
         if vmax is None:
@@ -491,7 +493,7 @@ def contourf(
         if vcen is None:
             vcen = 0
         if vdif is True:
-            vdif = np.max(np.abs(c - vcen))
+            vdif = np.nanmax(np.abs(c - vcen))
         if vmin is None:
             vmin = vcen - vdif
         if vmax is None:
