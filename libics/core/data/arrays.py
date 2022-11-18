@@ -760,7 +760,7 @@ class ArrayData(AttrHashBase):
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.var_shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
