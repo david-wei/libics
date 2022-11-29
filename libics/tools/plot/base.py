@@ -776,6 +776,12 @@ def _get_xyc_from_data(
                 data[0].get_var_meshgrid_bins() if use_bins is True
                 else data[0].get_var_meshgrid()
             )
+            for k in ["x", "y"]:
+                if np.issubdtype(data_dict[k].dtype, object):
+                    try:
+                        data_dict[k] = data_dict[k].astype(float)
+                    except TypeError:
+                        pass
             data_dict["c"] = data[0].data
             data_dict["xlabel"] = data[0].var_quantity[0].labelstr(val=False)
             data_dict["ylabel"] = data[0].var_quantity[1].labelstr(val=False)
