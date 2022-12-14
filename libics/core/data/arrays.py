@@ -1,4 +1,5 @@
 import copy
+import datetime
 import numpy as np
 from scipy import interpolate
 
@@ -798,6 +799,17 @@ class ArrayData(AttrHashBase):
             _tz = _points[0].tzinfo
             _points = np.array([misc.cv_timestamp(x) for x in _points])
         _bins = np.empty(len(_points) + 1, dtype=float)
+        # Handle single point
+        if len(_points) == 1:
+            _point = _points[0]
+            if _is_datetime:
+                _bins[0] = _point - datetime.timedelta(seconds=0.5)
+                _bins[-1] = _point + datetime.timedelta(seconds=0.5)
+            else:
+                _bins[0] = _point - 0.5
+                _bins[-1] = _points + 0.5
+            return _bins
+        # Handle points array
         _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
         _bins[0] = 2 * _points[0] - _bins[1]
         _bins[-1] = 2 * _points[-1] - _bins[-2]
