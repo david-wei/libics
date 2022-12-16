@@ -10,6 +10,7 @@ This is the documentation of the data analysis package `libics <https://github.c
 
 .. toctree::
    :maxdepth: 2
+   :titlesonly:
    :caption: Contents:
     
    _dynamic/libics.env

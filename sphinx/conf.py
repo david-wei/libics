@@ -21,7 +21,7 @@ import env
 # -- Project information -----------------------------------------------------
 
 project = 'libics'
-copyright = '2019-2022, David Wei'
+copyright = '2019-2023, David Wei'
 author = 'David Wei'
 
 # The short X.Y version

@@ -117,8 +117,8 @@ def insert_dims(ar, ndim, axis=-1):
     axis : `int`
         Dimensional index of insertion.
 
-    Return
-    ------
+    Returns
+    -------
     ar : `np.ndarray`
         Expanded array.
 
@@ -299,7 +299,7 @@ def tensormul_numpy_array(
         Combined result tensor.
 
     Notes
-    --------
+    -----
     This function wraps `numpy.einsum`.
 
     Examples

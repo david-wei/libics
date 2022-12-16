@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libics.tools.trafo &mdash; libics 1.0a documentation</title>
+  <title>libics.tools.trafo &mdash; libics 1.1a documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,8 +14,10 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> libics
           </a>
               <div class="version">
-                1.0
+                1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -50,9 +52,26 @@
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.math.html">libics.tools.math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.plot.html">libics.tools.plot</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.trafo</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.fourier">fourier</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.linear">linear</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.resize">resize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.fourier">fourier</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.fourier.fft"><code class="docutils literal notranslate"><span class="pre">fft()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.fourier.ifft"><code class="docutils literal notranslate"><span class="pre">ifft()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.linear">linear</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo"><code class="docutils literal notranslate"><span class="pre">AffineTrafo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d"><code class="docutils literal notranslate"><span class="pre">AffineTrafo2d</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.trafo.resize">resize</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.center_crop"><code class="docutils literal notranslate"><span class="pre">center_crop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.crop_image"><code class="docutils literal notranslate"><span class="pre">crop_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.find_centroid"><code class="docutils literal notranslate"><span class="pre">find_centroid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.fit_to_aspect"><code class="docutils literal notranslate"><span class="pre">fit_to_aspect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.resize_on_condition"><code class="docutils literal notranslate"><span class="pre">resize_on_condition()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.resize_on_filter_maximum"><code class="docutils literal notranslate"><span class="pre">resize_on_filter_maximum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.trafo.resize.resize_on_mass"><code class="docutils literal notranslate"><span class="pre">resize_on_mass()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -85,9 +104,9 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.trafo">
-<span id="libics-tools-trafo"></span><h1>libics.tools.trafo<a class="headerlink" href="#module-libics.tools.trafo" title="Permalink to this headline"></a></h1>
+<span id="libics-tools-trafo"></span><h1>libics.tools.trafo<a class="headerlink" href="#module-libics.tools.trafo" title="Permalink to this heading"></a></h1>
 <section id="module-libics.tools.trafo.fourier">
-<span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.tools.trafo.fourier" title="Permalink to this headline"></a></h2>
+<span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.tools.trafo.fourier" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.trafo.fourier.fft">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.fourier.</span></span><span class="sig-name descname"><span class="pre">fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.fourier.fft" title="Permalink to this definition"></a></dt>
@@ -159,11 +178,11 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 
 </section>
 <section id="module-libics.tools.trafo.linear">
-<span id="linear"></span><h2>linear<a class="headerlink" href="#module-libics.tools.trafo.linear" title="Permalink to this headline"></a></h2>
+<span id="linear"></span><h2>linear<a class="headerlink" href="#module-libics.tools.trafo.linear" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.linear.</span></span><span class="sig-name descname"><span class="pre">AffineTrafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a>, <a class="reference internal" href="libics.core.data.html#libics.core.data.types.AttrHashBase" title="libics.core.data.types.AttrHashBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.data.types.AttrHashBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileBase</span></code></a>, <a class="reference internal" href="libics.core.data.html#libics.core.data.types.AttrHashBase" title="libics.core.data.types.AttrHashBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttrHashBase</span></code></a></p>
 <p>Defines an affine transformation in arbitrary dimensions.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -186,7 +205,7 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -251,10 +270,13 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 <col style="width: 26%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
+<tr class="row-odd"><td><p><strong>copy</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>set_offset_by_point_pair</strong></p></td>
+<tr class="row-even"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_offset_by_point_pair</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -308,6 +330,11 @@ placed on the last axes (dimensions: […, ndim]).</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.copy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_origin">
@@ -494,7 +521,7 @@ dimension in target space.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo2d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.linear.</span></span><span class="sig-name descname"><span class="pre">AffineTrafo2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo2d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo" title="libics.tools.trafo.linear.AffineTrafo"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.trafo.linear.AffineTrafo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo" title="libics.tools.trafo.linear.AffineTrafo"><code class="xref py py-class docutils literal notranslate"><span class="pre">AffineTrafo</span></code></a></p>
 <p>Maps origin pixel positions to target pixels positions.</p>
 <p>Convention: <code class="docutils literal notranslate"><span class="pre">target_coord</span> <span class="pre">=</span> <span class="pre">matrix</span> <span class="pre">*</span> <span class="pre">origin_coord</span> <span class="pre">+</span> <span class="pre">offset</span></code>.</p>
 <p>Usage:</p>
@@ -517,7 +544,7 @@ dimension in target space.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -620,16 +647,19 @@ dimension in target space.</p>
 <col style="width: 26%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
+<tr class="row-odd"><td><p><strong>copy</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>set_offset_by_point_pair</strong></p></td>
+<tr class="row-even"><td><p><strong>set_offset_by_fixed_point</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>shift_origin_axes</strong></p></td>
+<tr class="row-odd"><td><p><strong>set_offset_by_point_pair</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>shift_target_axes</strong></p></td>
+<tr class="row-even"><td><p><strong>shift_origin_axes</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>shift_target_axes</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -809,7 +839,7 @@ None: If fit failed.</p>
 
 </section>
 <section id="module-libics.tools.trafo.resize">
-<span id="resize"></span><h2>resize<a class="headerlink" href="#module-libics.tools.trafo.resize" title="Permalink to this headline"></a></h2>
+<span id="resize"></span><h2>resize<a class="headerlink" href="#module-libics.tools.trafo.resize" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.trafo.resize.center_crop">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.resize.</span></span><span class="sig-name descname"><span class="pre">center_crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.resize.center_crop" title="Permalink to this definition"></a></dt>
@@ -1028,7 +1058,7 @@ crop.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2022, David Wei.</p>
+    <p>&#169; Copyright 2019-2023, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

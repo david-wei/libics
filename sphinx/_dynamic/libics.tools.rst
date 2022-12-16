@@ -8,6 +8,7 @@ libics.tools
 
 .. toctree::
    :maxdepth: 2
+   :titlesonly:
    :caption: Contents:
 
    libics.tools.control.rst

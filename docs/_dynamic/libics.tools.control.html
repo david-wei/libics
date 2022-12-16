@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libics.tools.control &mdash; libics 1.0a documentation</title>
+  <title>libics.tools.control &mdash; libics 1.1a documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,7 +14,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> libics
           </a>
               <div class="version">
-                1.0
+                1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -46,8 +48,18 @@
 <li class="toctree-l1"><a class="reference internal" href="libics.core.html">libics.core</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.control</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.kalman">kalman</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.pid">pid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.kalman">kalman</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.kalman.KalmanFilter"><code class="docutils literal notranslate"><span class="pre">KalmanFilter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.control.pid">pid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop"><code class="docutils literal notranslate"><span class="pre">ArrayControlLoop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.pid.ImageControlLoop"><code class="docutils literal notranslate"><span class="pre">ImageControlLoop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.pid.get_ctrl_image"><code class="docutils literal notranslate"><span class="pre">get_ctrl_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.pid.get_dif_image"><code class="docutils literal notranslate"><span class="pre">get_dif_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.control.pid.get_err_image"><code class="docutils literal notranslate"><span class="pre">get_err_image()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.database.html">libics.tools.database</a></li>
@@ -84,9 +96,9 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.control">
-<span id="libics-tools-control"></span><h1>libics.tools.control<a class="headerlink" href="#module-libics.tools.control" title="Permalink to this headline"></a></h1>
+<span id="libics-tools-control"></span><h1>libics.tools.control<a class="headerlink" href="#module-libics.tools.control" title="Permalink to this heading"></a></h1>
 <section id="module-libics.tools.control.kalman">
-<span id="kalman"></span><h2>kalman<a class="headerlink" href="#module-libics.tools.control.kalman" title="Permalink to this headline"></a></h2>
+<span id="kalman"></span><h2>kalman<a class="headerlink" href="#module-libics.tools.control.kalman" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.control.kalman.KalmanFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.control.kalman.</span></span><span class="sig-name descname"><span class="pre">KalmanFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_estimate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_covariance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.kalman.KalmanFilter" title="Permalink to this definition"></a></dt>
@@ -127,7 +139,7 @@ and the covariance in observation space, respectively.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -205,7 +217,7 @@ If <cite>None</cite>, no control is applied.</p>
 
 </section>
 <section id="module-libics.tools.control.pid">
-<span id="pid"></span><h2>pid<a class="headerlink" href="#module-libics.tools.control.pid" title="Permalink to this headline"></a></h2>
+<span id="pid"></span><h2>pid<a class="headerlink" href="#module-libics.tools.control.pid" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">ArrayControlLoop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_ctrl_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop" title="Permalink to this definition"></a></dt>
@@ -240,7 +252,7 @@ If <cite>None</cite>, no control is applied.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -321,7 +333,7 @@ If <cite>None</cite>, appends a new step.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel">
-<span class="sig-name descname"><span class="pre">set_ctrl_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gain_prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_ctrl_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gain_prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_integr_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.control.pid.ArrayControlLoop.set_ctrl_kernel" title="Permalink to this definition"></a></dt>
 <dd><p>Sets feedback parameters for proportional and limited integral gain.</p>
 <p>For the limited integral control loop, an exponential kernel is used.</p>
 <dl class="field-list">
@@ -358,7 +370,7 @@ i.e. denominator of exponent.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.control.pid.ImageControlLoop">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.control.pid.</span></span><span class="sig-name descname"><span class="pre">ImageControlLoop</span></span><a class="headerlink" href="#libics.tools.control.pid.ImageControlLoop" title="Permalink to this definition"></a></dt>
-<dd><p>alias of <a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop" title="libics.tools.control.pid.ArrayControlLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.control.pid.ArrayControlLoop</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#libics.tools.control.pid.ArrayControlLoop" title="libics.tools.control.pid.ArrayControlLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayControlLoop</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -432,7 +444,7 @@ Can be used to implement PI control.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2022, David Wei.</p>
+    <p>&#169; Copyright 2019-2023, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

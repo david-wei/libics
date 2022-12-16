@@ -19,6 +19,14 @@ image
     :undoc-members:
     :show-inheritance:
 
+iomisc
+------
+
+.. automodule:: libics.core.io.iomisc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 trace
 -----
 

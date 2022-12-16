@@ -260,8 +260,8 @@ def find_peaks_1d_prominence(
     prominence : `np.ndarray(1, float)`
         Prominence of each peak.
 
-    Note
-    ----
+    Notes
+    -----
     The number of returned peaks may vary.
     """
     # Parse data

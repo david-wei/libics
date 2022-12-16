@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libics.core.util &mdash; libics 1.0a documentation</title>
+  <title>libics.core.util &mdash; libics 1.1a documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,8 +14,10 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -31,7 +33,7 @@
             <a href="../index.html" class="icon icon-home"> libics
           </a>
               <div class="version">
-                1.0
+                1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -49,9 +51,78 @@
 <li class="toctree-l2"><a class="reference internal" href="libics.core.data.html">libics.core.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libics.core.io.html">libics.core.io</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">libics.core.util</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.func">func</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.misc">misc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.path">path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.func">func</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.func.Memoize"><code class="docutils literal notranslate"><span class="pre">Memoize</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.func.PeriodicTimer"><code class="docutils literal notranslate"><span class="pre">PeriodicTimer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.func.StoppableThread"><code class="docutils literal notranslate"><span class="pre">StoppableThread</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.misc">misc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_construct_obj"><code class="docutils literal notranslate"><span class="pre">assume_construct_obj()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_dir"><code class="docutils literal notranslate"><span class="pre">assume_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_endswith"><code class="docutils literal notranslate"><span class="pre">assume_endswith()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_even_int"><code class="docutils literal notranslate"><span class="pre">assume_even_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_iter"><code class="docutils literal notranslate"><span class="pre">assume_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_list"><code class="docutils literal notranslate"><span class="pre">assume_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_numpy_array"><code class="docutils literal notranslate"><span class="pre">assume_numpy_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_odd_int"><code class="docutils literal notranslate"><span class="pre">assume_odd_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_startswith"><code class="docutils literal notranslate"><span class="pre">assume_startswith()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.assume_tuple"><code class="docutils literal notranslate"><span class="pre">assume_tuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.capitalize_first_char"><code class="docutils literal notranslate"><span class="pre">capitalize_first_char()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.char_range"><code class="docutils literal notranslate"><span class="pre">char_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_array_points_to_bins"><code class="docutils literal notranslate"><span class="pre">cv_array_points_to_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_bitfield"><code class="docutils literal notranslate"><span class="pre">cv_bitfield()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_camel_to_snake_case"><code class="docutils literal notranslate"><span class="pre">cv_camel_to_snake_case()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_coord_spherical_to_cartesian"><code class="docutils literal notranslate"><span class="pre">cv_coord_spherical_to_cartesian()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_datetime"><code class="docutils literal notranslate"><span class="pre">cv_datetime()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_float"><code class="docutils literal notranslate"><span class="pre">cv_float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_index_center_to_rect"><code class="docutils literal notranslate"><span class="pre">cv_index_center_to_rect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_index_center_to_slice"><code class="docutils literal notranslate"><span class="pre">cv_index_center_to_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_index_ellipsis"><code class="docutils literal notranslate"><span class="pre">cv_index_ellipsis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_index_mask_to_rect"><code class="docutils literal notranslate"><span class="pre">cv_index_mask_to_rect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_index_rect_to_slice"><code class="docutils literal notranslate"><span class="pre">cv_index_rect_to_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_iter_to_str"><code class="docutils literal notranslate"><span class="pre">cv_iter_to_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.cv_timestamp"><code class="docutils literal notranslate"><span class="pre">cv_timestamp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.do_nothing"><code class="docutils literal notranslate"><span class="pre">do_nothing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.extract"><code class="docutils literal notranslate"><span class="pre">extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.extract_index_nonunique_array"><code class="docutils literal notranslate"><span class="pre">extract_index_nonunique_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.flatten_nested_dict"><code class="docutils literal notranslate"><span class="pre">flatten_nested_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.flatten_nested_list"><code class="docutils literal notranslate"><span class="pre">flatten_nested_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.generate_fill_chars"><code class="docutils literal notranslate"><span class="pre">generate_fill_chars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_combinations"><code class="docutils literal notranslate"><span class="pre">get_combinations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_first_elem_iter"><code class="docutils literal notranslate"><span class="pre">get_first_elem_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_numpy_array_index"><code class="docutils literal notranslate"><span class="pre">get_numpy_array_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_numpy_dtype_str"><code class="docutils literal notranslate"><span class="pre">get_numpy_dtype_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_regex_number"><code class="docutils literal notranslate"><span class="pre">get_regex_number()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.get_si_prefix"><code class="docutils literal notranslate"><span class="pre">get_si_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.hex_positive"><code class="docutils literal notranslate"><span class="pre">hex_positive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.id_dict"><code class="docutils literal notranslate"><span class="pre">id_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.is_datetime"><code class="docutils literal notranslate"><span class="pre">is_datetime()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.is_iter"><code class="docutils literal notranslate"><span class="pre">is_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.is_number"><code class="docutils literal notranslate"><span class="pre">is_number()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.iter_progress"><code class="docutils literal notranslate"><span class="pre">iter_progress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.make_dict"><code class="docutils literal notranslate"><span class="pre">make_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.make_getitem_func"><code class="docutils literal notranslate"><span class="pre">make_getitem_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.map_dicts"><code class="docutils literal notranslate"><span class="pre">map_dicts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.nest_flattened_dict"><code class="docutils literal notranslate"><span class="pre">nest_flattened_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.order_list"><code class="docutils literal notranslate"><span class="pre">order_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.print_progress"><code class="docutils literal notranslate"><span class="pre">print_progress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.rename_dict_keys"><code class="docutils literal notranslate"><span class="pre">rename_dict_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.resize_numpy_array"><code class="docutils literal notranslate"><span class="pre">resize_numpy_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.ret_id"><code class="docutils literal notranslate"><span class="pre">ret_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.reverse_dict"><code class="docutils literal notranslate"><span class="pre">reverse_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.split_strip"><code class="docutils literal notranslate"><span class="pre">split_strip()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.split_unit"><code class="docutils literal notranslate"><span class="pre">split_unit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.str_si_prefix"><code class="docutils literal notranslate"><span class="pre">str_si_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.misc.transpose_array"><code class="docutils literal notranslate"><span class="pre">transpose_array()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.core.util.path">path</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.path.FolderContentsResult"><code class="docutils literal notranslate"><span class="pre">FolderContentsResult</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.path.assume_file_exists"><code class="docutils literal notranslate"><span class="pre">assume_file_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.core.util.path.get_folder_contents"><code class="docutils literal notranslate"><span class="pre">get_folder_contents()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -85,9 +156,9 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.core.util">
-<span id="libics-core-util"></span><h1>libics.core.util<a class="headerlink" href="#module-libics.core.util" title="Permalink to this headline"></a></h1>
+<span id="libics-core-util"></span><h1>libics.core.util<a class="headerlink" href="#module-libics.core.util" title="Permalink to this heading"></a></h1>
 <section id="module-libics.core.util.func">
-<span id="func"></span><h2>func<a class="headerlink" href="#module-libics.core.util.func" title="Permalink to this headline"></a></h2>
+<span id="func"></span><h2>func<a class="headerlink" href="#module-libics.core.util.func" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.func.Memoize">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">Memoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.Memoize" title="Permalink to this definition"></a></dt>
@@ -102,7 +173,7 @@ If called later with the same arguments, the cached value is returned
 </pre></div>
 </div>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -138,7 +209,7 @@ Call signature: <cite>worker_func(*args, **kwargs)</cite> with
 <p class="rubric">Notes</p>
 <p>This timer can be restarted.</p>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -251,7 +322,7 @@ Call signature: <cite>stop_action()</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.func.StoppableThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">StoppableThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_action</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></p>
 <p>Thread that ends on a stop event.</p>
 <p>To stop the thread, wait conditionally for the <cite>StoppableThread.stop_event</cite>
 to trigger.</p>
@@ -285,28 +356,25 @@ to trigger.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isAlive</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code>()</p></td>
 <td><p>Return whether the thread is alive.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code>()</p></td>
-<td><p>Return whether the thread is alive.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>([timeout])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>([timeout])</p></td>
 <td><p>Wait until the thread terminates.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>()</p></td>
 <td><p>Method representing the thread's activity.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code>()</p></td>
 <td><p>Start the thread's activity.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.StoppableThread.stop" title="libics.core.util.func.StoppableThread.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.StoppableThread.stop" title="libics.core.util.func.StoppableThread.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
 <td><p>Stops the thread.</p></td>
 </tr>
 </tbody>
@@ -341,7 +409,7 @@ to trigger.</p>
 
 </section>
 <section id="module-libics.core.util.misc">
-<span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.core.util.misc" title="Permalink to this headline"></a></h2>
+<span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.core.util.misc" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_construct_obj">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_construct_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_construct_obj" title="Permalink to this definition"></a></dt>
@@ -512,6 +580,35 @@ If given and data has a different shape, raises a <cite>ValueError</cite>.</p>
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_odd_int">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_odd_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_odd_int" title="Permalink to this definition"></a></dt>
 <dd><p>Asserts that val is a scalar odd integer.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.assume_startswith">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_startswith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_startswith" title="Permalink to this definition"></a></dt>
+<dd><p>Asserts that the passed <cite>string</cite> starts with with <cite>prefix</cite>. If it does not,
+the prefix is prepended. The assumed result is returned.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>string</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String to be checked.</p>
+</dd>
+<dt><strong>prefix</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Assumed start of string.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>string</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>String with assumed beginning.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the parameters are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -707,6 +804,42 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_index_ellipsis">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_ellipsis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_ellipsis" title="Permalink to this definition"></a></dt>
+<dd><p>Resolves an indexing tuple containing <cite>Ellipsis</cite> into explicit slices.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>indices</strong><span class="classifier"><cite>Iter[int or slice or Ellipsis]</cite></span></dt><dd><p>Indexing tuple.</p>
+</dd>
+<dt><strong>ndim</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Number of dimensions of resolved indexing tuple.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>resolved_indices</strong><span class="classifier"><cite>tuple(int or slice)</cite></span></dt><dd><p>Indexing tuple with <cite>Ellipsis</cite> resolved.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+<span class="go">array([[ 64,  69,  74,  79],</span>
+<span class="go">       [ 84,  89,  94,  99],</span>
+<span class="go">       [104, 109, 114, 119]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolved_indices</span> <span class="o">=</span> <span class="n">cv_index_ellipsis</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">ar</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolved_indices</span>
+<span class="go">(1, slice(None, None, None), slice(None, None, None), 4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ar</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">==</span> <span class="n">ar</span><span class="p">[</span><span class="n">resolved_indices</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.cv_index_mask_to_rect">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_index_mask_to_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_index_mask_to_rect" title="Permalink to this definition"></a></dt>
 <dd><p>Converts boolean mask to rectangle. Assumes rectangular mask.</p>
@@ -742,6 +875,33 @@ and the inner tuple corresponds to the slice <cite>(min, max)</cite>.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
 <dt><strong>slices</strong><span class="classifier"><cite>Iter[slice]</cite></span></dt><dd><p>Iterator of slices from index rectangle.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.cv_iter_to_str">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_iter_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_iter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">',</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'['</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">']'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_iter_to_str" title="Permalink to this definition"></a></dt>
+<dd><p>Converts an iterable to a single string.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>_iter</strong><span class="classifier"><cite>Iter[Any]</cite></span></dt><dd><p>Iterable to be converted.</p>
+</dd>
+<dt><strong>fmt</strong><span class="classifier"><cite>str</cite> or <cite>None</cite></span></dt><dd><p>Formatter string, e.g.: <cite>“{:.2f}”, “{:03d}”, “{:4.3e}”</cite>.
+If <cite>None</cite>, the items in <cite>_iter</cite> are converted by <cite>str()</cite>.</p>
+</dd>
+<dt><strong>join</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Characters used to join the items.</p>
+</dd>
+<dt><strong>prefix, suffix</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Prefix/suffix prepended/appended to the joined string.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>s</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Converted string.</p>
 </dd>
 </dl>
 </dd>
@@ -1414,7 +1574,7 @@ given string is cast to numerical format.</p>
 
 </section>
 <section id="module-libics.core.util.path">
-<span id="path"></span><h2>path<a class="headerlink" href="#module-libics.core.util.path" title="Permalink to this headline"></a></h2>
+<span id="path"></span><h2>path<a class="headerlink" href="#module-libics.core.util.path" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.path.FolderContentsResult">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.path.</span></span><span class="sig-name descname"><span class="pre">FolderContentsResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult" title="Permalink to this definition"></a></dt>
@@ -1493,6 +1653,12 @@ given string is cast to numerical format.</p>
 </dd>
 </dl>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>FileNotFoundError</dt><dd><p>If the folder does not exist.</p>
+</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1510,7 +1676,7 @@ given string is cast to numerical format.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2022, David Wei.</p>
+    <p>&#169; Copyright 2019-2023, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -18,3 +18,11 @@ colors
     :members:
     :undoc-members:
     :show-inheritance:
+
+layout
+------
+
+.. automodule:: libics.tools.plot.layout
+    :members:
+    :undoc-members:
+    :show-inheritance:

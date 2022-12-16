@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libics.tools.database &mdash; libics 1.0a documentation</title>
+  <title>libics.tools.database &mdash; libics 1.1a documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,7 +14,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> libics
           </a>
               <div class="version">
-                1.0
+                1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -47,7 +49,21 @@
 <li class="toctree-l1 current"><a class="reference internal" href="libics.tools.html">libics.tools</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.control.html">libics.tools.control</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">libics.tools.database</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.database.influx">influx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.database.amqp">amqp</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase"><code class="docutils literal notranslate"><span class="pre">AmqpApiBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection"><code class="docutils literal notranslate"><span class="pre">AmqpConnection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpLocalError"><code class="docutils literal notranslate"><span class="pre">AmqpLocalError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpRemoteError"><code class="docutils literal notranslate"><span class="pre">AmqpRemoteError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpReplyTimeoutError"><code class="docutils literal notranslate"><span class="pre">AmqpReplyTimeoutError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase"><code class="docutils literal notranslate"><span class="pre">AmqpRpcBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcFactory"><code class="docutils literal notranslate"><span class="pre">AmqpRpcFactory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.amqp.api_method"><code class="docutils literal notranslate"><span class="pre">api_method()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-libics.tools.database.influx">influx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#libics.tools.database.influx.InfluxDB"><code class="docutils literal notranslate"><span class="pre">InfluxDB</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="libics.tools.math.html">libics.tools.math</a></li>
@@ -83,9 +99,659 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.database">
-<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this headline"></a></h1>
+<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this heading"></a></h1>
+<section id="module-libics.tools.database.amqp">
+<span id="amqp"></span><h2>amqp<a class="headerlink" href="#module-libics.tools.database.amqp" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpApiBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_random_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AMQP RPC API base class.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>amqp_client</strong><span class="classifier"><cite>AmqpConnection</cite></span></dt><dd><p>AMQP client.</p>
+</dd>
+<dt><strong>instance_id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Unique name of the API instance.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Usage:</p>
+<ul class="simple">
+<li><p>Subclass this base class and set the class attribute <a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.API_ID" title="libics.tools.database.amqp.AmqpApiBase.API_ID"><code class="xref py py-attr docutils literal notranslate"><span class="pre">API_ID</span></code></a>
+to a unique API-identifying string.</p></li>
+<li><p>Subclasses to a base API, which should use the same exchange as the
+parent API can be distinguished by setting the class attribute
+<a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.API_SUB_ID" title="libics.tools.database.amqp.AmqpApiBase.API_SUB_ID"><code class="xref py py-attr docutils literal notranslate"><span class="pre">API_SUB_ID</span></code></a>.</p></li>
+<li><p>Set an appropriate <a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.API_VERSION" title="libics.tools.database.amqp.AmqpApiBase.API_VERSION"><code class="xref py py-attr docutils literal notranslate"><span class="pre">API_VERSION</span></code></a>.</p></li>
+<li><p>The methods that should be accessible via the RPC API should be
+decorated with <a class="reference internal" href="#libics.tools.database.amqp.api_method" title="libics.tools.database.amqp.api_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">api_method()</span></code></a>.</p></li>
+<li><p>Using <a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcFactory" title="libics.tools.database.amqp.AmqpRpcFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmqpRpcFactory</span></code></a>, these API classes can be turned
+into an RPC server or client class.</p></li>
+</ul>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.get_api" title="libics.tools.database.amqp.AmqpApiBase.get_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_api</span></code></a>()</p></td>
+<td><p>Gets a list of all API method names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.get_api_signature" title="libics.tools.database.amqp.AmqpApiBase.get_api_signature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_api_signature</span></code></a>(func_id)</p></td>
+<td><p>Gets the call signature of the API method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.get_api_specifications" title="libics.tools.database.amqp.AmqpApiBase.get_api_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_api_specifications</span></code></a>()</p></td>
+<td><p>Gets the API specifications.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.help" title="libics.tools.database.amqp.AmqpApiBase.help"><code class="xref py py-obj docutils literal notranslate"><span class="pre">help</span></code></a>(func_id)</p></td>
+<td><p>Gets the docstring of the API method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.ping" title="libics.tools.database.amqp.AmqpApiBase.ping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ping</span></code></a>()</p></td>
+<td><p>Returns <cite>True</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.ping_args" title="libics.tools.database.amqp.AmqpApiBase.ping_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ping_args</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Returns any passed parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.register_cb_on_entry" title="libics.tools.database.amqp.AmqpApiBase.register_cb_on_entry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_cb_on_entry</span></code></a>(method_name, func)</p></td>
+<td><p>Adds a callback function called before executing the API method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase.register_cb_on_exit" title="libics.tools.database.amqp.AmqpApiBase.register_cb_on_exit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_cb_on_exit</span></code></a>(method_name, func)</p></td>
+<td><p>Adds a callback function called after executing the API method.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66%" />
+<col style="width: 34%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>get_exchange_id</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_queue_id</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_routing_key</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_ID">
+<span class="sig-name descname"><span class="pre">API_ID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TEST'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_METHODS">
+<span class="sig-name descname"><span class="pre">API_METHODS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'get_api',</span> <span class="pre">'get_api_signature',</span> <span class="pre">'get_api_specifications',</span> <span class="pre">'help',</span> <span class="pre">'ping',</span> <span class="pre">'ping_args'}</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_METHODS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_REPLIES">
+<span class="sig-name descname"><span class="pre">API_REPLIES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'get_api',</span> <span class="pre">'get_api_signature',</span> <span class="pre">'get_api_specifications',</span> <span class="pre">'help',</span> <span class="pre">'ping',</span> <span class="pre">'ping_args'}</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_REPLIES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_SUB_ID">
+<span class="sig-name descname"><span class="pre">API_SUB_ID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'default'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_SUB_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_TIMEOUTS">
+<span class="sig-name descname"><span class="pre">API_TIMEOUTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'get_api':</span> <span class="pre">1,</span> <span class="pre">'get_api_signature':</span> <span class="pre">1,</span> <span class="pre">'get_api_specifications':</span> <span class="pre">1,</span> <span class="pre">'help':</span> <span class="pre">1,</span> <span class="pre">'ping':</span> <span class="pre">1,</span> <span class="pre">'ping_args':</span> <span class="pre">1}</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_TIMEOUTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.API_VERSION">
+<span class="sig-name descname"><span class="pre">API_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0.0.0'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.API_VERSION" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.tools.database.amqp.AmqpApiBase</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_api">
+<span class="sig-name descname"><span class="pre">get_api</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_api" title="Permalink to this definition"></a></dt>
+<dd><p>Gets a list of all API method names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_api_signature">
+<span class="sig-name descname"><span class="pre">get_api_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_api_signature" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the call signature of the API method.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ret</strong><span class="classifier"><cite>dict</cite></span></dt><dd><p>Dictionary describing the signature with the following items:</p>
+</dd>
+<dt><strong>func_id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>API method name.</p>
+</dd>
+<dt><strong>arg_names</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Names of positional arguments in order.</p>
+</dd>
+<dt><strong>kwarg_names</strong><span class="classifier"><cite>list(str)</cite></span></dt><dd><p>Names of keyword arguments.</p>
+</dd>
+<dt><strong>return</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether a value is returned.
+If <cite>True</cite>, the argument name of the reply in <cite>types</cite> is <cite>“return”</cite>.</p>
+</dd>
+<dt><strong>arg_var</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether variable positional arguments are valid.</p>
+</dd>
+<dt><strong>kwarg_var</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether variable keyword arguments are valid.</p>
+</dd>
+<dt><strong>types</strong><span class="classifier"><cite>dict(str-&gt;list(str))</cite></span></dt><dd><p>Dictionary mapping arg/kwarg/return name to a list of types.
+Valid types: <cite>“null”, “bool”, “int”, “float”, “str”, “json”</cite>.
+Type <cite>“json”</cite> means that the parameter has no type hint or
+has a more complicated structure.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_api_specifications">
+<span class="sig-name descname"><span class="pre">get_api_specifications</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_api_specifications" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the API specifications.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl>
+<dt><strong>specs</strong><span class="classifier"><cite>dict(str-&gt;Any)</cite></span></dt><dd><p>Dictionary containing the class variables
+<cite>“API_METHODS”, “API_REPLIES”, “API_TIMEOUTS”</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_exchange_id">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_exchange_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_exchange_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_queue_id">
+<span class="sig-name descname"><span class="pre">get_queue_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_queue_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.get_routing_key">
+<span class="sig-name descname"><span class="pre">get_routing_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.get_routing_key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.help">
+<span class="sig-name descname"><span class="pre">help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.help" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the docstring of the API method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.ping">
+<span class="sig-name descname"><span class="pre">ping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.ping" title="Permalink to this definition"></a></dt>
+<dd><p>Returns <cite>True</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.ping_args">
+<span class="sig-name descname"><span class="pre">ping_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.ping_args" title="Permalink to this definition"></a></dt>
+<dd><p>Returns any passed parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.register_cb_on_entry">
+<span class="sig-name descname"><span class="pre">register_cb_on_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.register_cb_on_entry" title="Permalink to this definition"></a></dt>
+<dd><p>Adds a callback function called before executing the API method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>method_name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>API method name.</p>
+</dd>
+<dt><strong>func</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Callback function. Must accept the same arguments as the API method
+and may only raise <cite>AmqpLocalError</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase.register_cb_on_exit">
+<span class="sig-name descname"><span class="pre">register_cb_on_exit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase.register_cb_on_exit" title="Permalink to this definition"></a></dt>
+<dd><p>Adds a callback function called after executing the API method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>method_name</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>API method name.</p>
+</dd>
+<dt><strong>func</strong><span class="classifier"><cite>callable</cite></span></dt><dd><p>Callback function. Must accept the return value of the API method
+as arguments and may only raise <cite>AmqpLocalError</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>RPC base class via AMQP message queues.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>config</strong><span class="classifier"><cite>str</cite> or <cite>dict</cite></span></dt><dd><p>Configuration file path or dictionary specifying below parameters.
+Duplicate parameters overwrite the <cite>config</cite> parameters.</p>
+</dd>
+<dt><strong>host</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Message broker server IP.</p>
+</dd>
+<dt><strong>port</strong><span class="classifier"><cite>int</cite></span></dt><dd><p>Message broker server port.</p>
+</dd>
+<dt><strong>credentials</strong><span class="classifier"><cite>dict(str-&gt;str)</cite></span></dt><dd><p>Message broker access credentials with items: <cite>“username”, “password”</cite>.</p>
+</dd>
+<dt><strong>blocking</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to establish a blocking connection.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>credentials</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.close" title="libics.tools.database.amqp.AmqpConnection.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
+<td><p>Closes the AMQP connection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.connect" title="libics.tools.database.amqp.AmqpConnection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>([callback])</p></td>
+<td><p>Sets up an AMQP connection and channel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.discover_configs" title="libics.tools.database.amqp.AmqpConnection.discover_configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">discover_configs</span></code></a>([config_path])</p></td>
+<td><p>Returns a list of all file names within the default configuration path.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.is_connected" title="libics.tools.database.amqp.AmqpConnection.is_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_connected</span></code></a>()</p></td>
+<td><p>Returns whether the AMQP connection is established.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.is_running" title="libics.tools.database.amqp.AmqpConnection.is_running"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_running</span></code></a>()</p></td>
+<td><p>Returns whether the AMQP I/O loop is running.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.join" title="libics.tools.database.amqp.AmqpConnection.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></a>()</p></td>
+<td><p>Waits for the I/O loop to stop.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.run" title="libics.tools.database.amqp.AmqpConnection.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<td><p>Starts the AMQP I/O loop.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.stop" title="libics.tools.database.amqp.AmqpConnection.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
+<td><p>Stops the AMQP I/O loop.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>find_configs</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_url</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>handle_error</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.CONFIG_PATH">
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\weida\\.libics\\tools\\database\\amqp'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.CONFIG_PATH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.tools.database.amqp.AmqpBase</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.close" title="Permalink to this definition"></a></dt>
+<dd><p>Closes the AMQP connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.connect" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up an AMQP connection and channel.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.credentials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">credentials</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.credentials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.discover_configs">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">discover_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.discover_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all file names within the default configuration path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.find_configs">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.find_configs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.get_url">
+<span class="sig-name descname"><span class="pre">get_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.get_url" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.handle_error">
+<span class="sig-name descname"><span class="pre">handle_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_raise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.handle_error" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.is_connected" title="Permalink to this definition"></a></dt>
+<dd><p>Returns whether the AMQP connection is established.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.is_running">
+<span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.is_running" title="Permalink to this definition"></a></dt>
+<dd><p>Returns whether the AMQP I/O loop is running.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.join" title="Permalink to this definition"></a></dt>
+<dd><p>Waits for the I/O loop to stop.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.run" title="Permalink to this definition"></a></dt>
+<dd><p>Starts the AMQP I/O loop.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.stop" title="Permalink to this definition"></a></dt>
+<dd><p>Stops the AMQP I/O loop.</p>
+<p>Note that this function is non-blocking;
+if applicable, call <a class="reference internal" href="#libics.tools.database.amqp.AmqpConnection.join" title="libics.tools.database.amqp.AmqpConnection.join"><code class="xref py py-meth docutils literal notranslate"><span class="pre">join()</span></code></a> afterwards.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpLocalError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpLocalError</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpLocalError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRemoteError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpRemoteError</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRemoteError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpReplyTimeoutError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpReplyTimeoutError</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpReplyTimeoutError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpRpcBase</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AMQP RPC base object.</p>
+<p class="rubric">Notes</p>
+<p>AMQP specifications:</p>
+<ul class="simple">
+<li><p>Messages (RPC calls) are sent to an AMQP topic exchange with the
+exchange name matching <cite>API_ID</cite>, by convention this should be all caps.</p></li>
+<li><p>The AMQP routing keys have the form <cite>API_ID.API_SUB_ID.instance_id.*</cite>.</p></li>
+<li><p>The AMQP queue instances have an additional random string attached,
+i.e., <cite>API_ID.SUBAPI_ID.instance_id.random_id</cite>. The random
+string is used to allow for multiple code instances to subscribe to
+the same API instance (e.g. one code instance executes the commands,
+another code instance logs the API traffic).</p></li>
+</ul>
+<p>Message specifications:</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
+{</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“__meta__”: {</dt><dd><p>“__rpc_version”: “x.y.z”,
+“__api_version”: “x.y.z”</p>
+</dd>
+</dl>
+<p>},
+“func_id”: “my_unique_function_identifier”,
+“func_args”: [</p>
+<blockquote>
+<div><p>arg0, arg1, …</p>
+</div></blockquote>
+<p>],
+“func_kwargs”: {</p>
+<blockquote>
+<div><p>“kw0”: kwarg0, “kw1”: kwarg1, …</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<section id="id3">
+<h3>}<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>API</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.close_amqp" title="libics.tools.database.amqp.AmqpRpcBase.close_amqp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close_amqp</span></code></a>()</p></td>
+<td><p>Closes an AMQP connection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.connect_amqp" title="libics.tools.database.amqp.AmqpRpcBase.connect_amqp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_amqp</span></code></a>()</p></td>
+<td><p>Establishes an AMQP connection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.local_dispatcher" title="libics.tools.database.amqp.AmqpRpcBase.local_dispatcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_dispatcher</span></code></a>(channel, method, ...)</p></td>
+<td><p>Local dispatcher used by RPC server.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.remote_dispatcher" title="libics.tools.database.amqp.AmqpRpcBase.remote_dispatcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remote_dispatcher</span></code></a>(func_id, *args, **kwargs)</p></td>
+<td><p>Remote dispatcher used by RPC client.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.setup_amqp" title="libics.tools.database.amqp.AmqpRpcBase.setup_amqp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_amqp</span></code></a>([amqp_connection, blocking])</p></td>
+<td><p>Sets up the AMQP connection object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcBase.setup_api" title="libics.tools.database.amqp.AmqpRpcBase.setup_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_api</span></code></a>(*args[, api_object])</p></td>
+<td><p>Sets up the API object.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 70%" />
+<col style="width: 30%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>deserialize_reply</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>deserialize_request</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>serialize_reply</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>serialize_request</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.API">
+<span class="sig-name descname"><span class="pre">API</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.API" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.RPC_VERSION">
+<span class="sig-name descname"><span class="pre">RPC_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0.0.0'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.RPC_VERSION" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.close_amqp">
+<span class="sig-name descname"><span class="pre">close_amqp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.close_amqp" title="Permalink to this definition"></a></dt>
+<dd><p>Closes an AMQP connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.connect_amqp">
+<span class="sig-name descname"><span class="pre">connect_amqp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.connect_amqp" title="Permalink to this definition"></a></dt>
+<dd><p>Establishes an AMQP connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.deserialize_reply">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize_reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.deserialize_reply" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.deserialize_request">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.deserialize_request" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.local_dispatcher">
+<span class="sig-name descname"><span class="pre">local_dispatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.local_dispatcher" title="Permalink to this definition"></a></dt>
+<dd><p>Local dispatcher used by RPC server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.remote_dispatcher">
+<span class="sig-name descname"><span class="pre">remote_dispatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.remote_dispatcher" title="Permalink to this definition"></a></dt>
+<dd><p>Remote dispatcher used by RPC client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.serialize_reply">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.serialize_reply" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.serialize_request">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.serialize_request" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.setup_amqp">
+<span class="sig-name descname"><span class="pre">setup_amqp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amqp_connection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.setup_amqp" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up the AMQP connection object.</p>
+<p>If passing an <cite>amqp_connection</cite>, a separate connection with its
+parameters is created and is overwritten by <cite>kwargs</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcBase.setup_api">
+<span class="sig-name descname"><span class="pre">setup_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcBase.setup_api" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up the API object.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpRpcFactory</span></span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Factory class that turns API classes into RPC servers/clients.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server" title="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_rpc_server</span></code></a>(Api, cls_name)</p></td>
+<td><p>Creates an AMQP RPC server class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client" title="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_rpc_client</span></code></a>(Api, cls_name)</p></td>
+<td><p>Creates an AMQP RPC client class.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory.make_dynamic_rpc_client">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_dynamic_rpc_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_sub_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_dynamic_rpc_client" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an AMQP RPC client class.</p>
+<p>API method calls are sent via an AMQP broker to a remote server.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>api_id, api_sub_id, instance_id</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>API ID, API sub ID and instance ID determining the AMQP
+exchange from which to obtain the API specifications.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an AMQP RPC client class.</p>
+<p>API method calls are sent via an AMQP broker to a remote server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an AMQP RPC server class.</p>
+<p>Accepts API method calls via an AMQP broker from a remote client.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.database.amqp.api_method">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">api_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reply</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.api_method" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator registering a method as API method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ret</strong><span class="classifier"><cite>bool</cite></span></dt><dd><p>Whether to expect a reply value.</p>
+</dd>
+<dt><strong>timeout</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>API reply timeout in seconds (s).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-libics.tools.database.influx">
-<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this headline"></a></h2>
+<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.influx.</span></span><span class="sig-name descname"><span class="pre">InfluxDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB" title="Permalink to this definition"></a></dt>
@@ -128,7 +794,7 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -174,7 +840,7 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 </table>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.CONFIG_PATH">
-<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\David\\.libics\\tools\\database\\influx'</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.CONFIG_PATH" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\weida\\.libics\\tools\\database\\influx'</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.CONFIG_PATH" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -435,7 +1101,7 @@ for <a class="reference internal" href="#libics.tools.database.influx.InfluxDB.w
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2022, David Wei.</p>
+    <p>&#169; Copyright 2019-2023, David Wei.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
