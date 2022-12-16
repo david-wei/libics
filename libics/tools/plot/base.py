@@ -191,6 +191,8 @@ def tick_params(
     ax.tick_params(axis=axis, **kwargs)
     # Cap style
     if capstyle is not None:
+        if not isinstance(capstyle, mpl.markers.CapStyle):
+            capstyle = getattr(mpl.markers.CapStyle, capstyle)
         if axis in ["x", "both"]:
             for i in ax.xaxis.get_majorticklines():
                 i._marker._capstyle = capstyle
@@ -241,7 +243,9 @@ def plot(
         If `Quantity`, sets an automatic label.
     marker : `str` or `object`
         Matplotlib markers.
-        Additionally supports `"O"` (larger circle with darker edge color).
+        Using square brackets (`[<marker>]`) around the matplotlib marker
+        creates a larger marker with a darker edge color.
+        Shorthands: `"O" == "[o]"`.
     xlabel, ylabel, label, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -267,7 +271,7 @@ def plot(
         if yerr is not None:
             yerr = np.array(yerr) / ynorm
     # Process marker style
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_marker_param(marker, **kwargs)
     # Perform plot
@@ -296,9 +300,13 @@ def scatter(*args, marker="O", linestyle="None", **kwargs):
     return plot(*args, linestyle=linestyle, marker=marker, **kwargs)
 
 
+scatter.__doc__ += "\n\n" + plot.__doc__
+
+
 def pcolormesh(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
+    vmin=None, vmax=None, vdif=None, vcen=None,
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True, cticks=None,
     aspect=None, ax=None, **kwargs
@@ -324,6 +332,11 @@ def pcolormesh(
     xnorm, ynorm, cnorm : `float, ValQuantity`
         Normalization value for plot data.
         If `Quantity`, sets an automatic label.
+    vmin, vmax, vdif, vcen : `float`
+        Defines the color map range.
+        Minimum/maximum are given either directly (`vmin, vmax`)
+        or are deduced from center and range (`vcen, vdif`).
+        If `vdif is True`, the full range is automatically assigned.
     xlabel, ylabel, clabel, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -359,8 +372,17 @@ def pcolormesh(
         y = np.array(y) / ynorm
     if cnorm is not None:
         c = np.array(c) / cnorm
+    if vdif is not None:
+        if vcen is None:
+            vcen = 0
+        if vdif is True:
+            vdif = np.nanmax(np.abs(c - vcen))
+        if vmin is None:
+            vmin = vcen - vdif
+        if vmax is None:
+            vmax = vcen + vdif
     # Perform pcolormesh
-    art = ax.pcolormesh(x, y, c, **kwargs)
+    art = ax.pcolormesh(x, y, c, vmin=vmin, vmax=vmax, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
@@ -397,9 +419,13 @@ def pcolorim(*args, aspect=1, **kwargs):
     return pcolormesh(*args, aspect=aspect, **kwargs)
 
 
+pcolorim.__doc__ += "\n\n" + pcolormesh.__doc__
+
+
 def contourf(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
+    vmin=None, vmax=None, vdif=None, vcen=None,
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True,
     aspect=None, ax=None, **kwargs
@@ -425,6 +451,11 @@ def contourf(
     xnorm, ynorm, cnorm : `float, ValQuantity`
         Normalization value for plot data.
         If `Quantity`, sets an automatic label.
+    vmin, vmax, vdif, vcen : `float`
+        Defines the color map range.
+        Minimum/maximum are given either directly (`vmin, vmax`)
+        or are deduced from center and range (`vcen, vdif`).
+        If `vdif is True`, the full range is automatically assigned.
     xlabel, ylabel, clabel, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -447,7 +478,7 @@ def contourf(
     ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
     cnorm, clabel = _process_norm_param(cnorm, label=clabel)
     p = _get_xyc_from_data(
-        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=True
+        *data, xlabel=xlabel, ylabel=ylabel, clabel=clabel, use_bins=False
     )
     x, y, c = p["x"], p["y"], p["c"]
     xlabel, ylabel, clabel = p["xlabel"], p["ylabel"], p["clabel"]
@@ -458,8 +489,17 @@ def contourf(
         y = np.array(y) / ynorm
     if cnorm is not None:
         c = np.array(c) / cnorm
+    if vdif is not None:
+        if vcen is None:
+            vcen = 0
+        if vdif is True:
+            vdif = np.nanmax(np.abs(c - vcen))
+        if vmin is None:
+            vmin = vcen - vdif
+        if vmax is None:
+            vmax = vcen + vdif
     # Perform contourf
-    art = ax.contourf(x, y, c, **kwargs)
+    art = ax.contourf(x, y, c, vmin=vmin, vmax=vmax, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
@@ -524,7 +564,7 @@ def plot_rectangle(
     # Process marker style
     if angle is not None:
         kwargs["angle"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
@@ -568,7 +608,7 @@ def plot_polygon(
     # Process marker style
     if "orientation" not in kwargs and angle is not None:
         kwargs["orientation"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
@@ -611,7 +651,7 @@ def plot_ellipse(
     # Process marker style
     if angle is not None:
         kwargs["angle"] = angle
-    if "color" not in kwargs:
+    if "color" not in kwargs or kwargs["color"] is None:
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Plot patch
@@ -736,6 +776,12 @@ def _get_xyc_from_data(
                 data[0].get_var_meshgrid_bins() if use_bins is True
                 else data[0].get_var_meshgrid()
             )
+            for k in ["x", "y"]:
+                if np.issubdtype(data_dict[k].dtype, object):
+                    try:
+                        data_dict[k] = data_dict[k].astype(float)
+                    except TypeError:
+                        pass
             data_dict["c"] = data[0].data
             data_dict["xlabel"] = data[0].var_quantity[0].labelstr(val=False)
             data_dict["ylabel"] = data[0].var_quantity[1].labelstr(val=False)
@@ -845,7 +891,7 @@ def _process_marker_param(
     Parameters
     ----------
     marker : `str`
-        Matplotlib marker options or `"O"`.
+        Matplotlib marker options.
     **kwargs
         Other matplotlib style options for plotting.
 
@@ -854,7 +900,16 @@ def _process_marker_param(
     kwargs : `dict`
         Updated matplotlib style options.
     """
-    if marker == "O":
+    marker_map = {
+        "O": "[o]"
+    }
+    marker = marker_map.get(marker, marker)
+    try:
+        marker = misc.extract(marker, r"^\[(.*)\]$")
+        has_edge = True
+    except (TypeError, KeyError):
+        has_edge = False
+    if has_edge:
         if "markersize" not in kwargs:
             kwargs["markersize"] = mpl.rcParams["lines.markersize"] * 1.3
         if "markeredgewidth" not in kwargs:
@@ -892,9 +947,7 @@ def _process_marker_param(
                             kwargs["color"]
                         ))
                     )
-        kwargs["marker"] = "o"
-    else:
-        kwargs["marker"] = marker
+    kwargs["marker"] = marker
     return kwargs
 
 

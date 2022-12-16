@@ -46,6 +46,14 @@ calculus
     :undoc-members:
     :show-inheritance:
 
+optimize
+--------
+
+.. automodule:: libics.tools.math.optimize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 sampling
 --------
 

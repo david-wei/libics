@@ -1,9 +1,12 @@
+import colorama
 import logging
 import sys
 
 from logging import (
     DEBUG, INFO, WARNING, ERROR, CRITICAL
 )
+
+colorama.init(autoreset=True)
 
 
 ###############################################################################
@@ -25,10 +28,30 @@ class MaxFilter(logging.Filter):
 ###############################################################################
 
 
-LOG_FMT = logging.Formatter(
+class ColorFormatter(logging.Formatter):
+
+    COLORS = {
+        "DEBUG": colorama.Fore.WHITE + colorama.Style.DIM,
+        "INFO": colorama.Fore.WHITE,
+        "WARNING": colorama.Fore.YELLOW,
+        "ERROR": colorama.Fore.RED,
+        "CRITICAL": colorama.Fore.WHITE + colorama.Back.RED
+    }
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelname, "")
+        if color:
+            record.msg = color + record.msg
+        return logging.Formatter.format(self, record)
+
+
+LOG_FMT = ColorFormatter(
     "%(asctime)s [%(levelname).4s|%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
+
+
+###############################################################################
 
 
 DEBUG_HANDLER = logging.StreamHandler(stream=sys.stdout)

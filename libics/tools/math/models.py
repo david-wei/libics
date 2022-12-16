@@ -2,16 +2,27 @@ import abc
 import copy
 import numpy as np
 import scipy.optimize
+import scipy.stats
+try:
+    from scipy.stats._distn_infrastructure import rv_continuous_frozen
+except ImportError:
+    # Backward compatibilty after scipy update (commit on 2022-03-17)
+    from scipy.stats._distn_infrastructure import (
+        rv_frozen as rv_continuous_frozen
+    )
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData, SeriesData
 from libics.core.util import misc
+from libics.core.io import FileBase
 
 
 ###############################################################################
+# Fitting models
+###############################################################################
 
 
-class ModelBase(abc.ABC):
+class ModelBase(abc.ABC, FileBase):
 
     """
     Base class for functional models.
@@ -83,6 +94,9 @@ class ModelBase(abc.ABC):
     """
 
     LOGGER = logging.get_logger("libics.math.models.ModelBase")
+    SER_KEYS = FileBase.SER_KEYS | {
+        "_pfit", "_p0", "_popt", "_pcov", "psuccess", "_var_rect"
+    }
 
     # Ordered list of all parameter names
     P_ALL = NotImplemented
@@ -118,6 +132,15 @@ class ModelBase(abc.ABC):
             or len(cls.P_DEFAULT) != len(cls.P_ALL)
         ):
             raise NotImplementedError("Class attribute `P_DEFAULT` is missing")
+
+    def copy(self):
+        """
+        Returns a deep copy of the object.
+        """
+        obj = self.__class__()
+        for attr_name in self.SER_KEYS:
+            setattr(obj, attr_name, copy.deepcopy(getattr(self, attr_name)))
+        return obj
 
     @staticmethod
     @abc.abstractmethod
@@ -336,7 +359,7 @@ class ModelBase(abc.ABC):
         """
         raise NotImplementedError
 
-    def find_popt(self, *data, **kwargs):
+    def find_popt(self, *data, bounds=None, **kwargs):
         """
         Fits the model function to the given data.
 
@@ -344,6 +367,9 @@ class ModelBase(abc.ABC):
         ----------
         *data : `Any`
             Data interpretable by :py:meth:`_split_fit_data`.
+        bounds : `dict(str->(float, float))`
+            Bounds for fitted values for each parameter:
+            `dict(parameter_name->(lower_bound, upper_bound))`.
         **kwargs
             Keyword arguments passed to :py:func:`scipy.optimize.curve_fit`.
 
@@ -375,6 +401,13 @@ class ModelBase(abc.ABC):
         if func_data.dtype != float:
             func_data = func_data.astype(float)
         p0 = np.copy(self.p0_for_fit)
+
+        # Set bounds
+        if bounds is not None:
+            pbounds = []
+            for k in self.pfit:
+                pbounds.append(bounds.get(k, (-np.inf, np.inf)))
+            kwargs["bounds"] = np.transpose(pbounds)
 
         # Optimize parameters
         try:
@@ -454,8 +487,7 @@ class ModelBase(abc.ABC):
         ----------
         var : `np.ndarray` or `ArrayData`
             Variables.
-            If `ArrayData`, uses its `var_meshgrid` as variables
-            and overwrites its data.
+            If `ArrayData`, uses its `var_meshgrid` as variables.
         *args : `Any`
             Model function positional arguments after the parameters.
         **kwargs : `Any`
@@ -472,7 +504,7 @@ class ModelBase(abc.ABC):
         # Parse arguments
         ad = None
         if isinstance(var, ArrayData):
-            ad = var
+            ad = var.copy_var()
             var = ad.get_var_meshgrid()
         # Get current parameters
         _popt = self.popt
@@ -674,6 +706,176 @@ class ModelBase(abc.ABC):
         else:
             var_data = var_data.reshape((var_data.shape[0], -1))
         return var_data, func_data, err_data
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++
+# Model generators
+# +++++++++++++++++++++++++++++++++++++++++++++
+
+
+def ModelFromArray(
+    ar, param_dims=None, scale_dims=None, offset_dims=None,
+    interpolation="linear", extrapolation=True
+):
+    """
+    Uses an interpolated array to define a variable-scaled model.
+
+    Can be used to fit a scale and offset to the array variables.
+
+    Parameters
+    ----------
+    ar : `Array[float]`
+        Array interpreted as functional values.
+    param_dims : `int` or `Iter[int]`
+        Array dimensions used as fitting parameters.
+    scale_dims, offset_dims : `int` or `Iter[int]`
+        Array dimensions that should be scaled/offset.
+    interpolation : `str`
+        Interpolation mode: `"nearest", "linear"`.
+    extrapolation : `bool` or `float`
+        If `True`, extrapolates using the method given by `interpolation`.
+        If `False`, raises an error upon extrapolation.
+        If `float`, uses the given value as constant extrapolation value.
+
+    Returns
+    -------
+    FitArrayData : `class`
+        Generated model class (subclass of :py:class:`ModelBase`).
+
+    Raises
+    ------
+    ValueError
+        If the given dimensions are invalid.
+
+    Examples
+    --------
+    Consider a typical physical model `f (t, x; a, b)`.
+    This could, e.g., be a charge distribution `f` at time `t`
+    and location `x`, given some parameters `a` and `b` (like conductivities).
+    Since this might be a complicated model, it might be numerically defined
+    and given as the array `ar`:
+    >>> ar.ndim
+    4
+
+    Let us assume that the goal is to fit this model to measurements
+    `f_i (t_i, x)`. `f_i` denotes the data set, which we assume is taken at
+    all positions `x` and at a single point in time `t_i`:
+    >>> f.ndim
+    2
+
+    If we want to fit `a, b`, we have to pass the dimensions of `a` and `b`
+    as `param_dims`:
+    >>> param_dims = [2, 3]
+
+    Let us further assume that we also want to fit the times.
+    If we allow for a scalable time, we can set the corresponding dimensions:
+    >>> scale_dims : [0]
+
+    If we allow for a time offset, we can again set the dimensions:
+    >>> offset_dims = [0]
+
+    Now we can create the class representing the fit model from the
+    numerical model:
+    >>> FitModel = ModelFromArray(
+    ...     ar, param_dims=param_dims,
+    ...     scale_dims=scale_dims, offset_dims=offset_dims
+    ... )
+
+    This class is a subclass of :py:class:`ModelBase` and can now be used
+    to fit the measurement data:
+    >>> fit = FitModel(f)
+    """
+    # Parse parameters
+    if isinstance(ar, ArrayData):
+        ad = ar.copy()
+    else:
+        ad = ArrayData(np.array(ar).copy())
+        for dim in range(ad.ndim):
+            ad.set_var_quantity(dim, name=chr(ord("a") + dim))
+    # Find parameter, scaling and offset dimensions
+    param_dims = [] if param_dims is None else misc.assume_iter(param_dims)
+    var_dims = list(filter(lambda x: x not in param_dims, np.arange(ad.ndim)))
+    var_ndim = len(var_dims)
+    scale_dims = [] if scale_dims is None else misc.assume_iter(scale_dims)
+    offset_dims = [] if offset_dims is None else misc.assume_iter(offset_dims)
+    # Set fit parameter names and default values
+    param_names = (
+        [ad.var_quantity[dim].name for dim in param_dims]
+        + [f"{ad.var_quantity[dim].name}_scale" for dim in scale_dims]
+        + [f"{ad.var_quantity[dim].name}_offset" for dim in offset_dims]
+    )
+    param_default = (
+        [ad.get_center(dim) for dim in param_dims]
+        + len(scale_dims) * [1.0]
+        + len(offset_dims) * [0.0]
+    )
+
+    # Check for validity
+    if len(np.unique(param_names)) != len(param_names):
+        raise ValueError("non-unique parameter names")
+    if len(param_names) == 0:
+        raise ValueError("no parameter dimensions set")
+    if var_ndim == 0:
+        raise ValueError("no variable dimensions set")
+    if len(set(param_dims) & set(scale_dims)) > 0:
+        raise ValueError("scaling dimension cannot be parameter dimension")
+    if len(set(param_dims) & set(offset_dims)) > 0:
+        raise ValueError("offset dimension cannot be parameter dimension")
+
+    class FitArrayData(ModelBase):
+
+        P_ALL = param_names
+        P_DEFAULT = param_default
+
+        _data = ad
+        _var_dims = var_dims
+        _param_dims = param_dims
+        _scale_dims = scale_dims
+        _offset_dims = offset_dims
+
+        @staticmethod
+        def _func(var, *p):
+            cls = FitArrayData
+            # If scalar variable
+            if len(cls._var_dims) == 1:
+                var = [var]
+            shape = var[0].shape
+            # Counters for each parameter
+            i_var = 0
+            i_param = 0
+            i_scale = len(cls._param_dims)
+            i_offset = len(cls._param_dims) + len(cls._scale_dims)
+            # Construct interpolation parameters
+            params = []
+            for dim in range(cls._data.ndim):
+                if dim in cls._param_dims:
+                    _tmp = np.full(shape, p[i_param])
+                    i_param += 1
+                else:
+                    _tmp = var[i_var]
+                    i_var += 1
+                    if dim in cls._scale_dims:
+                        _tmp = p[i_scale] * _tmp
+                        i_scale += 1
+                    if dim in cls._offset_dims:
+                        _tmp = _tmp + p[i_offset]
+                        i_offset += 1
+                params.append(_tmp)
+            params = np.array(params)
+            # Interpolate
+            return ad.interpolate(
+                params, mode=interpolation, extrapolation=extrapolation
+            )
+
+    FitArrayData.__doc__ = (
+        f"Fit class for interpolated array with data_quantity"
+        f" `{str(ad.data_quantity.name)}`.\n"
+        f"\n"
+        f"Parameters\n"
+        f"----------\n"
+        f"{', '.join(param_names)}"
+    )
+    return FitArrayData
 
 
 ###############################################################################
@@ -1125,3 +1327,272 @@ class TensorModelBase(abc.ABC):
         else:
             var_data = var_data.reshape((var_data.shape[0], -1))
         return var_data, func_data, err_data
+
+
+###############################################################################
+# Random variable models
+###############################################################################
+
+
+class RvContinuousFrozen(rv_continuous_frozen):
+
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: (
+            getattr(self.dist, name)(*args, *self.args, **kwargs, **self.kwds)
+        )
+
+
+class RvContinuous(scipy.stats.rv_continuous):
+
+    LOGGER = logging.get_logger("libics.tools.math.models.RvContinuous")
+
+    def _ipdf(self, p, *args, branch="left", tol=None):
+        p = np.array(p, dtype=float)
+        xm = self._mode(*args)
+        if branch == "left":
+            opt_x0 = xm - 1
+        elif branch == "right":
+            opt_x0 = xm + 1
+        else:
+            raise ValueError("Invalid `branch` (should be 'left' or 'right')")
+        mask = (
+            (p > 0) & (p < self._amplitude(*args) * (1 + 1e-5))
+        )
+        p_masked = p[mask]
+        x = np.full_like(p, np.nan)
+        if len(p_masked) == 0:
+            self.LOGGER.error("`_ipdf`: Invalid probability densities given")
+            if x.ndim == 0:
+                return float(x)
+            else:
+                return x
+
+        # Find solutions to inverse PDF
+        def root_func(x):
+            return p_masked - self._pdf(x, *args)
+        opt_x0 = np.full_like(p_masked, opt_x0)
+        res = scipy.optimize.root(root_func, opt_x0, tol=tol)
+        x[mask] = res.x
+        # Check results
+        if np.any(np.isnan(x)):
+            self.LOGGER.error("`_ipdf`: Invalid probability densities given")
+        elif not res.success:
+            self.LOGGER.warning(f"`_ipdf` optimization: {res.message}")
+        if x.ndim == 0:
+            return float(x)
+        else:
+            return x
+
+    def _mode(self, *args):
+        res = scipy.optimize.minimize(-self._pdf, self._mean(*args), args=args)
+        return res.x
+
+    def _amplitude(self, *args):
+        return self._pdf(self._mode(*args), *args)
+
+    def ipdf(self, p, *args, branch="left", tol=None, **kwds):
+        """
+        Mode of the given RV, i.e., the maximum location of the PDF.
+
+        Parameters
+        ----------
+        p : `Array`
+            Probability density.
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+        loc : `Array`, optional
+            location parameter (default=0)
+        scale : `Array`, optional
+            scale parameter (default=1)
+        branch : `str`
+            Which branch of the PDF to select.
+            Options for unimodal distributions: `"left", "right"`.
+
+        Returns
+        -------
+        ipdf : `Array`
+            Inverse of the probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        try:
+            ipdf = self._ipdf(p * scale, *args, branch=branch, tol=tol)
+        except TypeError:
+            ipdf = self._ipdf(p * scale, *args, branch=branch)
+        return loc + scale * ipdf
+
+    def mode(self, *args, **kwds):
+        """
+        Mode of the given RV, i.e., the maximum location of the PDF.
+
+        Parameters
+        ----------
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+        loc : `Array`, optional
+            location parameter (default=0)
+        scale : `Array`, optional
+            scale parameter (default=1)
+
+        Returns
+        -------
+        mode : `float`
+            Mode of probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        return loc + scale * self._mode(*args)
+
+    def amplitude(self, *args, **kwds):
+        """
+        Amplitude of the given RV, i.e., the maximum value of the PDF.
+
+        Parameters
+        ----------
+        arg1, arg2, arg3,... : `Array`
+            The shape parameter(s) for the distribution (see docstring of the
+            instance object for more information)
+
+        Returns
+        -------
+        amplitude : `float`
+            Amplitude of probability density function.
+        """
+        args, loc, scale = self._parse_args(*args, **kwds)
+        return self._amplitude(*args) / scale
+
+    def freeze(self, *args, **kwds):
+        return RvContinuousFrozen(self, *args, **kwds)
+
+    def variance(self, *args, **kwargs):
+        return self.var(*args, **kwargs)
+
+    def skewness(self, *args, **kwargs):
+        return float(self.stats(*args, moments="s", **kwargs))
+
+    def kurtosis(self, *args, **kwargs):
+        return float(self.stats(*args, moments="k", **kwargs))
+
+    def separation_loc(
+        self, distr_l=None, distr_r=None, amp_l=1, amp_r=1,
+        args_l=tuple(), args_r=tuple(), kwargs_l={}, kwargs_r={}
+    ):
+        """
+        Gets the position of best separation between two distributions.
+
+        Parameters
+        ----------
+        distr_l, distr_r : `RvContinuous` or `RvContinuousFrozen` or `None`
+            (Left, right) distribution. If `None`, uses the current object.
+            If `RvContinuousFrozen`, overwrites `arg` and `kwarg`.
+        amp_l, amp_r : `float`
+            (Relative) amplitudes of the distributions.
+            Used if one distribution contains "more" probability than another.
+        args_l, args_r : `tuple(float)`
+            Distribution arguments (left, right).
+        kwargs_l, kwargs_r : `dict(str->Any)`
+            Distribution keyword arguments (left, right).
+
+        Returns
+        -------
+        xs : `float`
+            Separation position.
+        ql, qr : `float`
+            Quantile of the (left, right) distribution on the "wrong" side.
+        """
+        # Parse parameters
+        if distr_l is None:
+            distr_l = self
+        if distr_r is None:
+            distr_r = self
+        if np.isscalar(args_l):
+            args_l = (args_l,)
+        if np.isscalar(args_r):
+            args_r = (args_r,)
+        if not isinstance(distr_l, rv_continuous_frozen):
+            distr_l = distr_l(*args_l, **kwargs_l)
+        if not isinstance(distr_r, rv_continuous_frozen):
+            distr_r = distr_r(*args_r, **kwargs_r)
+        # Minimize overlap
+        return self.separation_loc_multi(
+            [distr_l], [distr_r], amp_l=amp_l, amp_r=amp_r
+        )
+
+    @staticmethod
+    def separation_loc_multi(distrs_l, distrs_r, amp_l=1, amp_r=1):
+        """
+        Gets the position of best separation between two distributions.
+
+        Parameters
+        ----------
+        distr_l, distr_r : `RvContinuous` or `RvContinuousFrozen` or `None`
+            (Left, right) distribution. If `None`, uses the current object.
+            If `RvContinuousFrozen`, overwrites `arg` and `kwarg`.
+        amp_l, amp_r : `float`
+            (Relative) amplitudes of the distributions.
+            Used if one distribution contains "more" probability than another.
+        args_l, args_r : `tuple(float)`
+            Distribution arguments (left, right).
+        kwargs_l, kwargs_r : `dict(str->Any)`
+            Distribution keyword arguments (left, right).
+
+        Returns
+        -------
+        xs : `float`
+            Separation position.
+        ql, qr : `float`
+            Quantile of the (left, right) distribution on the "wrong" side.
+        """
+        # Parse parameters
+        try:
+            distrs_l = list(distrs_l)
+        except TypeError:
+            distrs_l = [distrs_l]
+        try:
+            distrs_r = list(distrs_r)
+        except TypeError:
+            distrs_r = [distrs_r]
+        for distr in misc.flatten_nested_list([distrs_l, distrs_r]):
+            if not isinstance(distr, rv_continuous_frozen):
+                raise ValueError("Distributions must be frozen")
+        if np.isscalar(amp_l):
+            amp_l = np.full(len(distrs_l), amp_l, dtype=float)
+        if np.isscalar(amp_r):
+            amp_r = np.full(len(distrs_r), amp_r, dtype=float)
+        rel_amp_l, rel_amp_r = amp_l / np.sum(amp_l), amp_r / np.sum(amp_r)
+        # Check if left/right distributions need to be swapped
+        medians_l = [distr.median() for distr in distrs_l]
+        medians_r = [distr.median() for distr in distrs_r]
+        median_l = np.sum(np.array(medians_l) * rel_amp_l)
+        median_r = np.sum(np.array(medians_r) * rel_amp_r)
+        if median_l > median_r:
+            RvContinuous.LOGGER.warning(
+                "separation_loc_multi: flipped distribution order"
+            )
+            distrs_l, distrs_r = distrs_r, distrs_l
+            median_l, median_r = median_r, median_l
+
+        # Minimal overlap condition: equal weights across separation line `xs`
+        def root_func(x):
+            q_l = np.sum([
+                amp * distr.sf(x) for amp, distr in zip(amp_l, distrs_l)
+            ])
+            q_r = np.sum([
+                amp * distr.cdf(x) for amp, distr in zip(amp_r, distrs_r)
+            ])
+            return q_l - q_r
+        # Minimize overlap
+        bracket = [median_l, median_r]
+        res = scipy.optimize.root_scalar(root_func, bracket=bracket)
+        xs = res.root
+        if not res.converged:
+            RvContinuous.LOGGER.warning(
+                "`separation_loc_multi` did not converge"
+            )
+        ql = np.sum([
+            p * distr.sf(xs) for p, distr in zip(rel_amp_l, distrs_l)
+        ])
+        qr = np.sum([
+            p * distr.cdf(xs) for p, distr in zip(rel_amp_r, distrs_r)
+        ])
+        return xs, ql, qr

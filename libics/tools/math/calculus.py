@@ -64,6 +64,7 @@ def integrate_array(ar, bounds=False, x=None, dx=None, x0=None, axis=-1):
                 ad.cv_quantity_to_index(bounds[1], axis) + 1
             )
             ad = ad[axis * (slice(None),) + (slice(*idx_bounds),)]
+            x = ad.get_points(axis)
         ar_int = trapz(ad, x=x, axis=axis)
     # Package result
     if is_ad and not np.isscalar(ar_int):

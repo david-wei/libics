@@ -1,14 +1,14 @@
 import itertools
 import numpy as np
-from scipy import ndimage, optimize, signal
+from scipy import ndimage, signal
 
 from libics.env import logging
 from libics.core.data.arrays import ArrayData
+from libics.core.io import FileBase
 from libics.core.util import misc
-from libics.tools.math.models import ModelBase
+from libics.tools.math.models import ModelBase, RvContinuous
 from libics.tools.math.peaked import (
-    FitGaussian1d, FitLorentzian1dAbs,
-    FitSkewGaussian1d, SkewNormal1dDistribution
+    FitGaussian1d, FitLorentzian1dAbs, FitSkewGaussian1d
 )
 from libics.tools import plot
 
@@ -281,6 +281,8 @@ def find_peaks_1d_prominence(
                 ar = np.concatenate([[-np.inf], ar])
         else:
             ar = np.concatenate([ar, [-np.inf]])
+    else:
+        edge_peaks = False
     _peaks, _props = signal.find_peaks(ar, prominence=0)
     # Sort peaks by prominence
     _order = np.flip(np.argsort(_props["prominences"]))
@@ -347,7 +349,7 @@ def find_peaks_1d_prominence(
     }
 
 
-class PeakInfo:
+class PeakInfo(FileBase):
 
     """
     Results class for peak analysis.
@@ -372,16 +374,48 @@ class PeakInfo:
         of the :py:attr:`base`).
     """
 
+    LOGGER = logging.get_logger("libics.tools.math.signal.PeakInfo")
+    SER_KEYS = FileBase.SER_KEYS | {
+        "data", "center", "width", "base", "subpeak", "_fit"
+    }
+
     def __init__(
         self, data=None, fit=None, center=None, width=None, base=None,
         subpeak=None
     ):
         self.data = data
-        self.fit = fit
+        self._fit = fit
+        self._distribution = None
         self.center = center
         self.width = width
         self.base = base
         self.subpeak = subpeak
+
+    @property
+    def fit(self):
+        return self._fit
+
+    @fit.setter
+    def fit(self, val):
+        self._fit = val
+        self._distribution = None
+
+    @property
+    def distribution(self):
+        if self._distribution is None:
+            try:
+                self._distribution = self._fit.get_distribution()
+            except AttributeError:
+                self.LOGGER.error("`distribution` not set")
+        return self._distribution
+
+    @property
+    def distribution_amplitude(self):
+        try:
+            return self._fit.distribution_amplitude
+        except AttributeError:
+            self.LOGGER.error("`distribution_amplitude` unavailable")
+            return None
 
     def iter_subpeaks(self):
         """
@@ -448,7 +482,7 @@ class PeakInfo:
         return f"<{str(self)}>"
 
     @classmethod
-    def minimal_overlap(cls, peak_info_left, peak_info_right):
+    def separation_loc(cls, peak_info_left, peak_info_right):
         """
         Finds the position where the overlap between peaks is minimal.
 
@@ -469,62 +503,28 @@ class PeakInfo:
             Probability for the (left, right) peak to be on the wrong side
             of the separation line (i.e., the separation error probability).
         """
-        distr = SkewNormal1dDistribution
         # Separate peak infos
         pil = [_pi for _pi in peak_info_left.iter_peaks()]
         pir = [_pi for _pi in peak_info_right.iter_peaks()]
-        # Get distribution parameters
-        distrpl = []
-        for _pi in pil:
-            _d = _pi.fit.get_skew_normal_1d_distribution_params()
-            distrpl.append((_d["x0"], _d["wx"], _d["alpha"]))
-        distrpr = []
-        for _pi in pir:
-            _d = _pi.fit.get_skew_normal_1d_distribution_params()
-            distrpr.append((_d["x0"], _d["wx"], _d["alpha"]))
-        # Get distribution properties
-        ampl = np.array([
-            _pi.fit.a / distr.amplitude(*_dp[1:])
-            for _pi, _dp in zip(pil, distrpl)
-        ])
-        ampr = np.array([
-            _pi.fit.a / distr.amplitude(*_dp[1:])
-            for _pi, _dp in zip(pir, distrpr)
-        ])
-        centerl = [_pi.center for _pi in pil]
-        centerr = [_pi.center for _pi in pir]
-
-        # Minimal overlap condition: equal weights across separation line `xs`
-        def root_func(x):
-            qls = [_a * (1 - distr.cdf(x, *_dp))
-                   for _a, _dp in zip(ampl, distrpl)]
-            qrs = [_a * distr.cdf(x, *_dp)
-                   for _a, _dp in zip(ampr, distrpr)]
-            ql, qr = np.sum(qls), np.sum(qrs)
-            return ql - qr
+        # Get distributions
+        distrpl = [_pi.distribution for _pi in pil]
+        distrpr = [_pi.distribution for _pi in pir]
+        ampl = np.array([_pi.distribution_amplitude for _pi in pil])
+        ampr = np.array([_pi.distribution_amplitude for _pi in pir])
         # Minimize overlap
-        bracket = [np.min(centerl), np.max(centerr)]
-        res = optimize.root_scalar(root_func, bracket=bracket)
-        xs = res.root
-        if not res.converged:
-            cls.LOGGER.warning("`minimal_overlap` did not converge")
-        # Estimate overlap probabilities
-        overlapl = np.sum(
-            ampl * np.array([1 - distr.cdf(xs, *_dp) for _dp in distrpl])
-        ) / np.sum(ampl)
-        overlapr = np.sum(
-            ampr * np.array([distr.cdf(xs, *_dp) for _dp in distrpr])
-        ) / np.sum(ampr)
-        return xs, overlapl, overlapr
+        return RvContinuous.separation_loc_multi(
+            distrpl, distrpr, amp_l=ampl, amp_r=ampr
+        )
 
 
 def analyze_single_peak(
-    peak_ad, max_subpeaks=1, x0=None, c=0,
+    peak_ad, max_subpeaks=1, x0=None, alpha=None, c=0, p0=None,
+    fit_class=FitSkewGaussian1d,
     max_width_std=1e-3, min_subpeak_len_abs=5, min_subpeak_len_rel=0.2,
-    maxfev=10000, _is_recursion=False
+    maxfev=None, _is_recursion=False
 ):
     """
-    Fits a peak with a skew Gaussian.
+    Fits a peak with a distribution model.
 
     Recursively fits subpeaks to residuals.
 
@@ -537,8 +537,22 @@ def analyze_single_peak(
     x0 : `float` or `None`
         If `float`, fixes the peak maximum position, thereby
         removing one fit degree of freedom. Only applied to top-level peak.
+    alpha : `float` or `None`
+        If `float`, fixes the peak skewness parameter, thereby
+        removing one fit degree of freedom. Only applied to top-level peak.
+        Only applied for skewed models, e.g. for `fit_class=FitSkewGaussian1d`.
     c : `float`
         Fixed peak background level. Only applied to top-level peak.
+    p0 : `dict(str->float)`
+        Fitting initial values.
+    fit_class : `class`
+        Fit model class inheriting from
+        :py:class:`libics.tools.math.models.ModelBase`.
+        Must implement the parameters `"a", "x0", "wx"` and be associated
+        with a distribution, i.e., must implement `get_distribution()`
+        which must return a subclass of
+        :py:class:`libics.tools.math.models.RvContinuous`.
+        Examples are: `FitGaussian1d, FitSkewGaussian1d, FitSymExponential1d`.
     max_width_std : `float`
         Maximum fit uncertainty for the width to not continue to search
         for subpeaks.
@@ -547,8 +561,9 @@ def analyze_single_peak(
     min_subpeak_len_rel : `float`
         Minimum relative number of points outside the peak base
         to attempt subpeak fit.
-    maxfev : `int`
-        Maximum number of function evaluations for the fit.
+    maxfev : `int` or `None`
+        Maximum number of function evaluations for the fit.`
+        If `None`, uses `scipy.optimize.least_sq` default.
 
     Returns
     -------
@@ -558,11 +573,20 @@ def analyze_single_peak(
     """
     peak_ad = ArrayData(peak_ad)
     # Perform initial fit
-    _fit = FitSkewGaussian1d()
+    if (
+        not issubclass(fit_class, ModelBase)
+        or not hasattr(fit_class, "get_distribution")
+    ):
+        raise TypeError(f"invalid fit_class: {str(fit_class)}")
+    _fit = fit_class()
     _fit.find_p0(peak_ad)
+    if p0 is not None:
+        _fit.set_p0(**p0)
     const_p0 = {"c": c}
     if x0 is not None:
         const_p0["x0"] = x0
+    if alpha is not None and "alpha" in fit_class.P_ALL:
+        const_p0["alpha"] = alpha
     _fit.set_pfit(**const_p0)
     _fit.find_popt(peak_ad, maxfev=maxfev)
     # Check if peak fit can be considered successful
@@ -582,20 +606,16 @@ def analyze_single_peak(
         _subtr_filtered = ArrayData(_subtr_filtered)
         _subtr_filtered.set_dim(0, points=peak_ad_subtr.get_points(0))
         # Get distribution parameters (for statistical estimates)
-        distr = SkewNormal1dDistribution
-        distr_p = _fit.get_skew_normal_1d_distribution_params()
-        _amp = _fit.a / distr.amplitude(distr_p["wx"], distr_p["alpha"])
-        _p = distr_p["x0"], distr_p["wx"], distr_p["alpha"]
+        distr = _fit.get_distribution()
+        _amp = _fit.distribution_amplitude
         # Find peak base by comparing to maximum of residuals
         distr_subtr_max = np.max(_subtr_filtered) / _amp
-        try:
-            base_val = [
-                distr.ipdf(distr_subtr_max, *_p, branch=branch)
-                for branch in ["left", "right"]
-            ]
-            check_subpeak = True
-        except ValueError:
-            check_subpeak = False
+        check_subpeak = True
+        for j, branch in enumerate(["left", "right"]):
+            try:
+                base_val[j] = distr.ipdf(distr_subtr_max, branch=branch)
+            except ValueError:
+                check_subpeak = False
         if check_subpeak is False:
             subpeak = None
         else:
@@ -623,7 +643,8 @@ def analyze_single_peak(
                     peak_ad_subtr = ArrayData(_d)
                     peak_ad_subtr.set_dim(0, points=_x)
                     subpeak = analyze_single_peak(
-                        peak_ad_subtr, max_subpeaks=max_subpeaks-1,
+                        peak_ad_subtr, fit_class=fit_class,
+                        max_subpeaks=max_subpeaks-1,
                         max_width_std=max_width_std,
                         min_subpeak_len_abs=min_subpeak_len_abs,
                         min_subpeak_len_rel=min_subpeak_len_rel,

@@ -1,4 +1,5 @@
 import copy
+import datetime
 import numpy as np
 from scipy import interpolate
 
@@ -6,6 +7,7 @@ from libics.env import logging
 from libics.core.data.types import (
     AttrHashBase, Quantity, UNARY_OPS_NUMPY, BINARY_OPS_NUMPY
 )
+from libics.core import io
 from libics.core.util import misc
 
 
@@ -66,11 +68,33 @@ class ArrayData(AttrHashBase):
     LOGGER = logging.get_logger("libics.core.data.arrays.ArrayData")
 
     # Maps constructor argument type to function
-    _CONSTRUCTOR_MAP = [
+    _CONSTRUCTOR_MAP = {
         # For future class extension, use the format
-        # (object_type, "name_of_constructor_method")
-        # e.g.: (np.ndarray, "from_array")
-    ]
+        # object_type->"name_of_constructor_method"
+        # e.g.: _CONSTRUCTOR_MAP[np.ndarray] = "from_array"
+    }
+
+    @classmethod
+    def REGISTER_CONSTRUCTOR(cls, obj_cls, func, func_name=None):
+        """
+        Registers a constructor method.
+
+        Parameters
+        ----------
+        obj_cls : `class`
+            Class of objects to use the given constructor.
+        func : `callable`
+            Constructor function.
+        """
+        cls_name = obj_cls.__name__
+        if func_name is None:
+            func_name = f"from_{cls_name}"
+        if func_name in cls.__dict__:
+            raise ValueError(f"constructor name `{func_name}` already exists")
+        elif obj_cls in cls._CONSTRUCTOR_MAP:
+            raise ValueError(f"class `{str(obj_cls)}` is already registered")
+        setattr(cls, func_name, func)
+        cls._CONSTRUCTOR_MAP[obj_cls] = func_name
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -113,7 +137,7 @@ class ArrayData(AttrHashBase):
             return self.from_sequence_table(arg, **kwargs)
         else:
             # Constructor for registered types
-            for _type, _constructor in self._CONSTRUCTOR_MAP:
+            for _type, _constructor in self._CONSTRUCTOR_MAP.items():
                 if isinstance(arg, _type):
                     return getattr(self, _constructor)(arg, **kwargs)
             # Try to convert argument to numpy array
@@ -238,7 +262,7 @@ class ArrayData(AttrHashBase):
         if var_quantity is not None:
             for i, k in enumerate(var_keys):
                 if k in var_quantity:
-                    ad.set_var_quantity(i, var_quantity[k])
+                    ad.set_var_quantity(i, quantity=var_quantity[k])
 
         # Interpolate data
         table_var = []
@@ -272,19 +296,19 @@ class ArrayData(AttrHashBase):
         return self
 
     __LIBICS_IO__ = True
-    SER_KEYS = {
-        "data_quantity", "data", "var_quantity", "var_mode",
+
+    ATTR_NAMES_VAR = {
+        "var_quantity", "var_mode",
         "_points", "_offset", "_center", "_step", "_low", "_high"
     }
+    ATTR_NAMES_COPY_VAR = ATTR_NAMES_VAR | {
+        "data_quantity", "_placeholder_shape"
+    }
+    SER_KEYS = ATTR_NAMES_COPY_VAR | {"data"}
 
     def attributes(self):
         """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
         return {k: getattr(self, k) for k in self.SER_KEYS}
-
-    ATTR_NAMES_COPY_VAR = {
-        "data_quantity", "_placeholder_shape", "var_quantity", "var_mode",
-        "_points", "_offset", "_center", "_step", "_low", "_high"
-    }
 
     HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
 
@@ -603,6 +627,36 @@ class ArrayData(AttrHashBase):
             del self._low[dim]
             del self._high[dim]
 
+    def move_dim(self, source_dim=0, destination_dim=-1):
+        """
+        Moves a dimension to a new position (in place).
+
+        Parameters
+        ----------
+        source_dim, destination_dim : `int` or `Iter[int]`
+            Moves the dimension(s) with index/indices
+            `source_dim` to position `destination_dim`.
+        """
+        source_dim, destination_dim = (
+            np.array(misc.assume_iter(source_dim)) % self.ndim,
+            np.array(misc.assume_iter(destination_dim)) % self.ndim
+        )
+        _ord = np.argsort(destination_dim)
+        source_dim, destination_dim = source_dim[_ord], destination_dim[_ord]
+        if len(source_dim) != len(destination_dim):
+            raise ValueError("move_dim: invalid dimensions")
+        self.data = np.moveaxis(self.data, source_dim, destination_dim)
+        for attr_name in self.ATTR_NAMES_VAR:
+            item = getattr(self, attr_name)
+            if len(item) != self.ndim or not isinstance(item, list):
+                self.LOGGER.warning(f"move_dim: failed to move `{str(item)}`")
+                continue
+            _tmp = [item[i] for i in source_dim]
+            for i in np.flip(np.sort(source_dim)):
+                del item[i]
+            for i, j in enumerate(destination_dim):
+                item.insert(j, _tmp[i])
+
     # ++++++
     # Getter
     # ++++++
@@ -707,7 +761,7 @@ class ArrayData(AttrHashBase):
                 return self._offset[dim]
             else:
                 _step = self._step[dim]
-                _range = self.var_shape[dim] * _step
+                _range = (self.var_shape[dim] - 1) * _step
                 _center = self._center[dim]
                 return _center - _range / 2
         elif self.var_mode[dim] == self.LINSPACE:
@@ -745,6 +799,17 @@ class ArrayData(AttrHashBase):
             _tz = _points[0].tzinfo
             _points = np.array([misc.cv_timestamp(x) for x in _points])
         _bins = np.empty(len(_points) + 1, dtype=float)
+        # Handle single point
+        if len(_points) == 1:
+            _point = _points[0]
+            if _is_datetime:
+                _bins[0] = _point - datetime.timedelta(seconds=0.5)
+                _bins[-1] = _point + datetime.timedelta(seconds=0.5)
+            else:
+                _bins[0] = _point - 0.5
+                _bins[-1] = _points + 0.5
+            return _bins
+        # Handle points array
         _bins[1:-1] = (_points[:-1] + _points[1:]) / 2
         _bins[0] = 2 * _points[0] - _bins[1]
         _bins[-1] = 2 * _points[-1] - _bins[-2]
@@ -947,8 +1012,12 @@ class ArrayData(AttrHashBase):
         # If single item
         if (len(key) == self.ndim and np.all([np.isscalar(k) for k in key])):
             return self.data[key]
+        # If boolean array
+        if not isinstance(key, tuple):
+            return self.data[key]
         # Else (slice in at least one dimension)
         obj = self.copy_var()
+        key = misc.cv_index_ellipsis(key, self.ndim)
         kdim = len(key)
         for i, k in enumerate(reversed(key)):
             dim = kdim - i - 1
@@ -991,10 +1060,14 @@ class ArrayData(AttrHashBase):
             else:
                 raise ValueError(f"invalid key type ({k} of type {type(k)})")
         obj.data = self.data[key]
+        for k in self.ATTR_NAMES_VAR:
+            setattr(self, k, getattr(self, k)[:self.ndim])
         return obj
 
     def __setitem__(self, key, val):
         """Set data array item by index."""
+        if isinstance(key, ArrayData):
+            key = key.data
         self.data[key] = val
 
     def __iter__(self):
@@ -1233,11 +1306,14 @@ class ArrayData(AttrHashBase):
         # Convert to seriesdata-structure-like
         shape = None
         dim = self.ndim
+        is_scalar = False
         if dim == 1:
+            is_scalar = np.isscalar(var)
             if np.isscalar(var) or len(var) != 1:
                 var = [var]
             var = np.array(var)
         if not np.isscalar(var[0]):
+            is_scalar = np.isscalar(var[0])
             shape = var[0].shape
             var = var.reshape((dim, var.size // dim))
             var = np.moveaxis(var, 0, -1)
@@ -1263,6 +1339,8 @@ class ArrayData(AttrHashBase):
         )
         if shape is not None:
             func_val = func_val.reshape(shape)
+        if is_scalar:
+            func_val = func_val.item()
         return func_val
 
     def supersample(self, rep):
@@ -1417,6 +1495,25 @@ class ArrayData(AttrHashBase):
             Processed object.
         """
         obj = self if in_place else copy.deepcopy(self)
+        # Align var axes
+        if not np.isscalar(other):
+            dif_ndim = other.ndim - self.ndim
+            # If other has more dimensions, shift var for numpy broadcasting
+            if dif_ndim > 0:
+                # Assert that other has var attributes
+                if isinstance(other, ArrayData):
+                    other_ad = other
+                else:
+                    # Create dummy ArrayData
+                    other_ad = ArrayData()
+                    other_ad.add_dim(dif_ndim)
+                # Copy and shift var attributes
+                for k in obj.ATTR_NAMES_VAR:
+                    v = copy.deepcopy(
+                        list(getattr(other_ad, k)[:dif_ndim])
+                        + list(getattr(obj, k))
+                    )
+                    setattr(obj, k, v)
         # Non-homogeneous operation
         if not isinstance(other, ArrayData):
             if rev:
@@ -1559,28 +1656,28 @@ class ArrayData(AttrHashBase):
     # ++++ Comparisons +++++++++++
 
     def __lt__(self, other):
-        return np.all(self.get_common_obj(other, np.less, raw=True))
+        return self.get_common_obj(other, np.less, raw=True)
 
     def __le__(self, other):
-        return np.all(self.get_common_obj(other, np.less_equal, raw=True))
+        return self.get_common_obj(other, np.less_equal, raw=True)
 
     def __eq__(self, other):
         try:
-            return np.all(self.get_common_obj(other, np.equal, raw=True))
+            return self.get_common_obj(other, np.equal, raw=True)
         except ValueError:
             return False
 
     def __ne__(self, other):
         try:
-            return np.all(self.get_common_obj(other, np.not_equal, raw=True))
+            return self.get_common_obj(other, np.not_equal, raw=True)
         except ValueError:
             return True
 
     def __ge__(self, other):
-        return np.all(self.get_common_obj(other, np.greater_equal, raw=True))
+        return self.get_common_obj(other, np.greater_equal, raw=True)
 
     def __gt__(self, other):
-        return np.all(self.get_common_obj(other, np.greater, raw=True))
+        return self.get_common_obj(other, np.greater, raw=True)
 
     # ++++ Unary operations ++++++
 
@@ -1648,6 +1745,344 @@ class ArrayData(AttrHashBase):
                 obj.data = res
         # Return ArrayData object with data as calculated by the ufunc
         return obj
+
+
+class CmprArrayData(AttrHashBase):
+
+    """
+    Container class storing compressed real 2D :py:class:`ArrayData` objects.
+    """
+
+    __LIBICS_IO__ = True
+    SER_KEYS = ArrayData.SER_KEYS | {
+        "enc_type", "enc_bitdepth", "dec_lut", "ad_dtype",
+        "map_bitdepth", "map_ndim", "map_offset", "map_amplitude"
+    }
+
+    def attributes(self):
+        """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
+        return {k: getattr(self, k) for k in self.SER_KEYS}
+
+    HASH_KEYS = AttrHashBase.HASH_KEYS | SER_KEYS
+
+    def __init__(
+        self, ad=None, enc_type="png", map_bitdepth=16,
+        map_lut_vals=None, check_cmpr=True
+    ):
+        super().__init__()
+        # Encoding/compression: parameters
+        self.enc_type = enc_type
+        # Encoding/compression: derived
+        self.enc_bitdepth = None
+        self.dec_lut = None
+        self.ad_dtype = None
+        # Float mapping: parameters
+        self.map_bitdepth = map_bitdepth
+        self.map_lut_vals = map_lut_vals
+        # Float mapping: derived
+        self.map_offset = None
+        self.map_amplitude = None
+        self.map_ndim = None
+        # Initialize data
+        self.from_array_data(ad, check_cmpr=check_cmpr)
+
+    @property
+    def dec_lut(self):
+        return self._dec_lut
+
+    @dec_lut.setter
+    def dec_lut(self, val):
+        if val is None:
+            self._dec_lut = None
+        else:
+            self._dec_lut = {int(k): v for k, v in val.items()}
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+    # Static methods
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+
+    @staticmethod
+    def _get_dtype_str(dtype):
+        if np.issubdtype(dtype, np.bool_):
+            return "bool"
+        elif np.issubdtype(dtype, np.integer):
+            return "int"
+        elif np.issubdtype(dtype, np.floating):
+            return "float"
+        else:
+            raise ValueError(f"invalid dtype: {str(dtype)}")
+
+    @classmethod
+    def _get_enc_bitdepth(cls, map_bitdepth):
+        """
+        Gets the minimum encoding bitdepth for the given mapping bitdepth.
+        """
+        if map_bitdepth <= 8:
+            return 8
+        elif map_bitdepth <= 16:
+            return 16
+        else:
+            raise ValueError(f"invalid map_bitdepth: {map_bitdepth:d}")
+
+    @classmethod
+    def _get_enc_dtype(cls, enc_bitdepth):
+        """
+        Gets the appropriate encoding data type.
+        """
+        if enc_bitdepth == 8:
+            return np.uint8
+        elif enc_bitdepth == 16:
+            return np.uint16
+        else:
+            raise TypeError(f"invalid enc_bitdepth: {enc_bitdepth:d}")
+
+    @classmethod
+    def _get_enc_max(cls, map_bitdepth, enc_bitdepth=None, num_lut_vals=0):
+        """
+        Gets the maximum encoding value.
+        """
+        if enc_bitdepth is None:
+            enc_bitdepth = cls._get_enc_bitdepth(map_bitdepth)
+            # If too many LUT values are used, default to a higher bitdepth
+            dif_bitdepth = enc_bitdepth - map_bitdepth
+            if num_lut_vals >= 2**dif_bitdepth:
+                enc_bitdepth = 16  # maximum png encoding bitdepth is 16 bit
+        return min(2**map_bitdepth, 2**enc_bitdepth - num_lut_vals) - 1
+
+    @classmethod
+    def _get_lut_codes(self, num_lut_vals, enc_bitdepth):
+        """
+        Gets the LUT codes to be associated with.
+        """
+        if not np.isscalar(num_lut_vals):
+            num_lut_vals = len(num_lut_vals)
+        return [2**enc_bitdepth - 1 - i for i in range(num_lut_vals)]
+
+    @classmethod
+    def get_compressed_array_png(
+        cls, ar, map_bitdepth=16, enc_lut=None, max_num_lut=1024,
+        check_unique_vals=True
+    ):
+        """
+        Gets a base64-encoded string representing the array as PNG.
+
+        Parameters
+        ----------
+        ar : `Array[2]`
+            2D array to be compressed.
+        map_bitdepth : `int`
+            Bitdepth of compression (number of grayscales: `2**map_bitdepth`).
+        enc_lut : `dict(float->int)`
+            Encoding LUT palette.
+        max_num_lut : `int`
+            Maximum number of LUT palette colors.
+        check_unique_vals : `bool`
+            Whether the number of unique array elements is checked.
+            If `check_unique_vals is True and enc_lut is None`, this method
+            automatically tries to exactly encode the data via LUTs.
+
+        Returns
+        -------
+        ar_cmpr : `str`
+            Base64-encoded string representing compressed array.
+        meta : `dict(str->Any)`
+            Metadata dictionary containing the following items:
+        offset, amplitude : `float`
+            Mapping offset and amplitude.
+        dec_lut : `dict(int->float)`
+            Decoding LUT mapping codes to array values.
+        unique_vals_raw, unique_vals_cmpr : `int`
+            Number of unique values in the raw and in the compressed array.
+            Only returned if `check_unique_vals is True`.
+        """
+        # Parse parameters
+        if map_bitdepth <= 0 or map_bitdepth > 16:
+            raise ValueError(f"invalid map bitdepth: {map_bitdepth:d}")
+        enc_bitdepth = cls._get_enc_bitdepth(map_bitdepth)
+        enc_dtype = cls._get_enc_dtype(enc_bitdepth)
+        if check_unique_vals:
+            unique_vals = np.unique(ar)
+        # Construct LUT
+        if enc_lut is None:
+            # If few unique values exist, encode data exactly
+            if (
+                check_unique_vals and
+                len(unique_vals) <= min(2**enc_bitdepth, max_num_lut)
+            ):
+                enc_lut_vals = unique_vals
+                enc_lut_codes = cls._get_lut_codes(
+                    len(enc_lut_vals), enc_bitdepth
+                )
+                enc_lut = misc.make_dict(enc_lut_vals, enc_lut_codes)
+            else:
+                enc_lut = {}
+        dec_lut = misc.reverse_dict(enc_lut)
+        # Get data normalization parameters
+        ar_min, ar_max = np.min(ar), np.max(ar)
+        enc_max = cls._get_enc_max(
+            map_bitdepth, enc_bitdepth=enc_bitdepth, num_lut_vals=len(enc_lut)
+        )
+        offset = ar_min
+        amplitude = (ar_max - ar_min) / enc_max
+        # If only one value exists, set amplitude to some non-zero value
+        if amplitude == 0:
+            amplitude = 1
+            ar_norm = np.zeros_like(ar)
+        else:
+            ar_norm = (ar - offset) / amplitude
+        # Convert data to integer
+        ar_int = np.round(ar_norm).astype(enc_dtype)
+        # Encode LUT data
+        for lut_value, lut_code in enc_lut.items():
+            ar_int[ar == lut_value] = lut_code
+        # Compress data
+        ar_cmpr = io.image.compress_numpy_array_as_png(ar_int, encode="base64")
+        # Package metadata
+        meta = {"offset": offset, "amplitude": amplitude, "dec_lut": dec_lut}
+        if check_unique_vals:
+            meta.update(dict(
+                unique_vals_raw=len(np.unique(ar)),
+                unique_vals_cmpr=len(np.unique(ar_int))
+            ))
+        return ar_cmpr, meta
+
+    @classmethod
+    def get_decompressed_array_png(
+        cls, ar_cmpr, offset=0, amplitude=1, dec_lut=None, dtype=None
+    ):
+        """
+        Gets an array from its base64-PNG-encoded string representation.
+
+        Parameters
+        ----------
+        ar_cmpr : `str`
+            Compressed string representation of array.
+        offset, amplitude : `float`
+            Mapping offset and amplitude.
+        dec_lut : `dict(int->float)`
+            Decoding LUT mapping codes to values.
+        dtype : `str`
+            Data type of array.
+
+        Returns
+        -------
+        ar : `np.ndarray(2, dtype)`
+            Decompressed array.
+        """
+        # Parse parameters
+        if dec_lut is None:
+            dec_lut = {}
+        # Decompress data
+        ar_int = io.image.decompress_numpy_array_from_png(ar_cmpr)
+        # Decode data
+        ar = amplitude * ar_int + offset
+        # Decode LUT data
+        for lut_code, lut_value in dec_lut.items():
+            ar[ar_int == lut_code] = lut_value
+        if dtype is not None:
+            ar = np.array(ar).astype(dtype)
+        return ar
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+    # Compression/decompression methods
+    # +++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def from_array_data(self, ad, check_cmpr=True):
+        """
+        Converts an `ArrayData` object into its compressed form.
+
+        Parameters
+        ----------
+        ad : `ArrayData`
+            Uncompressed array data object.
+        check_cmpr : `bool` or `float`
+            Checks number of unique values before and after compression.
+            If the number before compression is larger by more than the factor
+            `check_cmpr`, raises a `ValueError` **after** setting the
+            attributes.
+            If `True`, uses the default factor of `64`.
+        """
+        # Parse parameters
+        if ad is None:
+            for k in ArrayData.SER_KEYS:
+                setattr(self, k, None)
+            return
+        if not isinstance(ad, ArrayData):
+            ad = ArrayData(ad)
+        if ad.ndim == 2:
+            pass
+        elif ad.ndim == 1:
+            ad = ad.copy()
+            ad.data = ad.data[:, np.newaxis]  # Add dummy dimension
+            self.map_ndim = 1
+        else:
+            raise TypeError("Invalid dimension of `ad`")
+        if check_cmpr:
+            check_cmpr = 64
+        # Execute compression
+        _err_msg = None
+        for k in ArrayData.SER_KEYS:
+            v = getattr(ad, k)
+            if k == "data":
+                if self.enc_type != "png":
+                    raise ValueError(f"invalid encoding type: {self.enc_type}")
+                self.enc_bitdepth = self._get_enc_bitdepth(self.map_bitdepth)
+                enc_lut = None
+                if self.map_lut_vals is not None:
+                    enc_lut = misc.make_dict(
+                        self.map_lut_vals, self._get_lut_codes(
+                            len(self.map_lut_vals), self.enc_bitdepth
+                        )
+                    )
+                v, meta = self.get_compressed_array_png(
+                    np.copy(v.data), self.map_bitdepth, enc_lut=enc_lut,
+                    check_unique_vals=(check_cmpr > 0)
+                )
+                if check_cmpr:
+                    unique_vals_raw = meta["unique_vals_raw"]
+                    unique_vals_cmpr = meta["unique_vals_cmpr"]
+                    if unique_vals_raw > check_cmpr * unique_vals_cmpr:
+                        _err_msg = (
+                            "check_cmpr failed ("
+                            f"uncompressed values: {unique_vals_raw:d}, "
+                            f"compressed values: {unique_vals_cmpr:d})"
+                        )
+                self.map_offset = meta["offset"]
+                self.map_amplitude = meta["amplitude"]
+                self.dec_lut = meta["dec_lut"]
+                self.ad_dtype = self._get_dtype_str(ad.dtype)
+            setattr(self, k, v)
+        # If compression is bad
+        if _err_msg is not None:
+            raise ValueError(_err_msg)
+
+    def to_array_data(self):
+        """
+        Converts the compressed data into an `ArrayData` object.
+        """
+        ad = ArrayData()
+        for k in ArrayData.SER_KEYS:
+            v = getattr(self, k)
+            if k == "data":
+                v = self.get_decompressed_array_png(
+                    v, offset=self.map_offset, amplitude=self.map_amplitude,
+                    dec_lut=self.dec_lut, dtype=self.ad_dtype
+                )
+                if self.map_ndim == 1:
+                    v = v[:, 0]
+            setattr(ad, k, v)
+        return ad
+
+
+def constructor_plugin_CmprArrayData_to_ArrayData(obj, *args, **kwargs):
+    arg = args[0]
+    ad = arg.to_array_data()
+    return obj.from_ArrayData(ad, **kwargs)
+
+
+ArrayData.REGISTER_CONSTRUCTOR(
+    CmprArrayData, constructor_plugin_CmprArrayData_to_ArrayData
+)
 
 
 ###############################################################################

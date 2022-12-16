@@ -256,6 +256,34 @@ def assume_endswith(string, suffix):
     return string
 
 
+def assume_startswith(string, prefix):
+    """
+    Asserts that the passed `string` starts with with `prefix`. If it does not,
+    the prefix is prepended. The assumed result is returned.
+
+    Parameters
+    ----------
+    string : `str`
+        String to be checked.
+    prefix : `str`
+        Assumed start of string.
+
+    Returns
+    -------
+    string : `str`
+        String with assumed beginning.
+
+    Raises
+    ------
+    AssertionError
+        If the parameters are invalid.
+    """
+    assert(type(string) == str and type(prefix) == str)
+    if not string.startswith(prefix):
+        string = prefix + string
+    return string
+
+
 def assume_dir(path):
     """
     Asserts that the given path directory exists. If not, the path will be
@@ -825,6 +853,35 @@ def cv_camel_to_snake_case(s, snake_char="_"):
     return s.lower()
 
 
+def cv_iter_to_str(_iter, fmt=None, join=", ", prefix="[", suffix="]"):
+    """
+    Converts an iterable to a single string.
+
+    Parameters
+    ----------
+    _iter : `Iter[Any]`
+        Iterable to be converted.
+    fmt : `str` or `None`
+        Formatter string, e.g.: `"{:.2f}", "{:03d}", "{:4.3e}"`.
+        If `None`, the items in `_iter` are converted by `str()`.
+    join : `str`
+        Characters used to join the items.
+    prefix, suffix : `str`
+        Prefix/suffix prepended/appended to the joined string.
+
+    Returns
+    -------
+    s : `str`
+        Converted string.
+    """
+    if fmt is None:
+        s = [str(i) for i in _iter]
+    else:
+        s = [fmt.format(i) for i in _iter]
+    s = prefix + join.join(s) + suffix
+    return s
+
+
 def char_range(start, stop=None, step=1):
     """
     Yield an alphabetic range of lowercase letters.
@@ -1316,6 +1373,58 @@ def cv_index_mask_to_rect(mask):
         for idx in idxs
     ]
     return rect
+
+
+def cv_index_ellipsis(indices, ndim):
+    """
+    Resolves an indexing tuple containing `Ellipsis` into explicit slices.
+
+    Parameters
+    ----------
+    indices : `Iter[int or slice or Ellipsis]`
+        Indexing tuple.
+    ndim : `int`
+        Number of dimensions of resolved indexing tuple.
+
+    Returns
+    -------
+    resolved_indices : `tuple(int or slice)`
+        Indexing tuple with `Ellipsis` resolved.
+
+    Examples
+    --------
+    >>> ar = np.arange(2*3*4*5).reshape((2, 3, 4, 5))
+    >>> indices = (1, ..., 4)
+    >>> ar[indices]
+    array([[ 64,  69,  74,  79],
+           [ 84,  89,  94,  99],
+           [104, 109, 114, 119]])
+    >>> resolved_indices = cv_index_ellipsis(indices, ar.ndim)
+    >>> resolved_indices
+    (1, slice(None, None, None), slice(None, None, None), 4)
+    >>> np.all(ar[indices] == ar[resolved_indices])
+    True
+    """
+    # Check if iterable
+    try:
+        iter(indices)
+    except TypeError:
+        return indices
+    # Find index of ellipsis
+    idx_ellipsis = None
+    for i, item in enumerate(indices):
+        if item == Ellipsis:
+            idx_ellipsis = i
+            break
+    if idx_ellipsis is None:
+        return indices
+    # Resolve ellipsis
+    resolved_indices = ndim * [slice(None)]
+    for i in range(idx_ellipsis):
+        resolved_indices[i] = indices[i]
+    for i in range(len(indices) - idx_ellipsis - 1):
+        resolved_indices[-i - 1] = indices[-i - 1]
+    return tuple(resolved_indices)
 
 
 def transpose_array(ar):

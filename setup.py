@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from .libics.env import __version__
+__version__ = "1.1a"
 
 
 def readme():
@@ -30,10 +30,11 @@ setup(name='libics',
             'gui_scripts': []
       },
       install_requires=[
-            'matplotlib', 'numpy', 'pandas', 'Pillow', 'scipy', 'xxhash'
+            'matplotlib', 'numpy', 'pandas', 'Pillow',
+            'scipy', 'xxhash', 'colorama'
       ],
       extras_require={
-            'bson': ['pymongo']
+            'bson': ['pymongo'], 'db': ['pika', 'influxdb-client']
       },
       python_requires='>=3.6',
       dependency_links=[

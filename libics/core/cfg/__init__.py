@@ -94,6 +94,10 @@ class CfgBase(io.FileBase):
             obj = obj[".".join(keys[1:])]
         return obj
 
+    def __iter__(self):
+        for k, v in self.__dict__.items():
+            yield (k, v)
+
     def _to_dict(self, serialize_all=False):
         """
         Serializes the serializable attributes to a dict.

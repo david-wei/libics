@@ -6,6 +6,14 @@ libics.tools.database
     :undoc-members:
     :show-inheritance:
 
+amqp
+----
+
+.. automodule:: libics.tools.database.amqp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 influx
 ------
 

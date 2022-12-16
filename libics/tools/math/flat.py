@@ -47,7 +47,7 @@ class FitCosine1d(ModelBase):
         var_diff = var_data[1:] - var_data[:-1]
         # Zero data
         c = np.mean(func_data)
-        func_data -= c
+        func_data = func_data - c
         # Uniform spacing
         if np.allclose(var_diff, var_diff[0]):
             var_data = var_data[:-1:2]
