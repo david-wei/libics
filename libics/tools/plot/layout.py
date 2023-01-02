@@ -517,8 +517,12 @@ class SubfigLayout:
                     row_stop = len(voffsets)
                 else:
                     row_stop = row.stop % (len(voffsets) + 1)
-                vhigh = voffsets[row_stop - 1] + heights[row_stop - 1]
-                voffsets = voffsets[row.start:row.start + 1]
+                if row.start is None:
+                    row_start = 0
+                else:
+                    row_start = row.start % (len(voffsets) + 1)
+                vhigh = voffsets[row_start] + heights[row_start]
+                voffsets = voffsets[row_stop - 1:row_stop]
                 heights = np.array([vhigh]) - voffsets
             else:
                 raise ValueError("invalid `row`")
@@ -531,8 +535,12 @@ class SubfigLayout:
                     col_stop = len(hoffsets)
                 else:
                     col_stop = col.stop % (len(hoffsets) + 1)
+                if col.start is None:
+                    col_start = 0
+                else:
+                    col_start = col.start % (len(hoffsets) + 1)
                 hhigh = hoffsets[col_stop - 1] + widths[col_stop - 1]
-                hoffsets = hoffsets[col.start:col.start + 1]
+                hoffsets = hoffsets[col_start:col_start + 1]
                 widths = np.array([hhigh]) - hoffsets
             else:
                 raise ValueError("invalid `col`")
