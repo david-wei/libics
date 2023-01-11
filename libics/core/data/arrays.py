@@ -1496,8 +1496,12 @@ class ArrayData(AttrHashBase):
         """
         obj = self if in_place else copy.deepcopy(self)
         # Align var axes
-        if not np.isscalar(other):
-            dif_ndim = other.ndim - self.ndim
+        if other is not None and not np.isscalar(other):
+            try:
+                dif_ndim = other.ndim - self.ndim
+            except AttributeError:
+                other = np.array(other)
+                dif_ndim = other.ndim - self.ndim
             # If other has more dimensions, shift var for numpy broadcasting
             if dif_ndim > 0:
                 # Assert that other has var attributes
