@@ -26,3 +26,11 @@ layout
     :members:
     :undoc-members:
     :show-inheritance:
+
+multi
+-----
+
+.. automodule:: libics.tools.plot.multi
+    :members:
+    :undoc-members:
+    :show-inheritance:
