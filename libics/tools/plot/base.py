@@ -42,6 +42,38 @@ def use_style(name="libics"):
 ###############################################################################
 
 
+def subplots(
+    fig=None, figsize=None, axsize=None, axsize_offset=None, size_unit="in",
+    nrows=1, ncols=1, **kwargs
+):
+    """
+    Create a figure and a set of subplots.
+
+    See matplotlib API:
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html.
+    """
+    # Parse parameters
+    if size_unit == "mm":
+        if figsize is not None:
+            figsize = (figsize[0] / 25.4, figsize[1] / 25.4)
+        if axsize is not None:
+            axsize = (axsize[0] / 25.4, axsize[1] / 25.4)
+        if axsize_offset is not None:
+            axsize_offset = (axsize_offset[0] / 25.4, axsize_offset[1] / 25.4)
+    # Make figure
+    if fig is None:
+        if figsize is None and axsize is not None:
+            figsize = tuple(
+                _n * _size + _offset
+                for _n, _size, _offset
+                in zip([ncols, nrows], axsize, axsize_offset)
+            )
+        fig = plt.figure(figsize=figsize)
+    # Create axes
+    axs = fig.subplots(nrows=nrows, ncols=ncols, **kwargs)
+    return fig, axs
+
+
 def style_figure(
     fig=None, ax_style=None,
     figsize=None, figsize_unit="in", dpi=None, tight_layout=None,
@@ -208,6 +240,57 @@ def tick_params(
 def savefig(fp, *args, **kwargs):
     plt.savefig(fp, *args, **kwargs)
     return fp
+
+
+def unsqueeze_axes(axs, ax_1d="col"):
+    """
+    Unsqueezes multiple matplotlib axes to an array[row, col].
+
+    Parameters
+    ----------
+    axs : `Iter[matplotlib.axes.Axes]`
+        Collection of matplotlib axes.
+    ax_1d : `str`
+        If `axs` is 1D, it is assumed that the array dimension is
+        `"col"` or `"row"`.
+
+    Returns
+    -------
+    axs : `np.ndarray(2, matplotlib.axes.Axes)`
+        2D array of matplotlib axes. Dimensions: [row, col].
+    """
+    if not isinstance(axs, (np.ndarray, tuple, list)):
+        axs = [[axs]]
+    axs = np.array(axs)
+    if axs.ndim == 1:
+        if ax_1d == "col":
+            axs = axs[np.newaxis, :]
+        else:
+            axs = axs[:, np.newaxis]
+    elif axs.ndim != 2:
+        raise ValueError("Invalid shape of `axs`")
+    return axs
+
+
+def remove_axes(*axs, enforce=False, if_empty=True):
+    """
+    (Conditionally) removes a matplotlib axes.
+
+    Parameters
+    ----------
+    *axs : `matplotlib.axes.Axes`
+        Matplotlib axes object.
+    enforce : `bool`
+        Whether to remove the axes unconditionally.
+    if_empty : `bool`
+        Whether to remove the axes if no artists are present.
+    """
+    for ax in axs:
+        if isinstance(ax, mpl.axes.Axes):
+            if enforce is True:
+                ax.remove()
+            elif if_empty and not ax.hasData():
+                ax.remove()
 
 
 ###############################################################################
