@@ -2,7 +2,6 @@
 
 import numpy as np
 
-from libics.env.logging import get_logger
 from libics.core.data.sequences import DataSequence
 from libics.tools.plot.base import remove_axes, subplots, unsqueeze_axes
 
@@ -106,7 +105,7 @@ def _analyze_shared_keys_for_ax_array(dsaa, select_list, share_list):
     # If both row and col are not provided in share_list,
     # at least one of them must be shared: Here we default to row.
     if nrows is None and ncols is None:
-        nrows = 1
+        nrows = len(unique_vals["row"])
     # Find nrows/ncols if not shared
     if nrows is None or ncols is None:
         shared_ax = "row" if nrows is not None else "col"
@@ -193,7 +192,7 @@ def _plot_ax_in_ax_array(
         ) for select_key, unique_val in unique_vals.items()
     }
     # Plot data
-    if x_key is None:
+    if x_key is False:
         for _, ds_row in dsaa.iterrows():
             func_args = [ds_row[f"arg_{i:d}"] for i in range(arg_size)]
             func_kwargs = {k: ds_row[f"kwarg_{k}"] for k in kwargs_list}
@@ -226,7 +225,7 @@ def _plot_ax_in_ax_array(
         for unique_select_comb in unique_select_combs:
             # Filter unique selection combination
             _ds = ds[ds["unique_select_comb"] == unique_select_comb].copy()
-            _ds.sort_rows(f"arg_{x_key}")
+            _ds.sort_rows("arg_x")
             func_args = [_ds[f"arg_{i:d}"] for i in range(arg_size)]
             func_kwargs = {k: _ds[f"kwarg_{k}"] for k in kwargs_list}
             # Prepare plot parameters
@@ -313,10 +312,36 @@ def plot_ax_array(
         If the plot key is selected for data differentiation, append an `s`,
         e.g., `colors=["red", "green", "blue"]`.
 
+    Returns
+    -------
+    axs : `np.ndarray(2, matplotlib.axes.Axes)`
+        Matplotlib axes array.
+
     Examples
     --------
-    TODO: Add examples.
+    Simple example for plotting two rows of 1D plots with different colors:
+    >>> dataset = DataSequence({
+    ...     "x": np.arange(10),
+    ...     "y": np.linspace(-1, 1, num=10),
+    ...     "z": 5*["a"] + 5*["b"],
+    ...     "a": 5*[True] + 3*[False] + 2*[True],
+    ... })
+    >>> arg_keys = ["y"]
+    >>> select_keys = {"color": "a", "label": "a", "row": "z"}
+    >>> share_list = []
+    >>> fmt_keys = {"label": r"a = {0}"}
+    >>> x_key = "x"
+    >>> axs = plot.plot_ax_array(
+    ...     dataset, plot.scatter,
+    ...     arg_keys=arg_keys, select_keys=select_keys, share_list=share_list,
+    ...     fmt_keys=fmt_keys, x_key=x_key,
+    ...     axsize=(5, 3.5)
+    ... )
+    >>> for ax in np.ravel(axs):
+    ...     plot.style_axes(ax=ax, legend=True)
+    >>> plot.show()
     """
+    # TODO: Add error handling
     # Analyze data set
     ana_ds = _analyze_dataset_for_ax_array(
         dataset, arg_keys, kwarg_keys=kwarg_keys,
@@ -332,7 +357,7 @@ def plot_ax_array(
     if has_unshared_ax:
         unshared_ax = list(ana_sk["unshared_vals"].keys())[0]
         shared_ax = "row" if unshared_ax == "col" else "col"
-        unshared_vals = ana_sk["unshared_vals"]
+        unshared_vals = ana_sk["unshared_vals"][unshared_ax]
 
     # Set up axes
     if axs is None:
@@ -400,3 +425,4 @@ def plot_ax_array(
     # Clean up
     if remove_empty:
         remove_axes(empty_axs, enforce=False, if_empty=True)
+    return axs
