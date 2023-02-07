@@ -2,16 +2,23 @@
 
 import numpy as np
 
+from libics.env.logging import get_logger
 from libics.core.data.sequences import DataSequence
 from libics.tools.plot.base import remove_axes, subplots, unsqueeze_axes
+
+LOGGER = get_logger("libics.tools.plot.multi")
 
 
 ###############################################################################
 
 
+# Predefined select plot parameters
+_DEFAULT_KWARGS = {"row", "col", "marker", "linestyle", "color"}
 _MARKERS = ["[o]", "[^]", "[s]", "[X]", "[D]", "[+]", "[*]", "[H]"]
 _LINESTYLES = ["solid", "dotted", "dashed", "dashdot"]
 _COLORS = [f"C{i:d}" for i in range(10)]
+# Map plot parameter abbreviations
+_PLT_PARAM_MAP = {"lw": "linewidth"}
 
 
 def _analyze_dataset_for_ax_array(
@@ -22,7 +29,7 @@ def _analyze_dataset_for_ax_array(
 
     Parameters
     ----------
-    dataset : `pd.DataFrame` or `dict(str->list)`
+    dataset : `pd.DataFrame`
     arg_keys : `Iter[str]`
     kwarg_keys : `dict(str->str)`
     select_keys : `dict(str->Iter[str])`
@@ -300,7 +307,7 @@ def plot_ax_array(
         If provided, the plot call is altered. After filtering the data set
         according to `select_keys`, `plot_func` is called as:
         `plot_func(dataset[x_key], dataset[arg_keys[0]], ...)`
-    share_list : `Iter[str]`
+    share_list : `Iter[str]` or `None`
         List of plot keys which should have common representation across axes.
     quantitative_list : `Iter[str]` or `None`
         List of plot keys to be used quantitatively.
@@ -341,7 +348,50 @@ def plot_ax_array(
     ...     plot.style_axes(ax=ax, legend=True)
     >>> plot.show()
     """
-    # TODO: Add error handling
+    # Parse and check parameters
+    dataset = DataSequence(dataset)
+    if arg_keys is None:
+        arg_keys = []
+        if np.any([x in plt_params for x in [
+            "args_keys", "args_key", "arg_key"
+        ]]):
+            LOGGER.warn("Did you mean the parameter `arg_keys`?")
+    elif isinstance(arg_keys, str):
+        arg_keys = [arg_keys]
+    if kwarg_keys is None:
+        kwarg_keys = {}
+        if np.any([x in plt_params for x in [
+            "kwargs_keys", "kwargs_key", "kwarg_key"
+        ]]):
+            LOGGER.warn("Did you mean the parameter `kwarg_keys`?")
+    if share_list is None:
+        share_list = []
+    elif isinstance(share_list, str):
+        share_list = [share_list]
+    if isinstance(quantitative_list, str):
+        quantitative_list = [quantitative_list]
+    for kk, vv in _PLT_PARAM_MAP.items():
+        # Iterate singular (const plot param.) and plural (select plot param.)
+        for k, v in [(kk, vv), (f"{kk}s", f"{vv}s")]:
+            if k in plt_params:
+                tmp = plt_params.pop(k)
+                if v not in plt_params:
+                    plt_params[v] = tmp
+        # Only singular in select_keys
+        if select_keys is not None:
+            if kk in select_keys:
+                tmp = select_keys.pop(kk)
+                if vv not in select_keys:
+                    select_keys[vv] = tmp
+    if select_keys is not None:
+        for k in select_keys:
+            if (
+                k not in _DEFAULT_KWARGS
+                and f"{k}s" not in plt_params
+                and k not in fmt_keys
+            ):
+                raise ValueError(f"`plt_param` parameter `{k}s` is required")
+
     # Analyze data set
     ana_ds = _analyze_dataset_for_ax_array(
         dataset, arg_keys, kwarg_keys=kwarg_keys,
