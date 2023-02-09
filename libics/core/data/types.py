@@ -183,6 +183,9 @@ class Quantity(AttrHashBase):
         """Implements :py:meth:`libics.core.io.FileBase.attributes`."""
         return {k: getattr(self, k) for k in self.SER_KEYS}
 
+    def copy(self):
+        return self.__class__(**self.attributes())
+
     # ++++++++++++++++
     # Unary operations
     # ++++++++++++++++
