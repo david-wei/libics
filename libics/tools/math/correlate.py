@@ -1,9 +1,12 @@
 import numpy as np
 from itertools import permutations, chain
 from math import factorial
-import time
 
+from libics.env.logging import get_logger
 from libics.core.data.arrays import ArrayData
+from libics.core.util import misc
+
+LOGGER = get_logger("libics.tools.math.correlate")
 
 
 ###############################################################################
@@ -36,8 +39,8 @@ def _subgroups(my_list):
         yield list(_slice_by_lengths(each_tuple, my_list))
 
 
-# Gets prefactor of permutation
 def _get_partition(my_list, num_groups):
+    """Gets prefactor of permutation"""
     # FIXME: highly inefficient
     filtered = []
     for perm in permutations(my_list, len(my_list)):
@@ -53,311 +56,300 @@ def _get_partition(my_list, num_groups):
 
 
 ###############################################################################
-# Get Correlator of order n
+# Sample-averaged autocorrelation
 ###############################################################################
 
 
-def Correlate(_data, _ds, connected_cor=True):
-    if len(_data.shape) == 2:
-        _data = np.array([_data])
-    Npic = _data.shape[0]
-    _YSize = _data.shape[1]
-    _XSize = _data.shape[2]
-    _YStart = max([np.clip(i, 0, _YSize) for i in _ds[1::2]])
-    _YStop = min([np.clip(_YSize+i, 0, _YSize) for i in _ds[1::2]])
-    _XStart = max([np.clip(-i, 0, _XSize) for i in _ds[0::2]])
-    _XStop = min([np.clip(_XSize-i, 0, _XSize) for i in _ds[0::2]])
-    _dsFull = [0, 0]+_ds
-    n = np.empty((int(len(_dsFull)/2), Npic, _YStop-_YStart, _XStop-_XStart))
-    for i, pos in enumerate(range(0, len(_dsFull), 2)):
-        n[i] = _data[
-            :, _YStart-_dsFull[pos+1]:_YStop-_dsFull[pos+1],
-            _XStart+_dsFull[pos]:_XStop+_dsFull[pos]
+def autocorrelate_single_dist(
+    data, vdists, connected=True, vdist_err_warn=True, vdist_err_val=np.nan
+):
+    """
+    Calculates the sample-averaged autocorrelation for one distance.
+
+    Parameters
+    ----------
+    data : `Array`
+        Sample data with dimensions: `[n_samples, ...]`.
+    vdists : `Array[2, int]` or `Array[1, int]`
+        Vectorial index distance for which to evaluate correlator.
+        If `vdists` is 2D, dimensions: `[n_order - 1, data_ndim]`.
+        If `vdists` is 1D and data is 1D, dimensions: `[n_order - 1]`.
+        If `vdists` is 1D and data is >1D, assumes `n_order == 2`.
+    connected : `bool`
+        Whether to calculate the connected correlator,
+        i.e., to subtract lower order correlators.
+    vdist_err_warn : `bool` or `Exception`
+        Sets the behavior when an invalid value for `vdists` is found.
+        If `False`, silently returns `vdist_err_val`.
+        If `True`, additionally logs a warning message.
+        If `Exception`, raises the given exception.
+    vdist_err_val : `scalar`
+        Return value on `vdists` error (if no exception is raised).
+
+    Returns
+    -------
+    corr : `float` or `complex`
+        Sample-averaged autocorrelation at the specified relative distances.
+    """
+    # Parse data
+    data_ar = np.array(data)
+    data_shape = np.array(data_ar.shape[1:])
+    data_ndim = len(data_shape)
+    n_samples = len(data_ar)
+    # Parse vectorial distances
+    vdists = np.array(vdists, dtype=int)
+    if vdists.ndim == 1:
+        if data_ndim == 1:
+            vdists = vdists[:, np.newaxis]
+        else:
+            vdists = vdists[np.newaxis, :]
+    if vdists.ndim != 2 or vdists.shape[1] != data_ndim:
+        raise ValueError("invalid shape of `vdists`")
+    vdists = np.concatenate([[np.zeros(data_ndim, dtype=int)], vdists])
+    order_ndim = len(vdists)
+    # Set up working memory for intermediate product array
+    tmp_starts = np.max(-vdists, axis=0)
+    tmp_stops = np.min(data_shape - vdists, axis=0)
+    tmp_starts[tmp_starts < 0] = 0
+    tmp_stops[tmp_stops > data_shape] = data_shape[tmp_stops > data_shape]
+    tmp_sizes = tmp_stops - tmp_starts
+    if np.any(tmp_sizes <= 0):
+        if vdist_err_warn is False:
+            return vdist_err_val
+        err_msg = "invalid `vdists`"
+        if vdist_err_warn is True:
+            LOGGER.warning(err_msg)
+            return vdist_err_val
+        else:
+            raise vdist_err_warn(err_msg)
+    tmp_dtype = complex if data_ar.dtype == complex else float
+    tmp_shape = (order_ndim, n_samples) + tuple(tmp_sizes)
+    tmp_ar = np.full(tmp_shape, np.nan, dtype=tmp_dtype)
+
+    # Calculate intermediate product array
+    for order_dim in range(order_ndim):
+        _roi = [
+            slice(tmp_starts[data_dim] + vdists[order_dim, data_dim],
+                  tmp_stops[data_dim] + vdists[order_dim, data_dim])
+            for data_dim in range(data_ndim)
         ]
-    if connected_cor is False:
-        return np.nanmean(np.nanmean(np.prod(n, axis=0), axis=0))
-    _gN = range(int(len(_dsFull)/2))
-    Totalsum = 0
-    for part in _gN:
-        _coff = (-1)**(part)*factorial(part)
-        _groups = _get_partition(_gN, part+1)
-        for _group in _groups:
-            _res = 1
-            for _sub in _group:
-                _res = _res*np.nanmean(np.prod(n[_sub], axis=0), axis=0)
-            Totalsum = Totalsum+_coff*_res
-    return np.nanmean(Totalsum)
-
-
-###############################################################################
-# Calculate the correlator for a given data set
-###############################################################################
-
-
-def cal_particle_particle_correl(
-    data, connected=True, n_order=2, eval_area=[5, 5], eval_length=5
-):
-    """
-    Calculates a multidimensional cross-correlation of order N (N_order).
-
-    Parameters
-    ----------
-    data : `ArrayData`
-        Input data: an array with N subarrays, each being the occupation
-        within our lattice or an abitrary lattice with real numbers
-    connected : `boolean`
-        If True: calculation of connected correlator
-        If True: <XY>-<X><Y>
-        If False: then only the first part of the correlator will be calculated
-        If False: <XY>
-    n_order : `float`
-        Order of correlator
-    default_area : `float`
-        evaluation area
-    default_length : `float`
-        length of additional dimension, if higher-order is used
-
-    Examples
-    --------
-    Input array should be an array of real numbers.
-
-    Example Array:
-
-    Application: Particle-particle correlations.
-    Array indicated site occupation ("1" = atom, "0" = hole).
-
-    The presented array consists of 5 independent occupations with
-    a system size of 2*14 lattice sites.
-
-    array([[[1, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-        [0, 1, 0, 1, 0, 0, 0, 1, 1, 1]],
-
-       [[1, 0, 1, 0, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 0, 0, 1]],
-
-       [[1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
-        [0, 1, 0, 0, 0, 1, 1, 1, 0, 1]],
-
-       [[1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 1, 0]],
-
-       [[0, 0, 1, 1, 1, 0, 1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 1, 1, 1, 1]]])
-    """
-    start_time = time.time()
-
-    dim = {}
-    for i in range(n_order):
-        if i < 2:
-            dim["dim"+str(i+1)] = eval_area[i]
-        else:
-            dim["dim"+str(i+1)] = eval_length
-
-    # Prepare the grid for evalution
-    G_list = [2*x+1 for x in dim.values()]
-    G = np.zeros(G_list)
-
-    GIdxs = [(var) for var in np.ndindex(G.shape)]
-    CalSize = len(GIdxs)
-
-    for check, GIdx in enumerate(GIdxs):
-        ds = []
-        for counter, center in enumerate(dim.values()):
-            ds.append(GIdx[counter] - center)
-
-        G[GIdx] = Correlate(data, ds, connected_cor=connected)
-        check += 1
-        print('Progress: ', round(check/CalSize*100, 2), ' %', end='\r')
-
-    center = [x for x in dim.values()]
-
-    if connected:
-        G[tuple(center)] = np.nan
+        tmp_ar[order_dim] = data_ar[tuple([slice(None)] + _roi)]
+    # Return bare (non-connected) autocorrelator
+    if connected is False:
+        corr = np.nanmean(np.prod(tmp_ar, axis=0))
+    # Calculate connected autocorrelator
     else:
-        G[tuple(center)] = 0.0
-    print("Time --- %0.4f seconds ---" % (time.time() - start_time))
+        order_dims = list(range(order_ndim))
+        corr = 0
+        for order_dim in order_dims:
+            _coeff = (-1)**order_dim * factorial(order_dim)
+            _groups = _get_partition(order_dims, order_dim + 1)
+            for _group in _groups:
+                _res = 1
+                for _sub in _group:
+                    _res = _res * np.nanmean(
+                        np.prod(tmp_ar[_sub], axis=0), axis=0
+                    )
+                corr = corr + _coeff * _res
+        corr = np.nanmean(corr)
+    return corr
 
-    G = ArrayData(G)
 
-    for i in range(G.ndim):
-        G.set_dim(i, center=0, step=1)
-
-    return G
-
-
-###############################################################################
-# Get Standard Deviation by Bootstrapping
-###############################################################################
-
-
-def Correlate_std(
-    _data, _ds, connected=True, bs=[5, 20], n_order=2,
-    eval_area=[5, 5], eval_length=5
+def autocorrelate(
+    data, connected=True, n_order=2, max_vdist=None, center_val=None,
+    vdist_err_val=np.nan, print_progress=False
 ):
     """
-    Calculates the standard deviation of the multidimensional
-    cross-correlation for one coordinate _ds
+    Gets sample-averaged n-th order autocorrelation at multiple distances.
 
     Parameters
     ----------
-    data : `ArrayData`
-        Input data: an array with N subarrays
-    _ds : `float`
-        Coordinate on which correlator is evaluated
+    data : `Array`
+        Sample data with dimensions: `[n_samples, ...]`.
     connected : `boolean`
-        If True: calculation of connected correlator
-        If True: <XY>-<X><Y>
-        If False: then only the first part of the correlator will be calculated
-        If False: <XY>
-    bs : `int`
-        bs is a list of two bootstrap parameters
-        bs[0]: Number of groups
-        bs[1]: Sample size per group
-    n_order : `float`
-        Order of correlator
-    default_area : `float`
-        evaluation area
-    default_length : `float`
-        length of additional dimension, if higher-order is used
+        Whether to calculate the connected correlator,
+        i.e., to subtract lower order correlators.
+        Example for `n_order=2`:
+        If `True`: <XY>-<X><Y>, if `False`: <XY>.
+    n_order : `int`
+        Order of correlator.
+    max_vdist : `Array[int or None]` or `int` or `None`
+        Maximum correlator distance for each data dimension.
+        If scalar, uses the scalar for all dimensions.
+        If `None`, uses the maximally possible distance
+        for the respective dimension.
+    center_val : `scalar` or `None`
+        If not `None`, sets the correlator at the origin to the given value.
+    vdist_err_val : `scalar`
+        Correlator value at invalid distance (combinations).
+
+    Returns
+    -------
+    corr : `ArrayData(float or complex)`
+        Sample-averaged autocorrelator.
+        Number of dimensions: `(n_order - 1) * (data.ndim - 1)`.
+        Dimensions: `[dx1, dy1, dz1, ..., dx2, dy2, dz2, ..., ...]`.
 
     Examples
     --------
-    Input array should be an array of real numbers.
-
-    Example Array:
-
-    Application: Particle-particle correlations.
-    Array indicated site occupation ("1" = atom, "0" = hole).
-
-    The presented array consists of 5 independent occupations with
-    a system size of 2*14 lattice sites.
-
-    array([[[1, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-        [0, 1, 0, 1, 0, 0, 0, 1, 1, 1]],
-
-       [[1, 0, 1, 0, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 0, 0, 1]],
-
-       [[1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
-        [0, 1, 0, 0, 0, 1, 1, 1, 0, 1]],
-
-       [[1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 1, 0]],
-
-       [[0, 0, 1, 1, 1, 0, 1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 1, 1, 1, 1]]])
+    Example for 1D nearest-neighbor-correlated data:
+    >>> ar = np.tile([-1, 1], 3)
+    >>> data = [ar, -ar]
+    >>> corr = autocorrelate(data)
+    >>> corr.data
+    array([-1.,  1., -1.,  1., -1.,  1., -1.,  1., -1.,  1., -1.])
     """
-    _group = bs[0]
-    _n = bs[1]
-    g_list = []
-    _rand = np.random.randint(_data.shape[0], size=(_group, _n))
-    for i, pos in enumerate(_rand):
-        print(r'progress: {:0.2f} %'.format((i+1)/_group*100), end='\r')
-        g_list.append(Correlate(_data[pos], _ds, connected_cor=connected))
-    g_list = np.array(g_list)
-    return np.std(g_list)/np.sqrt(_group)
+    # Check data format
+    n_order = int(n_order)
+    if n_order < 2:
+        raise ValueError("Correlation order `n_order` must be >2")
+    try:
+        data_ar = np.array(data)
+        if data_ar.dtype == object:
+            raise ValueError()
+    except ValueError:
+        raise ValueError(
+            "All samples in the parameter `data` must have the same shape"
+        )
+    data_shape = data_ar.shape[1:]
+    data_ndim = len(data_shape)
+
+    # Check for metadata
+    is_ad = isinstance(data[0], ArrayData)
+    if is_ad:
+        ad = data[0]
+        # Check whether ArrayData steps are equidistant
+        try:
+            for dim in range(ad.ndim):
+                ad.get_step(dim, check_mode=RuntimeError)
+        except RuntimeError:
+            LOGGER.warning("`data` does not contain equidistant steps")
+
+    # Parse maximum relative coordinates
+    max_vdist = misc.assume_list(max_vdist)
+    if len(max_vdist) < data_ndim:
+        _factor = int(np.ceil(data_ndim / len(max_vdist)))
+        max_vdist = _factor * max_vdist
+    max_vdist = [
+        data_shape[i] - 1 if max_vdist[i] is None else max_vdist[i]
+        for i in range(data_ndim)
+    ]
+
+    # TODO: make use of point symmetry of correlators
+    # Setup correlation data container
+    corr_shape = tuple((n_order - 1) * [2*x + 1 for x in max_vdist])
+    corr_dtype = complex if data_ar.dtype == complex else float
+    corr = ArrayData(np.full(corr_shape, np.nan, dtype=corr_dtype))
+    for dim in range(corr.ndim):
+        corr.set_dim(dim, center=0, step=1)
+    if is_ad:
+        q = ad.data_quantity.copy()
+        q.name += " correlation"
+        corr.set_data_quantity(quantity=q)
+        for dim in range(corr.ndim):
+            data_dim = dim % data_ndim
+            order_dim = dim // data_ndim + 1
+            q = ad.var_quantity[data_dim]
+            if n_order > 2:
+                q.name += f" [{order_dim:d}]"
+            corr.set_var_quantity(dim, quantity=q)
+    # All vectorial index distances with dimensions: [{...}, vdist]
+    all_vdists = np.moveaxis(corr.get_var_meshgrid(), 0, -1).astype(int)
+
+    # Iterate vectorial distances
+    _iter = np.ndindex(*corr_shape)
+    if print_progress:
+        _iter = misc.iter_progress(_iter)
+    for idx in _iter:
+        vdists = all_vdists[idx].reshape((n_order - 1, -1))
+        _c = autocorrelate_single_dist(
+            data_ar, vdists, connected=connected,
+            vdist_err_warn=False, vdist_err_val=vdist_err_val
+        )
+        corr[idx] = _c
+    # Apply correct variable steps
+    if is_ad:
+        for dim in range(corr.ndim):
+            data_dim = dim % data_ndim
+            corr.set_dim(
+                dim, center=0, step=ad.get_step(data_dim, check_mode=False)
+            )
+    # Apply center value
+    if center_val is not None:
+        idx = tuple(np.array(corr.shape) // 2)
+        corr[idx] = center_val
+    return corr
 
 
-###############################################################################
-# Calculate the standard error of the mean by bootstrapping
-###############################################################################
-
-
-def cal_particle_particle_correl_std(
-    data, connected=True, bs=[5, 20], n_order=2,
-    eval_area=[5, 5], eval_length=5
+def autocorrelate_bootstrap(
+    data, func=None, bs_groups=None, bs_size=None, seed=None,
+    print_progress=True, **kwargs
 ):
     """
-    Calculates the standard deviation of the multidimensional cross-correlation
-    of order N (N_order) using bootstrapping.
+    Performs bootstrapping for autocorrelator functions.
 
     Parameters
     ----------
-    data : `ArrayData`
-        Input data: an array with N subarrays
-    _ds : `float`
-        Coordinate on which correlator is evaluated
-    connected : `boolean`
-        If True: calculation of connected correlator
-        If True: <XY>-<X><Y>
-        If False: then only the first part of the correlator will be calculated
-        If False: <XY>
-    bs : `int`
-        bs is a list of two bootstrap parameters
-        bs[0]: Number of groups
-        bs[1]: Sample size per group
-    n_order : `float`
-        Order of correlator
-    default_area : `float`
-        evaluation area
-    default_length : `float`
-        length of additional dimension, if higher-order is used
+    data : `Array`
+        Sample data with dimensions: `[n_samples, ...]`.
+    func : `callable`
+        Autocorrelation function to call:
+        :py:func:`autocorrelate_single_dist` or :py:func:`autocorrelate`.
+        Call signature: `func(resampled_data, **kwargs)`.
+    bs_groups, bs_size : `int` or `None`
+        Bootstrap parameters for
+        the number of resampled groups
+        and the sample size of each group.
+        If `None`, uses the size of the data.
+    seed : `int` or `None`
+        Random number generator seed.
+    print_progress : `bool`
+        Whether to print a progress bar.
+    **kwargs
+        Keyword arguments passed to `func`.
+
+    Returns
+    -------
+    res : `dict(str->Any)`
+        Results dictionary containing:
+    data : `list(ArrayData)`
+        List of bootstrap autocorrelation calculation results.
+    sem : `ArrayData`
+        Standard error of the mean of the autocorrelation.
 
     Examples
     --------
-    Input array should be an array of real numbers.
-
-    Example Array:
-
-    Application: Particle-particle correlations.
-    Array indicated site occupation ("1" = atom, "0" = hole).
-
-    The presented array consists of 5 independent occupations with
-    a system size of 2*14 lattice sites.
-
-    array([[[1, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-        [0, 1, 0, 1, 0, 0, 0, 1, 1, 1]],
-
-       [[1, 0, 1, 0, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 0, 0, 1]],
-
-       [[1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
-        [0, 1, 0, 0, 0, 1, 1, 1, 0, 1]],
-
-       [[1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
-        [1, 0, 0, 0, 1, 1, 1, 0, 1, 0]],
-
-       [[0, 0, 1, 1, 1, 0, 1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 1, 1, 1, 1]]])
-
+    Example for 1D nearest-neighbor-correlated data with only two samples:
+    >>> ar = np.tile([-1, 1], 3)
+    >>> data = [ar, -ar]
+    >>> corr_bs = autocorrelate_bootstrap(
+    ...     data, func=autocorrelate, bs_groups=10, seed=0
+    ... )
+    >>> corr_bs["sem"]
+    array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
     """
-
-    start_time = time.time()
-
-    dim = {}
-    for i in range(n_order):
-        if i < 2:
-            dim["dim"+str(i+1)] = eval_area[i]
-        else:
-            dim["dim"+str(i+1)] = eval_length
-
-    # Prepare the grid for evalution
-    G_list = [2*x+1 for x in dim.values()]
-    G = np.zeros(G_list)
-
-    GIdxs = [(var) for var in np.ndindex(G.shape)]
-    CalSize = len(GIdxs)
-
-    for check, GIdx in enumerate(GIdxs):
-        ds = []
-        for counter, center in enumerate(dim.values()):
-            ds.append(GIdx[counter] - center)
-
-        G[GIdx] = Correlate_std(data, ds, connected=connected, bs=bs)
-        check += 1
-        print('Progress: ', round(check/CalSize*100, 2), ' %', end='\r')
-
-    center = [x for x in dim.values()]
-
-    if connected:
-        G[tuple(center)] = 0.0
-    else:
-        G[tuple(center)] = np.nan
-    print("Time --- %0.4f seconds ---" % (time.time() - start_time))
-
-    G = ArrayData(G)
-
-    for i in range(len(G.shape)):
-        G.set_dim(i, center=0, step=1)
-
-    return G
+    # Parse parameters
+    bs_groups = len(data) if bs_groups is None else int(bs_groups)
+    bs_size = len(data) if bs_size is None else int(bs_size)
+    if func not in [autocorrelate, autocorrelate_single_dist]:
+        raise ValueError(
+            "`func` must be either `autocorrelate` "
+            "or `autocorrelate_single_dist`"
+        )
+    # Perform bootstrapping
+    rng = np.random.RandomState(seed=seed)
+    corrs = []
+    _iter = range(bs_groups)
+    if print_progress:
+        _iter = misc.iter_progress(_iter)
+    for _ in _iter:
+        resampled_idxs = rng.choice(
+            np.arange(len(data)), size=bs_size, replace=True
+        )
+        resampled_data = [data[i] for i in resampled_idxs]
+        corr = func(resampled_data, **kwargs)
+        corrs.append(corr)
+    sem = np.std(corrs, axis=0)
+    # Package results
+    res = {"data": corrs, "sem": sem}
+    return res
