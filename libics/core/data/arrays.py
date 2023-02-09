@@ -734,13 +734,25 @@ class ArrayData(AttrHashBase):
     def get_step(self, dim, check_mode=True):
         """
         Gets the variable step for the specified dimension.
+
+        Parameters
+        ----------
+        dim : `int`
+            Variable dimension.
+        check_mode : `bool` or `Exception`
+            If `bool`, whether to check for equidistance of steps.
+            If `Exception`, raises given exception if non-equidistant.
         """
         if self.var_mode[dim] == self.POINTS:
             if check_mode and not self._check_mode_cv(dim):
-                self.LOGGER.warning(
+                err_msg = (
                     "getting differential mean as variable step "
                     "on a dimension in POINTS mode"
                 )
+                if check_mode is True:
+                    self.LOGGER.warning(err_msg)
+                else:
+                    raise check_mode(err_msg)
             _points = np.sort(self._points[dim])
             return np.mean(_points[1:] - _points[:-1])
         elif self.var_mode[dim] == self.RANGE:
