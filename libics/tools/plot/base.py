@@ -272,7 +272,7 @@ def unsqueeze_axes(axs, ax_1d="col"):
     return axs
 
 
-def remove_axes(*axs, enforce=False, if_empty=True):
+def remove_axes(*axs, enforce=False, on_empty=True):
     """
     (Conditionally) removes a matplotlib axes.
 
@@ -282,14 +282,14 @@ def remove_axes(*axs, enforce=False, if_empty=True):
         Matplotlib axes object.
     enforce : `bool`
         Whether to remove the axes unconditionally.
-    if_empty : `bool`
+    on_empty : `bool`
         Whether to remove the axes if no artists are present.
     """
     for ax in axs:
         if isinstance(ax, mpl.axes.Axes):
             if enforce is True:
                 ax.remove()
-            elif if_empty and not ax.hasData():
+            elif on_empty and not ax.has_data():
                 ax.remove()
 
 

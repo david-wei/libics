@@ -428,13 +428,15 @@ def plot_ax_array(
         for row, col in np.ndindex(nrows, ncols):
             ax = axs[row, col]
             row_val = unique_vals["row"][row]
-            col_val = unique_vals["col"][row]
+            col_val = unique_vals["col"][col]
             _ds = dsaa[
                 (dsaa["select_row"] == row_val)
                 & (dsaa["select_col"] == col_val)
             ]
             if len(_ds) == 0:
-                empty_axs.append(ax)
+                if remove_empty:
+                    empty_axs.append(ax)
+                    axs[row, col] = None
                 continue
             _plot_ax_in_ax_array(
                 _ds, plot_func, ax,
@@ -462,7 +464,9 @@ def plot_ax_array(
                 & (dsaa[f"select_{unshared_ax}"] == unshared_val)
             ]
             if len(_ds) == 0:
-                empty_axs.append(ax)
+                if remove_empty:
+                    empty_axs.append(ax)
+                    axs[row, col] = None
                 continue
             _plot_ax_in_ax_array(
                 _ds, plot_func, ax,
@@ -474,5 +478,5 @@ def plot_ax_array(
             )
     # Clean up
     if remove_empty:
-        remove_axes(empty_axs, enforce=False, if_empty=True)
+        remove_axes(*empty_axs, enforce=False, on_empty=True)
     return axs
