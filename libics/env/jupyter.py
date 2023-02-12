@@ -12,7 +12,7 @@ import scipy
 import IPython
 from IPython.display import HTML, Markdown, Latex
 
-from libics.env import logging
+from libics.env import *
 
 LOGGER = logging.get_logger("jupyter", level=logging.DEBUG)
 
