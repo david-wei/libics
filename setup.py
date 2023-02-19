@@ -31,7 +31,7 @@ setup(name='libics',
       },
       install_requires=[
             'matplotlib', 'numpy', 'pandas', 'Pillow',
-            'scipy', 'xxhash', 'colorama'
+            'scipy', 'xxhash', 'colorama', 'colorspacious'
       ],
       extras_require={
             'bson': ['pymongo'], 'db': ['pika', 'influxdb-client']

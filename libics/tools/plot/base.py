@@ -1000,17 +1000,13 @@ def _process_marker_param(
         if "markeredgecolor" not in kwargs:
             if "markerfacecolor" not in kwargs:
                 kwargs["markeredgecolor"] = kwargs["color"]
-                kwargs["markerfacecolor"] = colors.lighten_rgb(
-                    colors.hex_to_rgb(mplc.colorConverter.to_rgba(
-                        kwargs["markeredgecolor"]
-                    ))
+                kwargs["markerfacecolor"] = colors.rgb_whiten(
+                    kwargs["markeredgecolor"]
                 )
             else:
                 if __kwargs_param_is_not_empty(kwargs, "markerfacecolor"):
-                    kwargs["markeredgecolor"] = colors.darken_rgb(
-                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
-                            kwargs["markerfacecolor"]
-                        ))
+                    kwargs["markeredgecolor"] = colors.rgb_blacken(
+                        kwargs["markerfacecolor"]
                     )
                 else:
                     kwargs["markeredgecolor"] = mplc.colorConverter.to_rgba(
@@ -1019,16 +1015,12 @@ def _process_marker_param(
         else:
             if "markerfacecolor" not in kwargs:
                 if __kwargs_param_is_not_empty(kwargs, "markeredgecolor"):
-                    kwargs["markerfacecolor"] = colors.lighten_rgb(
-                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
-                            kwargs["markeredgecolor"]
-                        ))
+                    kwargs["markerfacecolor"] = colors.rgb_whiten(
+                        kwargs["markeredgecolor"]
                     )
                 else:
-                    kwargs["markerfacecolor"] = colors.lighten_rgb(
-                        colors.hex_to_rgb(mplc.colorConverter.to_rgba(
-                            kwargs["color"]
-                        ))
+                    kwargs["markerfacecolor"] = colors.rgb_whiten(
+                        kwargs["color"]
                     )
     kwargs["marker"] = marker
     return kwargs
@@ -1049,9 +1041,7 @@ def _process_patch_param(linestyle, **kwargs):
                 kwargs["facecolor"] = _fc
             else:
                 if __kwargs_param_is_not_empty(kwargs, "facecolor"):
-                    _ec = colors.darken_rgb(
-                        mplc.colorConverter.to_rgba(kwargs["facecolor"])
-                    )
+                    _ec = colors.rgb_blacken(kwargs["facecolor"])
                 else:
                     _ec = _color
                 kwargs["edgecolor"] = _ec
