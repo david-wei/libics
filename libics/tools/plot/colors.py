@@ -482,7 +482,7 @@ def rgb_change_chroma(rgb_color, chroma_change, scale="rel", clip_jch=True):
     if clip_jch:
         jch_color[color_dim] = np.clip(
             jch_color[color_dim],
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_chroma(jch_color)
         )
     rgb_color = cspace_convert(jch_color, "JCh", "sRGB1")
@@ -572,13 +572,13 @@ def rgb_change_saturation(
     if clip_jch:
         angle_deg = np.clip(
             angle_deg,
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_saturation(jch_color)
         )
         _set_jch_saturation_brightness(jch_color, saturation_deg=angle_deg)
         brightness = np.clip(
             brightness,
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_brightness(jch_color)
         )
     _set_jch_saturation_brightness(
@@ -624,13 +624,13 @@ def rgb_change_brightness(
     if clip_jch:
         brightness = np.clip(
             brightness,
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_brightness(jch_color)
         )
         _set_jch_saturation_brightness(jch_color, brightness=brightness)
         angle_deg = np.clip(
             angle_deg,
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_saturation(jch_color)
         )
     _set_jch_saturation_brightness(
@@ -677,7 +677,7 @@ def get_srgb_range(rgb_color, color_dim="lightness"):
             jch_colors.append(_jch_color)
     elif color_dim == "chroma":
         for chroma in (
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_chroma(jch_color)
         ):
             _jch_color = jch_color.copy()
@@ -685,7 +685,7 @@ def get_srgb_range(rgb_color, color_dim="lightness"):
             jch_colors.append(_jch_color)
     elif color_dim == "saturation":
         for saturation in (
-            1e-3,  # Using non-zero value to retain well-defined hue
+            1,  # Using non-zero value to retain well-defined hue
             _get_srgb_gamut_max_saturation(jch_color)
         ):
             _jch_color = jch_color.copy()
@@ -810,7 +810,7 @@ def get_srgb_gray_tinted(rgb_color_ref, grayscale):
     """
     grayscale = np.clip(grayscale, 0.02, 0.98)
     jch_color = cspace_convert(rgb_color_ref, "sRGB1", "JCh")
-    jch_color[1] = 1e-3
+    jch_color[1] = 1
     jch_color[0] = grayscale * 100
     rgb_color = cspace_convert(jch_color, "JCh", "sRGB1")
     rgb_color = np.clip(rgb_color, 0, 1)
