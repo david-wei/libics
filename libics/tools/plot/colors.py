@@ -99,6 +99,14 @@ class _CMAP_COUNTER:
     val = 0
 
 
+def _assume_cmap(cmap):
+    if isinstance(cmap, (mpl.colors.Colormap, str)):
+        cmap = mpl.colormaps.get_cmap(cmap)
+    else:
+        cmap = make_cmap(cmap)
+    return cmap
+
+
 def add_named_color(name, color):
     """Add a named RGB(A) color to matplotlib."""
     if isinstance(color, str) and color[0] != "#":
@@ -107,19 +115,35 @@ def add_named_color(name, color):
     mpl.colors.get_named_colors_mapping()[name] = color_hex
 
 
-def add_named_cmap(cmap, name=None):
+def add_named_cmap(cmap, name=None, **kwargs):
     """Add a named color map to matplotlib."""
     if not isinstance(cmap, mpl.colors.Colormap):
-        cmap = make_cmap(cmap, name=name)
+        cmap = make_cmap(cmap, name=name, **kwargs)
     mpl.colormaps.register(cmap, name=name)
 
 
-def make_cmap(colors, name=None):
-    """Creates a matplotlib linear segmented colormap."""
+def make_cmap(colors, name=None, continuous=True):
+    """Creates a matplotlib continuous or discrete colormap."""
     if name is None:
         name = f"custom_cmap{_CMAP_COUNTER.val:d}"
         _CMAP_COUNTER.val += 1
-    return mpl.colors.LinearSegmentedColormap.from_list(name, colors)
+    if continuous:
+        cmap = mpl.colors.LinearSegmentedColormap.from_list(name, colors)
+    else:
+        cmap = mpl.colors.ListedColormap(colors)
+    return cmap
+
+
+def get_colors_from_cmap(cmap, num=6):
+    """Gets discrete colors from a colormap."""
+    cmap = _assume_cmap(cmap)
+    return cmap(np.linspace(0, 1, num=num))
+
+
+def get_color_from_cmap(cmap, scale=0):
+    """Gets a color at the position `scale` (within [0, 1]) from a colormap."""
+    cmap = _assume_cmap(cmap)
+    return cmap(np.array([0, scale]))[1]
 
 
 def set_color_cycle(colors):
@@ -163,7 +187,7 @@ def _add_alpha(color, alpha):
     return color
 
 
-def _srgb_parser(multi=False):
+def _srgb_parser(multi=False, squeeze=False):
     """
     Returns a decorator for parsing color strings and handling alpha.
 
@@ -171,23 +195,36 @@ def _srgb_parser(multi=False):
     ----------
     multi : `bool`
         Whether the decorated function accepts multiple colors as `*args`.
+    squeeze : `bool`
+        If `multi is True`, sets whether a scalar color is returned
+        if the multi-color iterable has only one element.
     """
 
     if multi is False:
         def _decorator(function):
-            def parsing_function(color, *args, **kwargs):
+            def parsing_function(color, *args, cv_out=None, **kwargs):
                 if isinstance(color, str):
                     color = mpl.colors.to_rgba(color)
                 rgb_color, alpha = _remove_alpha(color)
-                rgb_color = function(rgb_color, *args, **kwargs)
-                color = _add_alpha(rgb_color, alpha)
-                return np.array(color)
+                rgb_color = np.array(function(rgb_color, *args, **kwargs))
+                if rgb_color.ndim == 1:
+                    color = np.array(_add_alpha(rgb_color, alpha))
+                    if cv_out is not None:
+                        color = cv_out(color)
+                else:
+                    color = np.array([
+                        _add_alpha(_rgb_color, alpha)
+                        for _rgb_color in rgb_color
+                    ])
+                    if cv_out is not None:
+                        color = cv_out(*color)
+                return color
             parsing_function.__doc__ = function.__doc__
             return parsing_function
 
-    else:
+    elif squeeze is False:
         def _decorator(function):
-            def parsing_function(*colors, **kwargs):
+            def parsing_function(*colors, cv_out=None, **kwargs):
                 rgb_colors, alphas = [], []
                 for color in colors:
                     if isinstance(color, str):
@@ -196,11 +233,36 @@ def _srgb_parser(multi=False):
                     rgb_colors.append(rgb_color)
                     alphas.append(alpha)
                 rgb_colors = function(*rgb_colors, **kwargs)
-                colors = [
+                colors = np.array([
                     _add_alpha(rgb_color, alphas[i % len(alphas)])
                     for i, rgb_color in enumerate(rgb_colors)
-                ]
-                return np.array(colors)
+                ])
+                if cv_out is not None:
+                    colors = cv_out(colors)
+                return colors
+            parsing_function.__doc__ = function.__doc__
+            return parsing_function
+
+    else:
+        def _decorator(function):
+            def parsing_function(*colors, cv_out=None, **kwargs):
+                rgb_colors, alphas = [], []
+                for color in colors:
+                    if isinstance(color, str):
+                        color = mpl.colors.to_rgba(color)
+                    rgb_color, alpha = _remove_alpha(color)
+                    rgb_colors.append(rgb_color)
+                    alphas.append(alpha)
+                rgb_colors = function(*rgb_colors, **kwargs)
+                colors = np.array([
+                    _add_alpha(rgb_color, alphas[i % len(alphas)])
+                    for i, rgb_color in enumerate(rgb_colors)
+                ])
+                if colors.ndim == 2 and len(colors) == 1:
+                    colors = colors[0]
+                if cv_out is not None:
+                    colors = cv_out(colors)
+                return colors
             parsing_function.__doc__ = function.__doc__
             return parsing_function
 
@@ -642,7 +704,8 @@ def get_srgb_range(rgb_color, color_dim="lightness"):
 
 @_srgb_parser(multi=True)
 def get_srgb_linspace(
-    *keycolors, num=50, keycolor_distances=None, distance_measure="deltaE"
+    *keycolors, num=50, keycolor_distances=None, distance_measure="deltaE",
+    hue_polarity=None
 ):
     """
     Returns an array of interpolated sRGB colors.
@@ -658,6 +721,10 @@ def get_srgb_linspace(
     distance_measure : `str`, optional
         `"deltaE"`: Scales `keycolor_distances` by the distance in JCh space.
         `"index"`: Does not scale `keycolor_distances`.
+    hue_polarity : `str` or `None`
+        As the hue is periodic, the interpolation can be performed
+        `"clockwise"` or `"anticlockwise"`.
+        If `None`, uses the polarity of the minimum hue distance.
 
     Returns
     -------
@@ -690,11 +757,23 @@ def get_srgb_linspace(
         idxs = np.argmax(num_per_distance)[:excess_num]
         for idx in idxs:
             num_per_distance[idx] -= 1
+    # Transform keycolors to JCh
+    jch_keycolors = cspace_convert(keycolors, "sRGB1", "JCh")
+    # Handle hue periodicity
+    for i in range(1, len(jch_keycolors)):
+        hue_diff = jch_keycolors[i, 2] - jch_keycolors[i - 1, 2]
+        if hue_polarity == "clockwise":
+            if hue_diff < 0:
+                jch_keycolors[i:, 2] += 360
+        elif hue_polarity == "anticlockwise":
+            if hue_diff > 0:
+                jch_keycolors[i:, 2] -= 360
+        else:
+            if hue_diff > 180:
+                jch_keycolors[i:, 2] -= 360
+            elif hue_diff < -180:
+                jch_keycolors[i:, 2] += 360
     # Interpolate colors
-    jch_keycolors = [
-        cspace_convert(rgb_color, "sRGB1", "JCh")
-        for rgb_color in keycolors
-    ]
     jch_interpolated_colors = []
     for i in range(num_keycolors - 1):
         jch_start_color = jch_keycolors[i]
@@ -784,37 +863,83 @@ def rgb_blacken(rgb_color, scale=0.55):
     return np.clip(rgb_color, 0, 1)
 
 
+@_srgb_parser(multi=True, squeeze=True)
+def rgb_equalize_lightness(*rgb_colors, trg_lightness=None, clip_jch=True):
+    """
+    Returns the RGB colors with equalized lightness, preserving saturation.
+
+    Parameters
+    ----------
+    trg_lightness : `float` or `None` or sRGB color
+        Target lightness in JCh color space (in range [0, 100]).
+        If `None`, chooses a common lightness trying to
+        preserve lightness of given colors.
+        If sRGB color, uses its lightness as target.
+    clip_jch : `bool``
+        Whether to clip in JCh space (reduces chroma to fit in sRGB gamut).
+    """
+    jch_colors = cspace_convert(rgb_colors, "sRGB1", "JCh")
+    lightnesses = jch_colors[..., 0]
+    # Set target lightness from given colors
+    if trg_lightness is None:
+        trg_lightness = 50
+        if np.all(lightnesses) > 50:
+            trg_lightness = np.min(lightnesses)
+        elif np.all(lightnesses) < 50:
+            trg_lightness = np.max(lightnesses)
+    # Set target lightness from target color
+    elif not np.isscalar(trg_lightness) or isinstance(trg_lightness, str):
+        trg_lightness = rgb_to_jch(trg_lightness)[0]
+    # Equalize colors
+    jch_colors[..., 1] *= trg_lightness / lightnesses  # Preserve saturation
+    jch_colors[..., 0] = trg_lightness
+    rgb_colors = cspace_convert(jch_colors, "JCh", "sRGB1")
+    # Hue-preserving clipping
+    if clip_jch:
+        jch_max_chromas = [
+            get_srgb_range(
+                rgb_color, color_dim="chroma", cv_out=rgb_to_jch
+            )[1][1] for rgb_color in rgb_colors
+        ]
+        mask = jch_colors[..., 1] > jch_max_chromas
+        for i, clipped in enumerate(mask):
+            if clipped:
+                jch_colors[i, 1] = jch_max_chromas[i]
+        rgb_colors = cspace_convert(jch_colors, "JCh", "sRGB1")
+    return np.clip(rgb_colors, 0, 1)
+
+
 ###############################################################################
 # Color space conversion functions
 ###############################################################################
 
 
-@_srgb_parser()
-def parse_color(color):
+@_srgb_parser(multi=True, squeeze=True)
+def parse_color(*colors):
     """Parses color strings or hex codes to color values."""
-    return color
+    return colors
 
 
-@_srgb_parser()
-def rgb_to_jch(rgb_color):
+@_srgb_parser(multi=True, squeeze=True)
+def rgb_to_jch(*rgb_colors):
     """Converts a RGB-style color to a JCh color."""
-    jch_color = cspace_convert(rgb_color, "sRGB1", "JCh")
-    return jch_color
+    jch_colors = cspace_convert(rgb_colors, "sRGB1", "JCh")
+    return jch_colors
 
 
-@_srgb_parser()
-def jch_to_rgb(jch_color, clip=True):
+@_srgb_parser(multi=True, squeeze=True)
+def jch_to_rgb(*jch_colors, clip=True):
     """Converts a RGB-style color to a JCh color."""
-    rgb_color = cspace_convert(jch_color, "JCh", "sRGB")
+    rgb_colors = cspace_convert(jch_colors, "JCh", "sRGB1")
     if clip:
-        rgb_color = np.clip(rgb_color, 0, 1)
-    return rgb_color
+        rgb_colors = np.clip(rgb_colors, 0, 1)
+    return rgb_colors
 
 
-@_srgb_parser()
-def rgb_to_hls(rgb):
+@_srgb_parser(multi=True, squeeze=True)
+def rgb_to_hls(*rgb_colors):
     """Converts a RGB-style color to a HLS color."""
-    return colorsys.rgb_to_hls(*rgb)
+    return [colorsys.rgb_to_hls(*rgb) for rgb in rgb_colors]
 
 
 def hls_to_rgb(hls):
@@ -824,10 +949,10 @@ def hls_to_rgb(hls):
     return _add_alpha(rgb, a)
 
 
-@_srgb_parser()
-def rgb_to_hsv(rgb):
+@_srgb_parser(multi=True, squeeze=True)
+def rgb_to_hsv(*rgb_colors):
     """Converts a RGB-style color to a HSV color."""
-    return colorsys.rgb_to_hsv(*rgb)
+    return [colorsys.rgb_to_hsv(*rgb) for rgb in rgb_colors]
 
 
 def hsv_to_rgb(hsv):
