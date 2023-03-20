@@ -130,7 +130,7 @@ def make_cmap(colors, name=None, continuous=True):
     if continuous:
         cmap = mpl.colors.LinearSegmentedColormap.from_list(name, colors)
     else:
-        cmap = mpl.colors.ListedColormap(colors)
+        cmap = mpl.colors.ListedColormap(colors, name=name)
     return cmap
 
 
@@ -918,6 +918,12 @@ def rgb_equalize_lightness(*rgb_colors, trg_lightness=None, clip_jch=True):
 def parse_color(*colors):
     """Parses color strings or hex codes to color values."""
     return colors
+
+
+def rgb_to_hex(*rgb_colors):
+    """Converts a RGB-style color to a hex string."""
+    hex_colors = [mpl.colors.to_hex(rgb_color) for rgb_color in rgb_colors]
+    return hex_colors
 
 
 @_srgb_parser(multi=True, squeeze=True)

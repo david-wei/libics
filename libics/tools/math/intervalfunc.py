@@ -38,7 +38,7 @@ class IntervalSeries():
                 for k in self.KEYS:
                     self._data[k].append(row[k] if k in row else None)
         # Single item
-        elif np.isscalar(t0):
+        elif t0 is None or np.isscalar(t0):
             for k in self.KEYS:
                 self._data[k].append(locals()[k])
         # Dict of lists
@@ -120,6 +120,10 @@ class IntervalSeries():
             func = assume_func(self._data["func"][i])
             t0, t1 = t0s[i], t1s[i]
             y0, y1 = self._data["y0"][i], self._data["y1"][i]
+            if y0 is None:
+                y0 = self._data["y1"][i - 1]
+            if y1 is None:
+                y1 = y0
             args, kwargs = self._data["args"][i], self._data["kwargs"][i]
             if args is None:
                 args = tuple()

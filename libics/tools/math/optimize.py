@@ -109,3 +109,13 @@ def maximize_discrete_stepwise(fun, *args, **kwargs):
     def neg_fun(*_args, **_kwargs):
         return -fun(*_args, **_kwargs)
     return minimize_discrete_stepwise(neg_fun, *args, **kwargs)
+
+
+maximize_discrete_stepwise.__doc__ += (
+    """
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Documentation of :py:func:`minimize_discrete_stepwise`
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    """
+    + minimize_discrete_stepwise.__doc__
+)
