@@ -1,5 +1,1 @@
-include README.md
-include docs/*.txt
-include docs/*.md
-include docs/*.rst
-include libics/assets/*
+recursive-include libics/assets *
