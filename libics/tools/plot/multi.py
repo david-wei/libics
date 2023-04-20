@@ -178,6 +178,8 @@ def _plot_ax_in_ax_array(
             select_list.remove(k)
     if quantitative_list is None:
         quantitative_list = []
+    if fmt_keys is None:
+        fmt_keys = {}
     # Default kwargs
     default_kwargs = dict(
         colors=_COLORS, markers=_MARKERS, linestyles=_LINESTYLES
