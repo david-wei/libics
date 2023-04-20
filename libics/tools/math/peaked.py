@@ -925,6 +925,25 @@ class FitSymExponential1d(FitGaussian1d):
 
 
 def exponential_1d_stretched(x, amplitude, rate, beta, offset=0.0):
+    r"""
+    Stretched exponential function in one dimension.
+
+    .. math::
+        A e^{-\text{sgn}(\gamma) (|\gamma| x)^\beta} + C
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    amplitude : `float`
+        Amplitude :math:`A`.
+    rate : `float`
+        Rate of exponential :math:`\gamma`.
+    beta : `float`
+        Stretched exponent :math:`\beta`.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`
+    """
     return amplitude * np.exp(np.sign(rate)*(np.abs(rate) * x)**beta) + offset
 
 
@@ -940,7 +959,7 @@ class FitExponential1dStretched(ModelBase):
     g : `float`
         rate
     b : `float`
-        streched exponent
+        stretched exponent
     c : `float`
         offset
 
@@ -948,12 +967,11 @@ class FitExponential1dStretched(ModelBase):
     ----------
     xi : `float`
         decay length, inverse rate
-        
     """
 
     LOGGER = logging.get_logger("libics.math.peaked.FitExponential1dStretched")
     P_ALL = ["a", "g", "b", "c"]
-    P_DEFAULT = [1, 1, 1,0]
+    P_DEFAULT = [1, 1, 1, 0]
 
     @staticmethod
     def _func(var, *p):
@@ -980,10 +998,10 @@ class FitExponential1dStretched(ModelBase):
         _exp_gx = np.exp(g * var_data)
         a = np.median(first_derivative / g / _exp_gx)
         c = np.median(func_data_filter - a * _exp_gx)
-
         # TODO. Proper estimation of starting value of streched exponent beta
-        # Here we simply put it to 1 to keep the same code of the "FitExponential1d" Class
-        self.p0 = [a, g, 1, c]
+        b = 1
+        self.p0 = [a, g, b, c]
+
 
 ###############################################################################
 # Polynomial Functions
