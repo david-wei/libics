@@ -781,6 +781,85 @@ def exponential_decay_nd(x,
     return amplitude * np.exp(exponent) + offset
 
 
+def exponential_1d_stretched(x, amplitude, rate, beta, offset=0.0):
+    r"""
+    Stretched exponential function in one dimension.
+
+    .. math::
+        A e^{-\text{sgn}(\gamma) (|\gamma| x)^\beta} + C
+
+    Parameters
+    ----------
+    x : `float`
+        Variable :math:`x`.
+    amplitude : `float`
+        Amplitude :math:`A`.
+    rate : `float`
+        Rate of exponential :math:`\gamma`.
+    beta : `float`
+        Stretched exponent :math:`\beta`.
+    offset : `float`, optional (default: 0)
+        Offset :math:`C`
+    """
+    return amplitude * np.exp(np.sign(rate)*(np.abs(rate) * x)**beta) + offset
+
+
+class FitExponential1dStretched(ModelBase):
+
+    """
+    Fit class for :py:func:`exponential_1d_stretched`.
+
+    Parameters
+    ----------
+    a : `float`
+        amplitude
+    g : `float`
+        rate
+    b : `float`
+        stretched exponent
+    c : `float`
+        offset
+
+    Attributes
+    ----------
+    xi : `float`
+        decay length, inverse rate
+    """
+
+    LOGGER = logging.get_logger("libics.math.peaked.FitExponential1dStretched")
+    P_ALL = ["a", "g", "b", "c"]
+    P_DEFAULT = [1, 1, 1, 0]
+
+    @staticmethod
+    def _func(var, *p):
+        return exponential_1d_stretched(var, *p)
+
+    @property
+    def xi(self):
+        return 1 / self.g
+
+    def find_p0(self, *data):
+        var_data, func_data, _ = self.split_fit_data(*data)
+        var_data = var_data.ravel()
+        # Smoothened derivatives
+        func_data_filter = ndimage.uniform_filter(
+            func_data, size=max(3, len(func_data) // 12)
+        )
+        first_derivative = np.gradient(func_data_filter, var_data)
+        second_derivative = np.gradient(
+            ndimage.uniform_filter(first_derivative, size=3), var_data
+        )
+        mask = first_derivative != 0
+        # Extract parameters
+        g = np.median(second_derivative[mask] / first_derivative[mask])
+        _exp_gx = np.exp(g * var_data)
+        a = np.median(first_derivative / g / _exp_gx)
+        c = np.median(func_data_filter - a * _exp_gx)
+        # TODO. Proper estimation of starting value of streched exponent beta
+        b = 1
+        self.p0 = [a, g, b, c]
+
+
 class _SymExpon1dDistribution_gen(RvContinuous):
 
     LOGGER = logging.get_logger(
