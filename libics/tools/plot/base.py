@@ -298,6 +298,11 @@ def remove_axes(*axs, enforce=False, on_empty=True):
 ###############################################################################
 
 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# 1D Plots
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 def plot(
     *data, x=None, y=None, xerr=None, yerr=None,
     xnorm=None, ynorm=None, marker=None,
@@ -384,6 +389,83 @@ def scatter(*args, marker="O", linestyle="None", **kwargs):
 
 
 scatter.__doc__ += "\n\n" + plot.__doc__
+
+
+def bar(
+    *data, x=None, y=None, width=None,
+    xnorm=None, ynorm=None, linestyle="=",
+    xlabel=True, ylabel=True, label=None, title=None,
+    ax=None, **kwargs
+):
+    """
+    Generates a 1D bar plot.
+
+    See matplotlib API:
+
+    * https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.bar
+
+    Parameters
+    ----------
+    *data : `array-like, ArrayData, SeriesData`
+        Plots data depending on passed data.
+        Supports var data of `ArrayData` or `SeriesData`.
+    x, y : `array-like, ArrayData, SeriesData`
+        Explicitly given plot data for each axis.
+        Overwrites `*data`.
+    width : `array-like, float`
+        Width of the bars in units of the `x` variable.
+    xnorm, ynorm : `float, ValQuantity`
+        Normalization value for plot data.
+        If `Quantity`, sets an automatic label.
+    linestyle : `str`
+        Matplotlib linestyle.
+    xlabel, ylabel, label, title : `str` or `bool`
+        Labels for the various properties.
+        If `True`, tries to automatically set a label.
+    ax : `matplotlib.axes.Axes`
+        Matplotlib axes.
+    **kwargs
+        Keyword arguments passed to the plot function.
+    """
+    ax = plt.gca() if ax is None else ax
+    # Interpret arguments
+    xnorm, xlabel = _process_norm_param(xnorm, label=xlabel)
+    ynorm, ylabel = _process_norm_param(ynorm, label=ylabel)
+    p = _get_xy_from_data(*data, xlabel=xlabel, ylabel=ylabel)
+    x, y, xlabel, ylabel = p["x"], p["y"], p["xlabel"], p["ylabel"]
+    if width is None:
+        bins = ArrayData(y)
+        bins.set_dim(0, points=x)
+        bins = bins.get_bins(0)
+        width = bins[1:] - bins[:-1]
+    elif np.isscalar(width):
+        width = np.full_like(x, width)
+    # Process normalization
+    if xnorm is not None:
+        x = np.array(x) / xnorm
+        if width is not None:
+            width = np.array(width) / xnorm
+    if ynorm is not None:
+        y = np.array(y) / ynorm
+    # Process patch style
+    if "color" not in kwargs or kwargs["color"] is None:
+        kwargs["color"] = ax._get_lines.get_next_color()
+    kwargs = _process_patch_param(linestyle, **kwargs)
+    # Perform plot
+    art = ax.bar(x, y, width=width, label=label, **kwargs)
+    # Set labels
+    if isinstance(xlabel, str):
+        ax.set_xlabel(misc.capitalize_first_char(xlabel))
+    if isinstance(ylabel, str):
+        ax.set_ylabel(misc.capitalize_first_char(ylabel))
+    if isinstance(title, str):
+        ax.set_title(title)
+    return art
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# 2D Plots
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def pcolormesh(
@@ -1031,30 +1113,35 @@ def _process_patch_param(linestyle, **kwargs):
         kwargs["edgecolor"] = kwargs.pop("ec")
     if "fc" in kwargs:
         kwargs["facecolor"] = kwargs.pop("fc")
+    if "lw" in kwargs:
+        kwargs["linewidth"] = kwargs.pop("lw")
     _color = mplc.colorConverter.to_rgba(kwargs.pop("color"))
     if linestyle == "=":
+        if "linewidth" not in kwargs:
+            kwargs["linewidth"] = mpl.rcParams["lines.linewidth"]
         if "edgecolor" not in kwargs:
             if "facecolor" not in kwargs:
                 kwargs["edgecolor"] = _color
-                _fc = mplc.colorConverter.to_rgba(kwargs["edgecolor"])
-                _fc = _fc[:-1] + (0.3 * _fc[-1],)
-                kwargs["facecolor"] = _fc
+                kwargs["facecolor"] = colors.rgb_whiten(kwargs["edgecolor"])
             else:
                 if __kwargs_param_is_not_empty(kwargs, "facecolor"):
                     _ec = colors.rgb_blacken(kwargs["facecolor"])
                 else:
-                    _ec = _color
+                    _ec = mpl.colorConverter.to_rgba(_color)
                 kwargs["edgecolor"] = _ec
         else:
             if "facecolor" not in kwargs:
                 if __kwargs_param_is_not_empty(kwargs, "edgecolor"):
-                    _fc = mplc.colorConverter.to_rgba(kwargs["edgecolor"])
+                    _fc = colors.rgb_whiten(kwargs["edgecolor"])
                 else:
-                    _fc = _color
-                _fc = _fc[:-1] + (0.3 * _fc[-1],)
+                    _fc = mpl.colorConverter.to_rgba(_color)
                 kwargs["facecolor"] = _fc
         kwargs["linestyle"] = "-"
     else:
+        if "edgecolor" not in kwargs:
+            kwargs["edgecolor"] = _color
+        if "facecolor" not in kwargs:
+            kwargs["facecolor"] = _color
         kwargs["linestyle"] = linestyle
     return kwargs
 
