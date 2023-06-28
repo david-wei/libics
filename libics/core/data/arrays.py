@@ -1762,6 +1762,17 @@ class ArrayData(AttrHashBase):
         # Return ArrayData object with data as calculated by the ufunc
         return obj
 
+    # ++++ Non-universal functions
+
+    def __array_function__(self, func, types, args, kwargs):
+        res = func(self.data, *args[1:], **kwargs)
+        if np.isscalar(res) or res.shape != self.shape:
+            obj = res
+        else:
+            obj = copy.deepcopy(self)
+            obj.data = res
+        return obj
+
 
 class CmprArrayData(AttrHashBase):
 

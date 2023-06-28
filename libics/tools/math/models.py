@@ -754,28 +754,34 @@ def ModelFromArray(
     and location `x`, given some parameters `a` and `b` (like conductivities).
     Since this might be a complicated model, it might be numerically defined
     and given as the array `ar`:
+
     >>> ar.ndim
     4
 
     Let us assume that the goal is to fit this model to measurements
     `f_i (t_i, x)`. `f_i` denotes the data set, which we assume is taken at
     all positions `x` and at a single point in time `t_i`:
+
     >>> f.ndim
     2
 
     If we want to fit `a, b`, we have to pass the dimensions of `a` and `b`
     as `param_dims`:
+
     >>> param_dims = [2, 3]
 
     Let us further assume that we also want to fit the times.
     If we allow for a scalable time, we can set the corresponding dimensions:
+
     >>> scale_dims : [0]
 
     If we allow for a time offset, we can again set the dimensions:
+
     >>> offset_dims = [0]
 
     Now we can create the class representing the fit model from the
     numerical model:
+
     >>> FitModel = ModelFromArray(
     ...     ar, param_dims=param_dims,
     ...     scale_dims=scale_dims, offset_dims=offset_dims
@@ -783,6 +789,7 @@ def ModelFromArray(
 
     This class is a subclass of :py:class:`ModelBase` and can now be used
     to fit the measurement data:
+
     >>> fit = FitModel(f)
     """
     # Parse parameters
