@@ -9,7 +9,7 @@ from libics.core.util import misc
 ###############################################################################
 
 
-def make_fixed_axes(fig, rect):
+def make_fixed_axes(fig, rect, **kwargs):
     """
     Creates a matplotlib axes at a fixed position.
 
@@ -20,6 +20,8 @@ def make_fixed_axes(fig, rect):
     rect : `Iter[float]`
         Axes rectangle (left, bottom, width, height) in units
         relative to the figure size.
+    **kwargs
+        Keyword arguments passed to `matplotlib.Figure.add_axes`.
 
     Returns
     -------
@@ -32,7 +34,8 @@ def make_fixed_axes(fig, rect):
     )
     ax = fig.add_axes(
         mpl_divider.get_position(),
-        axes_locator=mpl_divider.new_locator(1, 1)
+        axes_locator=mpl_divider.new_locator(1, 1),
+        **kwargs
     )
     return ax
 

@@ -392,7 +392,7 @@ scatter.__doc__ += "\n\n" + plot.__doc__
 
 
 def bar(
-    *data, x=None, y=None, width=None,
+    *data, x=None, y=None, width=None, bar_orientation="vertical",
     xnorm=None, ynorm=None, linestyle="=",
     xlabel=True, ylabel=True, label=None, title=None,
     ax=None, **kwargs
@@ -414,6 +414,8 @@ def bar(
         Overwrites `*data`.
     width : `array-like, float`
         Width of the bars in units of the `x` variable.
+    bar_orientation : `str`
+        Orientation of individual bars: `"vertical", "horizontal"`.
     xnorm, ynorm : `float, ValQuantity`
         Normalization value for plot data.
         If `Quantity`, sets an automatic label.
@@ -452,7 +454,11 @@ def bar(
         kwargs["color"] = ax._get_lines.get_next_color()
     kwargs = _process_patch_param(linestyle, **kwargs)
     # Perform plot
-    art = ax.bar(x, y, width=width, label=label, **kwargs)
+    if bar_orientation == "horizontal":
+        art = ax.barh(x, y, height=width, label=label, **kwargs)
+        xlabel, ylabel = ylabel, xlabel
+    else:
+        art = ax.bar(x, y, width=width, label=label, **kwargs)
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
@@ -461,6 +467,23 @@ def bar(
     if isinstance(title, str):
         ax.set_title(title)
     return art
+
+
+def barh(*args, bar_orientation="horizontal", **kwargs):
+    """
+    Wrapper for :py:func:`bar`.
+
+    Defaults to horizontally instead of vertically oriented bars.
+    Uses `plt.barh` instead of `plt.bar` nomenclature,
+    e.g., inverted meaning of `(width, height)` or `(x..., y...)`.
+    """
+    __kwargs_param_reverse(kwargs, ["width", "height"])
+    __kwargs_param_reverse(kwargs, ["xlabel", "ylabel"])
+    __kwargs_param_reverse(kwargs, ["xnorm", "ynorm"])
+    return bar(*args, bar_orientation=bar_orientation, **kwargs)
+
+
+barh.__doc__ += "\n\n" + bar.__doc__
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1167,3 +1190,34 @@ def __kwargs_param_is_not_empty(kwargs, param):
         if v == "" or v.lower() == "none":
             return False
     return True
+
+
+class __UNAVAILABLE:
+    pass
+
+
+def __kwargs_param_reverse(kwargs, params):
+    """
+    Reverses the order of key-value pairs (in place).
+
+    Parameters
+    ----------
+    kwargs : `dict`
+        Keyword argument dictionary.
+    params : `Iter[str]`
+        Keyword argument names.
+        If items in `params` are not present in `kwargs`, they are ignored.
+
+    Examples
+    --------
+    >>> d = {"a": 0, "b": 1, "c": 2, "d": 3}
+    >>> __kwargs_param_reverse(d, ["a", "b", "d"])
+    {'c': 2, 'd': 0, 'b': 1, 'a': 3}
+    >>> __kwargs_param_reverse(d, ["a", "b", "x"])
+    {'c': 2, 'd': 3, 'x': 0, 'b': 1}
+    """
+    values = [kwargs.pop(p, __UNAVAILABLE) for p in params]
+    for p, v in zip(reversed(params), values):
+        if v is not __UNAVAILABLE:
+            kwargs[p] = v
+    return kwargs
