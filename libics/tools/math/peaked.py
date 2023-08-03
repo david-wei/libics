@@ -2,6 +2,7 @@ import numpy as np
 from scipy import ndimage, optimize, special, signal, stats
 
 from libics.env import logging
+from libics.core.util import misc
 from libics.tools.math.models import ModelBase, RvContinuous
 
 
@@ -180,13 +181,12 @@ class FitGaussian1d(ModelBase):
         psuccess = super().find_popt(*args, **kwargs)
         if psuccess:
             # Enforce positive width
-            for pname in ["wx"]:
-                if pname in self.pfit:
-                    pidx = self.pfit[pname]
-                    self._popt[pidx] = np.abs(self._popt[pidx])
+            for pname in misc.filter_in_iter(["wx"], self.pfit):
+                pidx = self.pfit[pname]
+                self._popt[pidx] = np.abs(self._popt[pidx])
             psuccess &= np.all([
                 getattr(self, f"{pname}_std") / getattr(self, pname) < 1
-                for pname in ["a", "wx"]
+                for pname in misc.filter_in_iter(["a", "wx"], self.pfit)
             ])
         return psuccess
 
@@ -653,7 +653,7 @@ class FitGaussian2dTilt(ModelBase):
                 self.popt_for_fit[tilt_idx] = tilt
             psuccess &= np.all([
                 getattr(self, f"{pname}_std") / getattr(self, pname) < 1
-                for pname in ["a", "wu", "wv"]
+                for pname in misc.filter_in_iter(["a", "wu", "wv"], self.pfit)
             ])
         return psuccess
 

@@ -587,6 +587,19 @@ def analyze_single_peak(
         const_p0["x0"] = x0
     if alpha is not None and "alpha" in fit_class.P_ALL:
         const_p0["alpha"] = alpha
+    # Check if sufficient data points are available
+    _excess_points = len(_fit.P_ALL) - len(peak_ad)
+    if _excess_points > len(const_p0):
+        if "alpha" in _fit.P_ALL and "alpha" not in const_p0:
+            const_p0["alpha"] = 0
+    if _excess_points > len(const_p0):
+        LOGGER_PEAKS.error("insufficient data points for fit")
+        # Fall-back to prevent exceptions: use p0 as fit result
+        for k, v in _fit.get_p0(as_dict=True).items():
+            const_p0[k] = v
+            if _excess_points <= len(const_p0):
+                break
+    # Perform fit
     _fit.set_pfit(**const_p0)
     _fit.find_popt(peak_ad, maxfev=maxfev)
     # Check if peak fit can be considered successful

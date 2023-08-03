@@ -1049,6 +1049,26 @@ def flatten_nested_list(ls):
     return flat_ls
 
 
+def filter_in_iter(ls, it):
+    """
+    Filters the elements of a list that are in an iterable.
+
+    Parameters
+    ----------
+    ls : `Iter`
+        List to be filtered.
+    it : `Iter`
+        Iterable to filter by.
+        Only elements in `ls` which are also in `it` are returned.
+
+    Returns
+    -------
+    ls : `filter`
+        Filtered list.
+    """
+    return filter(lambda x: x in it, ls)
+
+
 def get_first_elem_iter(ls):
     """
     Gets the first element of a (nested) iterable.
