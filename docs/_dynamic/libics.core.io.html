@@ -14,9 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -81,7 +79,7 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.core.io">
-<span id="libics-core-io"></span><h1>libics.core.io<a class="headerlink" href="#module-libics.core.io" title="Permalink to this heading"></a></h1>
+<span id="libics-core-io"></span><h1>libics.core.io<a class="headerlink" href="#module-libics.core.io" title="Permalink to this headline"></a></h1>
 <span class="target" id="module-libics.core.io.base"></span><dl class="py class">
 <dt class="sig sig-object py" id="libics.core.io.base.FileBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.io.base.</span></span><span class="sig-name descname"><span class="pre">FileBase</span></span><a class="headerlink" href="#libics.core.io.base.FileBase" title="Permalink to this definition"></a></dt>
@@ -101,7 +99,7 @@ setting <cite>SER_KEYS = FileBase.SER_KEYS | {“ATTR0”, “ATTR1”, …}</ci
 overwritten to obtain more customizability.</p></li>
 </ul>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -183,7 +181,7 @@ inherit from this class and populate the attribute according to
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -300,7 +298,7 @@ inherit from this class and populate the attribute according to
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -507,7 +505,7 @@ or to proceed silently.</p>
 </dd></dl>
 
 <section id="module-libics.core.io.image">
-<span id="image"></span><h2>image<a class="headerlink" href="#module-libics.core.io.image" title="Permalink to this heading"></a></h2>
+<span id="image"></span><h2>image<a class="headerlink" href="#module-libics.core.io.image" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.io.image.compress_numpy_array_as_png">
 <span class="sig-prename descclassname"><span class="pre">libics.core.io.image.</span></span><span class="sig-name descname"><span class="pre">compress_numpy_array_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.image.compress_numpy_array_as_png" title="Permalink to this definition"></a></dt>
@@ -722,11 +720,11 @@ the current metadata.</p>
 
 </section>
 <section id="module-libics.core.io.iomisc">
-<span id="iomisc"></span><h2>iomisc<a class="headerlink" href="#module-libics.core.io.iomisc" title="Permalink to this heading"></a></h2>
+<span id="iomisc"></span><h2>iomisc<a class="headerlink" href="#module-libics.core.io.iomisc" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.io.iomisc.NumpyJsonEncoder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.io.iomisc.</span></span><span class="sig-name descname"><span class="pre">NumpyJsonEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.iomisc.NumpyJsonEncoder" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONEncoder</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.encoder.JSONEncoder</span></code></p>
 <p>JSON encoder class which converts numpy types to built-in types.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
@@ -737,7 +735,7 @@ the current metadata.</p>
 </pre></div>
 </div>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -779,7 +777,7 @@ implement default like this:</p>
 
 </section>
 <section id="module-libics.core.io.trace">
-<span id="trace"></span><h2>trace<a class="headerlink" href="#module-libics.core.io.trace" title="Permalink to this heading"></a></h2>
+<span id="trace"></span><h2>trace<a class="headerlink" href="#module-libics.core.io.trace" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.io.trace.load_csv_span_agilent_to_arraydata">
 <span class="sig-prename descclassname"><span class="pre">libics.core.io.trace.</span></span><span class="sig-name descname"><span class="pre">load_csv_span_agilent_to_arraydata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.io.trace.load_csv_span_agilent_to_arraydata" title="Permalink to this definition"></a></dt>

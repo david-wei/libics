@@ -223,21 +223,27 @@ def interval_func(*rescale_param):
 
         # Docstring
         s = (
-            f"        Interval function for {func.__name__}\n"
-            f"        \n"
-            f"        Parameters\n"
-            f"        ----------\n"
-            f"        t : `Array` or `Scalar`\n"
-            f"            Independent variable.\n"
-            f"        y0, y1 : `float`\n"
-            f"            Start, stop value.\n"
-            f"        t0, t1, dt : `float`\n"
-            f"            Interval start value/stop value/extent.\n"
-            f"            Specifying `t1` takes precedence over `dt`.\n"
-            f"        rescale : `bool` or `float`\n"
-            f"            Whether to rescale scale-dependent function \n"
-            f"            parameters.\n"
-            f"            If `float`, uses given value for rescaling.\n"
+            f"    Interval function for :py:func:`{func.__name__}`.\n"
+            f"    \n"
+            f"    Parameters\n"
+            f"    ----------\n"
+            f"    t : `Array` or `Scalar`\n"
+            f"        Independent variable.\n"
+            f"    y0, y1 : `float`\n"
+            f"        Start, stop value.\n"
+            f"    *args, **kwargs\n"
+            f"        Positional and keyword arguments passed to the actual\n"
+            f"        function implementation. See below.\n"
+            f"    t0, t1, dt : `float`\n"
+            f"        Interval start value/stop value/extent.\n"
+            f"        Specifying `t1` takes precedence over `dt`.\n"
+            f"    rescale : `bool` or `float`\n"
+            f"        Whether to rescale scale-dependent function \n"
+            f"        parameters.\n"
+            f"        If `float`, uses given value for rescaling.\n"
+            f"    \n"
+            f"    Notes\n"
+            f"    -----\n"
         )
         if func.__doc__ is not None:
             s = s + func.__doc__
@@ -277,6 +283,11 @@ def assume_func(func):
 
 @interval_func()
 def lin(t, y0, y1):
+    """
+    Linear: :math:`y(t) = a t + c`.
+
+    No additional parameters.
+    """
     a = y1 - y0
     c = y0
     return a * t + c
@@ -284,6 +295,14 @@ def lin(t, y0, y1):
 
 @interval_func(0)
 def exp(t, y0, y1, tau):
+    """
+    Exponential: :math:`y(t) = a e^{t / \\tau} + c`.
+
+    Positional parameters:
+
+    tau : `float`
+        Time constant.
+    """
     a = (y1 - y0) / (np.exp(1 / tau) - 1)
     c = y0 - a
     return a * np.exp(t / tau) + c
@@ -291,6 +310,14 @@ def exp(t, y0, y1, tau):
 
 @interval_func(0)
 def tanh(t, y0, y1, tau):
+    """
+    Hyperbolic tangent: :math:`y(t) = a \\tanh((2 t - 1) / \\tau) + c`.
+
+    Positional parameters:
+
+    tau : `float`
+        Time constant.
+    """
     c = (y0 + y1) / 2
     a = (y1 - c) / np.tanh(1 / tau)
     return a * np.tanh((2 * t - 1) / tau) + c
@@ -303,6 +330,16 @@ def tanh(t, y0, y1, tau):
 
 @interval_func(1)
 def gauss(t, y0, y1, yp, tau):
+    """
+    Gaussian: :math:`y(t) = a e^{-(t - 1/2)^2 / 2 \\tau^2} + c`.
+
+    Positional parameters:
+
+    yp : `float`
+        Peak value.
+    tau : `float`
+        Time constant.
+    """
     if y1 != y0:
         raise ValueError("`y0` must be equal to `y1`")
     a = (yp - y0) / (1 - np.exp(-1 / 2 / tau**2))
@@ -312,6 +349,16 @@ def gauss(t, y0, y1, yp, tau):
 
 @interval_func(0)
 def cosh(t, y0, y1, yp, tau):
+    """
+    Hyperbolic cosine: :math:`y(t) = a \\cosh((t - 1/2) / \\tau) + c`.
+
+    Positional parameters:
+
+    yp : `float`
+        Peak value.
+    tau : `float`
+        Time constant.
+    """
     if y1 != y0:
         raise ValueError("`y0` must be equal to `y1`")
     a = (yp - y0) / (np.cosh(1 / tau) - 1)
@@ -321,6 +368,21 @@ def cosh(t, y0, y1, yp, tau):
 
 @interval_func(1, 2, "tc0", "tc1")
 def trapez(t, y0, y1, yp, tc0=0.3, tc1=None):
+    """
+    Trapezoidal: linear rise and fall, flat top.
+
+    Positional parameters:
+
+    yp : `float`
+        Peak value.
+
+    Keyword parameters:
+
+    tc0 : `float`
+        Rise time.
+    tc1 : `float`
+        Fall time. Defaults to `1 - tc0`
+    """
     if tc1 is None:
         tc1 = 1 - tc0
     if tc1 < tc0:
@@ -331,17 +393,29 @@ def trapez(t, y0, y1, yp, tc0=0.3, tc1=None):
     c1 = y1 - a1
     return np.piecewise(
         t, [t < tc0, t > tc1],
-        [lambda t: a0 * t + c0, lambda t: a1 * t + c1, lambda t: yp]
+        [lambda t: a0 * t + c0, lambda t: a1 * t + c1, yp]
     )
 
 
 @interval_func(1, 2, "tc0", "tc1")
 def step(t, y0, y1, yp, tc0=0.3, tc1=None):
+    """
+    Step: sudden rise and fall.
+
+    Positional parameters:
+
+    yp : `float`
+        Peak value.
+
+    Keyword parameters:
+
+    tc0 : `float`
+        Time of first step.
+    tc1 : `float`
+        Time of second step. Defaults to `1 - tc0`.
+    """
     if tc1 is None:
         tc1 = 1 - tc0
     if tc1 < tc0:
         raise ValueError("`tc0` must be smaller than `tc1`")
-    return np.piecewise(
-        t, [t < tc0, t > tc1],
-        [lambda t: y0, lambda t: y1, lambda t: yp]
-    )
+    return np.piecewise(t, [t < tc0, t > tc1], [y0, y1, yp])

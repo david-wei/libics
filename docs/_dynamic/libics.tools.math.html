@@ -14,10 +14,8 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -83,13 +81,13 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.math">
-<span id="libics-tools-math"></span><h1>libics.tools.math<a class="headerlink" href="#module-libics.tools.math" title="Permalink to this heading"></a></h1>
+<span id="libics-tools-math"></span><h1>libics.tools.math<a class="headerlink" href="#module-libics.tools.math" title="Permalink to this headline"></a></h1>
 <section id="module-libics.tools.math.models">
-<span id="models"></span><h2>models<a class="headerlink" href="#module-libics.tools.math.models" title="Permalink to this heading"></a></h2>
+<span id="models"></span><h2>models<a class="headerlink" href="#module-libics.tools.math.models" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.models.ModelBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileBase</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
 <p>Base class for functional models.</p>
 <ul class="simple">
 <li><p>Supports fitting.</p></li>
@@ -181,7 +179,7 @@ should be interpretable by <code class="xref py py-meth docutils literal notrans
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -475,7 +473,7 @@ constant parameters.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.math.models.ModelBase.split_fit_data">
-<span class="sig-name descname"><span class="pre">split_fit_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.split_fit_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split_fit_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.ModelBase.split_fit_data" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -535,47 +533,61 @@ If <cite>float</cite>, uses the given value as constant extrapolation value.</p>
 This could, e.g., be a charge distribution <cite>f</cite> at time <cite>t</cite>
 and location <cite>x</cite>, given some parameters <cite>a</cite> and <cite>b</cite> (like conductivities).
 Since this might be a complicated model, it might be numerically defined
-and given as the array <cite>ar</cite>:
-&gt;&gt;&gt; ar.ndim
-4</p>
+and given as the array <cite>ar</cite>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">4</span>
+</pre></div>
+</div>
 <p>Let us assume that the goal is to fit this model to measurements
 <cite>f_i (t_i, x)</cite>. <cite>f_i</cite> denotes the data set, which we assume is taken at
-all positions <cite>x</cite> and at a single point in time <cite>t_i</cite>:
-&gt;&gt;&gt; f.ndim
-2</p>
+all positions <cite>x</cite> and at a single point in time <cite>t_i</cite>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">2</span>
+</pre></div>
+</div>
 <p>If we want to fit <cite>a, b</cite>, we have to pass the dimensions of <cite>a</cite> and <cite>b</cite>
-as <cite>param_dims</cite>:
-&gt;&gt;&gt; param_dims = [2, 3]</p>
+as <cite>param_dims</cite>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param_dims</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
 <p>Let us further assume that we also want to fit the times.
-If we allow for a scalable time, we can set the corresponding dimensions:
-&gt;&gt;&gt; scale_dims : [0]</p>
-<p>If we allow for a time offset, we can again set the dimensions:
-&gt;&gt;&gt; offset_dims = [0]</p>
+If we allow for a scalable time, we can set the corresponding dimensions:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scale_dims</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If we allow for a time offset, we can again set the dimensions:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">offset_dims</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
 <p>Now we can create the class representing the fit model from the
-numerical model:
-&gt;&gt;&gt; FitModel = ModelFromArray(
-…     ar, param_dims=param_dims,
-…     scale_dims=scale_dims, offset_dims=offset_dims
-… )</p>
+numerical model:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FitModel</span> <span class="o">=</span> <span class="n">ModelFromArray</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ar</span><span class="p">,</span> <span class="n">param_dims</span><span class="o">=</span><span class="n">param_dims</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">scale_dims</span><span class="o">=</span><span class="n">scale_dims</span><span class="p">,</span> <span class="n">offset_dims</span><span class="o">=</span><span class="n">offset_dims</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
 <p>This class is a subclass of <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a> and can now be used
-to fit the measurement data:
-&gt;&gt;&gt; fit = FitModel(f)</p>
+to fit the measurement data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitModel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.models.RvContinuous">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">RvContinuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">momtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badvalue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extradoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.RvContinuous" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rv_continuous</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_continuous</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -597,7 +609,7 @@ to fit the measurement data:
 <td><p>Calculate expected value of a function with respect to the distribution by numerical integration.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code>(data, *args, **kwds)</p></td>
-<td><p>Return estimates of shape (if applicable), location, and scale parameters from data.</p></td>
+<td><p>Return MLEs for shape (if applicable), location, and scale parameters from data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_loc_scale</span></code>(data, *args)</p></td>
 <td><p>Estimate loc and scale parameters from data using 1st and 2nd moments.</p></td>
@@ -605,7 +617,7 @@ to fit the measurement data:
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.freeze" title="libics.tools.math.models.RvContinuous.freeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code></a>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.ipdf" title="libics.tools.math.models.RvContinuous.ipdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ipdf</span></code></a>(p, *args[, branch, tol])</p></td>
@@ -632,11 +644,11 @@ to fit the measurement data:
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.mode" title="libics.tools.math.models.RvContinuous.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(*args, **kwds)</p></td>
 <td><p>Mode of the given RV, i.e., the maximum location of the PDF.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
-<td><p>non-central moment of distribution of specified order.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
+<td><p>n-th order non-central moment of distribution.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
-<td><p>Negative loglikelihood function.</p></td>
+<td><p>Return negative loglikelihood function.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pdf</span></code>(x, *args, **kwds)</p></td>
 <td><p>Probability density function at x of the given RV.</p></td>
@@ -663,7 +675,7 @@ to fit the measurement data:
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Support of the distribution.</p></td>
+<td><p>Return the support of the distribution.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
@@ -869,7 +881,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.models.RvContinuousFrozen">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">RvContinuousFrozen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.RvContinuousFrozen" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rv_continuous_frozen</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_frozen</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
@@ -905,19 +917,25 @@ Used if one distribution contains “more” probability than another.</p>
 <tr class="row-odd"><td><p><strong>logpdf</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>logsf</strong></p></td>
+<tr class="row-even"><td><p><strong>logpmf</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>mean</strong></p></td>
+<tr class="row-odd"><td><p><strong>logsf</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>median</strong></p></td>
+<tr class="row-even"><td><p><strong>mean</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>moment</strong></p></td>
+<tr class="row-odd"><td><p><strong>median</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>pdf</strong></p></td>
+<tr class="row-even"><td><p><strong>moment</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>pdf</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>pmf</strong></p></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><p><strong>ppf</strong></p></td>
@@ -948,7 +966,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.models.TensorModelBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">TensorModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.TensorModelBase" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
@@ -965,7 +983,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1105,11 +1123,11 @@ Used if one distribution contains “more” probability than another.</p>
 
 </section>
 <section id="module-libics.tools.math.flat">
-<span id="flat"></span><h2>flat<a class="headerlink" href="#module-libics.tools.math.flat" title="Permalink to this heading"></a></h2>
+<span id="flat"></span><h2>flat<a class="headerlink" href="#module-libics.tools.math.flat" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitCosine1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitCosine1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitCosine1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.cosine_1d" title="libics.tools.math.flat.cosine_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">cosine_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1146,7 +1164,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1271,7 +1289,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitCosine2d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitCosine2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitCosine2d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.cosine_2d" title="libics.tools.math.flat.cosine_2d"><code class="xref py py-func docutils literal notranslate"><span class="pre">cosine_2d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1296,7 +1314,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1436,7 +1454,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitErrorFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitErrorFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitErrorFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.error_function" title="libics.tools.math.flat.error_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">error_function()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1473,7 +1491,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1598,7 +1616,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitLinear1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitLinear1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitLinear1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.linear_1d" title="libics.tools.math.flat.linear_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">linear_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1631,7 +1649,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1756,7 +1774,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitLinearStepFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitLinearStepFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitLinearStepFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.linear_step_function" title="libics.tools.math.flat.linear_step_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">linear_step_function()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1793,7 +1811,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1918,7 +1936,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitPowerLaw1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitPowerLaw1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.power_law_1d" title="libics.tools.math.flat.power_law_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">power_law_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1951,7 +1969,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2051,7 +2069,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.flat.FitPowerLaw1dCenter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.flat.</span></span><span class="sig-name descname"><span class="pre">FitPowerLaw1dCenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.flat.FitPowerLaw1dCenter" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.flat.power_law_1d" title="libics.tools.math.flat.power_law_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">power_law_1d()</span></code></a> with center as fit variable.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2088,7 +2106,7 @@ Used if one distribution contains “more” probability than another.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2231,11 +2249,11 @@ c + a (for x &gt; x_0 + w)\]</div>
 
 </section>
 <section id="module-libics.tools.math.peaked">
-<span id="peaked"></span><h2>peaked<a class="headerlink" href="#module-libics.tools.math.peaked" title="Permalink to this heading"></a></h2>
+<span id="peaked"></span><h2>peaked<a class="headerlink" href="#module-libics.tools.math.peaked" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitAiryDisk2d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitAiryDisk2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitAiryDisk2d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.airy_disk_2d" title="libics.tools.math.peaked.airy_disk_2d"><code class="xref py py-func docutils literal notranslate"><span class="pre">airy_disk_2d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2272,7 +2290,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2371,7 +2389,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitBmGaussianParabolic1dInt2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitBmGaussianParabolic1dInt2d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian1d</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian1d</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.bm_gaussian_parabolic_1d_int2d" title="libics.tools.math.peaked.bm_gaussian_parabolic_1d_int2d"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm_gaussian_parabolic_1d_int2d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2409,7 +2427,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2535,7 +2553,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitBmGaussianParabolic2dInt1dTilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitBmGaussianParabolic2dInt1dTilt" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt" title="libics.tools.math.peaked.FitGaussian2dTilt"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian2dTilt</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt" title="libics.tools.math.peaked.FitGaussian2dTilt"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian2dTilt</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.bm_gaussian_parabolic_2d_int1d" title="libics.tools.math.peaked.bm_gaussian_parabolic_2d_int1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm_gaussian_parabolic_2d_int1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2575,7 +2593,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2728,7 +2746,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitExponential1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.exponential_1d" title="libics.tools.math.peaked.exponential_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">exponential_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2751,7 +2769,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -2859,6 +2877,134 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitExponential1dStretched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
+<p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.exponential_1d_stretched" title="libics.tools.math.peaked.exponential_1d_stretched"><code class="xref py py-func docutils literal notranslate"><span class="pre">exponential_1d_stretched()</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>a</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>amplitude</p>
+</dd>
+<dt><strong>g</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>rate</p>
+</dd>
+<dt><strong>b</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>stretched exponent</p>
+</dd>
+<dt><strong>c</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>offset</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl>
+<dt><strong>xi</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>decay length, inverse rate</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(var, *args, **kwargs)</p></td>
+<td><p>Calls the model function with current parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>()</p></td>
+<td><p>Default saved attributes getter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</p></td>
+<td><p>Returns a deep copy of the object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2</span></code>(*data)</p></td>
+<td><p>Gets the chi squared statistic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(*data)</p></td>
+<td><p>Gets the reduced chi squared statistic.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(*data)</p></td>
+<td><p>Gets the chi squared confindence quantile for the fit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitExponential1dStretched.find_p0" title="libics.tools.math.peaked.FitExponential1dStretched.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(*data)</p></td>
+<td><p>Routine for initial fit parameter finding.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code>(*data[, bounds])</p></td>
+<td><p>Fits the model function to the given data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_data</span></code>([shape])</p></td>
+<td><p>Gets a (continuos) model data array using fitted parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(file_path, **kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(file_path, **kwargs)</p></td>
+<td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(**p0)</p></td>
+<td><p>Sets initial parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(*opt[, const])</p></td>
+<td><p>Set which parameters to fit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(*data[, p_value])</p></td>
+<td><p>Tests the whether the fit is valid.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 64%" />
+<col style="width: 36%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>get_p0</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_popt</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_pstd</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>p0_is_set</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>split_fit_data</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">libics.math.peaked.FitExponential1dStretched</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched.P_ALL">
+<span class="sig-name descname"><span class="pre">P_ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['a',</span> <span class="pre">'g',</span> <span class="pre">'b',</span> <span class="pre">'c']</span></em><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched.P_ALL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched.P_DEFAULT">
+<span class="sig-name descname"><span class="pre">P_DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0]</span></em><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched.P_DEFAULT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched.find_p0">
+<span class="sig-name descname"><span class="pre">find_p0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched.find_p0" title="Permalink to this definition"></a></dt>
+<dd><p>Routine for initial fit parameter finding.</p>
+<p>Should return whether this succeeded.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponential1dStretched.xi">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xi</span></span><a class="headerlink" href="#libics.tools.math.peaked.FitExponential1dStretched.xi" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitExponentialDecay1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitExponentialDecay1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitExponentialDecay1d" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -2867,7 +3013,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitGaussian1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitGaussian1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitGaussian1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.gaussian_1d" title="libics.tools.math.peaked.gaussian_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -2905,7 +3051,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3051,7 +3197,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitGaussian2dTilt">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitGaussian2dTilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitGaussian2dTilt" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.gaussian_2d_tilt" title="libics.tools.math.peaked.gaussian_2d_tilt"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_2d_tilt()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3091,7 +3237,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3231,7 +3377,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitLorentzian1dAbs">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitLorentzian1dAbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitLorentzian1dAbs" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.lorentzian_1d_abs" title="libics.tools.math.peaked.lorentzian_1d_abs"><code class="xref py py-func docutils literal notranslate"><span class="pre">lorentzian_1d_abs()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3268,7 +3414,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3392,7 +3538,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitLorentzianEit1dImag">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitLorentzianEit1dImag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitLorentzianEit1dImag" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.lorentzian_eit_1d_imag" title="libics.tools.math.peaked.lorentzian_eit_1d_imag"><code class="xref py py-func docutils literal notranslate"><span class="pre">lorentzian_eit_1d_imag()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3433,7 +3579,7 @@ c + a (for x &gt; x_0 + w)\]</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3627,7 +3773,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitLorentzianRydEit1dImag">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitLorentzianRydEit1dImag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitLorentzianRydEit1dImag" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag" title="libics.tools.math.peaked.FitLorentzianEit1dImag"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitLorentzianEit1dImag</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitLorentzianEit1dImag" title="libics.tools.math.peaked.FitLorentzianEit1dImag"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitLorentzianEit1dImag</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.lorentzian_ryd_eit_1d_imag" title="libics.tools.math.peaked.lorentzian_ryd_eit_1d_imag"><code class="xref py py-func docutils literal notranslate"><span class="pre">lorentzian_ryd_eit_1d_imag()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3668,7 +3814,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3782,7 +3928,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitParabolic1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitParabolic1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitParabolic1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.models.ModelBase" title="libics.tools.math.models.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.models.ModelBase</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.parabolic_1d" title="libics.tools.math.peaked.parabolic_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">parabolic_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3817,7 +3963,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -3917,7 +4063,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitParabolic1dInt2d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitParabolic1dInt2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitParabolic1dInt2d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian1d</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian1d</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.parabolic_1d_int2d" title="libics.tools.math.peaked.parabolic_1d_int2d"><code class="xref py py-func docutils literal notranslate"><span class="pre">parabolic_1d_int2d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -3955,7 +4101,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4061,7 +4207,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitParabolic2dInt1dTilt">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitParabolic2dInt1dTilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitParabolic2dInt1dTilt" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt" title="libics.tools.math.peaked.FitGaussian2dTilt"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian2dTilt</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian2dTilt" title="libics.tools.math.peaked.FitGaussian2dTilt"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian2dTilt</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.parabolic_1d_int2d" title="libics.tools.math.peaked.parabolic_1d_int2d"><code class="xref py py-func docutils literal notranslate"><span class="pre">parabolic_1d_int2d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4101,7 +4247,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4198,7 +4344,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitSkewGaussian1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitSkewGaussian1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitSkewGaussian1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian1d</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian1d</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.skew_gaussian_1d" title="libics.tools.math.peaked.skew_gaussian_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">skew_gaussian_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4238,55 +4384,58 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(var, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.DISTRIBUTION" title="libics.tools.math.peaked.FitSkewGaussian1d.DISTRIBUTION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DISTRIBUTION</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(var, *args, **kwargs)</p></td>
 <td><p>Calls the model function with current parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code>()</p></td>
 <td><p>Default saved attributes getter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</p></td>
 <td><p>Returns a deep copy of the object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2</span></code>(*data)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2</span></code>(*data)</p></td>
 <td><p>Gets the chi squared statistic.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(*data)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_red</span></code>(*data)</p></td>
 <td><p>Gets the reduced chi squared statistic.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(*data)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_chi2_significance</span></code>(*data)</p></td>
 <td><p>Gets the chi squared confindence quantile for the fit.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.find_p0" title="libics.tools.math.peaked.FitSkewGaussian1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(*data)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.find_p0" title="libics.tools.math.peaked.FitSkewGaussian1d.find_p0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_p0</span></code></a>(*data)</p></td>
 <td><p>Routine for initial fit parameter finding.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.find_popt" title="libics.tools.math.peaked.FitSkewGaussian1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.find_popt" title="libics.tools.math.peaked.FitSkewGaussian1d.find_popt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_popt</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Fits the model function to the given data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.get_distribution" title="libics.tools.math.peaked.FitSkewGaussian1d.get_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_distribution</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.peaked.FitSkewGaussian1d.get_distribution" title="libics.tools.math.peaked.FitSkewGaussian1d.get_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_distribution</span></code></a>()</p></td>
 <td><p>Gets the distribution corresponding to this model.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_data</span></code>([shape])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_data</span></code>([shape])</p></td>
 <td><p>Gets a (continuos) model data array using fitted parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(file_path, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(file_path, **kwargs)</p></td>
 <td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(file_path, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(file_path, **kwargs)</p></td>
 <td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(**p0)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_p0</span></code>(**p0)</p></td>
 <td><p>Sets initial parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(*opt[, const])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pfit</span></code>(*opt[, const])</p></td>
 <td><p>Set which parameters to fit.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(*data[, p_value])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_hypothesis_chi2</span></code>(*data[, p_value])</p></td>
 <td><p>Tests the whether the fit is valid.</p></td>
 </tr>
 </tbody>
@@ -4297,22 +4446,19 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <col style="width: 36%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>DISTRIBUTION</strong></p></td>
+<tr class="row-odd"><td><p><strong>get_p0</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>get_p0</strong></p></td>
+<tr class="row-even"><td><p><strong>get_popt</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>get_popt</strong></p></td>
+<tr class="row-odd"><td><p><strong>get_pstd</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>get_pstd</strong></p></td>
+<tr class="row-even"><td><p><strong>p0_is_set</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>p0_is_set</strong></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p><strong>split_fit_data</strong></p></td>
+<tr class="row-odd"><td><p><strong>split_fit_data</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -4393,7 +4539,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.FitSymExponential1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">FitSymExponential1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const_p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.FitSymExponential1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGaussian1d</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.peaked.FitGaussian1d" title="libics.tools.math.peaked.FitGaussian1d"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.peaked.FitGaussian1d</span></code></a></p>
 <p>Fit class for <a class="reference internal" href="#libics.tools.math.peaked.sym_exponential_1d" title="libics.tools.math.peaked.sym_exponential_1d"><code class="xref py py-func docutils literal notranslate"><span class="pre">sym_exponential_1d()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4431,7 +4577,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4552,7 +4698,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.RndDscBallistic1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">RndDscBallistic1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.RndDscBallistic1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rv_discrete</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_discrete</span></code></p>
 <p>1D ballistic transport site occupation random variable.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4567,13 +4713,13 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4594,7 +4740,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4615,34 +4761,31 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
-<td><p>non-central moment of distribution of specified order.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
+<td><p>n-th order non-central moment of distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
-<td><p>Negative loglikelihood function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Support of the distribution.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Return the support of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>
@@ -4652,7 +4795,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.RndDscBlochOsc1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">RndDscBlochOsc1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.RndDscBlochOsc1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rv_discrete</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_discrete</span></code></p>
 <p>1D Bloch oscillation site occupation random variable.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4669,13 +4812,13 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4696,7 +4839,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4717,34 +4860,31 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
-<td><p>non-central moment of distribution of specified order.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
+<td><p>n-th order non-central moment of distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
-<td><p>Negative loglikelihood function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Support of the distribution.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Return the support of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>
@@ -4754,7 +4894,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.peaked.RndDscDiffusive1d">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">RndDscDiffusive1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.RndDscDiffusive1d" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rv_discrete</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_discrete</span></code></p>
 <p>1D random variable for diffusive transport on discrete sites.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -4769,13 +4909,13 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -4796,7 +4936,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4817,34 +4957,31 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
-<td><p>non-central moment of distribution of specified order.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
+<td><p>n-th order non-central moment of distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
-<td><p>Negative loglikelihood function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Support of the distribution.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Return the support of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>
@@ -5013,6 +5150,30 @@ site <cite>var[0]</cite> at the given time <cite>var[1]</cite>.</p>
 <dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
 </dd>
 <dt><strong>rate</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Rate of exponential <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.math.peaked.exponential_1d_stretched">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.peaked.</span></span><span class="sig-name descname"><span class="pre">exponential_1d_stretched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.peaked.exponential_1d_stretched" title="Permalink to this definition"></a></dt>
+<dd><p>Stretched exponential function in one dimension.</p>
+<div class="math notranslate nohighlight">
+\[A e^{-\text{sgn}(\gamma) (|\gamma| x)^\beta} + C\]</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Variable <span class="math notranslate nohighlight">\(x\)</span>.</p>
+</dd>
+<dt><strong>amplitude</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Amplitude <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt><strong>rate</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Rate of exponential <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Stretched exponent <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 </dd>
 <dt><strong>offset</strong><span class="classifier"><cite>float</cite>, optional (default: 0)</span></dt><dd><p>Offset <span class="math notranslate nohighlight">\(C\)</span></p>
 </dd>
@@ -5338,7 +5499,7 @@ Normalized to be consistent with Gaussian width in series expansion.</p>
 
 </section>
 <section id="module-libics.tools.math.intervalfunc">
-<span id="intervalfunc"></span><h2>intervalfunc<a class="headerlink" href="#module-libics.tools.math.intervalfunc" title="Permalink to this heading"></a></h2>
+<span id="intervalfunc"></span><h2>intervalfunc<a class="headerlink" href="#module-libics.tools.math.intervalfunc" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.IntervalSeries">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">IntervalSeries</span></span><a class="headerlink" href="#libics.tools.math.intervalfunc.IntervalSeries" title="Permalink to this definition"></a></dt>
@@ -5352,7 +5513,7 @@ Normalized to be consistent with Gaussian width in series expansion.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -5454,13 +5615,16 @@ function by name.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.cosh">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">cosh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.cosh" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for cosh</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.cosh" title="libics.tools.math.intervalfunc.cosh"><code class="xref py py-func docutils literal notranslate"><span class="pre">cosh()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5470,6 +5634,15 @@ parameters.
 If <cite>float</cite>, uses given value for rescaling.</p>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Hyperbolic cosine: <span class="math notranslate nohighlight">\(y(t) = a \cosh((t - 1/2) / \tau) + c\)</span>.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>yp<span class="classifier"><cite>float</cite></span></dt><dd><p>Peak value.</p>
+</dd>
+<dt>tau<span class="classifier"><cite>float</cite></span></dt><dd><p>Time constant.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5477,13 +5650,16 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.exp">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.exp" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for exp</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.exp" title="libics.tools.math.intervalfunc.exp"><code class="xref py py-func docutils literal notranslate"><span class="pre">exp()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5493,6 +5669,13 @@ parameters.
 If <cite>float</cite>, uses given value for rescaling.</p>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Exponential: <span class="math notranslate nohighlight">\(y(t) = a e^{t / \tau} + c\)</span>.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>tau<span class="classifier"><cite>float</cite></span></dt><dd><p>Time constant.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5500,13 +5683,16 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.gauss">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">gauss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.gauss" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for gauss</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.gauss" title="libics.tools.math.intervalfunc.gauss"><code class="xref py py-func docutils literal notranslate"><span class="pre">gauss()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5516,6 +5702,15 @@ parameters.
 If <cite>float</cite>, uses given value for rescaling.</p>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Gaussian: <span class="math notranslate nohighlight">\(y(t) = a e^{-(t - 1/2)^2 / 2 \tau^2} + c\)</span>.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>yp<span class="classifier"><cite>float</cite></span></dt><dd><p>Peak value.</p>
+</dd>
+<dt>tau<span class="classifier"><cite>float</cite></span></dt><dd><p>Time constant.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5562,13 +5757,16 @@ where <cite>t</cite> is the independent variable defined on the interval <cite>[
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.lin">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">lin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.lin" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for lin</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.lin" title="libics.tools.math.intervalfunc.lin"><code class="xref py py-func docutils literal notranslate"><span class="pre">lin()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5580,18 +5778,24 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Linear: <span class="math notranslate nohighlight">\(y(t) = a t + c\)</span>.</p>
+<p>No additional parameters.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.step">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.step" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for step</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.step" title="libics.tools.math.intervalfunc.step"><code class="xref py py-func docutils literal notranslate"><span class="pre">step()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5601,6 +5805,20 @@ parameters.
 If <cite>float</cite>, uses given value for rescaling.</p>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Step: sudden rise and fall.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>yp<span class="classifier"><cite>float</cite></span></dt><dd><p>Peak value.</p>
+</dd>
+</dl>
+<p>Keyword parameters:</p>
+<dl>
+<dt>tc0<span class="classifier"><cite>float</cite></span></dt><dd><p>Time of first step.</p>
+</dd>
+<dt>tc1<span class="classifier"><cite>float</cite></span></dt><dd><p>Time of second step. Defaults to <cite>1 - tc0</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5608,13 +5826,16 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.tanh">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.tanh" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for tanh</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.tanh" title="libics.tools.math.intervalfunc.tanh"><code class="xref py py-func docutils literal notranslate"><span class="pre">tanh()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5624,6 +5845,13 @@ parameters.
 If <cite>float</cite>, uses given value for rescaling.</p>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Hyperbolic tangent: <span class="math notranslate nohighlight">\(y(t) = a \tanh((2 t - 1) / \tau) + c\)</span>.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>tau<span class="classifier"><cite>float</cite></span></dt><dd><p>Time constant.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5631,13 +5859,16 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.intervalfunc.trapez">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.intervalfunc.</span></span><span class="sig-name descname"><span class="pre">trapez</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.intervalfunc.trapez" title="Permalink to this definition"></a></dt>
-<dd><p>Interval function for trapez</p>
+<dd><p>Interval function for <a class="reference internal" href="#libics.tools.math.intervalfunc.trapez" title="libics.tools.math.intervalfunc.trapez"><code class="xref py py-func docutils literal notranslate"><span class="pre">trapez()</span></code></a>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>t</strong><span class="classifier"><cite>Array</cite> or <cite>Scalar</cite></span></dt><dd><p>Independent variable.</p>
 </dd>
 <dt><strong>y0, y1</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Start, stop value.</p>
+</dd>
+<dt><strong>*args, **kwargs</strong></dt><dd><p>Positional and keyword arguments passed to the actual
+function implementation. See below.</p>
 </dd>
 <dt><strong>t0, t1, dt</strong><span class="classifier"><cite>float</cite></span></dt><dd><p>Interval start value/stop value/extent.
 Specifying <cite>t1</cite> takes precedence over <cite>dt</cite>.</p>
@@ -5649,14 +5880,28 @@ If <cite>float</cite>, uses given value for rescaling.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Trapezoidal: linear rise and fall, flat top.</p>
+<p>Positional parameters:</p>
+<dl>
+<dt>yp<span class="classifier"><cite>float</cite></span></dt><dd><p>Peak value.</p>
+</dd>
+</dl>
+<p>Keyword parameters:</p>
+<dl>
+<dt>tc0<span class="classifier"><cite>float</cite></span></dt><dd><p>Rise time.</p>
+</dd>
+<dt>tc1<span class="classifier"><cite>float</cite></span></dt><dd><p>Fall time. Defaults to <cite>1 - tc0</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="module-libics.tools.math.calculus">
-<span id="calculus"></span><h2>calculus<a class="headerlink" href="#module-libics.tools.math.calculus" title="Permalink to this heading"></a></h2>
+<span id="calculus"></span><h2>calculus<a class="headerlink" href="#module-libics.tools.math.calculus" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.calculus.differentiate_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">differentiate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.differentiate_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">differentiate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.differentiate_array" title="Permalink to this definition"></a></dt>
 <dd><p>Differentiates an array.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -5686,7 +5931,7 @@ differences at the boundaries.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.calculus.integrate_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">integrate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.integrate_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.calculus.</span></span><span class="sig-name descname"><span class="pre">integrate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.calculus.integrate_array" title="Permalink to this definition"></a></dt>
 <dd><p>Performs a definite or indefinite 1D integral of an array.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -5722,13 +5967,11 @@ If definite integration, removes one dimension of <cite>ar</cite>.</p>
 
 </section>
 <section id="module-libics.tools.math.optimize">
-<span id="optimize"></span><h2>optimize<a class="headerlink" href="#module-libics.tools.math.optimize" title="Permalink to this heading"></a></h2>
+<span id="optimize"></span><h2>optimize<a class="headerlink" href="#module-libics.tools.math.optimize" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.optimize.maximize_discrete_stepwise">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.optimize.</span></span><span class="sig-name descname"><span class="pre">maximize_discrete_stepwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.optimize.maximize_discrete_stepwise" title="Permalink to this definition"></a></dt>
 <dd><p>Analogous to <a class="reference internal" href="#libics.tools.math.optimize.minimize_discrete_stepwise" title="libics.tools.math.optimize.minimize_discrete_stepwise"><code class="xref py py-func docutils literal notranslate"><span class="pre">minimize_discrete_stepwise()</span></code></a> but maximizing.</p>
-<section id="documentation-of-minimize-discrete-stepwise">
-<h3>Documentation of <a class="reference internal" href="#libics.tools.math.optimize.minimize_discrete_stepwise" title="libics.tools.math.optimize.minimize_discrete_stepwise"><code class="xref py py-func docutils literal notranslate"><span class="pre">minimize_discrete_stepwise()</span></code></a><a class="headerlink" href="#documentation-of-minimize-discrete-stepwise" title="Permalink to this heading"></a></h3>
 <p>Minimizes a discrete function by nearest neighbour descent.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -5766,7 +6009,6 @@ Larger <cite>search_range</cite> avoids ending in local optimum but is slower.</
 </dl>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py function">
@@ -5813,7 +6055,7 @@ Larger <cite>search_range</cite> avoids ending in local optimum but is slower.</
 
 </section>
 <section id="module-libics.tools.math.sampling">
-<span id="sampling"></span><h2>sampling<a class="headerlink" href="#module-libics.tools.math.sampling" title="Permalink to this heading"></a></h2>
+<span id="sampling"></span><h2>sampling<a class="headerlink" href="#module-libics.tools.math.sampling" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.sampling.get_nonlinear_support_points">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.math.sampling.</span></span><span class="sig-name descname"><span class="pre">get_nonlinear_support_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nr_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slope'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.sampling.get_nonlinear_support_points" title="Permalink to this definition"></a></dt>
@@ -5860,11 +6102,11 @@ according to <cite>method</cite>.</p>
 
 </section>
 <section id="module-libics.tools.math.signal">
-<span id="signal"></span><h2>signal<a class="headerlink" href="#module-libics.tools.math.signal" title="Permalink to this heading"></a></h2>
+<span id="signal"></span><h2>signal<a class="headerlink" href="#module-libics.tools.math.signal" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.signal.PeakInfo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.signal.</span></span><span class="sig-name descname"><span class="pre">PeakInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subpeak</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.signal.PeakInfo" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="libics.core.io.html#libics.core.io.base.FileBase" title="libics.core.io.base.FileBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.core.io.base.FileBase</span></code></a></p>
 <p>Results class for peak analysis.</p>
 <dl class="field-list">
 <dt class="field-odd">Attributes</dt>
@@ -5889,7 +6131,7 @@ of the <code class="xref py py-attr docutils literal notranslate"><span class="p
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -6249,11 +6491,11 @@ If <cite>False</cite>, does not perform the check.</p>
 
 </section>
 <section id="module-libics.tools.math.tensor">
-<span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-libics.tools.math.tensor" title="Permalink to this heading"></a></h2>
+<span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-libics.tools.math.tensor" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.DiagonalizableLS">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">DiagonalizableLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.DiagonalizableLS" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.LinearSystem" title="libics.tools.math.tensor.LinearSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinearSystem</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.LinearSystem" title="libics.tools.math.tensor.LinearSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.tensor.LinearSystem</span></code></a></p>
 <p>Eigensystem solver for arbitrary square diagonalizable matrices.</p>
 <p>The linear system is defined as</p>
 <div class="math notranslate nohighlight">
@@ -6337,7 +6579,7 @@ the result vector <span class="math notranslate nohighlight">\(y\)</span>.</p></
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -6498,7 +6740,7 @@ Call signature: <cite>func(np.ndarray(…, n_dof))-&gt;float</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.HermitianLS">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">HermitianLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.HermitianLS" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.DiagonalizableLS" title="libics.tools.math.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiagonalizableLS</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.DiagonalizableLS" title="libics.tools.math.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.tensor.DiagonalizableLS</span></code></a></p>
 <p>Eigensystem solver for Hermitian diagonalizable matrices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -6525,7 +6767,7 @@ Call signature: <cite>func(np.ndarray(…, n_dof))-&gt;float</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -6577,7 +6819,7 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.LinearSystem">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">LinearSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mata_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matb_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">veca_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecb_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.LinearSystem" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">LinearSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mata_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matb_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">veca_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecb_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.LinearSystem" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Linear system solver for arbitrary complex matrices.</p>
 <p>The linear system is defined as</p>
@@ -6620,7 +6862,7 @@ defines the degrees of freedom <span class="math notranslate nohighlight">\(n_{\
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -6693,7 +6935,7 @@ vector <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.SymmetricLS">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">SymmetricLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.SymmetricLS" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.DiagonalizableLS" title="libics.tools.math.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiagonalizableLS</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#libics.tools.math.tensor.DiagonalizableLS" title="libics.tools.math.tensor.DiagonalizableLS"><code class="xref py py-class docutils literal notranslate"><span class="pre">libics.tools.math.tensor.DiagonalizableLS</span></code></a></p>
 <p>Eigensystem solver for complex symmetric diagonalizable matrices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -6720,7 +6962,7 @@ vector <span class="math notranslate nohighlight">\(x\)</span>.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -6902,7 +7144,7 @@ Contains the multi-dimensional diagonal elements of
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.insert_dims">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">insert_dims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.insert_dims" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">insert_dims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.insert_dims" title="Permalink to this definition"></a></dt>
 <dd><p>Expands the dimensions of an array.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -6980,7 +7222,7 @@ Dimensions: [n_vector, n_components].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.tensorinv_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorinv_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorinv_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorinv_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorinv_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the tensor inverse (w.r.t. to <a class="reference internal" href="#libics.tools.math.tensor.tensormul_numpy_array" title="libics.tools.math.tensor.tensormul_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensormul_numpy_array()</span></code></a>).</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -7003,7 +7245,7 @@ These specified dimensions span an effective square matrix.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.tensorize_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorize_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-2,</span> <span class="pre">-1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorize_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorize_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-</span> <span class="pre">2,</span> <span class="pre">-</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorize_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Tensorizes a vectorized <cite>numpy</cite> array. Opposite of
 <a class="reference internal" href="#libics.tools.math.tensor.vectorize_numpy_array" title="libics.tools.math.tensor.vectorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">vectorize_numpy_array()</span></code></a>.</p>
 <dl class="field-list">
@@ -7067,7 +7309,7 @@ relative. Allows for use of ellipses.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.tensorsolve_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorsolve_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorsolve_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensorsolve_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensorsolve_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Solves a tensor equation <span class="math notranslate nohighlight">\(A x = b\)</span> for <span class="math notranslate nohighlight">\(x\)</span>, where all operands
 may be high-dimensional.</p>
 <dl class="field-list">
@@ -7100,7 +7342,7 @@ does not support broadcasting.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.tensortranspose_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensortranspose_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensortranspose_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">tensortranspose_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.tensortranspose_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Transposes the matrix spanned by <cite>a_axes</cite>, <cite>b_axes</cite>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -7123,7 +7365,7 @@ These specified dimensions span an effective square matrix.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.math.tensor.vectorize_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">vectorize_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-2,</span> <span class="pre">-1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.vectorize_numpy_array" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.math.tensor.</span></span><span class="sig-name descname"><span class="pre">vectorize_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-</span> <span class="pre">2,</span> <span class="pre">-</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.tensor.vectorize_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Vectorizes a tensor (high-dimensional) <cite>numpy</cite> array. Opposite of
 <a class="reference internal" href="#libics.tools.math.tensor.tensorize_numpy_array" title="libics.tools.math.tensor.tensorize_numpy_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">tensorize_numpy_array()</span></code></a>.</p>
 <dl class="field-list">

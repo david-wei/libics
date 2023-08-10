@@ -14,10 +14,8 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -82,9 +80,9 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.core.util">
-<span id="libics-core-util"></span><h1>libics.core.util<a class="headerlink" href="#module-libics.core.util" title="Permalink to this heading"></a></h1>
+<span id="libics-core-util"></span><h1>libics.core.util<a class="headerlink" href="#module-libics.core.util" title="Permalink to this headline"></a></h1>
 <section id="module-libics.core.util.func">
-<span id="func"></span><h2>func<a class="headerlink" href="#module-libics.core.util.func" title="Permalink to this heading"></a></h2>
+<span id="func"></span><h2>func<a class="headerlink" href="#module-libics.core.util.func" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.func.Memoize">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">Memoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.Memoize" title="Permalink to this definition"></a></dt>
@@ -99,7 +97,7 @@ If called later with the same arguments, the cached value is returned
 </pre></div>
 </div>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -135,7 +133,7 @@ Call signature: <cite>worker_func(*args, **kwargs)</cite> with
 <p class="rubric">Notes</p>
 <p>This timer can be restarted.</p>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -248,7 +246,7 @@ Call signature: <cite>stop_action()</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.func.StoppableThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.func.</span></span><span class="sig-name descname"><span class="pre">StoppableThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_action</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.func.StoppableThread" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
 <p>Thread that ends on a stop event.</p>
 <p>To stop the thread, wait conditionally for the <cite>StoppableThread.stop_event</cite>
 to trigger.</p>
@@ -282,25 +280,28 @@ to trigger.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isAlive</span></code>()</p></td>
 <td><p>Return whether the thread is alive.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>([timeout])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_alive</span></code>()</p></td>
+<td><p>Return whether the thread is alive.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code>([timeout])</p></td>
 <td><p>Wait until the thread terminates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>()</p></td>
 <td><p>Method representing the thread's activity.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code>()</p></td>
 <td><p>Start the thread's activity.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#libics.core.util.func.StoppableThread.stop" title="libics.core.util.func.StoppableThread.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.core.util.func.StoppableThread.stop" title="libics.core.util.func.StoppableThread.stop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop</span></code></a>()</p></td>
 <td><p>Stops the thread.</p></td>
 </tr>
 </tbody>
@@ -335,7 +336,7 @@ to trigger.</p>
 
 </section>
 <section id="module-libics.core.util.misc">
-<span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.core.util.misc" title="Permalink to this heading"></a></h2>
+<span id="misc"></span><h2>misc<a class="headerlink" href="#module-libics.core.util.misc" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_construct_obj">
 <span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_construct_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_construct_obj" title="Permalink to this definition"></a></dt>
@@ -912,6 +913,29 @@ Only used for non-integer types.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
 <dt><strong>idx</strong><span class="classifier"><cite>iter(np.ndarray(1, int))</cite></span></dt><dd><p>Iterable filter of lists of indices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.core.util.misc.filter_in_iter">
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">filter_in_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">it</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.filter_in_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Filters the elements of a list that are in an iterable.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>Iter</cite></span></dt><dd><p>List to be filtered.</p>
+</dd>
+<dt><strong>it</strong><span class="classifier"><cite>Iter</cite></span></dt><dd><p>Iterable to filter by.
+Only elements in <cite>ls</cite> which are also in <cite>it</cite> are returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>ls</strong><span class="classifier"><cite>filter</cite></span></dt><dd><p>Filtered list.</p>
 </dd>
 </dl>
 </dd>
@@ -1500,7 +1524,7 @@ given string is cast to numerical format.</p>
 
 </section>
 <section id="module-libics.core.util.path">
-<span id="path"></span><h2>path<a class="headerlink" href="#module-libics.core.util.path" title="Permalink to this heading"></a></h2>
+<span id="path"></span><h2>path<a class="headerlink" href="#module-libics.core.util.path" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.core.util.path.FolderContentsResult">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.core.util.path.</span></span><span class="sig-name descname"><span class="pre">FolderContentsResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.path.FolderContentsResult" title="Permalink to this definition"></a></dt>

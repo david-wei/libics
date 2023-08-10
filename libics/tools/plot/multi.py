@@ -329,6 +329,7 @@ def plot_ax_array(
     Examples
     --------
     Simple example for plotting two rows of 1D plots with different colors:
+
     >>> dataset = DataSequence({
     ...     "x": np.arange(10),
     ...     "y": np.linspace(-1, 1, num=10),

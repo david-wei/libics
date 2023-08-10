@@ -14,9 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -82,8 +80,88 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.plot">
-<span id="libics-tools-plot"></span><h1>libics.tools.plot<a class="headerlink" href="#module-libics.tools.plot" title="Permalink to this heading"></a></h1>
+<span id="libics-tools-plot"></span><h1>libics.tools.plot<a class="headerlink" href="#module-libics.tools.plot" title="Permalink to this headline"></a></h1>
 <span class="target" id="module-libics.tools.plot.base"></span><dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.plot.base.bar">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.plot.base.</span></span><span class="sig-name descname"><span class="pre">bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ynorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.bar" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a 1D bar plot.</p>
+<p>See matplotlib API:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.bar">https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.bar</a></p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*data</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Plots data depending on passed data.
+Supports var data of <cite>ArrayData</cite> or <cite>SeriesData</cite>.</p>
+</dd>
+<dt><strong>x, y</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Explicitly given plot data for each axis.
+Overwrites <cite>*data</cite>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>array-like, float</cite></span></dt><dd><p>Width of the bars in units of the <cite>x</cite> variable.</p>
+</dd>
+<dt><strong>bar_orientation</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Orientation of individual bars: <cite>“vertical”, “horizontal”</cite>.</p>
+</dd>
+<dt><strong>xnorm, ynorm</strong><span class="classifier"><cite>float, ValQuantity</cite></span></dt><dd><p>Normalization value for plot data.
+If <cite>Quantity</cite>, sets an automatic label.</p>
+</dd>
+<dt><strong>linestyle</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Matplotlib linestyle.</p>
+</dd>
+<dt><strong>xlabel, ylabel, label, title</strong><span class="classifier"><cite>str</cite> or <cite>bool</cite></span></dt><dd><p>Labels for the various properties.
+If <cite>True</cite>, tries to automatically set a label.</p>
+</dd>
+<dt><strong>ax</strong><span class="classifier"><cite>matplotlib.axes.Axes</cite></span></dt><dd><p>Matplotlib axes.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the plot function.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.plot.base.barh">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.plot.base.</span></span><span class="sig-name descname"><span class="pre">barh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.barh" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper for <a class="reference internal" href="#libics.tools.plot.base.bar" title="libics.tools.plot.base.bar"><code class="xref py py-func docutils literal notranslate"><span class="pre">bar()</span></code></a>.</p>
+<p>Defaults to horizontally instead of vertically oriented bars.
+Uses <cite>plt.barh</cite> instead of <cite>plt.bar</cite> nomenclature,
+e.g., inverted meaning of <cite>(width, height)</cite> or <cite>(x…, y…)</cite>.</p>
+<p>Generates a 1D bar plot.</p>
+<p>See matplotlib API:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.bar">https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.bar</a></p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*data</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Plots data depending on passed data.
+Supports var data of <cite>ArrayData</cite> or <cite>SeriesData</cite>.</p>
+</dd>
+<dt><strong>x, y</strong><span class="classifier"><cite>array-like, ArrayData, SeriesData</cite></span></dt><dd><p>Explicitly given plot data for each axis.
+Overwrites <cite>*data</cite>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier"><cite>array-like, float</cite></span></dt><dd><p>Width of the bars in units of the <cite>x</cite> variable.</p>
+</dd>
+<dt><strong>bar_orientation</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Orientation of individual bars: <cite>“vertical”, “horizontal”</cite>.</p>
+</dd>
+<dt><strong>xnorm, ynorm</strong><span class="classifier"><cite>float, ValQuantity</cite></span></dt><dd><p>Normalization value for plot data.
+If <cite>Quantity</cite>, sets an automatic label.</p>
+</dd>
+<dt><strong>linestyle</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Matplotlib linestyle.</p>
+</dd>
+<dt><strong>xlabel, ylabel, label, title</strong><span class="classifier"><cite>str</cite> or <cite>bool</cite></span></dt><dd><p>Labels for the various properties.
+If <cite>True</cite>, tries to automatically set a label.</p>
+</dd>
+<dt><strong>ax</strong><span class="classifier"><cite>matplotlib.axes.Axes</cite></span></dt><dd><p>Matplotlib axes.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the plot function.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.plot.base.contourf">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.plot.base.</span></span><span class="sig-name descname"><span class="pre">contourf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ynorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vdif</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vcen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.base.contourf" title="Permalink to this definition"></a></dt>
 <dd><p>Generates a 2D color contour plot.</p>
@@ -538,7 +616,7 @@ Is applied to all axes contained in the figure.</p>
 </dd></dl>
 
 <section id="module-libics.tools.plot.colors">
-<span id="colors"></span><h2>colors<a class="headerlink" href="#module-libics.tools.plot.colors" title="Permalink to this heading"></a></h2>
+<span id="colors"></span><h2>colors<a class="headerlink" href="#module-libics.tools.plot.colors" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.plot.colors.add_named_cmap">
 <span class="sig-prename descclassname"><span class="pre">libics.tools.plot.colors.</span></span><span class="sig-name descname"><span class="pre">add_named_cmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.colors.add_named_cmap" title="Permalink to this definition"></a></dt>
@@ -952,7 +1030,7 @@ If sRGB color, uses its lightness as target.</p>
 
 </section>
 <section id="module-libics.tools.plot.layout">
-<span id="layout"></span><h2>layout<a class="headerlink" href="#module-libics.tools.plot.layout" title="Permalink to this heading"></a></h2>
+<span id="layout"></span><h2>layout<a class="headerlink" href="#module-libics.tools.plot.layout" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.plot.layout.SubfigLayout">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.plot.layout.</span></span><span class="sig-name descname"><span class="pre">SubfigLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.layout.SubfigLayout" title="Permalink to this definition"></a></dt>
@@ -993,7 +1071,7 @@ Can be another <cite>SubfigLayout</cite> or a <cite>mpl.axes.Axes</cite> object
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1209,7 +1287,7 @@ indexes the lower (outer) margin and <cite>[1:]</cite> indexes the inner margins
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1287,7 +1365,7 @@ indexes the lower (outer) margin and <cite>[1:]</cite> indexes the inner margins
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.plot.layout.make_fixed_axes">
-<span class="sig-prename descclassname"><span class="pre">libics.tools.plot.layout.</span></span><span class="sig-name descname"><span class="pre">make_fixed_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.layout.make_fixed_axes" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">libics.tools.plot.layout.</span></span><span class="sig-name descname"><span class="pre">make_fixed_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.plot.layout.make_fixed_axes" title="Permalink to this definition"></a></dt>
 <dd><p>Creates a matplotlib axes at a fixed position.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -1296,6 +1374,8 @@ indexes the lower (outer) margin and <cite>[1:]</cite> indexes the inner margins
 </dd>
 <dt><strong>rect</strong><span class="classifier"><cite>Iter[float]</cite></span></dt><dd><p>Axes rectangle (left, bottom, width, height) in units
 relative to the figure size.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to <cite>matplotlib.Figure.add_axes</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -1310,7 +1390,7 @@ relative to the figure size.</p>
 
 </section>
 <section id="module-libics.tools.plot.multi">
-<span id="multi"></span><h2>multi<a class="headerlink" href="#module-libics.tools.plot.multi" title="Permalink to this heading"></a></h2>
+<span id="multi"></span><h2>multi<a class="headerlink" href="#module-libics.tools.plot.multi" title="Permalink to this headline"></a></h2>
 <p>Module providing multi-axes plots of higher-dimensional data.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.tools.plot.multi.plot_ax_array">
@@ -1369,27 +1449,29 @@ e.g., <cite>colors=[“red”, “green”, “blue”]</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<p>Simple example for plotting two rows of 1D plots with different colors:
-&gt;&gt;&gt; dataset = DataSequence({
-…     “x”: np.arange(10),
-…     “y”: np.linspace(-1, 1, num=10),
-…     “z”: 5*[“a”] + 5*[“b”],
-…     “a”: 5*[True] + 3*[False] + 2*[True],
-… })
-&gt;&gt;&gt; arg_keys = [“y”]
-&gt;&gt;&gt; select_keys = {“color”: “a”, “label”: “a”, “row”: “z”}
-&gt;&gt;&gt; share_list = []
-&gt;&gt;&gt; fmt_keys = {“label”: r”a = {0}”}
-&gt;&gt;&gt; x_key = “x”
-&gt;&gt;&gt; axs = plot.plot_ax_array(
-…     dataset, plot.scatter,
-…     arg_keys=arg_keys, select_keys=select_keys, share_list=share_list,
-…     fmt_keys=fmt_keys, x_key=x_key,
-…     axsize=(5, 3.5)
-… )
-&gt;&gt;&gt; for ax in np.ravel(axs):
-…     plot.style_axes(ax=ax, legend=True)
-&gt;&gt;&gt; plot.show()</p>
+<p>Simple example for plotting two rows of 1D plots with different colors:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">DataSequence</span><span class="p">({</span>
+<span class="gp">... </span>    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">5</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="o">*</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">select_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">share_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmt_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;a = </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_key</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">plot_ax_array</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">dataset</span><span class="p">,</span> <span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">arg_keys</span><span class="o">=</span><span class="n">arg_keys</span><span class="p">,</span> <span class="n">select_keys</span><span class="o">=</span><span class="n">select_keys</span><span class="p">,</span> <span class="n">share_list</span><span class="o">=</span><span class="n">share_list</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">fmt_keys</span><span class="o">=</span><span class="n">fmt_keys</span><span class="p">,</span> <span class="n">x_key</span><span class="o">=</span><span class="n">x_key</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">axsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">plot</span><span class="o">.</span><span class="n">style_axes</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

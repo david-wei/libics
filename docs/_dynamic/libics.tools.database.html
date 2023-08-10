@@ -14,9 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -82,9 +80,9 @@
            <div itemprop="articleBody">
              
   <section id="module-libics.tools.database">
-<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this heading"></a></h1>
+<span id="libics-tools-database"></span><h1>libics.tools.database<a class="headerlink" href="#module-libics.tools.database" title="Permalink to this headline"></a></h1>
 <section id="module-libics.tools.database.amqp">
-<span id="amqp"></span><h2>amqp<a class="headerlink" href="#module-libics.tools.database.amqp" title="Permalink to this heading"></a></h2>
+<span id="amqp"></span><h2>amqp<a class="headerlink" href="#module-libics.tools.database.amqp" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpApiBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.amqp.</span></span><span class="sig-name descname"><span class="pre">AmqpApiBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_random_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpApiBase" title="Permalink to this definition"></a></dt>
@@ -115,7 +113,7 @@ decorated with <a class="reference internal" href="#libics.tools.database.amqp.a
 into an RPC server or client class.</p></li>
 </ul>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -349,7 +347,7 @@ Duplicate parameters overwrite the <cite>config</cite> parameters.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -400,7 +398,7 @@ Duplicate parameters overwrite the <cite>config</cite> parameters.</p>
 </table>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpConnection.CONFIG_PATH">
-<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\weida\\.libics\\tools\\database\\amqp'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.CONFIG_PATH" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\David\\.libics\\tools\\database\\amqp'</span></em><a class="headerlink" href="#libics.tools.database.amqp.AmqpConnection.CONFIG_PATH" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -516,29 +514,21 @@ the same API instance (e.g. one code instance executes the commands,
 another code instance logs the API traffic).</p></li>
 </ul>
 <p>Message specifications:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
-{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“__meta__”: {</dt><dd><p>“__rpc_version”: “x.y.z”,
-“__api_version”: “x.y.z”</p>
-</dd>
-</dl>
-<p>},
-“func_id”: “my_unique_function_identifier”,
-“func_args”: [</p>
-<blockquote>
-<div><p>arg0, arg1, …</p>
-</div></blockquote>
-<p>],
-“func_kwargs”: {</p>
-<blockquote>
-<div><p>“kw0”: kwarg0, “kw1”: kwarg1, …</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<section id="id3">
-<h3>}<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;__meta__&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;__rpc_version&quot;</span><span class="p">:</span> <span class="s2">&quot;x.y.z&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;__api_version&quot;</span><span class="p">:</span> <span class="s2">&quot;x.y.z&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;func_id&quot;</span><span class="p">:</span> <span class="s2">&quot;my_unique_function_identifier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;func_args&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">arg0</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;func_kwargs&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;kw0&quot;</span><span class="p">:</span> <span class="n">kwarg0</span><span class="p">,</span> <span class="s2">&quot;kw1&quot;</span><span class="p">:</span> <span class="n">kwarg1</span><span class="p">,</span> <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
@@ -547,7 +537,7 @@ another code instance logs the API traffic).</p></li>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -661,7 +651,6 @@ parameters is created and is overwritten by <cite>kwargs</cite>.</p>
 <dd><p>Sets up the API object.</p>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
@@ -670,7 +659,7 @@ parameters is created and is overwritten by <cite>kwargs</cite>.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Factory class that turns API classes into RPC servers/clients.</p>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -702,14 +691,14 @@ exchange from which to obtain the API specifications.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">libics.tools.database.amqp.AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_client" title="Permalink to this definition"></a></dt>
 <dd><p>Creates an AMQP RPC client class.</p>
 <p>API method calls are sent via an AMQP broker to a remote server.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_rpc_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#libics.tools.database.amqp.AmqpApiBase" title="libics.tools.database.amqp.AmqpApiBase"><span class="pre">libics.tools.database.amqp.AmqpApiBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.amqp.AmqpRpcFactory.make_rpc_server" title="Permalink to this definition"></a></dt>
 <dd><p>Creates an AMQP RPC server class.</p>
 <p>Accepts API method calls via an AMQP broker from a remote client.</p>
 </dd></dl>
@@ -734,7 +723,7 @@ exchange from which to obtain the API specifications.</p>
 
 </section>
 <section id="module-libics.tools.database.influx">
-<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this heading"></a></h2>
+<span id="influx"></span><h2>influx<a class="headerlink" href="#module-libics.tools.database.influx" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.database.influx.</span></span><span class="sig-name descname"><span class="pre">InfluxDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.database.influx.InfluxDB" title="Permalink to this definition"></a></dt>
@@ -777,7 +766,7 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -823,7 +812,7 @@ Excludes default keys like <cite>_field, _value, etc.</cite></p>
 </table>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="libics.tools.database.influx.InfluxDB.CONFIG_PATH">
-<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\weida\\.libics\\tools\\database\\influx'</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.CONFIG_PATH" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C:\\Users\\David\\.libics\\tools\\database\\influx'</span></em><a class="headerlink" href="#libics.tools.database.influx.InfluxDB.CONFIG_PATH" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

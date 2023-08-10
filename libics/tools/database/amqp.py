@@ -544,21 +544,21 @@ class AmqpRpcBase:
 
     Message specifications:
 
-    ```
-    {
-        "__meta__": {
-            "__rpc_version": "x.y.z",
-            "__api_version": "x.y.z"
-        },
-        "func_id": "my_unique_function_identifier",
-        "func_args": [
-            arg0, arg1, ...
-        ],
-        "func_kwargs": {
-            "kw0": kwarg0, "kw1": kwarg1, ...
+    .. code-block:: python
+
+        {
+            "__meta__": {
+                "__rpc_version": "x.y.z",
+                "__api_version": "x.y.z"
+            },
+            "func_id": "my_unique_function_identifier",
+            "func_args": [
+                arg0, arg1, ...
+            ],
+            "func_kwargs": {
+                "kw0": kwarg0, "kw1": kwarg1, ...
+            }
         }
-    }
-    ```
     """
 
     RPC_VERSION = "0.0.0"
