@@ -60,6 +60,8 @@ def subplots(
             axsize = (axsize[0] / 25.4, axsize[1] / 25.4)
         if axsize_offset is not None:
             axsize_offset = (axsize_offset[0] / 25.4, axsize_offset[1] / 25.4)
+    if axsize_offset is None:
+        axsize_offset = (12 / 25.4, 10 / 25.4)
     # Make figure
     if fig is None:
         if figsize is None and axsize is not None:
