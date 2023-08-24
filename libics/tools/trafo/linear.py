@@ -71,7 +71,8 @@ class AffineTrafo(FileBase, AttrHashBase):
 
     @staticmethod
     def _get_matrix_from_unit_vectors(
-        unit_vecs, normalize=False, orthogonalize=False, check_rank=True
+        unit_vecs, normalize=False, orthogonalize=False,
+        ortho_order=None, check_rank=True
     ):
         """
         Gets the transformation matrix by specifying the unit vectors.
@@ -87,7 +88,10 @@ class AffineTrafo(FileBase, AttrHashBase):
         orthogonalize : `bool`
             Whether to orthogonalize the `unit_vecs`.
             Uses Gram-Schmidt orthogonalization,
-            with precedence to the first vectors.
+            with precedence set by `ortho_order`.
+        ortho_order : `Iterable[int]`
+            Order of orthogonalization.
+            If `None`, uses the index order.
         check_rank : `bool`
             Whether to check if vectors are linearly independent.
             Raises `ValueError` if `unit_vecs` are invalid.
@@ -104,7 +108,11 @@ class AffineTrafo(FileBase, AttrHashBase):
             unit_vecs /= np.linalg.norm(unit_vecs, axis=1, keepdims=True)
         # Orthogonalize vectors
         if orthogonalize:
-            vals_ortho, vals_raw = [], unit_vecs
+            if ortho_order is None:
+                ortho_order = np.arange(ndim)
+            elif len(ortho_order) != ndim:
+                raise IndexError("Invalid `ortho_order`")
+            vals_ortho, vals_raw = [], [unit_vecs[idx] for idx in ortho_order]
             for vr in vals_raw:
                 vn = vr.copy()
                 for vo in vals_ortho:
@@ -112,7 +120,8 @@ class AffineTrafo(FileBase, AttrHashBase):
                 vals_ortho.append(vn)
             if normalize:
                 vals_ortho = [v / np.linalg.norm(v) for v in vals_ortho]
-            unit_vecs = np.asarray(vals_ortho, dtype=float)
+            for i, idx in enumerate(ortho_order):
+                unit_vecs[idx] = vals_ortho[i]
         # Assign matrix
         matrix = np.asarray(unit_vecs, dtype=float).T
         if check_rank:
