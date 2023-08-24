@@ -69,6 +69,85 @@ class AffineTrafo(FileBase, AttrHashBase):
             self.matrix - np.diag(np.ones(len(self.matrix)))
         ) @ self.offset
 
+    @staticmethod
+    def _get_matrix_from_unit_vectors(
+        unit_vecs, normalize=False, orthogonalize=False, check_rank=True
+    ):
+        """
+        Gets the transformation matrix by specifying the unit vectors.
+
+        Parameters
+        ----------
+        unit_vecs : `Iterable[np.ndarray]`
+            New unit vectors in cartesian units.
+            If insufficient vectors (less than `ndim`) are given,
+            the new vectors are padded by the cartesian vectors.
+        normalize : `bool`
+            Whether to normalize the `unit_vecs`.
+        orthogonalize : `bool`
+            Whether to orthogonalize the `unit_vecs`.
+            Uses Gram-Schmidt orthogonalization,
+            with precedence to the first vectors.
+        check_rank : `bool`
+            Whether to check if vectors are linearly independent.
+            Raises `ValueError` if `unit_vecs` are invalid.
+        """
+        unit_vecs = np.asarray(unit_vecs, dtype=float)
+        ndim = len(unit_vecs[0])
+        # Pad unit vectors
+        if len(unit_vecs) != ndim:
+            vecs = np.diag(np.ones(ndim, dtype=float))
+            vecs[:len(unit_vecs)] = np.asarray(unit_vecs)
+            unit_vecs = vecs
+        # Normalize vectors
+        if normalize:
+            unit_vecs /= np.linalg.norm(unit_vecs, axis=1, keepdims=True)
+        # Orthogonalize vectors
+        if orthogonalize:
+            vals_ortho, vals_raw = [], unit_vecs
+            for vr in vals_raw:
+                vn = vr.copy()
+                for vo in vals_ortho:
+                    vn -= np.dot(vn, vo) * vo / np.linalg.norm(vo)**2
+                vals_ortho.append(vn)
+            if normalize:
+                vals_ortho = [v / np.linalg.norm(v) for v in vals_ortho]
+            unit_vecs = np.asarray(vals_ortho, dtype=float)
+        # Assign matrix
+        matrix = np.asarray(unit_vecs, dtype=float).T
+        if check_rank:
+            if np.linalg.matrix_rank(matrix) != ndim:
+                raise ValueError("Vectors are not linearly independent")
+        return matrix
+
+    def set_matrix_by_target_unit_vectors(self, unit_vecs, **kwargs):
+        """
+        Sets the transformation matrix by specifying the target unit vectors.
+
+        Parameters
+        ----------
+        unit_vecs : `Iterable[np.ndarray]`
+            Target unit vectors in origin units.
+        **kwargs
+            See :py:meth:`_get_matrix_from_unit_vectors`.
+        """
+        matrix = self._get_matrix_from_unit_vectors(unit_vecs, **kwargs)
+        self.matrix = matrix
+
+    def set_matrix_by_origin_unit_vectors(self, unit_vecs, **kwargs):
+        """
+        Sets the transformation matrix by specifying the origin unit vectors.
+
+        Parameters
+        ----------
+        unit_vecs : `Iterable[np.ndarray]`
+            Origin unit vectors in target units.
+        **kwargs
+            See :py:meth:`_get_matrix_from_unit_vectors`.
+        """
+        matrix = self._get_matrix_from_unit_vectors(unit_vecs, **kwargs)
+        self.matrix = np.linalg.inv(matrix)
+
     def set_offset_by_fixed_point(self, fixed_point):
         return self.set_offset_by_point_pair(fixed_point, fixed_point)
 
