@@ -6,6 +6,14 @@ libics.tools.trafo
     :undoc-members:
     :show-inheritance:
 
+coordinates
+-----------
+
+.. automodule:: libics.tools.trafo.coordinates
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 fourier
 -------
 
