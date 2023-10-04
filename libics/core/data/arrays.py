@@ -1766,7 +1766,10 @@ class ArrayData(AttrHashBase):
 
     def __array_function__(self, func, types, args, kwargs):
         res = func(self.data, *args[1:], **kwargs)
-        if np.isscalar(res) or res.shape != self.shape:
+        if (
+            np.isscalar(res)
+            or not hasattr(res, "shape") or res.shape != self.shape
+        ):
             obj = res
         else:
             obj = copy.deepcopy(self)
