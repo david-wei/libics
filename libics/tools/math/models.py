@@ -102,6 +102,9 @@ class ModelBase(abc.ABC, FileBase):
     P_ALL = NotImplemented
     P_DEFAULT = NotImplemented
 
+    # Helper class attributes
+    _SCIPY_VERSION = tuple(int(x) for x in scipy.__version__.split("."))
+
     def __init__(self, *data, const_p0=None, **kwargs):
         # Parameter names to be fitted (map to _popt index)
         self._pfit = None
@@ -400,6 +403,8 @@ class ModelBase(abc.ABC, FileBase):
             var_data = var_data.astype(float)
         if func_data.dtype != float:
             func_data = func_data.astype(float)
+        if "nan_policy" not in kwargs and self._SCIPY_VERSION >= (1, 11):
+            kwargs["nan_policy"] = "omit"
         p0 = np.copy(self.p0_for_fit)
 
         # Set bounds

@@ -140,7 +140,7 @@ def assume_iter(data):
     """
     try:
         iter(data)
-    except(TypeError):
+    except TypeError:
         data = [data]
     return data
 
@@ -195,18 +195,25 @@ def assume_list(data):
         return [data]
 
 
-def assume_numpy_array(data, shape=None):
+def assume_numpy_array(data, shape=None, error="raise"):
     """
-    Asserts that data is a `numpy.ndarray` object.
+    Asserts that `data` is a `numpy.ndarray` object (with given shape).
 
     Parameters
     ----------
     data
         Input data to be checked for `numpy.ndarray`.
     shape : `tuple(int)` or `None`
-        If given and data is scalar, creates a numpy array with given shape
+        If given data is scalar, creates a numpy array with given shape
         containing given data as element.
-        If given and data has a different shape, raises a `ValueError`.
+        If given data has a different shape, performs error handling according
+        to the `error` parameter.
+    error : `str`
+        Controls how to handle shape errors:
+        `"raise"`: raises a `ValueError`.
+        `"repeat" or "tile"`: appends the data or crops it to match the shape.
+        Repeating means `"[1, 2, 3] -> [1, 1, 2, 2, 3, 3]`,
+        tiling means `"[1, 2, 3] -> [1, 2, 3, 1, 2, 3]`.
 
     Returns
     -------
@@ -222,9 +229,18 @@ def assume_numpy_array(data, shape=None):
                 data = np.full(shape, data)
             # Else wrong shape
             else:
-                raise ValueError(
-                    f"array shape {data.shape} != given shape {shape}"
-                )
+                if error in ("repeat", "tile"):
+                    reps = np.ceil(np.array(shape) / np.array(data.shape))
+                    reps = reps.astype(int)
+                    func = {"repeat": np.repeat, "tile": np.tile}[error]
+                    for axis, rep in enumerate(reps):
+                        if rep > 1:
+                            data = func(data, rep, axis=axis)
+                    data = data[tuple(slice(0, s) for s in shape)]
+                else:
+                    raise ValueError(
+                        f"array shape {data.shape} != given shape {shape}"
+                    )
     return data
 
 
@@ -250,7 +266,7 @@ def assume_endswith(string, suffix):
     AssertionError
         If the parameters are invalid.
     """
-    assert(type(string) == str and type(suffix) == str)
+    assert (isinstance(string, str) and isinstance(suffix, str))
     if not string.endswith(suffix):
         string += suffix
     return string
@@ -278,7 +294,7 @@ def assume_startswith(string, prefix):
     AssertionError
         If the parameters are invalid.
     """
-    assert(type(string) == str and type(prefix) == str)
+    assert (isinstance(string, str) and isinstance(prefix, str))
     if not string.startswith(prefix):
         string = prefix + string
     return string
@@ -549,7 +565,7 @@ def make_dict(key_list, val_list):
     AssertionError
         If the lengths of the lists do not match.
     """
-    assert(len(key_list) == len(val_list))
+    assert len(key_list) == len(val_list)
     d = {}
     for i, k in enumerate(key_list):
         d[k] = val_list[i]
@@ -606,7 +622,7 @@ def generate_fill_chars(s, fill_char=" "):
     fs : `str`
         Fill string with length defined by `s`.
     """
-    if type(s) != int:
+    if not isinstance(s, int):
         s = len(s)
     lfch = len(fill_char)
     rep = math.ceil(float(s) / lfch)
