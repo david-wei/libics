@@ -266,11 +266,11 @@ def _plot_ax_in_ax_array(
 def plot_ax_array(
     # Data
     dataset, plot_func,
+    # Grouping properties
+    x_key=None, arg_keys=None, kwarg_keys=None, select_keys=None,
     # Figure properties
     fig=None, axs=None, sharex=False, sharey=False, remove_empty=True,
     figsize=None, axsize=None, axsize_offset=(0.2, 0.2), size_unit="in",
-    # Grouping properties
-    arg_keys=None, kwarg_keys=None, select_keys=None, x_key=None,
     # Formatting properties
     share_list=None, quantitative_list=None, fmt_keys=None, **plt_params
 ):
@@ -285,15 +285,10 @@ def plot_ax_array(
         Data set.
     plot_func : `callable`
         Plot function. Must accept parameter `ax` as matplotlib axes.
-    fig, axs
-        Matplotlib figure or axes into which to plot data.
-        If `None`, is automatically generated.
-    sharex, sharey : `bool`
-        Whether to share axes ticks.
-    remove_empty : `bool`
-        Whether to remove empty matplotlib axes.
-    fig_size, ax_size, axsize_offset, size_unit
-        Figure size if `fig` is automatically generated.
+    x_key : `str`
+        If provided, the plot call is altered. After filtering the data set
+        according to `select_keys`, `plot_func` is called as:
+        `plot_func(dataset[x_key], dataset[arg_keys[0]], ...)`
     arg_keys : `Iter[str]`
         List of data keys used to call `plot_func`.
         Call signature: `plot_func(dataset_row[arg_key[0]], ...)`.
@@ -305,10 +300,15 @@ def plot_ax_array(
         Chooses how the data should be encoded as plot styles.
         Dictionary mapping plot style to data keys, e.g.,
         `{"color": ["data_column0", "data_column1"]}`.
-    x_key : `str`
-        If provided, the plot call is altered. After filtering the data set
-        according to `select_keys`, `plot_func` is called as:
-        `plot_func(dataset[x_key], dataset[arg_keys[0]], ...)`
+    fig, axs
+        Matplotlib figure or axes into which to plot data.
+        If `None`, is automatically generated.
+    sharex, sharey : `bool`
+        Whether to share axes ticks.
+    remove_empty : `bool`
+        Whether to remove empty matplotlib axes.
+    fig_size, ax_size, axsize_offset, size_unit
+        Figure size if `fig` is automatically generated.
     share_list : `Iter[str]` or `None`
         List of plot keys which should have common representation across axes.
     quantitative_list : `Iter[str]` or `None`
@@ -343,8 +343,9 @@ def plot_ax_array(
     >>> x_key = "x"
     >>> axs = plot.plot_ax_array(
     ...     dataset, plot.scatter,
-    ...     arg_keys=arg_keys, select_keys=select_keys, share_list=share_list,
-    ...     fmt_keys=fmt_keys, x_key=x_key,
+    ...     x_key=x_key, arg_keys=arg_keys,
+    ...     select_keys=select_keys,
+    ...     share_list=share_list, fmt_keys=fmt_keys,
     ...     axsize=(5, 3.5)
     ... )
     >>> for ax in np.ravel(axs):

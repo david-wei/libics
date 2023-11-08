@@ -720,7 +720,7 @@ def contourf(
 
 
 def plot_rectangle(
-    rect=None, center=None, size=None,
+    rect=None, center=None, size=None, idx_rect=None,
     linestyle="=", angle=None,
     ax=None, **kwargs
 ):
@@ -732,11 +732,14 @@ def plot_rectangle(
 
     Parameters
     ----------
-    rect : `[[float, float], [float], float]]`
+    rect : `[[float, float], [float, float]]`
         Rectangle corners, specified as `[[xmin, xmax], [ymin, ymax]]`.
         Takes precedence over `center` and `size`.
     center, size : `[float, float]`
         Rectangle center and size, specified as `[x, y]`.
+    idx_rect : `[[int, int], [int, int]]` or `tuple(slice)`
+        Index rectangle specified as `rect` or as `slice` object.
+        Applies an offset of -0.5 to account for being an index.
     angle : `float`
         Rotation of rectangle.
     ax : `matplotlib.axes.Axes`
@@ -749,6 +752,15 @@ def plot_rectangle(
     if rect is not None:
         _xy = rect[0][0], rect[1][0]
         size = rect[0][1] - rect[0][0], rect[1][1] - rect[1][0]
+    elif idx_rect is not None:
+        idx_rect = [
+            [_idx.start, _idx.stop] if isinstance(_idx, slice) else _idx
+            for _idx in idx_rect
+        ]
+        _xy = idx_rect[0][0] - 0.5, idx_rect[1][0] - 0.5
+        size = idx_rect[0][1] - idx_rect[0][0], idx_rect[1][1] - idx_rect[1][0]
+        if np.all([_s not in kwargs for _s in ["color", "facecolor", "fc"]]):
+            kwargs["facecolor"] = "none"
     else:
         _xy = center[0] - size[0] / 2, center[1] - size[1] / 2
     # Process marker style
@@ -1152,14 +1164,14 @@ def _process_patch_param(linestyle, **kwargs):
                 if __kwargs_param_is_not_empty(kwargs, "facecolor"):
                     _ec = colors.rgb_blacken(kwargs["facecolor"])
                 else:
-                    _ec = mpl.colorConverter.to_rgba(_color)
+                    _ec = mplc.colorConverter.to_rgba(_color)
                 kwargs["edgecolor"] = _ec
         else:
             if "facecolor" not in kwargs:
                 if __kwargs_param_is_not_empty(kwargs, "edgecolor"):
                     _fc = colors.rgb_whiten(kwargs["edgecolor"])
                 else:
-                    _fc = mpl.colorConverter.to_rgba(_color)
+                    _fc = mplc.colorConverter.to_rgba(_color)
                 kwargs["facecolor"] = _fc
         kwargs["linestyle"] = "-"
     else:

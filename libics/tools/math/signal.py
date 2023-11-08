@@ -440,7 +440,7 @@ class PeakInfo(FileBase):
         peak : `PeakInfo`
             Peak.
         """
-        yield(self)
+        yield self
         for subpeak in self.iter_subpeaks():
             yield subpeak
 
