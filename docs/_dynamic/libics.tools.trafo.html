@@ -81,6 +81,109 @@
              
   <section id="module-libics.tools.trafo">
 <span id="libics-tools-trafo"></span><h1>libics.tools.trafo<a class="headerlink" href="#module-libics.tools.trafo" title="Permalink to this headline"></a></h1>
+<section id="module-libics.tools.trafo.coordinates">
+<span id="coordinates"></span><h2>coordinates<a class="headerlink" href="#module-libics.tools.trafo.coordinates" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.assume_coords_type">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">assume_coords_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.assume_coords_type" title="Permalink to this definition"></a></dt>
+<dd><p>Converts coordinates into a specified format.</p>
+<p>Multidimensional arrays of multidimensional coordinates
+can be specified in three different formats:</p>
+<ul class="simple">
+<li><p><cite>“coords”</cite>: A single array whose coordinates are located
+in the last axis, i.e., <cite>array.shape = (…, n_dim)</cite>.</p></li>
+<li><p><cite>“components”</cite>: A list of arrays, where each list item represents
+one coordinate, i.e., <cite>len(array) = n_dim</cite>.</p></li>
+<li><p><cite>“names”</cite>: Keyword arguments, where the keyword names specify
+the respective coordinate, i.e., <cite>len(kwargs) = n_dim</cite>.</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>*coords, **components</strong><span class="classifier"><cite>np.ndarray</cite></span></dt><dd><p>Coordinates (may be given in any of the above formats).</p>
+</dd>
+<dt><strong>coord_type</strong><span class="classifier"><cite>str</cite> or <cite>None</cite></span></dt><dd><p>Format of the coordinates: <cite>“coords”, “components”, “names”</cite>.
+If <cite>None</cite>, uses the input format.</p>
+</dd>
+<dt><strong>names</strong><span class="classifier"><cite>list(tuple(str))</cite></span></dt><dd><p>Component names in the coordinate order.
+Each tuple contains aliases for the respective component.
+If <cite>coord_type == “names”</cite>, the first item of the tuple is used as key.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>coords</dt><dd><p>Coordinates in the format specified by <cite>coord_type</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If <cite>coord_type</cite> is invalid.</p>
+</dd>
+<dt>IndexError, KeyError</dt><dd><p>If <cite>names</cite> is incompatible with <cite>**components</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_cartesian_to_cylindrical">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_cartesian_to_cylindrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_cartesian_to_cylindrical" title="Permalink to this definition"></a></dt>
+<dd><p>Converts cartesian to cylindrical <span class="math notranslate nohighlight">\((\rho, \phi, z)\)</span> coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the in-plane radial,
+<span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the polar,
+and <span class="math notranslate nohighlight">\(z \in [-\infty, \infty]\)</span> is the vertical coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_cartesian_to_polar">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_cartesian_to_polar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_cartesian_to_polar" title="Permalink to this definition"></a></dt>
+<dd><p>Converts cartesian to polar <span class="math notranslate nohighlight">\((\rho, \phi)\)</span> coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial,
+<span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the polar coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_cartesian_to_spherical">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_cartesian_to_spherical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_cartesian_to_spherical" title="Permalink to this definition"></a></dt>
+<dd><p>Converts cartesian to spherical <span class="math notranslate nohighlight">\((r, \theta, \phi)\)</span> coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial, <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span>
+is the polar, and <span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the azimuthal coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_cylindrical_to_cartesian">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_cylindrical_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_cylindrical_to_cartesian" title="Permalink to this definition"></a></dt>
+<dd><p>Converts cylindrical <span class="math notranslate nohighlight">\((\rho, \phi, z)\)</span> to cartesian coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the in-plane radial,
+<span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the polar,
+and <span class="math notranslate nohighlight">\(z \in [-\infty, \infty]\)</span> is the vertical coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_polar_to_cartesian">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_polar_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_polar_to_cartesian" title="Permalink to this definition"></a></dt>
+<dd><p>Converts polar <span class="math notranslate nohighlight">\((\rho, \phi)\)</span> to cartesian coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial,
+<span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the polar coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.cv_spherical_to_cartesian">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">cv_spherical_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.cv_spherical_to_cartesian" title="Permalink to this definition"></a></dt>
+<dd><p>Converts spherical <span class="math notranslate nohighlight">\((r, \theta, \phi)\)</span> to cartesian coordinates.</p>
+<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial, <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span>
+is the polar, and <span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the azimuthal coordinate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="libics.tools.trafo.coordinates.get_coords_type">
+<span class="sig-prename descclassname"><span class="pre">libics.tools.trafo.coordinates.</span></span><span class="sig-name descname"><span class="pre">get_coords_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.coordinates.get_coords_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="module-libics.tools.trafo.fourier">
 <span id="fourier"></span><h2>fourier<a class="headerlink" href="#module-libics.tools.trafo.fourier" title="Permalink to this headline"></a></h2>
 <dl class="py function">
@@ -237,6 +340,12 @@ Inv. FFT: <cite>“forward”</cite>: 1, <cite>“ortho”</cite>: 1/√N, <cite
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(file_path, **kwargs)</p></td>
 <td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_origin_unit_vectors" title="libics.tools.trafo.linear.AffineTrafo.set_matrix_by_origin_unit_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_matrix_by_origin_unit_vectors</span></code></a>(unit_vecs, ...)</p></td>
+<td><p>Sets the transformation matrix by specifying the origin unit vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_target_unit_vectors" title="libics.tools.trafo.linear.AffineTrafo.set_matrix_by_target_unit_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_matrix_by_target_unit_vectors</span></code></a>(unit_vecs, ...)</p></td>
+<td><p>Sets the transformation matrix by specifying the target unit vectors.</p></td>
 </tr>
 </tbody>
 </table>
@@ -483,6 +592,38 @@ dimension in target space.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.set_matrix_by_origin_unit_vectors">
+<span class="sig-name descname"><span class="pre">set_matrix_by_origin_unit_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit_vecs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_origin_unit_vectors" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the transformation matrix by specifying the origin unit vectors.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>unit_vecs</strong><span class="classifier"><cite>Iterable[np.ndarray]</cite></span></dt><dd><p>Origin unit vectors in target units.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">_get_matrix_from_unit_vectors()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.set_matrix_by_target_unit_vectors">
+<span class="sig-name descname"><span class="pre">set_matrix_by_target_unit_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit_vecs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_target_unit_vectors" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the transformation matrix by specifying the target unit vectors.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>unit_vecs</strong><span class="classifier"><cite>Iterable[np.ndarray]</cite></span></dt><dd><p>Target unit vectors in origin units.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">_get_matrix_from_unit_vectors()</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="libics.tools.trafo.linear.AffineTrafo.set_offset_by_fixed_point">
 <span class="sig-name descname"><span class="pre">set_offset_by_fixed_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fixed_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.trafo.linear.AffineTrafo.set_offset_by_fixed_point" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -605,6 +746,12 @@ dimension in target space.</p>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(file_path, **kwargs)</p></td>
 <td><p>Wrapper for <code class="xref py py-func docutils literal notranslate"><span class="pre">save()</span></code> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_matrix_by_origin_unit_vectors</span></code>(unit_vecs, ...)</p></td>
+<td><p>Sets the transformation matrix by specifying the origin unit vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_matrix_by_target_unit_vectors</span></code>(unit_vecs, ...)</p></td>
+<td><p>Sets the transformation matrix by specifying the target unit vectors.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes" title="libics.tools.trafo.linear.AffineTrafo2d.set_origin_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_origin_axes</span></code></a>([magnification, angle, offset])</p></td>
 <td><p>Sets the origin coordinate system axes.</p></td>

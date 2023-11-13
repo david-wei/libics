@@ -270,7 +270,8 @@ def plot_ax_array(
     x_key=None, arg_keys=None, kwarg_keys=None, select_keys=None,
     # Figure properties
     fig=None, axs=None, sharex=False, sharey=False, remove_empty=True,
-    figsize=None, axsize=None, axsize_offset=(0.2, 0.2), size_unit="in",
+    figsize=None, axsize=None, axsize_offset=(0.2, 0.2), dpi=None,
+    size_unit="in",
     # Formatting properties
     share_list=None, quantitative_list=None, fmt_keys=None, **plt_params
 ):
@@ -307,7 +308,7 @@ def plot_ax_array(
         Whether to share axes ticks.
     remove_empty : `bool`
         Whether to remove empty matplotlib axes.
-    fig_size, ax_size, axsize_offset, size_unit
+    fig_size, ax_size, axsize_offset, size_unit, dpi
         Figure size if `fig` is automatically generated.
     share_list : `Iter[str]` or `None`
         List of plot keys which should have common representation across axes.
@@ -417,7 +418,7 @@ def plot_ax_array(
     if axs is None:
         fig, axs = subplots(
             fig=fig, size_unit=size_unit, figsize=figsize,
-            axsize=axsize, axsize_offset=axsize_offset,
+            axsize=axsize, axsize_offset=axsize_offset, dpi=dpi,
             nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey,
             squeeze=False
         )
@@ -481,6 +482,12 @@ def plot_ax_array(
                 **plt_params
             )
     # Clean up
+    if sharex:
+        for ax in np.ravel(axs[:-1]):
+            ax.set_xlabel("")
+    if sharey:
+        for ax in np.ravel(axs[:, 1:]):
+            ax.set_ylabel("")
     if remove_empty:
         remove_axes(*empty_axs, enforce=False, on_empty=True)
     return axs

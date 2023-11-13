@@ -581,7 +581,7 @@ to fit the measurement data:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
@@ -609,7 +609,7 @@ to fit the measurement data:</p>
 <td><p>Calculate expected value of a function with respect to the distribution by numerical integration.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code>(data, *args, **kwds)</p></td>
-<td><p>Return MLEs for shape (if applicable), location, and scale parameters from data.</p></td>
+<td><p>Return estimates of shape (if applicable), location, and scale parameters from data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_loc_scale</span></code>(data, *args)</p></td>
 <td><p>Estimate loc and scale parameters from data using 1st and 2nd moments.</p></td>
@@ -617,7 +617,7 @@ to fit the measurement data:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.freeze" title="libics.tools.math.models.RvContinuous.freeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code></a>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.ipdf" title="libics.tools.math.models.RvContinuous.ipdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ipdf</span></code></a>(p, *args[, branch, tol])</p></td>
@@ -644,11 +644,11 @@ to fit the measurement data:</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#libics.tools.math.models.RvContinuous.mode" title="libics.tools.math.models.RvContinuous.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(*args, **kwds)</p></td>
 <td><p>Mode of the given RV, i.e., the maximum location of the PDF.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
-<td><p>n-th order non-central moment of distribution.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
+<td><p>non-central moment of distribution of specified order.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
-<td><p>Return negative loglikelihood function.</p></td>
+<td><p>Negative loglikelihood function.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pdf</span></code>(x, *args, **kwds)</p></td>
 <td><p>Probability density function at x of the given RV.</p></td>
@@ -675,7 +675,7 @@ to fit the measurement data:</p>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Return the support of the distribution.</p></td>
+<td><p>Support of the distribution.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
@@ -881,7 +881,7 @@ Used if one distribution contains “more” probability than another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="libics.tools.math.models.RvContinuousFrozen">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libics.tools.math.models.</span></span><span class="sig-name descname"><span class="pre">RvContinuousFrozen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.tools.math.models.RvContinuousFrozen" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_frozen</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats._distn_infrastructure.rv_continuous_frozen</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
@@ -917,25 +917,19 @@ Used if one distribution contains “more” probability than another.</p>
 <tr class="row-odd"><td><p><strong>logpdf</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>logpmf</strong></p></td>
+<tr class="row-even"><td><p><strong>logsf</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>logsf</strong></p></td>
+<tr class="row-odd"><td><p><strong>mean</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>mean</strong></p></td>
+<tr class="row-even"><td><p><strong>median</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>median</strong></p></td>
+<tr class="row-odd"><td><p><strong>moment</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>moment</strong></p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p><strong>pdf</strong></p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p><strong>pmf</strong></p></td>
+<tr class="row-even"><td><p><strong>pdf</strong></p></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><p><strong>ppf</strong></p></td>
@@ -4713,7 +4707,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
@@ -4740,7 +4734,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4761,31 +4755,34 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
-<td><p>n-th order non-central moment of distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
+<td><p>non-central moment of distribution of specified order.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
+<td><p>Negative loglikelihood function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Return the support of the distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Support of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>
@@ -4812,7 +4809,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
@@ -4839,7 +4836,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4860,31 +4857,34 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
-<td><p>n-th order non-central moment of distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
+<td><p>non-central moment of distribution of specified order.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
+<td><p>Negative loglikelihood function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Return the support of the distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Support of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>
@@ -4909,7 +4909,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 </dd>
 <dt class="field-even">Attributes</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the RandomState object for generating random variates.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_state</span></code></dt><dd><p>Get or set the generator object for generating random variates.</p>
 </dd>
 </dl>
 </dd>
@@ -4936,7 +4936,7 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code>(*args, **kwds)</p></td>
 <td><p>Freeze the distribution for the given arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>(alpha, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code>([confidence])</p></td>
 <td><p>Confidence interval with equal areas around the median.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isf</span></code>(q, *args, **kwds)</p></td>
@@ -4957,31 +4957,34 @@ intermediate state decay rate “ge”, offset <cite>“c”</cite>.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>(*args, **kwds)</p></td>
 <td><p>Median of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>(n, *args, **kwds)</p></td>
-<td><p>n-th order non-central moment of distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moment</span></code>([order])</p></td>
+<td><p>non-central moment of distribution of specified order.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnlf</span></code>(theta, x)</p></td>
+<td><p>Negative loglikelihood function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Probability mass function at k of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ppf</span></code>(q, *args, **kwds)</p></td>
 <td><p>Percent point function (inverse of <cite>cdf</cite>) at q of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvs</span></code>(*args, **kwargs)</p></td>
 <td><p>Random variates of given type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sf</span></code>(k, *args, **kwds)</p></td>
 <td><p>Survival function (1 - <cite>cdf</cite>) at k of the given RV.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code>(*args, **kwds)</p></td>
 <td><p>Some statistics of the given RV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>(*args, **kwds)</p></td>
 <td><p>Standard deviation of the distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
-<td><p>Return the support of the distribution.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support</span></code>(*args, **kwargs)</p></td>
+<td><p>Support of the distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>(*args, **kwds)</p></td>
 <td><p>Variance of the distribution.</p></td>
 </tr>
 </tbody>

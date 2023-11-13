@@ -184,6 +184,8 @@
 </li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.misc.assume_construct_obj">assume_construct_obj() (in module libics.core.util.misc)</a>
 </li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.assume_coords_type">assume_coords_type() (in module libics.tools.trafo.coordinates)</a>
+</li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.misc.assume_dir">assume_dir() (in module libics.core.util.misc)</a>
 </li>
       <li><a href="_dynamic/libics.env.html#libics.env.ASSUME_DIR">ASSUME_DIR() (in module libics.env)</a>
@@ -354,8 +356,6 @@
 </li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.coord_to_target">coord_to_target() (libics.tools.trafo.linear.AffineTrafo method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.copy">copy() (libics.core.data.arrays.ArrayData method)</a>
 
       <ul>
@@ -366,6 +366,8 @@
         <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.copy">(libics.tools.trafo.linear.AffineTrafo method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.copy_var">copy_var() (libics.core.data.arrays.ArrayData method)</a>
 </li>
       <li><a href="_dynamic/libics.tools.math.html#libics.tools.math.signal.correlate_g2">correlate_g2() (in module libics.tools.math.signal)</a>
@@ -394,9 +396,15 @@
 </li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.misc.cv_camel_to_snake_case">cv_camel_to_snake_case() (in module libics.core.util.misc)</a>
 </li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_cartesian_to_cylindrical">cv_cartesian_to_cylindrical() (in module libics.tools.trafo.coordinates)</a>
+</li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_cartesian_to_polar">cv_cartesian_to_polar() (in module libics.tools.trafo.coordinates)</a>
+</li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_cartesian_to_spherical">cv_cartesian_to_spherical() (in module libics.tools.trafo.coordinates)</a>
+</li>
       <li><a href="_dynamic/libics.tools.plot.html#libics.tools.plot.layout.SubfigLayout.cv_center_to_rect">cv_center_to_rect() (libics.tools.plot.layout.SubfigLayout static method)</a>
 </li>
-      <li><a href="_dynamic/libics.core.util.html#libics.core.util.misc.cv_coord_spherical_to_cartesian">cv_coord_spherical_to_cartesian() (in module libics.core.util.misc)</a>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_cylindrical_to_cartesian">cv_cylindrical_to_cartesian() (in module libics.tools.trafo.coordinates)</a>
 </li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.conversion.cv_datasequence_to_list">cv_datasequence_to_list() (in module libics.core.data.conversion)</a>
 </li>
@@ -430,11 +438,15 @@
 </li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.cv_offset_shift_to_target">cv_offset_shift_to_target() (libics.tools.trafo.linear.AffineTrafo method)</a>
 </li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_polar_to_cartesian">cv_polar_to_cartesian() (in module libics.tools.trafo.coordinates)</a>
+</li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.cv_quantity_to_index">cv_quantity_to_index() (libics.core.data.arrays.ArrayData method)</a>
 </li>
       <li><a href="_dynamic/libics.tools.plot.html#libics.tools.plot.layout.SubfigLayout.cv_rect_to_center">cv_rect_to_center() (libics.tools.plot.layout.SubfigLayout static method)</a>
 </li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.conversion.cv_seriesdata_to_arraydata">cv_seriesdata_to_arraydata() (in module libics.core.data.conversion)</a>
+</li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.cv_spherical_to_cartesian">cv_spherical_to_cartesian() (in module libics.tools.trafo.coordinates)</a>
 </li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.misc.cv_timestamp">cv_timestamp() (in module libics.core.util.misc)</a>
 </li>
@@ -836,6 +848,8 @@
 </li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.get_coordinate_meshgrid">get_coordinate_meshgrid() (in module libics.core.data.arrays)</a>
 </li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.coordinates.get_coords_type">get_coords_type() (in module libics.tools.trafo.coordinates)</a>
+</li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.get_copy_obj">get_copy_obj() (libics.core.data.arrays.ArrayData method)</a>
 </li>
       <li><a href="_dynamic/libics.tools.control.html#libics.tools.control.pid.get_ctrl_image">get_ctrl_image() (in module libics.tools.control.pid)</a>
@@ -878,10 +892,10 @@
 </li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.path.get_folder_contents">get_folder_contents() (in module libics.core.util.path)</a>
 </li>
-      <li><a href="_dynamic/libics.core.io.html#libics.core.io.base.get_fqname_from_class">get_fqname_from_class() (in module libics.core.io.base)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_dynamic/libics.core.io.html#libics.core.io.base.get_fqname_from_class">get_fqname_from_class() (in module libics.core.io.base)</a>
+</li>
       <li><a href="_dynamic/libics.core.util.html#libics.core.util.func.PeriodicTimer.get_function">get_function() (libics.core.util.func.PeriodicTimer method)</a>
 </li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.get_high">get_high() (libics.core.data.arrays.ArrayData method)</a>
@@ -1448,6 +1462,13 @@
 </li>
       </ul></li>
       <li>
+    libics.tools.trafo.coordinates
+
+      <ul>
+        <li><a href="_dynamic/libics.tools.trafo.html#module-libics.tools.trafo.coordinates">module</a>
+</li>
+      </ul></li>
+      <li>
     libics.tools.trafo.fourier
 
       <ul>
@@ -1763,6 +1784,8 @@
         <li><a href="_dynamic/libics.tools.plot.html#module-libics.tools.plot.multi">libics.tools.plot.multi</a>
 </li>
         <li><a href="_dynamic/libics.tools.trafo.html#module-libics.tools.trafo">libics.tools.trafo</a>
+</li>
+        <li><a href="_dynamic/libics.tools.trafo.html#module-libics.tools.trafo.coordinates">libics.tools.trafo.coordinates</a>
 </li>
         <li><a href="_dynamic/libics.tools.trafo.html#module-libics.tools.trafo.fourier">libics.tools.trafo.fourier</a>
 </li>
@@ -2231,6 +2254,10 @@
 </li>
       <li><a href="_dynamic/libics.core.data.html#libics.core.data.arrays.ArrayData.set_dim">set_dim() (libics.core.data.arrays.ArrayData method)</a>
 </li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_origin_unit_vectors">set_matrix_by_origin_unit_vectors() (libics.tools.trafo.linear.AffineTrafo method)</a>
+</li>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.set_matrix_by_target_unit_vectors">set_matrix_by_target_unit_vectors() (libics.tools.trafo.linear.AffineTrafo method)</a>
+</li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.set_offset_by_fixed_point">set_offset_by_fixed_point() (libics.tools.trafo.linear.AffineTrafo method)</a>
 </li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo.set_offset_by_point_pair">set_offset_by_point_pair() (libics.tools.trafo.linear.AffineTrafo method)</a>
@@ -2261,10 +2288,10 @@
         <li><a href="_dynamic/libics.tools.plot.html#libics.tools.plot.layout.SubfigLayout.shape">(libics.tools.plot.layout.SubfigLayout property)</a>
 </li>
       </ul></li>
-      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo2d.shift">shift() (libics.tools.trafo.linear.AffineTrafo2d method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo2d.shift">shift() (libics.tools.trafo.linear.AffineTrafo2d method)</a>
+</li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo2d.shift_origin_axes">shift_origin_axes() (libics.tools.trafo.linear.AffineTrafo2d method)</a>
 </li>
       <li><a href="_dynamic/libics.tools.trafo.html#libics.tools.trafo.linear.AffineTrafo2d.shift_target_axes">shift_target_axes() (libics.tools.trafo.linear.AffineTrafo2d method)</a>

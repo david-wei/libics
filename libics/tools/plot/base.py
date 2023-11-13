@@ -43,8 +43,8 @@ def use_style(name="libics"):
 
 
 def subplots(
-    fig=None, figsize=None, axsize=None, axsize_offset=None, size_unit="in",
-    nrows=1, ncols=1, **kwargs
+    fig=None, figsize=None, axsize=None, axsize_offset=None, dpi=None,
+    size_unit="in", nrows=1, ncols=1, **kwargs
 ):
     """
     Create a figure and a set of subplots.
@@ -70,7 +70,7 @@ def subplots(
                 for _n, _size, _offset
                 in zip([ncols, nrows], axsize, axsize_offset)
             )
-        fig = plt.figure(figsize=figsize)
+        fig = plt.figure(figsize=figsize, dpi=dpi)
     # Create axes
     axs = fig.subplots(nrows=nrows, ncols=ncols, **kwargs)
     return fig, axs

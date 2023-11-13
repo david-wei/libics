@@ -15,7 +15,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -481,16 +480,23 @@ list. If not, a list is created with the data as single item.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="libics.core.util.misc.assume_numpy_array">
-<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition"></a></dt>
-<dd><p>Asserts that data is a <cite>numpy.ndarray</cite> object.</p>
+<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">assume_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.assume_numpy_array" title="Permalink to this definition"></a></dt>
+<dd><p>Asserts that <cite>data</cite> is a <cite>numpy.ndarray</cite> object (with given shape).</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>data</strong></dt><dd><p>Input data to be checked for <cite>numpy.ndarray</cite>.</p>
 </dd>
-<dt><strong>shape</strong><span class="classifier"><cite>tuple(int)</cite> or <cite>None</cite></span></dt><dd><p>If given and data is scalar, creates a numpy array with given shape
+<dt><strong>shape</strong><span class="classifier"><cite>tuple(int)</cite> or <cite>None</cite></span></dt><dd><p>If given data is scalar, creates a numpy array with given shape
 containing given data as element.
-If given and data has a different shape, raises a <cite>ValueError</cite>.</p>
+If given data has a different shape, performs error handling according
+to the <cite>error</cite> parameter.</p>
+</dd>
+<dt><strong>error</strong><span class="classifier"><cite>str</cite></span></dt><dd><p>Controls how to handle shape errors:
+<cite>“raise”</cite>: raises a <cite>ValueError</cite>.
+<cite>“repeat” or “tile”</cite>: appends the data or crops it to match the shape.
+Repeating means <cite>“[1, 2, 3] -&gt; [1, 1, 2, 2, 3, 3]</cite>,
+tiling means <cite>“[1, 2, 3] -&gt; [1, 2, 3, 1, 2, 3]</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -658,15 +664,6 @@ two-point average.</p>
 </dl>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="libics.core.util.misc.cv_coord_spherical_to_cartesian">
-<span class="sig-prename descclassname"><span class="pre">libics.core.util.misc.</span></span><span class="sig-name descname"><span class="pre">cv_coord_spherical_to_cartesian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuthal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libics.core.util.misc.cv_coord_spherical_to_cartesian" title="Permalink to this definition"></a></dt>
-<dd><p>Converts 3D spherical (standard parametrization) to cartesian coordinates.</p>
-<p>where <span class="math notranslate nohighlight">\(r \in [0, \infty]\)</span> is the radial, <span class="math notranslate nohighlight">\(\theta \in [0, \pi]\)</span>
-is the polar, and <span class="math notranslate nohighlight">\(\phi \in [0, 2 \pi]\)</span> is the azimuthal coordinate.
-Supports broadcasting.</p>
 </dd></dl>
 
 <dl class="py function">
