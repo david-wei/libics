@@ -183,6 +183,10 @@ class ObjEncoder(object):
         return d
 
     @classmethod
+    def _serialize_datetime(cls, obj):
+        return {"data": obj.isoformat()}
+
+    @classmethod
     def serialize(cls, obj):
         obj = filter_primitive(obj)
         if type_is_primitive(obj):
@@ -204,6 +208,8 @@ class ObjEncoder(object):
                 d["__obj__"] = cls._serialize_numpy_ndarray(obj)
             elif isinstance(obj, pd.DataFrame):
                 d["__obj__"] = cls._serialize_pandas_dataframe(obj)
+            elif misc.is_datetime(obj):
+                d["__obj__"] = cls._serialize_datetime(obj)
             elif "__dict__" in obj:
                 d["__obj__"] = cls.serialize(obj.__dict__)
             else:
@@ -288,6 +294,10 @@ class ObjDecoder(object):
         return pd.DataFrame(data=data, columns=columns)
 
     @classmethod
+    def _deserialize_datetime(cls, ser, cls_name="datetime.datetime"):
+        return get_class_from_fqname(cls_name).fromisoformat(ser["data"])
+
+    @classmethod
     def deserialize(cls, ser, obj=None, raise_err=True):
         """
         Parameters
@@ -334,6 +344,9 @@ class ObjDecoder(object):
                     obj = cls._deserialize_pandas_dataframe(
                         data, raise_err=raise_err
                     )
+                # Datetime
+                elif name == "datetime.datetime" or name == "pandas.Timestamp":
+                    obj = cls._deserialize_datetime(data, cls_name=name)
                 # FileBase
                 else:
                     # Construct object and fill attributes
