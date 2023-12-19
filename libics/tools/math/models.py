@@ -720,6 +720,7 @@ class ModelBase(abc.ABC, FileBase):
 
 def ModelFromArray(
     ar, param_dims=None, scale_dims=None, offset_dims=None,
+    scale_data=True, offset_data=True,
     interpolation="linear", extrapolation=True
 ):
     """
@@ -735,6 +736,8 @@ def ModelFromArray(
         Array dimensions used as fitting parameters.
     scale_dims, offset_dims : `int` or `Iter[int]`
         Array dimensions that should be scaled/offset.
+    scale_data, offset_data : `bool`
+        Flag whether to scale/offset the data, used as a parameter.
     interpolation : `str`
         Interpolation mode: `"nearest", "linear"`.
     extrapolation : `bool` or `float`
@@ -821,7 +824,12 @@ def ModelFromArray(
         + len(scale_dims) * [1.0]
         + len(offset_dims) * [0.0]
     )
-
+    if scale_data:
+        param_names += ["data_scale"]
+        param_default += [1.0]
+    if offset_data:
+        param_names += ["data_offset"]
+        param_default += [0.0]
     # Check for validity
     if len(np.unique(param_names)) != len(param_names):
         raise ValueError("non-unique parameter names")
@@ -844,6 +852,8 @@ def ModelFromArray(
         _param_dims = param_dims
         _scale_dims = scale_dims
         _offset_dims = offset_dims
+        _scale_data = scale_data
+        _offset_data = offset_data
 
         @staticmethod
         def _func(var, *p):
@@ -875,9 +885,18 @@ def ModelFromArray(
                 params.append(_tmp)
             params = np.array(params)
             # Interpolate
-            return ad.interpolate(
+            res = ad.interpolate(
                 params, mode=interpolation, extrapolation=extrapolation
             )
+            if cls._scale_data:
+                i = -1
+                if cls._offset_data:
+                    i -= 1
+                res = res * p[i]
+            if cls._offset_data:
+                i = -1
+                res = res + p[i]
+            return res
 
     FitArrayData.__doc__ = (
         f"Fit class for interpolated array with data_quantity"
