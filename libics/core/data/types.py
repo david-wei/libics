@@ -76,7 +76,7 @@ def hash_libics(val):
             return xxh64_intdigest(np.ascontiguousarray(val))
     elif isinstance(val, AttrHashBase):
         return val._hash_libics()
-    elif isinstance(val, collections.Mapping):
+    elif isinstance(val, collections.abc.Mapping):
         return hash_combine_xor(*(
             hash_combine_ordered(hash_libics(k), hash_libics(val[k]))
             for k in val
