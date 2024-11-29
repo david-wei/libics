@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import trapz, cumtrapz
+from scipy.integrate import trapezoid, cumulative_trapezoid
 
 from libics.core.data.arrays import ArrayData
 
@@ -49,7 +49,7 @@ def integrate_array(ar, bounds=False, x=None, dx=None, x0=None, axis=-1):
     indefinite_integration = bounds is False
     # Indefinite integration
     if indefinite_integration:
-        ar_int = cumtrapz(ad, x=x, axis=axis, initial=0)
+        ar_int = cumulative_trapezoid(ad, x=x, axis=axis, initial=0)
         if x0 is not None:
             idx_x0 = ad.cv_quantity_to_index(x0, axis)
             ar_int -= (
@@ -65,7 +65,7 @@ def integrate_array(ar, bounds=False, x=None, dx=None, x0=None, axis=-1):
             )
             ad = ad[axis * (slice(None),) + (slice(*idx_bounds),)]
             x = ad.get_points(axis)
-        ar_int = trapz(ad, x=x, axis=axis)
+        ar_int = trapezoid(ad, x=x, axis=axis)
     # Package result
     if is_ad and not np.isscalar(ar_int):
         ad_int = ad.copy_var()
