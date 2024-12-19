@@ -293,7 +293,7 @@ def lin(t, y0, y1):
     return a * t + c
 
 
-@interval_func(0)
+@interval_func(0, "tau")
 def exp(t, y0, y1, tau):
     """
     Exponential: :math:`y(t) = a e^{t / \\tau} + c`.
@@ -308,7 +308,7 @@ def exp(t, y0, y1, tau):
     return a * np.exp(t / tau) + c
 
 
-@interval_func(0)
+@interval_func(0, "tau")
 def tanh(t, y0, y1, tau):
     """
     Hyperbolic tangent: :math:`y(t) = a \\tanh((2 t - 1) / \\tau) + c`.
@@ -328,7 +328,7 @@ def tanh(t, y0, y1, tau):
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-@interval_func(1)
+@interval_func(1, "tau")
 def gauss(t, y0, y1, yp, tau):
     """
     Gaussian: :math:`y(t) = a e^{-(t - 1/2)^2 / 2 \\tau^2} + c`.
@@ -347,7 +347,7 @@ def gauss(t, y0, y1, yp, tau):
     return a * np.exp(-(t - 1/2)**2 / 2 / (tau / 2)**2) + c
 
 
-@interval_func(0)
+@interval_func(1, "tau")
 def cosh(t, y0, y1, yp, tau):
     """
     Hyperbolic cosine: :math:`y(t) = a \\cosh((t - 1/2) / \\tau) + c`.
@@ -381,7 +381,7 @@ def trapez(t, y0, y1, yp, tc0=0.3, tc1=None):
     tc0 : `float`
         Rise time.
     tc1 : `float`
-        Fall time. Defaults to `1 - tc0`
+        Fall time. Defaults to `1 - tc0`.
     """
     if tc1 is None:
         tc1 = 1 - tc0
