@@ -1022,6 +1022,17 @@ def _get_xyc_from_data(
         # (..., AR, ...):
         else:
             data_dict["y"] = np.array(data[1])
+        # Make x, y two-dimensional
+        _x, _y = [data_dict[_k] for _k in ("x", "y")]
+        if _x.ndim == 1:
+            if _y.ndim == 1:
+                data_dict["x"], data_dict["y"] = np.meshgrid(
+                    _x, _y, indexing="ij"
+                )
+            else:  # _x.ndim == 1 and _y.ndim == 2
+                data_dict["x"] = _x[:, np.newaxis] * np.ones_like(_y)
+        elif _y.ndim == 1:  # _x.ndim == 2 and _y.ndim == 1
+            data_dict["y"] = _y[np.newaxis, :] * np.ones_like(_x)
         # (..., AD)
         if isinstance(data[2], ArrayData):
             data_dict["c"] = data[2].data
