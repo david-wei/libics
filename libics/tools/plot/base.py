@@ -616,6 +616,7 @@ def contourf(
     *data, x=None, y=None, c=None,
     xnorm=None, ynorm=None, cnorm=None,
     vmin=None, vmax=None, vdif=None, vcen=None,
+    levels=11, extend="both",
     xlabel=True, ylabel=True, title=None,
     colorbar=None, cb_orientation="vertical", clabel=True,
     aspect=None, ax=None, **kwargs
@@ -646,6 +647,12 @@ def contourf(
         Minimum/maximum are given either directly (`vmin, vmax`)
         or are deduced from center and range (`vcen, vdif`).
         If `vdif is True`, the full range is automatically assigned.
+    levels : `int` or `Array[float]`
+        If `Array`, defines contour level values directly.
+        If `int`, uses the color map range parameters to define the levels.
+    extend : `{'neither', 'both', 'min', 'max'}`
+        Whether to use the min/max color if the value is outside
+        the [min, max] range.
     xlabel, ylabel, clabel, title : `str` or `bool`
         Labels for the various properties.
         If `True`, tries to automatically set a label.
@@ -688,8 +695,15 @@ def contourf(
             vmin = vcen - vdif
         if vmax is None:
             vmax = vcen + vdif
+    # Process contourf-specific parameters
+    if np.isscalar(levels):
+        if vmin is not None and vmax is not None:
+            levels = mpl.ticker.MaxNLocator(levels + 1).tick_values(vmin, vmax)
     # Perform contourf
-    art = ax.contourf(x, y, c, vmin=vmin, vmax=vmax, **kwargs)
+    art = ax.contourf(
+        x, y, c, vmin=vmin, vmax=vmax,
+        levels=levels, extend=extend, **kwargs
+    )
     # Set labels
     if isinstance(xlabel, str):
         ax.set_xlabel(misc.capitalize_first_char(xlabel))
