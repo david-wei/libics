@@ -1072,9 +1072,9 @@ class FitParabolic1d(ModelBase):
         # Find p0
         _x0 = x[_cidx]
         _c = _y_savgol[_cidx]
-        _a = np.mean([
-            (_yl - _c) / (_xl - _x0)**2,
-            (_yr - _c) / (_xr - _x0)**2,
+        _a = np.nanmean([
+            np.nan if _xl == _x0 else (_yl - _c) / (_xl - _x0)**2,
+            np.nan if _xr == _x0 else (_yr - _c) / (_xr - _x0)**2,
         ])
         self.p0 = [_a, _x0, _c]
 
