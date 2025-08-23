@@ -67,3 +67,26 @@ def display_array(ar, d, cmap="viridis", vmin=None, vmax=None, height=512):
     else:
         d["display_handle"].update(display_obj)
     IPython.display.clear_output(wait=True)
+
+
+def display_swatch(*rgb_colors, size_px=40):
+    """
+    Displays one or more color swatches.
+
+    Parameters
+    ----------
+    *rgb_colors : `Iter[float]` or `str`
+        RGB color given in a [0, 1] float representation or as hex string.
+    """
+    colors = [mpl.colors.to_hex(c) for c in rgb_colors]
+    return HTML(
+        "<div style='display:grid;grid-auto-flow:column;gap:6px;"
+        "justify-content:start;align-items:center'>"
+        + "".join(
+            f"<div style='width:{size_px:.0f}px;height:{size_px:.0f}px;"
+            f"border:1px solid #ccc;border-radius:4px;"
+            f"background:{c};box-sizing:border-box'></div>"
+            for c in colors
+        )
+        + "</div>"
+)

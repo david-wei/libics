@@ -6,6 +6,9 @@ import numpy as np
 import scipy.optimize
 
 
+DEBUG = False
+
+
 ###############################################################################
 # DEPRECATED (based on HLS color space, use CIECAM02 functions instead)
 ###############################################################################
@@ -115,10 +118,14 @@ def add_named_color(name, color):
     mpl.colors.get_named_colors_mapping()[name] = color_hex
 
 
-def add_named_cmap(cmap, name=None, **kwargs):
+def add_named_cmap(cmap, name=None, overwrite=True, **kwargs):
     """Add a named color map to matplotlib."""
     if not isinstance(cmap, mpl.colors.Colormap):
         cmap = make_cmap(cmap, name=name, **kwargs)
+    if name is None:
+        name = cmap.name
+    if overwrite:
+        mpl.colormaps.unregister(name)
     mpl.colormaps.register(cmap, name=name)
 
 
@@ -320,21 +327,30 @@ def _srgb_gamut_opt_func(val, curve_func):
     if val < 0:
         return np.abs(val)
     new_jch = curve_func(val)
-    new_rgb = cspace_convert(new_jch, "JCh", "sRGB1")
-    loss_ofl = np.sum(new_rgb[new_rgb > 1] - 1)
-    loss_ufl = np.sum(-new_rgb[new_rgb < 0])
-    loss_reg = min(
-        np.abs(np.max(new_rgb) - 1),
-        np.abs(np.min(new_rgb))
+    new_rgb = cspace_convert(np.copy(new_jch), "JCh", "sRGB1")
+    bck_jch = cspace_convert(
+        np.round(255 * np.clip(new_rgb, 0, 1)) / 255, "sRGB1", "JCh"
     )
-    return loss_ofl + loss_ufl + loss_reg
+    loss_ofl = 1e3 * np.sum((new_rgb[new_rgb > 1] - 1)**2)
+    loss_ufl = 1e3 * np.sum((-new_rgb[new_rgb < 0])**2)
+    loss_reg = 1e1 * min(
+        np.abs(np.max(new_rgb) - 1)**2,
+        np.abs(np.min(new_rgb))**2
+    )
+    loss_res = np.sum(((new_jch - bck_jch) / np.array([100, 100, 360]))**2)
+    loss = loss_ofl + loss_ufl + loss_reg + loss_res
+    if DEBUG:
+        with np.printoptions(precision=4, suppress=True):
+            print(f"{loss_ofl:.2e}, {loss_ufl:.2e}, {loss_reg:.2e}, "
+                  f"{loss_res:.2e}, {new_jch}, {bck_jch}, {new_rgb}")
+    return loss
 
 
 @_color_lru_cache
 def _get_srgb_gamut_max_chroma(jch_color):
     new_jch = np.array(jch_color, dtype=float).copy()
     color_dim = 1
-    curve_bounds = (0, 100)
+    curve_bounds = (jch_color[1], 100)
 
     def curve_func(val):
         new_jch[color_dim] = val
@@ -352,7 +368,7 @@ def _get_srgb_gamut_max_chroma(jch_color):
 def _get_srgb_gamut_max_lightness(jch_color):
     new_jch = np.array(jch_color, dtype=float).copy()
     color_dim = 0
-    curve_bounds = (0, 100)
+    curve_bounds = (jch_color[0], 100)
 
     def curve_func(val):
         new_jch[color_dim] = val
@@ -370,7 +386,7 @@ def _get_srgb_gamut_max_lightness(jch_color):
 def _get_srgb_gamut_min_lightness(jch_color):
     new_jch = np.array(jch_color, dtype=float).copy()
     color_dim = 0
-    curve_bounds = (0, 100)
+    curve_bounds = (0, jch_color[0])
 
     def curve_func(val):
         new_jch[color_dim] = val
@@ -783,6 +799,8 @@ def get_srgb_linspace(
             np.linspace(jch_start_color[j], jch_stop_color[j], num=_num)
             for j in range(3)
         ]
+        if i != 0:
+            _interp = [v[1:] for v in _interp]
         jch_interpolated_colors.append(np.transpose(_interp))
     jch_interpolated_colors = np.concatenate(jch_interpolated_colors)
     rgb_interpolated_colors = [
@@ -935,7 +953,7 @@ def rgb_to_jch(*rgb_colors):
 
 @_srgb_parser(multi=True, squeeze=True)
 def jch_to_rgb(*jch_colors, clip=True):
-    """Converts a RGB-style color to a JCh color."""
+    """Converts a JCh color to a RGB color."""
     rgb_colors = cspace_convert(jch_colors, "JCh", "sRGB1")
     if clip:
         rgb_colors = np.clip(rgb_colors, 0, 1)
